@@ -1,0 +1,84 @@
+import Vue from 'vue'
+import Router from 'vue-router'
+import auth from '@/auth/authService'
+
+// Routes
+import InventoryRoutes from './invetory.routes'
+import SalesRoutes from './sales.routes'
+import UsersRoutes from './users.routes'
+
+Vue.use(Router)
+
+export const routes = [{
+  path: '/',
+  redirect: '/dashboard/analytics'
+}, {
+  path: '/dashboard/analytics',
+  name: 'dashboard-analytics',
+  component: () => import(/* webpackChunkName: "dashboard" */ '@/pages/dashboard/DashboardPage.vue')
+},
+...InventoryRoutes,
+...SalesRoutes,
+...UsersRoutes,
+{
+  path: '/blank',
+  name: 'blank',
+  component: () => import(/* webpackChunkName: "blank" */ '@/pages/BlankPage.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/login',
+  name: 'login',
+  component: () => import('@/views/pages/Login.vue'),
+  meta: {
+    layout: 'auth'
+  }
+}, {
+  path: '/error/unexpected',
+  name: 'error-unexpected',
+  component: () => import('@/views/pages/UnexpectedPage.vue'),
+  meta: {
+    layout: 'error'
+  }
+}, {
+  path: '*',
+  name: 'error',
+  component: () => import('@/views/pages/NotFoundPage.vue'),
+  meta: {
+    layout: 'error'
+  }
+}]
+
+const router = new Router({
+  mode: 'history',
+  base: process.env.BASE_URL || '/',
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) return savedPosition
+
+    return { x: 0, y: 0 }
+  },
+  routes
+})
+
+/**
+ * Before each route update
+ */
+router.beforeEach((to, from, next) => {
+  // If auth required, check login. If login fails redirect to login page
+  if (to.meta.authRequired) {
+    if (!auth.isAuthenticated()) {
+      router.push({ path: '/login', query: { to: to.path } })
+    }
+  }
+
+  return next()
+})
+
+/**
+ * After each route update
+ */
+router.afterEach(() => {
+})
+
+export default router
