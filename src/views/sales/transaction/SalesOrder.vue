@@ -135,9 +135,10 @@
 
     <v-dialog
       v-model="dialog.add"
+      transition="dialog-bottom-transition"
       fullscreen
       hide-overlay
-      transition="dialog-bottom-transition"
+      scrollable
     >
       <v-card :style="{ background: $vuetify.theme.themes[theme].surface }">
         <v-toolbar dark color="primary">
@@ -208,21 +209,30 @@
                       <v-col cols="12">
                         <v-autocomplete
                           v-model="data.sales"
+                          :items="salesmans"
                           :rules="rules.sales"
+                          :search-input.sync="searchSalesman"
                           label="Salesman"
+                          item-text="name"
+                          item-value="code"
                           class="mt-0"
+                          required
+                          @click="ctrlSalesmanClicked()"
                         ></v-autocomplete>
                       </v-col>
                     </v-row>
 
                     <v-row no-gutters>
                       <v-col cols="5">
-                        <v-autocomplete
+                        <v-combobox
                           v-model="data.curr"
+                          :items="currencies"
                           :rules="rules.curr"
                           label="Currrency"
+                          item-text="code"
+                          item-value="code"
                           class="mt-0"
-                        ></v-autocomplete>
+                        ></v-combobox>
                       </v-col>
 
                       <v-col cols="7" class="pl-1">
@@ -326,7 +336,7 @@
                         <v-col cols="12">
                           <v-select
                             v-model="data.deliveryAddr"
-                            :items="data.custDeliveries"
+                            :items="deliveries"
                             label="Delivery Address"
                           ></v-select>
                         </v-col>
@@ -403,7 +413,7 @@
                         <v-col cols="12">
                           <v-select
                             v-model="data.billAddr"
-                            :items="data.custDeliveries"
+                            :items="deliveries"
                             label="Biling Address"
                           ></v-select>
                         </v-col>
@@ -701,19 +711,27 @@
     </v-dialog>
 
     <confirm ref="confirm"></confirm>
+    <find-customer
+      ref="findCust"
+      @dblclick:row="bindCustData"
+    ></find-customer>
   </div>
 </template>
 
 <script>
 import axios from '@/axios'
 import moment from 'moment'
+import { debounce as _debounce } from 'lodash'
 
 import Confirm from '@/components/dialog/Confirm'
+import FindCustomer from '@/components/dialog/FindCustomer'
 
 export default {
   components: {
-    Confirm
+    Confirm,
+    FindCustomer
   },
+
   data: () => ({
     main: true,
     dialog: {
@@ -727,6 +745,7 @@ export default {
       cust: null,
       foot: null
     },
+    test: '',
     grid: {
       data: [],
       columns: [
@@ -751,6 +770,10 @@ export default {
       ]
     },
     valid: false,
+    searchSalesman: null,
+    salesmans: [],
+    currencies: [],
+    deliveries: [],
     data: {
       code: null,
       orderDate: moment().format('DD-MMM-YYYY'),
@@ -759,8 +782,18 @@ export default {
       rate: 1,
       includeTax: true,
       custCode: null,
-      delivery: null,
+      custName: null,
+      custAddr: null,
+      custPhone: null,
+      custFax: null,
+      deliveryAddr: null,
+      custDeliveryAddr: null,
+      custDeliveryPhone: null,
+      custDeliveryFax: null,
       deliveryDate: moment().format('DD-MMM-YYYY'),
+      billAddr: null,
+      paymentTerm: null,
+      tax: null,
       dpp: 0,
       downPayment: 0,
       applyTax: false,
@@ -776,7 +809,6 @@ export default {
       fee: 0,
       grandTotal: 0
     },
-    name: '',
     rules: {
       date: [
         (v) => !!v || 'Order Date is required'
@@ -786,20 +818,44 @@ export default {
       ]
     }
   }),
+
   mounted: function () {
     this.getList()
+    this.getCurrLists()
   },
+
   computed: {
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'
     }
   },
+
+  watch: {
+    searchSalesman: _debounce(
+      function (value) {
+        // eslint-disable-next-line no-invalid-this
+        this.getSalesmanLists(value)
+      }, 1000)
+  },
+  
   methods: {
     getList() {
       axios.post('/item/list')
         .then(response => {
           this.grid.data = response.data
           this.gridItem.data = response.data
+        })
+    },
+    getSalesmanLists(filter) {
+      axios.post('/salesman/lists', { filter })
+        .then(response => {
+          this.salesmans = response.data
+        })
+    },
+    getCurrLists() {
+      axios.post('/currency/lists')
+        .then(response => {
+          this.currencies = response.data
         })
     },
     add() {
@@ -822,8 +878,27 @@ export default {
       this.$refs.confirm.open('Delete?', 'Are you sure want to delete this data?')
       // console.log(item)
     },
+    ctrlSalesmanClicked() {
+      if (this.salesmans.length === 0) {
+        this.getSalesmanLists('')
+      }
+    },
     showFindCustDialog() {
-      console.log('this is cust dialog')
+      this.$refs.findCust.open()
+    },
+    bindCustData(item) {
+      this.data.custCode = item.code
+      this.data.custName = item.name
+      this.data.custAddr = item.address
+      this.data.custPhone = item.phone1
+      this.data.custFax = item.fax
+      // this.data.deliveryAddr = item.code
+      this.data.custDeliveryAddr = item.address
+      this.data.custDeliveryPhone = item.phone1
+      this.data.custDeliveryFax = item.fax
+      // this.data.billAddr = item.code
+      // this.data.paymentTerm = item.code
+      // this.data.tax = item.code
     }
   }
 }
