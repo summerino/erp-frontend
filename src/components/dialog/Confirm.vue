@@ -8,17 +8,20 @@
       <v-card-text v-show="message">{{ message }}</v-card-text>
       <v-card-actions class="justify-center pb-2">
         <v-btn
+          color="red darken-2"
+          class="font-weight-regular"
           dark
           small
           tile
-          color="red darken-2"
-          class="font-weight-regular">
+        >
           OK
         </v-btn>
         <v-btn
+          class="font-weight-regular ml-1"
           small
           tile
-          class="font-weight-regular ml-1">
+          @click="dialog = false"
+        >
           Cancel
         </v-btn>
       </v-card-actions>
@@ -27,14 +30,6 @@
 </template>
 
 <script>
-/*
-|---------------------------------------------------------------------
-| Toolbar Apps Component
-|---------------------------------------------------------------------
-|
-| Quickmenu for applications in the toolbar
-|
-*/
 export default {
   data() {
     return {
@@ -52,6 +47,9 @@ export default {
       this.title = title
       this.message = message
       this.options = Object.assign(this.options, options)
+    },
+    close() {
+      this.dialog = false
     }
   }
 }
