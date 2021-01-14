@@ -6,8 +6,8 @@ export default {
   menu: [{
     text: '',
     items: [
-      { icon: 'mdi-view-dashboard-outline', text: 'Dashboard', link: '/dashboard/analytics' },
-      { icon: 'mdi-file-outline', text: 'Blank Page', link: '/blank' }
+      { icon: 'mdi-view-dashboard-outline', text: 'Dashboard', link: 'dashboard' },
+      { icon: 'mdi-file-outline', text: 'Blank Page', link: 'blank' }
     ]
   }, {
     text: 'Inventory',

@@ -14,7 +14,7 @@ export const routes = [{
   redirect: '/dashboard/analytics'
 }, {
   path: '/dashboard/analytics',
-  name: 'dashboard-analytics',
+  name: 'dashboard',
   component: () => import(/* webpackChunkName: "dashboard" */ '@/pages/dashboard/DashboardPage.vue')
 },
 ...InventoryRoutes,
@@ -68,7 +68,7 @@ router.beforeEach((to, from, next) => {
   // If auth required, check login. If login fails redirect to login page
   if (to.meta.authRequired) {
     if (!auth.isAuthenticated()) {
-      router.push({ path: '/login', query: { to: to.path } })
+      router.push({ name: 'login', query: { to: to.path } })
     }
   }
 

@@ -3,7 +3,7 @@
     <v-list-item
       v-if="!menuItem.items"
       :input-value="menuItem.value"
-      :to="menuItem.link"
+      :to="{ name: menuItem.link }"
       :exact="menuItem.exact"
       :disabled="menuItem.disabled"
       active-class="primary--text"

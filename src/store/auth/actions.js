@@ -37,7 +37,7 @@ const logout = () => {
         localStorage.removeItem('userInfo')
 
         // Navigate to login page
-        router.push('/login')
+        router.push({ name: 'login' })
 
         resolve(response)
       })
