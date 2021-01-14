@@ -15,7 +15,7 @@ export const routes = [{
 }, {
   path: '/dashboard/analytics',
   name: 'dashboard',
-  component: () => import(/* webpackChunkName: "dashboard" */ '@/pages/dashboard/DashboardPage.vue')
+  component: () => import(/* webpackChunkName: "dashboard" */ '@/views/dashboard/Dashboard.vue')
 },
 ...InventoryRoutes,
 ...SalesRoutes,
