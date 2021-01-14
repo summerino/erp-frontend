@@ -8,12 +8,12 @@
           </v-col>
           <v-col cols="12" md="6" class="text-right">
             <v-btn
+              color="green darken-1"
+              class="font-weight-regular"
               dark
               small
               tile
-              color="green darken-1"
-              class="font-weight-regular"
-              @click="add()"
+              @click="dialog.add = true"
             >
               <v-icon left>
                 mdi-plus
@@ -211,13 +211,11 @@
                           v-model="data.sales"
                           :items="salesmans"
                           :rules="rules.sales"
-                          :search-input.sync="searchSalesman"
                           label="Salesman"
                           item-text="name"
                           item-value="code"
                           class="mt-0"
                           required
-                          @click="ctrlSalesmanClicked()"
                         ></v-autocomplete>
                       </v-col>
                     </v-row>
@@ -232,6 +230,7 @@
                           item-text="code"
                           item-value="code"
                           class="mt-0"
+                          required
                         ></v-combobox>
                       </v-col>
 
@@ -462,7 +461,7 @@
                             class="blue--text"
                             small
                             tile
-                            @onclick="addItem"
+                            @onclick="addItem()"
                           >
                             <v-icon left>mdi-plus</v-icon>
                             Add
@@ -710,6 +709,30 @@
       </v-card>
     </v-dialog>
 
+    <v-dialog
+      v-model="dialog.addItem"
+      transition="slide-x-transition"
+      width="500"
+      persistent
+      scrollable
+    >
+      <v-card>
+        <v-toolbar
+          color="red darken-1"
+          dark
+          dense
+        >
+          <v-btn icon dark @click="dialog.addItem = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <v-toolbar-title>Item</v-toolbar-title>
+          
+        </v-toolbar>
+        <v-card-text>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+
     <confirm ref="confirm"></confirm>
     <find-customer
       ref="findCust"
@@ -721,7 +744,6 @@
 <script>
 import axios from '@/axios'
 import moment from 'moment'
-import { debounce as _debounce } from 'lodash'
 
 import Confirm from '@/components/dialog/Confirm'
 import FindCustomer from '@/components/dialog/FindCustomer'
@@ -735,7 +757,8 @@ export default {
   data: () => ({
     main: true,
     dialog: {
-      add: true
+      add: true,
+      addItem: false
     },
     menu: {
       orderDate: false,
@@ -770,7 +793,6 @@ export default {
       ]
     },
     valid: false,
-    searchSalesman: null,
     salesmans: [],
     currencies: [],
     deliveries: [],
@@ -821,6 +843,7 @@ export default {
 
   mounted: function () {
     this.getList()
+    this.getSalesmanLists()
     this.getCurrLists()
   },
 
@@ -829,16 +852,11 @@ export default {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'
     }
   },
-
-  watch: {
-    searchSalesman: _debounce(
-      function (value) {
-        // eslint-disable-next-line no-invalid-this
-        this.getSalesmanLists(value)
-      }, 1000)
-  },
   
   methods: {
+    addItem() {
+      console.log(this.dialog.addItem)
+    },
     getList() {
       axios.post('/item/list')
         .then(response => {
@@ -858,18 +876,12 @@ export default {
           this.currencies = response.data
         })
     },
-    add() {
-      this.dialog.add = true
-    },
     edit(item) {
       console.log(item)
     },
     remove() {
       this.$refs.confirm.open('Delete?', 'Are you sure want to delete this data?')
       // console.log(item)
-    },
-    addItem() {
-      this.dialog.add = true
     },
     editItem(item) {
       console.log(item)
