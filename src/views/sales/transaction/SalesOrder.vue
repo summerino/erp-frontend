@@ -15,9 +15,7 @@
               tile
               @click="dialog.add = true"
             >
-              <v-icon left>
-                mdi-plus
-              </v-icon>
+              <v-icon left>mdi-plus</v-icon>
               New
             </v-btn>
           </v-col>
@@ -141,7 +139,11 @@
       scrollable
     >
       <v-card :style="{ background: $vuetify.theme.themes[theme].surface }">
-        <v-toolbar dark color="primary">
+        <v-toolbar
+          color="primary"
+          max-height="64"
+          dark
+        >
           <v-btn icon dark @click="dialog.add = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
@@ -185,10 +187,10 @@
                         >
                           <template v-slot:activator="{ on, attrs }">
                             <v-text-field
-                              v-model="data.orderDate"
                               v-bind="attrs"
                               v-on="on"
                               :rules="rules.date"
+                              :value="formatOrderDate"
                               label="Order Date"
                               class="mt-0"
                               readonly
@@ -199,7 +201,7 @@
                             v-model="data.orderDate"
                             no-title
                             scrollable
-                            @input="menu.orderDate = false"
+                            @change="menu.orderDate = false"
                           ></v-date-picker>
                         </v-menu>
                       </v-col>
@@ -383,10 +385,10 @@
                           >
                             <template v-slot:activator="{ on, attrs }">
                               <v-text-field
-                                v-model="data.deliveryDate"
                                 v-bind="attrs"
                                 v-on="on"
                                 :rules="rules.date"
+                                :value="formatDeliveryDate"
                                 label="Delivery Date"
                                 class="mt-0"
                                 readonly
@@ -461,7 +463,7 @@
                             class="blue--text"
                             small
                             tile
-                            @onclick="addItem()"
+                            @click="$refs.crudItem.open()"
                           >
                             <v-icon left>mdi-plus</v-icon>
                             Add
@@ -709,55 +711,36 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog
-      v-model="dialog.addItem"
-      transition="slide-x-transition"
-      width="500"
-      persistent
-      scrollable
-    >
-      <v-card>
-        <v-toolbar
-          color="red darken-1"
-          dark
-          dense
-        >
-          <v-btn icon dark @click="dialog.addItem = false">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-          <v-toolbar-title>Item</v-toolbar-title>
-          
-        </v-toolbar>
-        <v-card-text>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-
     <confirm ref="confirm"></confirm>
     <find-customer
       ref="findCust"
       @dblclick:row="bindCustData"
     ></find-customer>
+    <crud-item
+      ref="crudItem"
+    ></crud-item>
   </div>
 </template>
 
 <script>
 import axios from '@/axios'
-import moment from 'moment'
+import { format, parseISO } from 'date-fns'
 
 import Confirm from '@/components/dialog/Confirm'
 import FindCustomer from '@/components/dialog/FindCustomer'
+import CrudItem from '@/components/dialog/sales/CrudItem'
 
 export default {
   components: {
     Confirm,
-    FindCustomer
+    FindCustomer,
+    CrudItem
   },
 
   data: () => ({
     main: true,
     dialog: {
-      add: true,
+      add: false,
       addItem: false
     },
     menu: {
@@ -768,7 +751,6 @@ export default {
       cust: null,
       foot: null
     },
-    test: '',
     grid: {
       data: [],
       columns: [
@@ -798,7 +780,7 @@ export default {
     deliveries: [],
     data: {
       code: null,
-      orderDate: moment().format('DD-MMM-YYYY'),
+      orderDate: format(new Date(), 'yyyy-MM-dd'),
       sales: null,
       curr: 'IDR',
       rate: 1,
@@ -812,7 +794,7 @@ export default {
       custDeliveryAddr: null,
       custDeliveryPhone: null,
       custDeliveryFax: null,
-      deliveryDate: moment().format('DD-MMM-YYYY'),
+      deliveryDate: format(new Date(), 'yyyy-MM-dd'),
       billAddr: null,
       paymentTerm: null,
       tax: null,
@@ -850,13 +832,16 @@ export default {
   computed: {
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'
+    },
+    formatOrderDate() {
+      return this.data.orderDate ? format(parseISO(this.data.orderDate), 'dd-MMM-yyyy') : ''
+    },
+    formatDeliveryDate() {
+      return this.data.deliveryDate ? format(parseISO(this.data.deliveryDate), 'dd-MMM-yyyy') : ''
     }
   },
   
   methods: {
-    addItem() {
-      console.log(this.dialog.addItem)
-    },
     getList() {
       axios.post('/item/list')
         .then(response => {
