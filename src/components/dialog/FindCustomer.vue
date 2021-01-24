@@ -83,8 +83,8 @@ export default {
         by: 'name',
         value: '',
         items: [
-          { text: 'Customer Code', value: 'code' },
-          { text: 'Customer Name', value: 'name' }
+          { text: 'Code', value: 'code' },
+          { text: 'Name', value: 'name' }
         ]
       },
       grid: {
