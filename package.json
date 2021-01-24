@@ -12,6 +12,7 @@
     "animate.css": "^4.1.1",
     "apexcharts": "^3.22.2",
     "axios": "^0.21.1",
+    "date-fns": "^2.16.1",
     "echarts": "^4.9.0",
     "flag-icon-css": "^3.5.0",
     "jsonwebtoken": "^8.5.1",
