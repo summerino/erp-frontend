@@ -3,8 +3,8 @@ import mock from '@/fake-db/mock.js'
 const data = {
   itemGroups: [{
     id: 1,
-    code: 'PRD-1',
-    name: 'Product 1'
+    code: 'PRD',
+    name: 'Product'
   }, {
     id: 2,
     code: 'PRD-2',
