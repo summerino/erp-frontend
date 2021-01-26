@@ -24,6 +24,7 @@ const state = {
   toast: {
     show: false,
     color: 'black',
+    icon: '',
     message: '',
     timeout: 3000
   },
