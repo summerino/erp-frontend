@@ -3,10 +3,11 @@
   "version": "1.0.0-dev",
   "private": true,
   "scripts": {
+    "server": "json-server --watch ./src/fake-db/db.json",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "dev": "npm run serve"
+    "dev": "concurrently \"npm run server\" \"npm run serve\""
   },
   "dependencies": {
     "animate.css": "^4.1.1",
@@ -31,6 +32,7 @@
     "vue-i18n": "^8.22.2",
     "vue-router": "^3.4.9",
     "vue-shortkey": "^3.1.7",
+    "vue-uuid": "^2.0.2",
     "vue2-google-maps": "^0.10.7",
     "vuedraggable": "^2.24.3",
     "vuetify": "^2.3.19",
@@ -43,6 +45,7 @@
     "@vue/cli-service": "^4.5.10",
     "axios-mock-adapter": "^1.19.0",
     "babel-eslint": "^10.1.0",
+    "concurrently": "^5.3.0",
     "core-js": "^3.8.2",
     "eslint": "^6.8.0",
     "eslint-plugin-vue": "^6.2.2",
