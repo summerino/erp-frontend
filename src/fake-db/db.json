@@ -922,5 +922,23 @@
       "isBaseUnit": 0,
       "seq": 3
     }
+  ],
+
+  "taxes": [
+    {
+      "code": "001",
+      "type": "PPN",
+      "name": "10% Sales",
+      "rate": 10.0,
+      "source": "SLS",
+      "showInSales": 1
+    }, {
+      "code": "002",
+      "type": "PPN",
+      "name": "1% Sales",
+      "rate": 1.0,
+      "source": "SLS",
+      "showInSales": 1
+    }
   ]
 }
