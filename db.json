@@ -235,6 +235,34 @@
       "name": "Retail"
     }
   ],
+  "salesmans": [{
+    "code": "W00001",
+    "name": "Moon Ga Young"
+  }, {
+    "code": "W00002",
+    "name": "Song Hye Kyo"
+  }, {
+    "code": "W00003",
+    "name": "Kim Seon Ho"
+  }, {
+    "code": "W00004",
+    "name": "Nam Joo Hyuk"
+  }, {
+    "code": "W00005",
+    "name": "Bae Suzy"
+  }, {
+    "code": "W00006",
+    "name": "Kang Han Na"
+  }, {
+    "code": "W00007",
+    "name": "Cha Eun Woo"
+  }, {
+    "code": "W00008",
+    "name": "Hwang In Yeop"
+  }, {
+    "code": "W00009",
+    "name": "Jo Woo Ri"
+  }],
   "items": [
     {
       "id": 1,
