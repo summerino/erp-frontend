@@ -55,7 +55,7 @@ const showSuccess = ({ state, commit }, message) => {
 
   setTimeout(() => {
     commit('showToast', {
-      color: 'success',
+      color: 'green darken-2',
       message,
       timeout: 3000
     })
