@@ -33,6 +33,7 @@
           </v-col>
           <v-col cols="12" md="8" class="pl-md-1">
             <v-text-field
+              ref="search"
               v-model="data.value"
               label="Search Text"
               class="mt-0"
@@ -47,7 +48,7 @@
             :items="grid.data"
             :items-per-page="-1"
             height="300"
-            class="elevation-1"
+            class="elevation-1 row-pointer"
             fixed-header
             hide-default-footer
             @dblclick:row="dblclickRow"
@@ -105,9 +106,18 @@ export default {
     }
   },
   methods: {
+    reset() {
+      this.data.by = 'name'
+      this.data.value = ''
+      this.grid.data = []
+    },
     open(options) {
       this.dialog = true
       this.options = Object.assign(this.options, options)
+      this.reset()
+      setTimeout(() => {
+        this.$refs.search.focus()
+      }, 0)
     },
     search() {
       axios.post('/customer/list', {
