@@ -115,3 +115,13 @@
 .text-right .v-text-field__slot input {
   text-align: right;
 }
+
+.row-pointer {
+  table {
+    tbody {
+      tr {
+        cursor: pointer;
+      }
+    }
+  }
+}
