@@ -13,6 +13,7 @@
           dark
           small
           tile
+          @click="submit"
         >
           OK
         </v-btn>
@@ -20,7 +21,7 @@
           class="font-weight-regular ml-1"
           small
           tile
-          @click="dialog = false"
+          @click="cancel"
         >
           Cancel
         </v-btn>
@@ -34,6 +35,8 @@ export default {
   data() {
     return {
       dialog: false,
+      resolve: null,
+      reject: null,
       title: null,
       message: null,
       options: {
@@ -47,8 +50,17 @@ export default {
       this.title = title
       this.message = message
       this.options = Object.assign(this.options, options)
+      return new Promise((resolve, reject) => {
+        this.resolve = resolve
+        this.reject = reject
+      })
     },
-    close() {
+    submit() {
+      this.resolve(true)
+      this.dialog = false
+    },
+    cancel() {
+      this.resolve(false)
       this.dialog = false
     }
   }
