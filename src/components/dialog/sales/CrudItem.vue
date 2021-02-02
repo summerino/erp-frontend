@@ -23,7 +23,7 @@
           <v-btn
             dark
             text
-            @click="dialog = false"
+            @click="save"
           >
             Save
           </v-btn>
@@ -41,7 +41,7 @@
               <v-card-text>
                 <v-row no-gutters>
                   <v-treeview
-                    v-model="data.search.category"
+                    v-model="search.category"
                     :items="categories"
                     :open.sync="initOpenTV"
                     activatable
@@ -61,18 +61,19 @@
                 <v-row no-gutters>
                   <v-col cols="12" md="4">
                     <v-select
-                      v-model="data.search.by"
-                      :items="data.search.items"
+                      v-model="search.by"
+                      :items="search.items"
                       label="Search By"
                       class="mt-0"
                     ></v-select>
                   </v-col>
                   <v-col cols="12" md="8" class="pl-md-1">
                     <v-text-field
-                      v-model="data.search.value"
+                      ref="search"
+                      v-model="search.value"
                       label="Search Text"
                       class="mt-0"
-                      @keyup.enter="search"
+                      @keyup.enter="doSearch"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -83,7 +84,7 @@
                     :items="grid.data"
                     :items-per-page="-1"
                     height="300"
-                    class="elevation-1"
+                    class="elevation-1 row-pointer"
                     fixed-header
                     hide-default-footer
                     @dblclick:row="dblclickRow"
@@ -94,7 +95,10 @@
           </v-col>
         </v-row>
 
-        <v-form v-model="valid">
+        <v-form
+          ref="form"
+          v-model="valid"
+        >
           <v-row dense>
             <v-col cols="12">
               <v-card>
@@ -123,6 +127,7 @@
                   <v-row no-gutters>
                     <v-col cols="12" md="3">
                       <v-currency-field
+                        ref="qty"
                         v-model="data.qty"
                         label="Qty"
                         class="text-right mt-0"
@@ -206,17 +211,18 @@ export default {
       categories: [],
       initOpenTV: [],
       units: [],
+      search: {
+        category: [0],
+        by: 'name',
+        value: '',
+        items: [
+          { text: 'Code', value: 'code' },
+          { text: 'Name', value: 'name' },
+          { text: 'Type', value: 'type' }
+        ]
+      },
       data: {
-        search: {
-          category: [0],
-          by: 'name',
-          value: '',
-          items: [
-            { text: 'Code', value: 'code' },
-            { text: 'Name', value: 'name' },
-            { text: 'Type', value: 'type' }
-          ]
-        },
+        action: '',
         itemCode: null,
         itemName: null,
         qty: 0,
@@ -254,14 +260,50 @@ export default {
   },
   
   methods: {
-    open() {
+    reset() {
+      this.search.category = [0]
+      this.search.by = 'name'
+      this.search.value = ''
+      this.grid.data = []
+      this.data = {}
+    },
+    add() {
       this.dialog = true
+      this.reset()
+      this.data.action = 'add'
+      setTimeout(() => {
+        this.$refs.search.focus()
+      }, 0)
+    },
+    edit(item) {
+      this.dialog = true
+      this.reset()
+      
+      this.data = {
+        action: 'edit',
+        rowId: item.rowId,
+        itemId: item.itemId,
+        itemCode: item.itemCode,
+        itemName: item.itemName,
+        qty: item.qty,
+        unit: { id: item.unitId, unitEquivalent: item.unitName },
+        uomSellName: item.uomSellName,
+        unitPrice: item.unitPrice,
+        itemSellPrice: item.itemSellPrice,
+        disc: item.disc,
+        nettPrice: item.nettPrice,
+        total: item.total,
+        description: item.description,
+        state: item.state
+      }
+      
+      this.getUnitLists(item.uomId)
     },
     getCategoryHierarchy() {
       axios.get('/item/category/hierarchy')
         .then(response => {
           this.categories = response.data
-          this.data.search.category = [0]
+          this.search.category = [0]
           this.initOpenTV = [0]
         })
     },
@@ -271,11 +313,11 @@ export default {
           this.units = response.data
         })
     },
-    search() {
+    doSearch() {
       axios.post('/item/list', {
-        category: this.data.search.category,
-        searchBy: this.data.search.by,
-        search: this.data.search.value
+        category: this.search.category,
+        searchBy: this.search.by,
+        search: this.search.value
       })
         .then(response => {
           this.grid.data = response.data
@@ -294,10 +336,12 @@ export default {
       this.data.total = this.data.qty * this.data.nettPrice
     },
     dblclickRow(event, { item }) {
+      this.data.itemId = item.id
       this.data.itemCode = item.code
       this.data.itemName = item.name
       this.data.qty = 1
-      this.data.unit = item.uomSellId
+      this.data.uomId = item.uomId
+      this.data.unit = { id: item.uomSellId, unitEquivalent: item.uomSellName }
       this.data.uomSellName = item.uomSellName
       this.data.unitPrice = item.sellPrice
       this.data.itemSellPrice = item.sellPrice
@@ -305,13 +349,23 @@ export default {
 
       this.getUnitLists(item.uomId)
       this.calcPrice()
+
+      this.$refs.form.$el.scrollIntoView()
+      this.$refs.qty.$refs.textfield.focus()
     },
     unitChange() {
       this.data.uomConversion = 1
-      this.calcUomConversion(this.data.unit.unitEquivalent)
-      
+
+      if (this.data.unit.unitEquivalent !== this.data.uomSellName) {
+        this.calcUomConversion(this.data.unit.unitEquivalent)
+      }
+
       this.data.unitPrice = this.data.itemSellPrice / this.data.uomConversion
       this.calcPrice()
+    },
+    save() {
+      this.$emit('save', this.data)
+      this.dialog = false
     }
   }
 }
