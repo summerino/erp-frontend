@@ -1085,7 +1085,7 @@
     {
       "code": "SO000001",
       "orderDate": "2021-02-02",
-      "salesCode": "W00009",
+      "salesCode": "W00006",
       "curr": "IDR",
       "rate": 1,
       "includeTax": 1,
@@ -1097,7 +1097,7 @@
       "downPayment": 10000,
       "applyTax": 1,
       "notes": "this is notes",
-      "dpTax": 909.09,
+      "dpTax": 909.0909090909099,
       "shipmentFee": 30000,
       "handlingFee": 20000,
       "dpp": 124772.72727272726,
@@ -1105,7 +1105,7 @@
       "finalDiscPercent": 0,
       "finalDisc": 0,
       "taxPercent": 10,
-      "taxAmount": 12477.27,
+      "taxAmount": 12477.272727272735,
       "grandTotal": 187250,
       "id": 1
     }

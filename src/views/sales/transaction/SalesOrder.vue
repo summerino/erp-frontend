@@ -926,14 +926,25 @@ export default {
       data.applyTax = this.data.applyTax | 0
       data.itemDetails = this.gridItem.data
 
-      axios.post('/sales-order/update', data)
-        .then(response => {
-          if (response.data.success) {
-            this.$store.dispatch('app/showSuccess', response.data.message)
-            this.getList()
-            this.dialog.add = false
-          }
-        })
+      if (data.action === 'add') {
+        axios.post('/sales-order', data)
+          .then(response => {
+            if (response.data.success) {
+              this.$store.dispatch('app/showSuccess', response.data.message)
+              this.getList()
+              this.dialog.add = false
+            }
+          })
+      } else if (data.action === 'edit') {
+        axios.put(`/sales-order/${data.code}`, data)
+          .then(response => {
+            if (response.data.success) {
+              this.$store.dispatch('app/showSuccess', response.data.message)
+              this.getList()
+              this.dialog.add = false
+            }
+          })
+      }
     },
     addItem() {
       if (!this.data.custCode) {
