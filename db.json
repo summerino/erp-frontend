@@ -235,34 +235,44 @@
       "name": "Retail"
     }
   ],
-  "salesmans": [{
-    "code": "W00001",
-    "name": "Moon Ga Young"
-  }, {
-    "code": "W00002",
-    "name": "Song Hye Kyo"
-  }, {
-    "code": "W00003",
-    "name": "Kim Seon Ho"
-  }, {
-    "code": "W00004",
-    "name": "Nam Joo Hyuk"
-  }, {
-    "code": "W00005",
-    "name": "Bae Suzy"
-  }, {
-    "code": "W00006",
-    "name": "Kang Han Na"
-  }, {
-    "code": "W00007",
-    "name": "Cha Eun Woo"
-  }, {
-    "code": "W00008",
-    "name": "Hwang In Yeop"
-  }, {
-    "code": "W00009",
-    "name": "Jo Woo Ri"
-  }],
+  "salesmans": [
+    {
+      "code": "W00001",
+      "name": "Moon Ga Young"
+    },
+    {
+      "code": "W00002",
+      "name": "Song Hye Kyo"
+    },
+    {
+      "code": "W00003",
+      "name": "Kim Seon Ho"
+    },
+    {
+      "code": "W00004",
+      "name": "Nam Joo Hyuk"
+    },
+    {
+      "code": "W00005",
+      "name": "Bae Suzy"
+    },
+    {
+      "code": "W00006",
+      "name": "Kang Han Na"
+    },
+    {
+      "code": "W00007",
+      "name": "Cha Eun Woo"
+    },
+    {
+      "code": "W00008",
+      "name": "Hwang In Yeop"
+    },
+    {
+      "code": "W00009",
+      "name": "Jo Woo Ri"
+    }
+  ],
   "items": [
     {
       "id": 1,
@@ -1073,21 +1083,21 @@
   ],
   "salesOrder_H": [
     {
-      "code": "SO00001",
-      "orderDate": "2021-02-01",
-      "salesCode": "W00008",
+      "code": "SO000001",
+      "orderDate": "2021-02-02",
+      "salesCode": "W00009",
       "curr": "IDR",
       "rate": 1,
       "includeTax": 1,
       "custCode": "C00002",
-      "deliveryDate": "2021-02-01",
+      "deliveryDate": "2021-02-02",
       "billAddr": null,
       "top": null,
       "tax": "001",
-      "downPayment": 0,
-      "applyTax": 0,
-      "notes": null,
-      "dpTax": 0,
+      "downPayment": 10000,
+      "applyTax": 1,
+      "notes": "this is notes",
+      "dpTax": 909.09,
       "shipmentFee": 30000,
       "handlingFee": 20000,
       "dpp": 124772.72727272726,
@@ -1095,15 +1105,15 @@
       "finalDiscPercent": 0,
       "finalDisc": 0,
       "taxPercent": 10,
-      "taxAmount": 12477.272727272735,
+      "taxAmount": 12477.27,
       "grandTotal": 187250,
       "id": 1
     }
   ],
   "salesOrder_D": [
     {
-      "rowId": "7edf5dc0-646e-11eb-bef8-43cc7bd023d3",
-      "code": "SO00001",
+      "rowId": "1d8a0f90-6548-11eb-8ea6-6f6267c67e31",
+      "code": "SO000001",
       "lineNo": 1,
       "itemId": 2,
       "itemCode": "ABC120",
@@ -1121,8 +1131,8 @@
       "id": 1
     },
     {
-      "rowId": "5bb2ecd0-64ab-11eb-a351-79cb5ebc915e",
-      "code": "SO00001",
+      "rowId": "24065ea0-6548-11eb-8ea6-6f6267c67e31",
+      "code": "SO000001",
       "lineNo": 2,
       "itemId": 3,
       "itemCode": "ABC24",
