@@ -1,10 +1,7 @@
-import data from '@/fake-db/db.json'
 import mock from '@/fake-db/mock.js'
 
-mock.onPost('/api/item/list').reply((request) => {
-  // const {username, password} = JSON.parse(request.data)
+mock.onPost('/api/item/group/list').reply(async (request) => {
+  const response = await axiosJsonServer.get('/itemGroups')
 
-  const datas = data.itemGroups
-
-  return [200, datas]
+  return [response.status, response.data]
 })

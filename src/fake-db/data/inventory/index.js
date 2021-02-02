@@ -1,4 +1,3 @@
-import data from '@/fake-db/db.json'
 import mock from '@/fake-db/mock.js'
 import axios from 'axios'
 
@@ -6,7 +5,7 @@ import itemCategory from './item.category'
 import itemGroup from './item.group'
 import uom from './uom.conversion'
 
-mock.onPost('/api/item/list').reply((request) => {
+mock.onPost('/api/item/list').reply(async (request) => {
   var category = []
   var searchBy = ''
   var search = ''
@@ -14,8 +13,10 @@ mock.onPost('/api/item/list').reply((request) => {
   if (request.data) {
     var { category, searchBy, search } = JSON.parse(request.data)
   }
+
+  const response = await axiosJsonServer.get('/items')
   
-  let results = data.items.filter(i => {
+  let results = response.data.filter(i => {
     if (category.length > 1) return category.includes(i.categoryId)
     else return i
   })
@@ -29,11 +30,11 @@ mock.onPost('/api/item/list').reply((request) => {
   return [200, results]
 })
 
-mock.onGet(/\/api\/item\/\d+/).reply((config) => {
+mock.onGet(/\/api\/item\/\d+/).reply(async (config) => {
   const url = config.url.split('/')
   const id = url[url.length - 1]
 
-  const results = data.items.find(i => i.id == id)
+  const response = await axiosJsonServer.get(`/items/${id}`)
 
-  return [200, results]
+  return [response.status, response.data]
 })

@@ -1,13 +1,10 @@
-import data from '@/fake-db/db.json'
 import mock from '@/fake-db/mock.js'
-import { orderBy as _orderBy } from 'lodash'
+import axiosJsonServer from '@/axios.jsonserver'
 
-mock.onPost('/api/uom-conversion/list').reply((request) => {
+mock.onPost('/api/uom-conversion/list').reply(async (request) => {
   const { uomId } = JSON.parse(request.data)
 
-  let results = data.uomConversions.filter(c => c.uomId == uomId)
+  const response = await axiosJsonServer.get(`/uomConversions?uomId=${uomId}&_sort=seq`)
 
-  results = _orderBy(results, 'seq');
-  
-  return [200, results]
+  return [response.status, response.data]
 })
