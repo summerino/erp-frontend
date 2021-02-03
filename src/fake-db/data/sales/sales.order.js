@@ -27,7 +27,7 @@ mock.onPost('/api/sales-order').reply(async (request) => {
     ? `SO${(data_h[data_h.length - 1].id + 1).toString().padStart(5, '0')}`
     : 'SO000001'
   
-  // Insert header
+  // Insert sales order header
   axiosJsonServer.post('/salesOrder_H', {
     code: code,
     orderDate: data.orderDate,
@@ -55,7 +55,7 @@ mock.onPost('/api/sales-order').reply(async (request) => {
     grandTotal: data.grandTotal
   })
 
-  // Insert item details
+  // Insert sales order details
   for (var i = 0; i < data.itemDetails.length; i++) {
     axiosJsonServer.post('/salesOrder_D', {
       rowId: data.itemDetails[i].rowId,
@@ -90,7 +90,7 @@ mock.onPut(/\/api\/sales-order\/./).reply(async (config) => {
   const response_h = await axiosJsonServer.get(`/salesOrder_H?code=${data.code}`)
   const id = response_h.data[0].id
 
-  // Update header
+  // Update sales order header
   axiosJsonServer.put(`/salesOrder_H/${id}`, {
     code: data.code,
     orderDate: data.orderDate,
@@ -118,7 +118,15 @@ mock.onPut(/\/api\/sales-order\/./).reply(async (config) => {
     grandTotal: data.grandTotal
   })
 
-  // Update item details
+  // Delete sales order details that not in request data item details
+  const response_d = await axiosJsonServer.get(`/salesOrder_D?code=${data.code}`)
+  const delItem = response_d.data.filter(d => !data.itemDetails.map(i => i.id).includes(d.id))
+  
+  for (var i = 0; i < delItem.length; i++) {
+    axiosJsonServer.delete(`/salesOrder_D/${delItem[i].id}`)
+  }
+
+  // Update sales order details
   for (var i = 0; i < data.itemDetails.length; i++) {
     if (data.itemDetails[i].id) {
       axiosJsonServer.put(`/salesOrder_D/${data.itemDetails[i].id}`, {
@@ -179,7 +187,7 @@ mock.onDelete(/\/api\/sales-order\/./).reply(async (config) => {
     axiosJsonServer.delete(`/salesOrder_H/${response_h.data[0].id}`)
   }
 
-  // Delete sales order detail
+  // Delete sales order details
   const response_d = await axiosJsonServer.get(`/salesOrder_D?code=${urlSegment[urlSegment.length - 1]}`)
   for (var i = 0; i < response_d.data.length; i++) {
     axiosJsonServer.delete(`/salesOrder_D/${response_d.data[i].id}`)

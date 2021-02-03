@@ -959,7 +959,12 @@ export default {
           'Delete?',
           'Are you sure want to delete this data?')
       ) {
-        console.log(item)
+        const idx = this.gridItem.data.findIndex(i => i.rowId === item.rowId)
+        this.gridItem.data.splice(idx, 1)
+
+        this.data.subTotal = _sumBy(this.gridItem.data, 'total')
+        this.data.dpp = this.data.subTotal - this.data.finalDisc
+        this.calcPrice(false)
       }
     },
     saveItem(data) {
@@ -1004,7 +1009,7 @@ export default {
       }
 
       this.data.subTotal = _sumBy(this.gridItem.data, 'total')
-      this.data.dpp = (this.data.subTotal - this.data.finalDisc)
+      this.data.dpp = this.data.subTotal - this.data.finalDisc
       this.calcPrice(false)
     },
     discPercentChange() {
