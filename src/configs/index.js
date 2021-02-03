@@ -10,8 +10,8 @@ import navigation from './navigation'
 export default {
   // product display information
   product: {
-    name: 'Lux Admin PRO',
-    version: '1.3.0'
+    name: 'Sahassa ERP',
+    version: '1.0.0-dev'
   },
 
   // google maps

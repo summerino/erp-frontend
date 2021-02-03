@@ -24,6 +24,7 @@
 
       <v-data-table
         :headers="grid.columns"
+        :height="gridDefaultHeight"
         :items="grid.data"
         :items-per-page="5"
         class="elevation-1"
@@ -672,6 +673,7 @@
 import axios from '@/axios'
 import { format, parseISO } from 'date-fns'
 import { sumBy as _sumBy } from 'lodash'
+import { mapState } from 'vuex'
 
 import currencyService from '@/services/currency.service'
 import salesmanService from '@/services/salesman.service'
@@ -750,10 +752,16 @@ export default {
     this.getSalesmanLists()
     this.getCurrLists()
     this.getTaxLists()
-    // this.add()
+  },
+
+  mounted: function () {
+    setTimeout(() => {
+      this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
+    }, 0)
   },
 
   computed: {
+    ...mapState('app', { gridDefaultHeight: state => state.grid.height }),
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'
     },

@@ -59,5 +59,12 @@ export default {
   },
   setToolbarDetached: (state, isDetached) => {
     state.isToolbarDetached = isDetached
+  },
+
+  /**
+   * Data table
+   */
+  setGridDefaultHeight: (state, contentHeight) => {
+    state.grid.height = contentHeight - 130
   }
 }

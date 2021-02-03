@@ -29,9 +29,9 @@ const state = {
     timeout: 3000
   },
 
-  // App.vue main dialog
-  dialog: {
-    show: false
+  // App.vue data table
+  grid: {
+    height: 300
   }
 }
 
