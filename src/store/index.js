@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 // Module
 import AppModule from './app'
+import ApiModule from './api'
 import AuthModule from './auth'
 
 Vue.use(Vuex)
@@ -13,6 +14,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   modules: {
     app: AppModule,
+    api: ApiModule,
     auth: AuthModule
   }
 })
