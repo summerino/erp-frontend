@@ -182,10 +182,152 @@
       "sort": 36
     }
   ],
+  "suppliers": [
+    {
+      "id": 1,
+      "code": "S00001",
+      "name": "John Doe",
+      "address": "This Is My Address",
+      "phone1": "021 - 999 999",
+      "fax": "",
+      "creditLimit": 0,
+      "contactPerson": ""
+    },
+    {
+      "id": 2,
+      "code": "S00002",
+      "name": "Mary Jane",
+      "address": "This Is My Address",
+      "phone1": "021 - 999 999",
+      "fax": "",
+      "creditLimit": 0,
+      "contactPerson": ""
+    },
+    {
+      "id": 3,
+      "code": "S00003",
+      "name": "Trevor Smith",
+      "address": "This Is My Address",
+      "phone1": "021 - 999 999",
+      "fax": "",
+      "creditLimit": 0,
+      "contactPerson": ""
+    },
+    {
+      "id": 4,
+      "code": "S00004",
+      "name": "Lauren Clark",
+      "address": "This Is My Address",
+      "phone1": "021 - 999 999",
+      "fax": "",
+      "creditLimit": 0,
+      "contactPerson": ""
+    },
+    {
+      "id": 5,
+      "code": "S00005",
+      "name": "Andrew Johnson",
+      "address": "This Is My Address",
+      "phone1": "021 - 999 999",
+      "fax": "",
+      "creditLimit": 0,
+      "contactPerson": ""
+    },
+    {
+      "id": 6,
+      "code": "S00006",
+      "name": "Tyler Kendall",
+      "address": "This Is My Address",
+      "phone1": "021 - 999 999",
+      "fax": "",
+      "creditLimit": 0,
+      "contactPerson": ""
+    },
+    {
+      "id": 7,
+      "code": "S00007",
+      "name": "Jacob King",
+      "address": "This Is My Address",
+      "phone1": "021 - 999 999",
+      "fax": "",
+      "creditLimit": 0,
+      "contactPerson": ""
+    },
+    {
+      "id": 8,
+      "code": "S00008",
+      "name": "Amand Kliens",
+      "address": "This Is My Address",
+      "phone1": "021 - 999 999",
+      "fax": "",
+      "creditLimit": 0,
+      "contactPerson": ""
+    },
+    {
+      "id": 9,
+      "code": "S00009",
+      "name": "Gregg Ross",
+      "address": "This Is My Address",
+      "phone1": "021 - 999 999",
+      "fax": "",
+      "creditLimit": 0,
+      "contactPerson": ""
+    },
+    {
+      "id": 10,
+      "code": "C00010",
+      "name": "Kara Evans",
+      "address": "This Is My Address",
+      "phone1": "021 - 999 999",
+      "fax": "",
+      "creditLimit": 0,
+      "contactPerson": ""
+    },
+    {
+      "id": 11,
+      "code": "C00011",
+      "name": "Eve Crawford",
+      "address": "This Is My Address",
+      "phone1": "021 - 999 999",
+      "fax": "",
+      "creditLimit": 0,
+      "contactPerson": ""
+    },
+    {
+      "id": 12,
+      "code": "C00012",
+      "name": "Zak Reid",
+      "address": "This Is My Address",
+      "phone1": "021 - 999 999",
+      "fax": "",
+      "creditLimit": 0,
+      "contactPerson": ""
+    },
+    {
+      "id": 13,
+      "code": "C00013",
+      "name": "Jack Graham",
+      "address": "This Is My Address",
+      "phone1": "021 - 999 999",
+      "fax": "",
+      "creditLimit": 0,
+      "contactPerson": ""
+    },
+    {
+      "id": 14,
+      "code": "C00014",
+      "name": "Aura Brook",
+      "address": "This Is My Address",
+      "phone1": "021 - 999 999",
+      "fax": "",
+      "creditLimit": 0,
+      "contactPerson": ""
+    }
+  ],
   "customers": [
     {
       "id": 1,
-      "code": "C00001",
+      "code": "S00001",
       "name": "John Doe",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -198,7 +340,7 @@
     },
     {
       "id": 2,
-      "code": "C00002",
+      "code": "S00002",
       "name": "Mary Jane",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -211,7 +353,7 @@
     },
     {
       "id": 3,
-      "code": "C00003",
+      "code": "S00003",
       "name": "Trevor Smith",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -224,7 +366,7 @@
     },
     {
       "id": 4,
-      "code": "C00004",
+      "code": "S00004",
       "name": "Lauren Clark",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -237,7 +379,7 @@
     },
     {
       "id": 5,
-      "code": "C00005",
+      "code": "S00005",
       "name": "Andrew Johnson",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -250,7 +392,7 @@
     },
     {
       "id": 6,
-      "code": "C00006",
+      "code": "S00006",
       "name": "Tyler Kendall",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -263,7 +405,7 @@
     },
     {
       "id": 7,
-      "code": "C00007",
+      "code": "S00007",
       "name": "Jacob King",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -276,7 +418,7 @@
     },
     {
       "id": 8,
-      "code": "C00008",
+      "code": "S00008",
       "name": "Amand Kliens",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -289,7 +431,7 @@
     },
     {
       "id": 9,
-      "code": "C00009",
+      "code": "S00009",
       "name": "Gregg Ross",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -1314,7 +1456,7 @@
       "curr": "IDR",
       "rate": 1,
       "includeTax": 1,
-      "custCode": "C00002",
+      "custCode": "S00002",
       "deliveryDate": "2021-02-02",
       "billAddr": null,
       "top": null,
