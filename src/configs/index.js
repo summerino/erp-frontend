@@ -6,6 +6,7 @@ import toolbar from './toolbar'
 import locales from './locales'
 import analytics from './analytics'
 import navigation from './navigation'
+import endpoint from './endpoint'
 
 export default {
   // product display information
@@ -36,5 +37,8 @@ export default {
   analytics,
 
   // navigation configs
-  navigation
+  navigation,
+
+  // endpoint configs
+  endpoint
 }
