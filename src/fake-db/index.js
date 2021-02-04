@@ -1,11 +1,13 @@
 import mock from './mock'
 
-import './data/currency'
-import './data/customer'
-import './data/inventory'
-import './data/sales'
-import './data/salesman'
-import './data/tax'
-import './data/user'
+import './currency'
+import './customer'
+import './inventory'
+import './purchase'
+import './sales'
+import './salesman'
+import './tax'
+import './user'
+import './worker'
 
 mock.onAny().passThrough() // forwards the matched request over network

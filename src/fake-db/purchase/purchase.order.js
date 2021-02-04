@@ -1,26 +1,27 @@
+import endpoint from '@/configs/endpoint'
 import mock from '@/fake-db/mock.js'
 import axiosJsonServer from '@/axios.jsonserver'
 
-mock.onPost('/api/sales-order/list').reply(async (request) => {
+mock.onGet(`/api/${endpoint.purchase.order}`).reply(async (request) => {
   // const { src } = JSON.parse(request.data)
   
-  const response = await axiosJsonServer.get('/salesOrder_H')
+  const response = await axiosJsonServer.get('/purchaseOrder_H')
 
   return [response.status, response.data]
 })
 
-mock.onPost('/api/sales-order/item/list').reply(async (request) => {
+mock.onPost(`/api/${endpoint.purchase.order}/item/list`).reply(async (request) => {
   const { code } = JSON.parse(request.data)
   
-  const response = await axiosJsonServer.get(`/salesOrder_D?code=${code}`)
+  const response = await axiosJsonServer.get(`/purchaseOrder_D?code=${code}`)
 
   return [response.status, response.data]
 })
 
-mock.onPost('/api/sales-order').reply(async (request) => {
+mock.onPost(`/api/${endpoint.purchase.order}`).reply(async (request) => {
   const data = JSON.parse(request.data)
   
-  const response_h = await axiosJsonServer.get('/salesOrder_H')
+  const response_h = await axiosJsonServer.get('/purchaseOrder_H')
   const data_h = response_h.data
 
   const code = data_h.length > 0
@@ -28,7 +29,7 @@ mock.onPost('/api/sales-order').reply(async (request) => {
     : 'SO000001'
   
   // Insert sales order header
-  axiosJsonServer.post('/salesOrder_H', {
+  axiosJsonServer.post('/purchaseOrder_H', {
     code: code,
     orderDate: data.orderDate,
     salesCode: data.salesCode,
@@ -57,7 +58,7 @@ mock.onPost('/api/sales-order').reply(async (request) => {
 
   // Insert sales order details
   for (var i = 0; i < data.itemDetails.length; i++) {
-    axiosJsonServer.post('/salesOrder_D', {
+    axiosJsonServer.post('/purchaseOrder_D', {
       rowId: data.itemDetails[i].rowId,
       code: code,
       lineNo: (i + 1),
@@ -83,15 +84,15 @@ mock.onPost('/api/sales-order').reply(async (request) => {
   return [200, { success: true, message: 'Success insert record.' }]
 })
 
-mock.onPut(/\/api\/sales-order\/./).reply(async (config) => {
+mock.onPut(/\/api\/purchase-order\/./).reply(async (config) => {
   let { data } = config
   data = JSON.parse(data)
   
-  const response_h = await axiosJsonServer.get(`/salesOrder_H?code=${data.code}`)
+  const response_h = await axiosJsonServer.get(`/purchaseOrder_H?code=${data.code}`)
   const id = response_h.data[0].id
 
   // Update sales order header
-  axiosJsonServer.put(`/salesOrder_H/${id}`, {
+  axiosJsonServer.put(`/purchaseOrder_H/${id}`, {
     code: data.code,
     orderDate: data.orderDate,
     salesCode: data.salesCode,
@@ -119,17 +120,17 @@ mock.onPut(/\/api\/sales-order\/./).reply(async (config) => {
   })
 
   // Delete sales order details that not in request data item details
-  const response_d = await axiosJsonServer.get(`/salesOrder_D?code=${data.code}`)
+  const response_d = await axiosJsonServer.get(`/purchaseOrder_D?code=${data.code}`)
   const delItem = response_d.data.filter(d => !data.itemDetails.map(i => i.id).includes(d.id))
   
   for (var i = 0; i < delItem.length; i++) {
-    axiosJsonServer.delete(`/salesOrder_D/${delItem[i].id}`)
+    axiosJsonServer.delete(`/purchaseOrder_D/${delItem[i].id}`)
   }
 
   // Update sales order details
   for (var i = 0; i < data.itemDetails.length; i++) {
     if (data.itemDetails[i].id) {
-      axiosJsonServer.put(`/salesOrder_D/${data.itemDetails[i].id}`, {
+      axiosJsonServer.put(`/purchaseOrder_D/${data.itemDetails[i].id}`, {
         rowId: data.itemDetails[i].rowId,
         code: data.itemDetails[i].code,
         lineNo: (i + 1),
@@ -151,7 +152,7 @@ mock.onPut(/\/api\/sales-order\/./).reply(async (config) => {
         description: data.itemDetails[i].description
       })
     } else {
-      axiosJsonServer.post('/salesOrder_D', {
+      axiosJsonServer.post('/purchaseOrder_D', {
         rowId: data.itemDetails[i].rowId,
         code: data.itemDetails[i].code,
         lineNo: (i + 1),
@@ -178,19 +179,19 @@ mock.onPut(/\/api\/sales-order\/./).reply(async (config) => {
   return [200, { success: true, message: 'Success update record.' }]
 })
 
-mock.onDelete(/\/api\/sales-order\/./).reply(async (config) => {
+mock.onDelete(/\/api\/purchase-order\/./).reply(async (config) => {
   const urlSegment = config.url.split('/')
   
   // Delete sales order header
-  const response_h = await axiosJsonServer.get(`/salesOrder_H?code=${urlSegment[urlSegment.length - 1]}`)
+  const response_h = await axiosJsonServer.get(`/purchaseOrder_H?code=${urlSegment[urlSegment.length - 1]}`)
   if (response_h.data.length > 0) {
-    axiosJsonServer.delete(`/salesOrder_H/${response_h.data[0].id}`)
+    axiosJsonServer.delete(`/purchaseOrder_H/${response_h.data[0].id}`)
   }
 
   // Delete sales order details
-  const response_d = await axiosJsonServer.get(`/salesOrder_D?code=${urlSegment[urlSegment.length - 1]}`)
+  const response_d = await axiosJsonServer.get(`/purchaseOrder_D?code=${urlSegment[urlSegment.length - 1]}`)
   for (var i = 0; i < response_d.data.length; i++) {
-    axiosJsonServer.delete(`/salesOrder_D/${response_d.data[i].id}`)
+    axiosJsonServer.delete(`/purchaseOrder_D/${response_d.data[i].id}`)
   }
   
   return [200, { success: true, message: 'Success delete record.' }]
