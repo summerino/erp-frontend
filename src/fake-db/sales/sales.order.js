@@ -2,24 +2,14 @@ import endpoint from '@/configs/endpoint'
 import mock from '@/fake-db/mock.js'
 import axiosJsonServer from '@/axios.jsonserver'
 
-mock.onGet(`/api/${endpoint.sales.order}`).reply(async (request) => {
-  // const { src } = JSON.parse(request.data)
-  
+mock.onGet(`/api/${endpoint.sales.order}`).reply(async (config) => {
   const response = await axiosJsonServer.get('/salesOrder_H')
 
   return [response.status, response.data]
 })
 
-mock.onPost(`/api/${endpoint.sales.order}/list`).reply(async (request) => {
-  // const { src } = JSON.parse(request.data)
-  
-  const response = await axiosJsonServer.get('/salesOrder_H')
-
-  return [response.status, response.data]
-})
-
-mock.onPost(`/api/${endpoint.sales.order}/item/list`).reply(async (request) => {
-  const { code } = JSON.parse(request.data)
+mock.onGet(`/api/${endpoint.sales.order}/item`).reply(async (config) => {
+  const { code } = config.params
   
   const response = await axiosJsonServer.get(`/salesOrder_D?code=${code}`)
 

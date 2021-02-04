@@ -670,7 +670,6 @@
 </template>
 
 <script>
-import axios from '@/axios'
 import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
 import { sumBy as _sumBy } from 'lodash'
@@ -909,7 +908,9 @@ export default {
       this.data.tax = this.taxes.find(t => t.code === item.tax)
 
       // Get item details
-      axios.post('/sales-order/item/list', { code: item.code })
+      api.getAll(`${this.endpoint.sales.order}/item`, {
+        params: { code: item.code }
+      })
         .then(response => {
           this.gridItem.data = response.data
         })
@@ -923,7 +924,7 @@ export default {
           'Delete?',
           'Are you sure want to delete this data?')
       ) {
-        axios.delete(`/sales-order/${item.code}`)
+        api.delete(this.endpoint.sales.order, item.code)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -940,7 +941,7 @@ export default {
       data.itemDetails = this.gridItem.data
 
       if (data.action === 'add') {
-        axios.post('/sales-order', data)
+        api.create(this.endpoint.sales.order, data)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -949,7 +950,7 @@ export default {
             }
           })
       } else if (data.action === 'edit') {
-        axios.put(`/sales-order/${data.code}`, data)
+        api.update(this.endpoint.sales.order, data)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
