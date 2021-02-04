@@ -888,9 +888,11 @@ export default {
       }
 
       // Get customer details
-      axios.post('/customer/list', {
-        searchBy: 'code',
-        search: item.custCode
+      api.getAll(this.endpoint.general.customer, {
+        params: {
+          searchBy: 'code',
+          search: item.custCode
+        }
       })
         .then(response => {
           const data = response.data[0]

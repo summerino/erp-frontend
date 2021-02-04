@@ -74,7 +74,8 @@
 </template>
 
 <script>
-import axios from '@/axios'
+import { mapState } from 'vuex'
+import api from '@/services/axios.service'
 
 export default {
   data() {
@@ -105,6 +106,11 @@ export default {
       }
     }
   },
+
+  computed: {
+    ...mapState('api', { endpoint: state => state.endpoint })
+  },
+  
   methods: {
     reset() {
       this.data.by = 'name'
@@ -120,9 +126,11 @@ export default {
       }, 0)
     },
     search() {
-      axios.post('/customer/list', {
-        searchBy: this.data.by,
-        search: this.data.value
+      api.getAll(this.endpoint.general.customer, {
+        params: {
+          searchBy: this.data.by,
+          search: this.data.value
+        }
       })
         .then(response => {
           this.grid.data = response.data
