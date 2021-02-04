@@ -1,4 +1,5 @@
 import menuInventories from './menus/inventory.menu'
+import menuPurchases from './menus/purchase.menu'
 import menuSales from './menus/sales.menu'
 
 export default {
@@ -12,6 +13,9 @@ export default {
   }, {
     text: 'Inventory',
     items: menuInventories
+  }, {
+    text: 'Purchase',
+    items: menuPurchases
   }, {
     text: 'Sales',
     items: menuSales
