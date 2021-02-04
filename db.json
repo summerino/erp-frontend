@@ -418,6 +418,44 @@
       "name": "Retail"
     }
   ],
+  "workers": [
+    {
+      "code": "W00001",
+      "name": "Mike Tyson"
+    },
+    {
+      "code": "W00002",
+      "name": "John Leider"
+    },
+    {
+      "code": "W00003",
+      "name": "Rabia Williams"
+    },
+    {
+      "code": "W00004",
+      "name": "Abel Wang"
+    },
+    {
+      "code": "W00005",
+      "name": "Chloe Condon"
+    },
+    {
+      "code": "W00006",
+      "name": "Christian Nwamba"
+    },
+    {
+      "code": "W00007",
+      "name": "Sarah Lean"
+    },
+    {
+      "code": "W00008",
+      "name": "Join Harsha"
+    },
+    {
+      "code": "W00009",
+      "name": "Bill Gates"
+    }
+  ],
   "salesmans": [
     {
       "code": "W00001",
@@ -1264,6 +1302,8 @@
       "showInSales": 1
     }
   ],
+  "purchaseOrder_H": [],
+  "purchaseOrder_D": [],
   "salesOrder_H": [
     {
       "code": "SO000001",
