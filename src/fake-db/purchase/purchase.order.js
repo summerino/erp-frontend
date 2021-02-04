@@ -2,16 +2,14 @@ import endpoint from '@/configs/endpoint'
 import mock from '@/fake-db/mock.js'
 import axiosJsonServer from '@/axios.jsonserver'
 
-mock.onGet(`/api/${endpoint.purchase.order}`).reply(async (request) => {
-  // const { src } = JSON.parse(request.data)
-  
+mock.onGet(`/api/${endpoint.purchase.order}`).reply(async (config) => {
   const response = await axiosJsonServer.get('/purchaseOrder_H')
 
   return [response.status, response.data]
 })
 
-mock.onPost(`/api/${endpoint.purchase.order}/item/list`).reply(async (request) => {
-  const { code } = JSON.parse(request.data)
+mock.onGet(`/api/${endpoint.purchase.order}/item`).reply(async (config) => {
+  const { code } = config.params
   
   const response = await axiosJsonServer.get(`/purchaseOrder_D?code=${code}`)
 
@@ -25,19 +23,18 @@ mock.onPost(`/api/${endpoint.purchase.order}`).reply(async (request) => {
   const data_h = response_h.data
 
   const code = data_h.length > 0
-    ? `SO${(data_h[data_h.length - 1].id + 1).toString().padStart(5, '0')}`
-    : 'SO000001'
+    ? `PO${(data_h[data_h.length - 1].id + 1).toString().padStart(5, '0')}`
+    : 'PO000001'
   
-  // Insert sales order header
+  // Insert purchase order header
   axiosJsonServer.post('/purchaseOrder_H', {
     code: code,
     orderDate: data.orderDate,
-    salesCode: data.salesCode,
+    workerCode: data.workerCode,
     curr: data.curr,
     rate: data.rate,
     includeTax: data.includeTax,
-    custCode: data.custCode,
-    deliveryDate: data.deliveryDate,
+    supCode: data.supCode,
     billAddr: data.billAddr,
     top: data.top,
     tax: data.tax,
@@ -56,7 +53,7 @@ mock.onPost(`/api/${endpoint.purchase.order}`).reply(async (request) => {
     grandTotal: data.grandTotal
   })
 
-  // Insert sales order details
+  // Insert purchase order details
   for (var i = 0; i < data.itemDetails.length; i++) {
     axiosJsonServer.post('/purchaseOrder_D', {
       rowId: data.itemDetails[i].rowId,
@@ -69,9 +66,9 @@ mock.onPost(`/api/${endpoint.purchase.order}`).reply(async (request) => {
       uomId: data.itemDetails[i].uomId,
       unitId: data.itemDetails[i].unitId,
       unitName: data.itemDetails[i].unitName,
-      uomSellName: data.itemDetails[i].uomSellName,
+      uomBuyName: data.itemDetails[i].uomBuyName,
       unitPrice: data.itemDetails[i].unitPrice,
-      itemSellPrice: data.itemDetails[i].itemSellPrice,
+      itemBuyPrice: data.itemDetails[i].itemBuyPrice,
       disc: data.itemDetails[i].disc,
       nettPrice: data.itemDetails[i].nettPrice,
       total: data.itemDetails[i].total,
@@ -91,16 +88,15 @@ mock.onPut(/\/api\/purchase-order\/./).reply(async (config) => {
   const response_h = await axiosJsonServer.get(`/purchaseOrder_H?code=${data.code}`)
   const id = response_h.data[0].id
 
-  // Update sales order header
+  // Update purchase order header
   axiosJsonServer.put(`/purchaseOrder_H/${id}`, {
     code: data.code,
     orderDate: data.orderDate,
-    salesCode: data.salesCode,
+    workerCode: data.workerCode,
     curr: data.curr,
     rate: data.rate,
     includeTax: data.includeTax,
-    custCode: data.custCode,
-    deliveryDate: data.deliveryDate,
+    supCode: data.supCode,
     billAddr: data.billAddr,
     top: data.top,
     tax: data.tax,
@@ -119,7 +115,7 @@ mock.onPut(/\/api\/purchase-order\/./).reply(async (config) => {
     grandTotal: data.grandTotal
   })
 
-  // Delete sales order details that not in request data item details
+  // Delete purchase order details that not in request data item details
   const response_d = await axiosJsonServer.get(`/purchaseOrder_D?code=${data.code}`)
   const delItem = response_d.data.filter(d => !data.itemDetails.map(i => i.id).includes(d.id))
   
@@ -127,7 +123,7 @@ mock.onPut(/\/api\/purchase-order\/./).reply(async (config) => {
     axiosJsonServer.delete(`/purchaseOrder_D/${delItem[i].id}`)
   }
 
-  // Update sales order details
+  // Update purchase order details
   for (var i = 0; i < data.itemDetails.length; i++) {
     if (data.itemDetails[i].id) {
       axiosJsonServer.put(`/purchaseOrder_D/${data.itemDetails[i].id}`, {
@@ -141,9 +137,9 @@ mock.onPut(/\/api\/purchase-order\/./).reply(async (config) => {
         uomId: data.itemDetails[i].uomId,
         unitId: data.itemDetails[i].unitId,
         unitName: data.itemDetails[i].unitName,
-        uomSellName: data.itemDetails[i].uomSellName,
+        uomBuyName: data.itemDetails[i].uomBuyName,
         unitPrice: data.itemDetails[i].unitPrice,
-        itemSellPrice: data.itemDetails[i].itemSellPrice,
+        itemBuyPrice: data.itemDetails[i].itemBuyPrice,
         disc: data.itemDetails[i].disc,
         nettPrice: data.itemDetails[i].nettPrice,
         total: data.itemDetails[i].total,
@@ -163,9 +159,9 @@ mock.onPut(/\/api\/purchase-order\/./).reply(async (config) => {
         uomId: data.itemDetails[i].uomId,
         unitId: data.itemDetails[i].unitId,
         unitName: data.itemDetails[i].unitName,
-        uomSellName: data.itemDetails[i].uomSellName,
+        uomBuyName: data.itemDetails[i].uomBuyName,
         unitPrice: data.itemDetails[i].unitPrice,
-        itemSellPrice: data.itemDetails[i].itemSellPrice,
+        itemBuyPrice: data.itemDetails[i].itemBuyPrice,
         disc: data.itemDetails[i].disc,
         nettPrice: data.itemDetails[i].nettPrice,
         total: data.itemDetails[i].total,
@@ -182,13 +178,13 @@ mock.onPut(/\/api\/purchase-order\/./).reply(async (config) => {
 mock.onDelete(/\/api\/purchase-order\/./).reply(async (config) => {
   const urlSegment = config.url.split('/')
   
-  // Delete sales order header
+  // Delete purchase order header
   const response_h = await axiosJsonServer.get(`/purchaseOrder_H?code=${urlSegment[urlSegment.length - 1]}`)
   if (response_h.data.length > 0) {
     axiosJsonServer.delete(`/purchaseOrder_H/${response_h.data[0].id}`)
   }
 
-  // Delete sales order details
+  // Delete purchase order details
   const response_d = await axiosJsonServer.get(`/purchaseOrder_D?code=${urlSegment[urlSegment.length - 1]}`)
   for (var i = 0; i < response_d.data.length; i++) {
     axiosJsonServer.delete(`/purchaseOrder_D/${response_d.data[i].id}`)
