@@ -1,5 +1,7 @@
 export default {
   general: {
+    currency: 'currency',
+    salesman: 'salesman',
     worker: 'worker'
   },
 

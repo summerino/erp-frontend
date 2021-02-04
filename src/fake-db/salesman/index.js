@@ -1,7 +1,8 @@
+import endpoint from '@/configs/endpoint'
 import mock from '@/fake-db/mock.js'
 import axiosJsonServer from '@/axios.jsonserver'
 
-mock.onPost('/api/salesman/lists').reply(async (request) => {
+mock.onGet(`/api/${endpoint.general.salesman}`).reply(async (request) => {
   var filter = null
   if (request.data) {
     var { filter } = JSON.parse(request.data)
