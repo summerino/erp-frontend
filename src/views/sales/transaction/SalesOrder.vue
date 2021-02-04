@@ -671,13 +671,11 @@
 
 <script>
 import axios from '@/axios'
+import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
 import { sumBy as _sumBy } from 'lodash'
-import { mapState } from 'vuex'
 
-import currencyService from '@/services/currency.service'
-import salesmanService from '@/services/salesman.service'
-import taxService from '@/services/tax.service'
+import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
 import FindCustomer from '@/components/dialog/FindCustomer'
@@ -761,7 +759,10 @@ export default {
   },
 
   computed: {
-    ...mapState('app', { gridDefaultHeight: state => state.grid.height }),
+    ...mapState({
+      gridDefaultHeight: state => state.app.grid.height,
+      endpoint: state => state.api.endpoint
+    }),
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'
     },
@@ -815,25 +816,27 @@ export default {
       }
     },
     getList() {
-      axios.post('/sales-order/list')
+      api.getAll(this.endpoint.sales.order)
         .then(response => {
           this.grid.data = response.data
         })
     },
-    getSalesmanLists(filter) {
-      salesmanService.lists(filter)
+    getSalesmanLists() {
+      api.getAll(this.endpoint.general.salesman)
         .then(response => {
           this.salesmans = response.data
         })
     },
     getCurrLists() {
-      currencyService.lists()
+      api.getAll(this.endpoint.general.currency)
         .then(response => {
           this.currencies = response.data
         })
     },
     getTaxLists() {
-      taxService.lists('sls')
+      api.getAll(this.endpoint.general.tax, {
+        params: { src: 'sls' }
+      })
         .then(response => {
           this.taxes = response.data
           this.data.tax = response.data[0]
@@ -1066,11 +1069,6 @@ export default {
         this.data.grandTotal = this.data.subTotal - this.data.finalDisc + this.data.fee
       } else {
         this.data.grandTotal = this.data.subTotal - this.data.finalDisc + this.data.taxAmount + this.data.fee
-      }
-    },
-    ctrlSalesmanClicked() {
-      if (this.salesmans.length === 0) {
-        this.getSalesmanLists('')
       }
     },
     showFindCustDialog() {
