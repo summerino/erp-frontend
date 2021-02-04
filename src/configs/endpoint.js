@@ -2,6 +2,7 @@ export default {
   general: {
     currency: 'currency',
     salesman: 'salesman',
+    tax: 'tax',
     worker: 'worker'
   },
 

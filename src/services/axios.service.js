@@ -11,8 +11,8 @@ class AxiosService {
   //   })
   // }
 
-  getAll(url) {
-    return axios.get(`/${url}`)
+  getAll(url, params) {
+    return axios.get(`/${url}`, params)
   }
 
   getOne(url, id, config) {

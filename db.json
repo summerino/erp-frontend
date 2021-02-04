@@ -1291,7 +1291,8 @@
       "name": "10% Sales",
       "rate": 10,
       "source": "SLS",
-      "showInSales": 1
+      "showInSales": 1,
+      "showInPurchase": 1
     },
     {
       "code": "002",
@@ -1299,7 +1300,8 @@
       "name": "1% Sales",
       "rate": 1,
       "source": "SLS",
-      "showInSales": 1
+      "showInSales": 1,
+      "showInPurchase": 1
     }
   ],
   "purchaseOrder_H": [],
