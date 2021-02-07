@@ -1,13 +1,14 @@
+import endpoint from '@/configs/endpoint'
 import mock from '@/fake-db/mock.js'
 import axiosJsonServer from '@/axios.jsonserver'
 
-mock.onPost('/api/item/category/list').reply(async (request) => {
+mock.onGet(`/api/${endpoint.inventory.item.category}`).reply(async (config) => {
   const response = await axiosJsonServer.get('/itemCategories')
 
   return [response.status, response.data]
 })
 
-mock.onGet('/api/item/category/hierarchy').reply(async () => {
+mock.onGet(`/api/${endpoint.inventory.item.category}/hierarchy`).reply(async () => {
   const response = await axiosJsonServer.get('/itemCategories')
   
   const datas = [{

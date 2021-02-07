@@ -2,10 +2,10 @@ import endpoint from '@/configs/endpoint'
 import mock from '@/fake-db/mock.js'
 import axiosJsonServer from '@/axios.jsonserver'
 
-mock.onGet(`/api/${endpoint.inventory.warehouse}`).reply(async (request) => {
+mock.onGet(`/api/${endpoint.inventory.warehouse}`).reply(async (config) => {
   var filter = null
-  if (request.data) {
-    var { filter } = JSON.parse(request.data)
+  if (config.params) {
+    var { filter } = config.params
   }
   filter = filter || ''
   

@@ -664,6 +664,7 @@
     ></find-customer>
     <crud-item
       ref="crudItem"
+      caller="sls"
       @save="saveItem"
     ></crud-item>
   </div>
@@ -678,7 +679,7 @@ import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
 import FindCustomer from '@/components/dialog/FindCustomer'
-import CrudItem from '@/components/dialog/sales/CrudItem'
+import CrudItem from '@/components/dialog/CrudItem'
 
 export default {
   components: {
@@ -870,7 +871,7 @@ export default {
         deliveryDate: format(parseISO(item.deliveryDate), 'yyyy-MM-dd'),
         billAddr: item.billAddr,
         top: item.top,
-        tax: item.tax,
+        tax: this.taxes.find(t => t.code === item.tax),
         notes: item.notes,
         dpp: item.dpp,
         downPayment: item.downPayment,
@@ -903,9 +904,6 @@ export default {
           this.data.custDeliveryPhone = data.phone1
           this.data.custDeliveryFax = data.fax
         })
-
-      // Define tax
-      this.data.tax = this.taxes.find(t => t.code === item.tax)
 
       // Get item details
       api.getAll(`${this.endpoint.sales.order}/item`, {

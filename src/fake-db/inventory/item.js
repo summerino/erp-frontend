@@ -1,13 +1,14 @@
+import endpoint from '@/configs/endpoint'
 import mock from '@/fake-db/mock.js'
 import axiosJsonServer from '@/axios.jsonserver'
 
-mock.onPost('/api/item/list').reply(async (request) => {
+mock.onGet(`/api/${endpoint.inventory.item.item}`).reply(async (config) => {
   var category = []
   var searchBy = ''
   var search = ''
   
-  if (request.data) {
-    var { category, searchBy, search } = JSON.parse(request.data)
+  if (config.params) {
+    var { category, searchBy, search } = config.params
   }
 
   const response = await axiosJsonServer.get('/items')

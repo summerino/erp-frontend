@@ -271,11 +271,13 @@
                     >
                       <v-row no-gutters>
                         <v-col cols="12">
-                          <v-select
+                          <v-combobox
                             v-model="data.warehouseCode"
                             :items="warehouses"
+                            :item-text="item => `${item.initial} - ${item.name}`"
                             label="Location"
-                          ></v-select>
+                            item-value="code"
+                          ></v-combobox>
                         </v-col>
                       </v-row>
                     </v-tab-item>
@@ -604,6 +606,7 @@
     ></find-supplier>
     <crud-item
       ref="crudItem"
+      caller="purc"
       @save="saveItem"
     ></crud-item>
   </div>
@@ -618,7 +621,7 @@ import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
 import FindSupplier from '@/components/dialog/FindSupplier'
-import CrudItem from '@/components/dialog/sales/CrudItem'
+import CrudItem from '@/components/dialog/CrudItem'
 
 export default {
   components: {
@@ -688,8 +691,8 @@ export default {
     this.getList()
     this.getPurchaserLists()
     this.getCurrLists()
+    this.getWarehouseLists()
     this.getTaxLists()
-    this.add()
   },
 
   mounted: function () {
@@ -727,7 +730,7 @@ export default {
         supAddr: null,
         supPhone: null,
         supFax: null,
-        warehouseCode: null,
+        warehouseCode: this.warehouses.find(w => w.isDefault === 1),
         billAddr: null,
         top: null,
         tax: this.taxes[0],
@@ -766,6 +769,12 @@ export default {
           this.currencies = response.data
         })
     },
+    getWarehouseLists() {
+      api.getAll(this.endpoint.inventory.warehouse)
+        .then(response => {
+          this.warehouses = response.data
+        })
+    },
     getTaxLists() {
       api.getAll(this.endpoint.general.tax, {
         params: { src: 'purc' }
@@ -797,10 +806,10 @@ export default {
         // supAddr: null,
         // supPhone: null,
         // supFax: null,
-        // warehouseCode: null,
+        warehouseCode: this.warehouses.find(w => w.code === item.warehouseCode),
         billAddr: item.billAddr,
         top: item.top,
-        tax: item.tax,
+        tax: this.taxes.find(t => t.code === item.tax),
         notes: item.notes,
         dpp: item.dpp,
         downPayment: item.downPayment,
@@ -829,11 +838,7 @@ export default {
           this.data.supAddr = data.address
           this.data.supPhone = data.phone1
           this.data.supFax = data.fax
-          this.data.warehouseCode = data.address
         })
-
-      // Define tax
-      this.data.tax = this.taxes.find(t => t.code === item.tax)
 
       // Get item details
       api.getAll(`${this.endpoint.purchase.order}/item`, {
@@ -864,6 +869,7 @@ export default {
     save() {
       const data = this.data
       data.includeTax = this.data.includeTax | 0
+      data.warehouseCode = this.data.warehouseCode.code
       data.tax = this.data.tax.code
       data.applyTax = this.data.applyTax | 0
       data.itemDetails = this.gridItem.data
@@ -1004,7 +1010,6 @@ export default {
       this.data.supAddr = item.address
       this.data.supPhone = item.phone1
       this.data.supFax = item.fax
-      // this.data.warehouseCode = item.code
       // this.data.billAddr = item.code
       // this.data.top = item.code
       // this.data.tax = item.code

@@ -201,9 +201,13 @@
 </template>
 
 <script>
-import axios from '@/axios'
+import { mapState } from 'vuex'
+import api from '@/services/axios.service'
 
 export default {
+  props: {
+    caller: String
+  },
   data() {
     return {
       dialog: false,
@@ -221,20 +225,7 @@ export default {
           { text: 'Type', value: 'type' }
         ]
       },
-      data: {
-        action: '',
-        itemCode: null,
-        itemName: null,
-        qty: 0,
-        unit: null,
-        uomConversion: 1,
-        uomSellName: null,
-        unitPrice: 0,
-        disc: 0,
-        nettPrice: 0,
-        total: 0,
-        description: null
-      },
+      data: {},
       grid: {
         data: [],
         columns: [
@@ -254,6 +245,7 @@ export default {
   },
 
   computed: {
+    ...mapState('api', { endpoint: state => state.endpoint }),
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'
     }
@@ -265,7 +257,19 @@ export default {
       this.search.by = 'name'
       this.search.value = ''
       this.grid.data = []
-      this.data = {}
+      this.data = {
+        itemCode: null,
+        itemName: null,
+        qty: 0,
+        unit: null,
+        uomConversion: 1,
+        uomSellName: null,
+        unitPrice: 0,
+        disc: 0,
+        nettPrice: 0,
+        total: 0,
+        description: null
+      }
     },
     add() {
       this.dialog = true
@@ -300,7 +304,7 @@ export default {
       this.getUnitLists(item.uomId)
     },
     getCategoryHierarchy() {
-      axios.get('/item/category/hierarchy')
+      api.getAll(`${this.endpoint.inventory.item.category}/hierarchy`)
         .then(response => {
           this.categories = response.data
           this.search.category = [0]
@@ -308,16 +312,20 @@ export default {
         })
     },
     getUnitLists(uomId) {
-      axios.post('/uom-conversion/list', { uomId: uomId })
+      api.getAll(this.endpoint.inventory.uom.conversion, {
+        params: { uomId: uomId }
+      })
         .then(response => {
           this.units = response.data
         })
     },
     doSearch() {
-      axios.post('/item/list', {
-        category: this.search.category,
-        searchBy: this.search.by,
-        search: this.search.value
+      api.getAll(this.endpoint.inventory.item.item, {
+        params: {
+          category: this.search.category,
+          searchBy: this.search.by,
+          search: this.search.value
+        }
       })
         .then(response => {
           this.grid.data = response.data
@@ -327,7 +335,11 @@ export default {
       const data = this.units.find(u => u.unitToConvert === unitToConvert && u.unitToConvert !== u.unitEquivalent)
       this.data.uomConversion *= data.conversion
       
-      if (data.unitEquivalent !== this.data.uomSellName) {
+      if (this.caller === 'sls') {
+        if (data.unitEquivalent !== this.data.uomSellName) {
+          this.calcUomConversion(data.unitEquivalent)
+        }
+      } else if (data.unitEquivalent !== this.data.uomBuyName) {
         this.calcUomConversion(data.unitEquivalent)
       }
     },
@@ -341,11 +353,19 @@ export default {
       this.data.itemName = item.name
       this.data.qty = 1
       this.data.uomId = item.uomId
-      this.data.unit = { id: item.uomSellId, unitEquivalent: item.uomSellName }
-      this.data.uomSellName = item.uomSellName
-      this.data.unitPrice = item.sellPrice
-      this.data.itemSellPrice = item.sellPrice
       this.data.disc = 0
+      
+      if (this.caller === 'sls') {
+        this.data.unit = { id: item.uomSellId, unitEquivalent: item.uomSellName }
+        this.data.uomSellName = item.uomSellName
+        this.data.unitPrice = item.sellPrice
+        this.data.itemSellPrice = item.sellPrice
+      } else {
+        this.data.unit = { id: item.uomSellId, unitEquivalent: item.uomSellName }
+        this.data.uomBuyName = item.uomBuyName
+        this.data.unitPrice = item.buyPrice
+        this.data.itemBuyPrice = item.buyPrice
+      }
 
       this.getUnitLists(item.uomId)
       this.calcPrice()
@@ -356,11 +376,18 @@ export default {
     unitChange() {
       this.data.uomConversion = 1
 
-      if (this.data.unit.unitEquivalent !== this.data.uomSellName) {
-        this.calcUomConversion(this.data.unit.unitEquivalent)
+      if (this.caller === 'sls') {
+        if (this.data.unit.unitEquivalent !== this.data.uomSellName) {
+          this.calcUomConversion(this.data.unit.unitEquivalent)
+        }
+        this.data.unitPrice = this.data.itemSellPrice / this.data.uomConversion
+      } else {
+        if (this.data.unit.unitEquivalent !== this.data.uomBuyName) {
+          this.calcUomConversion(this.data.unit.unitEquivalent)
+        }
+        this.data.unitPrice = this.data.itemBuyPrice / this.data.uomConversion
       }
 
-      this.data.unitPrice = this.data.itemSellPrice / this.data.uomConversion
       this.calcPrice()
     },
     save() {
