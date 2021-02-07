@@ -8,6 +8,15 @@ export default {
     worker: 'worker'
   },
 
+  inventory: {
+    item: {
+      category: 'item/category',
+      group: 'item/group',
+      item: 'item'
+    },
+    warehouse: 'warehouse'
+  },
+
   purchase: {
     order: 'purchase-order'
   },

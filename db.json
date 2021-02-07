@@ -1461,6 +1461,71 @@
       "seq": 3
     }
   ],
+  "warehouses": [
+    {
+      "id": 1,
+      "code": "WH00001",
+      "initial": "GD-AD",
+      "name": "Gudang Aditara",
+      "address": "This Is My Address",
+      "phone1": "021 - 999 991",
+      "isDefault": 0
+    },
+    {
+      "id": 2,
+      "code": "WH00002",
+      "initial": "GD-AK",
+      "name": "Gudang Akuang",
+      "address": "This Is My Address",
+      "phone1": "021 - 999 992",
+      "isDefault": 0
+    },
+    {
+      "id": 3,
+      "code": "WH00003",
+      "initial": "GD-BG",
+      "name": "Gudang Bulog",
+      "address": "This Is My Address",
+      "phone1": "021 - 999 993",
+      "isDefault": 1
+    },
+    {
+      "id": 4,
+      "code": "WH00004",
+      "initial": "GD-WL",
+      "name": "Gudang Way Lunik",
+      "address": "This Is My Address",
+      "phone1": "021 - 999 994",
+      "isDefault": 0
+    },
+    {
+      "id": 5,
+      "code": "WH00005",
+      "initial": "GD-PP",
+      "name": "Gudang Papan",
+      "address": "This Is My Address",
+      "phone1": "021 - 999 995",
+      "isDefault": 0
+    },
+    {
+      "id": 6,
+      "code": "WH00006",
+      "initial": "GD-MY",
+      "name": "Gudang Megayaksa",
+      "address": "This Is My Address",
+      "phone1": "021 - 999 996",
+      "isDefault": 0
+    },
+    {
+      "id": 7,
+      "code": "WH00007",
+      "initial": "GD-DN",
+      "name": "Gudang Dinar",
+      "address": "This Is My Address",
+      "phone1": "021 - 999 997",
+      "isDefault": 0
+    }
+  ],
   "taxes": [
     {
       "code": "001",
