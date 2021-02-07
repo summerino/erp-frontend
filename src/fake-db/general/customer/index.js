@@ -2,7 +2,7 @@ import endpoint from '@/configs/endpoint'
 import mock from '@/fake-db/mock.js'
 import axiosJsonServer from '@/axios.jsonserver'
 
-import category from './category'
+import './category'
 
 mock.onGet(`/api/${endpoint.general.customer}`).reply(async (config) => {
   const { searchBy, search } = config.params

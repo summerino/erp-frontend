@@ -1,1 +1,1 @@
-import purchaseOrder from './purchase.order'
+import './purchase.order'
