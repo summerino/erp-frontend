@@ -3,9 +3,18 @@
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
-          <v-col cols="12" md="6">
-            <span class="mx-1">this is main</span>
+          <v-col cols="12" md="4">
+            <v-text-field
+              v-model="grid.search"
+              append-icon="mdi-magnify"
+              label="Search..."
+              class="font-weight-regular mt-0 pt-0"
+              single-line
+              @keyup.enter="getList"
+            ></v-text-field>
+            <v-spacer></v-spacer>
           </v-col>
+          <v-spacer></v-spacer>
           <v-col cols="12" md="6" class="text-right">
             <v-btn
               color="green darken-1"
@@ -701,6 +710,7 @@ export default {
       foot: null
     },
     grid: {
+      search: null,
       data: [],
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
@@ -816,7 +826,9 @@ export default {
       }
     },
     getList() {
-      api.getAll(this.endpoint.sales.order)
+      api.getAll(this.endpoint.sales.order, {
+        params: { search: this.grid.search }
+      })
         .then(response => {
           this.grid.data = response.data
         })

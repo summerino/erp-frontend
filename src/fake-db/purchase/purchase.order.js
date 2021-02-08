@@ -3,7 +3,13 @@ import mock from '@/fake-db/mock.js'
 import axiosJsonServer from '@/axios.jsonserver'
 
 mock.onGet(`/api/${endpoint.purchase.order}`).reply(async (config) => {
-  const response = await axiosJsonServer.get('/purchaseOrder_H')
+  var search = null
+  if (config.params) {
+    var { search } = config.params
+  }
+  search = search || ''
+  
+  const response = await axiosJsonServer.get(`/purchaseOrder_H?q=${search}`)
 
   return [response.status, response.data]
 })
