@@ -235,6 +235,7 @@
                           >
                             <template v-slot:append-outer>
                               <v-btn
+                                ref="btnFindCust"
                                 icon
                                 color="primary"
                                 @click="showFindCustDialog"
@@ -984,6 +985,7 @@ export default {
     addItem() {
       if (!this.data.custCode) {
         this.$store.dispatch('app/showInfo', 'Please choose customer first')
+        this.$refs.btnFindCust.$el.focus()
         return
       }
       this.$refs.crudItem.add()
