@@ -17,12 +17,14 @@
           <v-spacer></v-spacer>
           <v-col cols="12" md="6" class="text-right">
             <v-btn
+              v-shortkey="['ctrl', 'alt', 'n']"
               color="green darken-1"
               class="font-weight-regular"
               dark
               small
               tile
               @click="add"
+              @shortkey="add"
             >
               <v-icon left>mdi-plus</v-icon>
               New
@@ -92,7 +94,13 @@
           <v-toolbar-title>Sales Order</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
-            <v-btn dark text @click="save">Save</v-btn>
+            <v-btn
+              v-shortkey="['ctrl', 's']"
+              dark
+              text
+              @click="save"
+              @shortkey="save"
+            >Save</v-btn>
           </v-toolbar-items>
         </v-toolbar>
 
@@ -855,6 +863,7 @@ export default {
         })
     },
     add() {
+      if (this.dialog.add) return
       this.dialog.add = true
       this.reset()
       this.data.action = 'add'
@@ -944,6 +953,8 @@ export default {
       }
     },
     save() {
+      if (this.dialog.add) return
+      
       const data = this.data
       data.includeTax = this.data.includeTax | 0
       data.tax = this.data.tax.code
