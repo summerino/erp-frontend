@@ -7,7 +7,8 @@ export default [
     items: [
       { text: 'Purchase', regex: /^\/purchase\/transaction\/purchase/,
         items: [
-          { text: 'Order', link: 'purchase-order' }
+          { text: 'Order', link: 'purchase-order' },
+          { text: 'Receive', link: 'purchase-receive' }
         ]
       }
     ]

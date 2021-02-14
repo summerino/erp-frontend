@@ -22,10 +22,12 @@ export default {
   },
 
   purchase: {
-    order: 'purchase-order'
+    order: 'purchase-order',
+    receive: 'purchase-receive'
   },
 
   sales: {
-    order: 'sales-order'
+    order: 'sales-order',
+    delivery: 'delivery-order'
   }
 }

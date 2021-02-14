@@ -1617,6 +1617,38 @@
       "id": 2
     }
   ],
+  "purchaseReceive_H": [
+    {
+      "code": "RCV000001",
+      "receiveDate": "2021-02-14",
+      "supDocNo": null,
+      "supCode": "S00014",
+      "receiveBy": null,
+      "approveBy": null,
+      "updatedBy": null,
+      "updatedDate": "2021-02-14",
+      "id": 1
+    }
+  ],
+  "purchaseReceive_D": [
+    {
+      "rowId": "9e4dbff0-6edf-11eb-a2c3-07d586290ee1",
+      "code": "RCV000001",
+      "lineNo": 1,
+      "itemCode": "ABK",
+      "itemName": "ATM BISKUIT KACANG",
+      "orderQty": 3,
+      "outstandingQty": 0,
+      "qty": 2,
+      "uomId": 3,
+      "unitId": 7,
+      "unitName": "PAK",
+      "warehouseCode": "WH00007",
+      "warehouseInitial": "GD-DN",
+      "warehouseName": "Gudang Dinar",
+      "id": 1
+    }
+  ],
   "salesOrder_H": [
     {
       "code": "SO000001",
