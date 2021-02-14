@@ -697,7 +697,7 @@ import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
 import FindCustomer from '@/components/dialog/FindCustomer'
-import CrudItem from '@/components/dialog/CrudItem'
+import CrudItem from '@/components/dialog/PoSoItem'
 
 export default {
   components: {

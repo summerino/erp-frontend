@@ -22,6 +22,68 @@ mock.onGet(`/api/${endpoint.purchase.order}/item`).reply(async (config) => {
   return [response.status, response.data]
 })
 
+mock.onGet(`/api/${endpoint.purchase.order}/incomplete`).reply(async (config) => {
+  var supCode = ''
+  var searchBy = ''
+  var search = ''
+  var results = []
+
+  if (config.params) {
+    var { supCode, searchBy, search } = config.params
+  }
+  searchBy = searchBy.toLowerCase()
+  search = search.toLowerCase()
+  
+  const resp_h = await axiosJsonServer.get(`/purchaseOrder_H?supCode=${supCode}`)
+  
+  let result_h = resp_h.data.filter(h => {
+    if (searchBy == 'pocode') return h.code.toLowerCase().includes(search)
+    else return h
+  })
+
+  if (result_h.length > 0) {
+    var params = ''
+    for (var i = 0; i < result_h.length; i++) {
+      params += `&code=${result_h[i].code}`
+    }
+    params = `?${params.substring(1)}`
+
+    const resp_d = await axiosJsonServer.get(`/purchaseOrder_D${params}`)
+
+    const result_d = resp_d.data.filter(d => {
+      if (searchBy == 'itemcode') return d.itemCode.toLowerCase().includes(search)
+      else return d.itemName.toLowerCase().includes(search)
+    })
+
+    const resp_w = await axiosJsonServer.get(`/warehouses`)
+    const result_w = resp_w.data
+
+    for (var j = 0; j < result_d.length; j++) {
+      const result = {
+        poCode: result_d[j].code,
+        poDate: result_h.find(x => x.code == result_d[j].code).orderDate,
+        warehouseCode: result_h.find(x => x.code == result_d[j].code).warehouseCode,
+        itemCode: result_d[j].itemCode,
+        itemName: result_d[j].itemName,
+        qty: result_d[j].qty,
+        uomId: result_d[j].uomId,
+        unitId: result_d[j].unitId,
+        unitName: result_d[j].unitName,
+        uomBuyName: result_d[j].uomBuyName,
+        itemBuyPrice: result_d[j].itemBuyPrice,
+        disc: result_d[j].disc,
+        nettPrice: result_d[j].nettPrice,
+        total: result_d[j].total
+      }
+      result.warehouseInitial = result_w.find(x => x.code == result.warehouseCode).initial
+      result.warehouseName = result_w.find(x => x.code == result.warehouseCode).name
+      results.push(result)
+    }
+  }
+  
+  return [200, results]
+})
+
 mock.onPost(`/api/${endpoint.purchase.order}`).reply(async (request) => {
   const data = JSON.parse(request.data)
   

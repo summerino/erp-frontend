@@ -5,4 +5,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/purchase/transaction/purchase/receive',
+  name: 'purchase-receive',
+  component: () => import('@/views/purchase/transaction/PurchaseReceive.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
