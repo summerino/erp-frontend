@@ -88,7 +88,7 @@ mock.onPut(/\/api\/purchase-receive\/./).reply(async (config) => {
     receiveBy: data.receiveBy,
     approveBy: data.approveBy,
     updatedBy: data.updatedBy,
-    updatedDate: data.updatedDate
+    updatedDate: format(new Date(), 'yyyy-MM-dd')
   })
 
   // Delete purchase receive details that not in request data item details

@@ -1,3 +1,5 @@
+import { format } from 'date-fns'
+
 import endpoint from '@/configs/endpoint'
 import mock from '@/fake-db/mock.js'
 import axiosJsonServer from '@/axios.jsonserver'
@@ -57,7 +59,11 @@ mock.onPost(`/api/${endpoint.sales.order}`).reply(async (request) => {
     finalDisc: data.finalDisc,
     taxPercent: data.taxPercent,
     taxAmount: data.taxAmount,
-    grandTotal: data.grandTotal
+    grandTotal: data.grandTotal,
+    createdBy: data.createdBy,
+    createdDate: format(new Date(), 'yyyy-MM-dd'),
+    updatedBy: data.updatedBy,
+    updatedDate: format(new Date(), 'yyyy-MM-dd')
   })
 
   // Insert sales order details
@@ -120,7 +126,9 @@ mock.onPut(/\/api\/sales-order\/./).reply(async (config) => {
     finalDisc: data.finalDisc,
     taxPercent: data.taxPercent,
     taxAmount: data.taxAmount,
-    grandTotal: data.grandTotal
+    grandTotal: data.grandTotal,
+    updatedBy: data.updatedBy,
+    updatedDate: format(new Date(), 'yyyy-MM-dd')
   })
 
   // Delete sales order details that not in request data item details

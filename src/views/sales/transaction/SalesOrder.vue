@@ -906,7 +906,9 @@ export default {
         finalDisc: item.finalDisc,
         taxPercent: item.taxPercent,
         taxAmount: item.taxAmount,
-        grandTotal: item.grandTotal
+        grandTotal: item.grandTotal,
+        updatedBy: item.updatedBy,
+        updatedDate: item.updatedDate
       }
 
       // Get customer details
