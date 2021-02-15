@@ -724,11 +724,11 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'Code', value: 'code', divider: true, width: '100' },
-        { text: 'Date', value: 'orderDate', divider: true, width: '120' },
+        { text: 'Date', value: 'orderDate', align: 'right', divider: true, width: '120' },
         { text: 'Sales', value: 'salesName', divider: true, width: '200' },
         { text: 'Customer', value: 'custName', divider: true, width: '200' },
         { text: 'Curr.', value: 'curr', divider: true, width: '90' },
-        { text: 'Total', value: 'grandTotal', divider: true, width: '120' },
+        { text: 'Total', value: 'grandTotal', align: 'right', divider: true, width: '120' },
         { text: 'TOP', value: 'paymentTerm', divider: true, width: '120' }
       ]
     },
@@ -738,12 +738,12 @@ export default {
         { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'Item', value: 'itemCode', divider: true, width: '100' },
         { text: 'Name', value: 'itemName', divider: true, width: '300' },
-        { text: 'Qty', value: 'qty', divider: true, width: '90' },
+        { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
         { text: 'Unit', value: 'unitName', divider: true, width: '90' },
-        { text: 'Unit Price', value: 'unitPrice', divider: true, width: '120' },
-        { text: 'Disc', value: 'disc', divider: true, width: '120' },
-        { text: 'Nett Price', value: 'nettPrice', divider: true, width: '120' },
-        { text: 'Total Price', value: 'total', divider: true, width: '120' },
+        { text: 'Unit Price', value: 'unitPrice', align: 'right', divider: true, width: '120' },
+        { text: 'Disc', value: 'disc', align: 'right', divider: true, width: '120' },
+        { text: 'Nett Price', value: 'nettPrice', align: 'right', divider: true, width: '120' },
+        { text: 'Total Price', value: 'total', align: 'right', divider: true, width: '120' },
         { text: 'Description', value: 'description' }
       ]
     },

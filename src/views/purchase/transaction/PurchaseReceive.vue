@@ -436,7 +436,7 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'Code', value: 'code', divider: true, width: '100' },
-        { text: 'Date', value: 'receiveDate', divider: true, width: '120' },
+        { text: 'Date', value: 'receiveDate', align: 'right', divider: true, width: '120' },
         { text: 'Supplier', value: 'supName', divider: true, width: '200' },
         { text: 'Supplier Doc. No.', value: 'supDocNo', divider: true, width: '150' }
       ]
@@ -447,9 +447,9 @@ export default {
         { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'Item', value: 'itemCode', divider: true, width: '100' },
         { text: 'Name', value: 'itemName', divider: true, width: '300' },
-        { text: 'Order Qty', value: 'orderQty', divider: true, width: '90' },
-        { text: 'Outstanding', value: 'outstandingQty', divider: true, width: '90' },
-        { text: 'Received Qty', value: 'qty', divider: true, width: '90' },
+        { text: 'Order Qty', value: 'orderQty', align: 'right', divider: true, width: '90' },
+        { text: 'Outstanding', value: 'outstandingQty', align: 'right', divider: true, width: '90' },
+        { text: 'Received Qty', value: 'qty', align: 'right', divider: true, width: '90' },
         { text: 'Unit', value: 'unitName', divider: true, width: '90' },
         { text: 'Location', value: 'warehouse', width: '250' },
         { text: 'Type', value: 'typeName', width: '90' }
