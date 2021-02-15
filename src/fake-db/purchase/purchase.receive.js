@@ -11,17 +11,34 @@ mock.onGet(`/api/${endpoint.purchase.receive}`).reply(async (config) => {
   }
   search = search || ''
   
-  const response = await axiosJsonServer.get(`/purchaseReceive_H?q=${search}`)
-
-  return [response.status, response.data]
+  const resp_h = await axiosJsonServer.get(`/purchaseReceive_H?q=${search}`)
+  const resp_s = await axiosJsonServer.get(`/suppliers`)
+  
+  var results = []
+  for (var i = 0; i < resp_h.data.length; i++) {
+    const result = resp_h.data[i]
+    result.supName = resp_s.data.find(s => s.code == resp_h.data[i].supCode).name
+    
+    results.push(result)
+  }
+  
+  return [200, results]
 })
 
 mock.onGet(`/api/${endpoint.purchase.receive}/item`).reply(async (config) => {
   const { code } = config.params
   
-  const response = await axiosJsonServer.get(`/purchaseReceive_D?code=${code}`)
+  const resp_d = await axiosJsonServer.get(`/purchaseReceive_D?code=${code}`)
 
-  return [response.status, response.data]
+  var results = []
+  for (var i = 0; i < resp_d.data.length; i++) {
+    const result = resp_d.data[i]
+    result.typeName = result.typeId == 0 ? 'Normal' : 'Bonus'
+    
+    results.push(result)
+  }
+
+  return [200, results]
 })
 
 mock.onPost(`/api/${endpoint.purchase.receive}`).reply(async (request) => {
@@ -31,7 +48,7 @@ mock.onPost(`/api/${endpoint.purchase.receive}`).reply(async (request) => {
   const data_h = response_h.data
 
   const code = data_h.length > 0
-    ? `RCV${(data_h[data_h.length - 1].id + 1).toString().padStart(5, '0')}`
+    ? `RCV${(data_h[data_h.length - 1].id + 1).toString().padStart(6, '0')}`
     : 'RCV000001'
   
   // Insert purchase receive header
@@ -65,7 +82,8 @@ mock.onPost(`/api/${endpoint.purchase.receive}`).reply(async (request) => {
       unitName: data.itemDetails[i].unitName,
       warehouseCode: data.itemDetails[i].warehouseCode,
       warehouseInitial: data.itemDetails[i].warehouseInitial,
-      warehouseName: data.itemDetails[i].warehouseName
+      warehouseName: data.itemDetails[i].warehouseName,
+      typeId: data.itemDetails[i].typeId
     })
   }
 
@@ -117,7 +135,8 @@ mock.onPut(/\/api\/purchase-receive\/./).reply(async (config) => {
         unitName: data.itemDetails[i].unitName,
         warehouseCode: data.itemDetails[i].warehouseCode,
         warehouseInitial: data.itemDetails[i].warehouseInitial,
-        warehouseName: data.itemDetails[i].warehouseName
+        warehouseName: data.itemDetails[i].warehouseName,
+        typeId: data.itemDetails[i].typeId
       })
     } else {
       axiosJsonServer.post('/purchaseReceive_D', {
@@ -135,7 +154,8 @@ mock.onPut(/\/api\/purchase-receive\/./).reply(async (config) => {
         unitName: data.itemDetails[i].unitName,
         warehouseCode: data.itemDetails[i].warehouseCode,
         warehouseInitial: data.itemDetails[i].warehouseInitial,
-        warehouseName: data.itemDetails[i].warehouseName
+        warehouseName: data.itemDetails[i].warehouseName,
+        typeId: data.itemDetails[i].typeId
       })
     }
   }

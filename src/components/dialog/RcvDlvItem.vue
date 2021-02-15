@@ -149,15 +149,26 @@
                   </v-row>
 
                   <v-row no-gutters>
-                    <v-select
-                      v-model="data.warehouse"
-                      :items="warehouses"
-                      :item-text="item => `${item.initial} - ${item.name}`"
-                      item-value="code"
-                      label="Location"
-                      class="mt-0"
-                      return-object
-                    ></v-select>
+                    <v-col cols="12" md="9">
+                      <v-select
+                        v-model="data.warehouse"
+                        :items="warehouses"
+                        :item-text="item => `${item.initial} - ${item.name}`"
+                        item-value="code"
+                        label="Location"
+                        class="mt-0"
+                        return-object
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" md="3" class="pl-md-1">
+                      <v-select
+                        v-model="data.typeId"
+                        :items="types"
+                        label="Type"
+                        class="mt-0"
+                        readonly
+                      ></v-select>
+                    </v-col>
                   </v-row>
                 </v-card-text>
               </v-card>
@@ -188,6 +199,10 @@ export default {
       dialog: false,
       valid: false,
       units: [],
+      types: [
+        { text: 'Normal', value: 0 },
+        { text: 'Bonus', value: 1 }
+      ],
       search: {
         by: 'poCode',
         value: '',
@@ -308,6 +323,7 @@ export default {
         initial: item.warehouseInitial,
         name: item.warehouseName
       }
+      this.data.typeId = 0
 
       this.getUnitLists(item.uomId)
 

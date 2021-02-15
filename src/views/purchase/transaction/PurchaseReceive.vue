@@ -437,7 +437,7 @@ export default {
         { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'Code', value: 'code', divider: true, width: '100' },
         { text: 'Date', value: 'receiveDate', divider: true, width: '120' },
-        { text: 'Supplier', value: 'supCode', divider: true, width: '200' },
+        { text: 'Supplier', value: 'supName', divider: true, width: '200' },
         { text: 'Supplier Doc. No.', value: 'supDocNo', divider: true, width: '150' }
       ]
     },
@@ -451,7 +451,8 @@ export default {
         { text: 'Outstanding', value: 'outstandingQty', divider: true, width: '90' },
         { text: 'Received Qty', value: 'qty', divider: true, width: '90' },
         { text: 'Unit', value: 'unitName', divider: true, width: '90' },
-        { text: 'Location', value: 'warehouse' }
+        { text: 'Location', value: 'warehouse', width: '250' },
+        { text: 'Type', value: 'typeName', width: '90' }
       ]
     },
     valid: false,
@@ -667,11 +668,12 @@ export default {
           warehouseCode: data.warehouse.code,
           warehouseInitial: data.warehouse.initial,
           warehouseName: data.warehouse.name,
+          typeId: data.typeId,
+          typeName: data.typeId === 0 ? 'Normal' : 'Bonus',
           state: 'A'
         }
         this.gridItem.data.push(item)
       } else {
-        console.log(data.warehouse)
         const item = this.gridItem.data.find(i => i.rowId === data.rowId)
         item.poCode = data.poCode
         item.itemId = data.itemId
@@ -686,6 +688,8 @@ export default {
         item.warehouseCode = data.warehouse.code
         item.warehouseInitial = data.warehouse.initial
         item.warehouseName = data.warehouse.name
+        item.typeId = data.typeId
+        item.typeName = data.typeId === 0 ? 'Normal' : 'Bonus'
         if (item.state !== 'A') {
           item.state = 'M'
         }
