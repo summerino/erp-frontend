@@ -1573,6 +1573,35 @@
       "taxAmount": 42451.64,
       "grandTotal": 486968,
       "id": 1
+    },
+    {
+      "code": "PO000002",
+      "orderDate": "2021-02-15",
+      "workerCode": "W00005",
+      "curr": "IDR",
+      "rate": 1,
+      "includeTax": 1,
+      "supCode": "S00005",
+      "warehouseCode": "WH00003",
+      "billAddr": null,
+      "top": null,
+      "tax": "000",
+      "downPayment": 0,
+      "applyTax": 0,
+      "notes": null,
+      "dpTax": 0,
+      "shipmentFee": 0,
+      "handlingFee": 0,
+      "dpp": 5800000,
+      "subTotal": 5800000,
+      "finalDiscPercent": 0,
+      "finalDisc": 0,
+      "taxPercent": 0,
+      "taxAmount": 0,
+      "grandTotal": 5800000,
+      "createdDate": "2021-02-15",
+      "updatedDate": "2021-02-15",
+      "id": 2
     }
   ],
   "purchaseOrder_D": [
@@ -1615,6 +1644,26 @@
       "total": 45750,
       "description": null,
       "id": 2
+    },
+    {
+      "rowId": "e185b510-6f5d-11eb-9d61-a3f0bdd2a571",
+      "code": "PO000002",
+      "lineNo": 1,
+      "itemId": 5,
+      "itemCode": "ABN",
+      "itemName": "ATM BISKUIT NANAS",
+      "qty": 100,
+      "uomId": 3,
+      "unitId": 8,
+      "unitName": "DUS",
+      "uomBuyName": "DUS",
+      "unitPrice": 58000,
+      "itemBuyPrice": 58000,
+      "disc": 0,
+      "nettPrice": 58000,
+      "total": 5800000,
+      "description": null,
+      "id": 3
     }
   ],
   "purchaseReceive_H": [
@@ -1626,26 +1675,27 @@
       "receiveBy": null,
       "approveBy": null,
       "updatedBy": null,
-      "updatedDate": "2021-02-14",
+      "updatedDate": "2021-02-15",
       "id": 1
     }
   ],
   "purchaseReceive_D": [
     {
-      "rowId": "9e4dbff0-6edf-11eb-a2c3-07d586290ee1",
+      "rowId": "bd4bf040-6f41-11eb-a593-274430fb1278",
       "code": "RCV000001",
       "lineNo": 1,
       "itemCode": "ABK",
       "itemName": "ATM BISKUIT KACANG",
       "orderQty": 3,
       "outstandingQty": 0,
-      "qty": 2,
+      "qty": 1,
       "uomId": 3,
       "unitId": 7,
       "unitName": "PAK",
       "warehouseCode": "WH00007",
       "warehouseInitial": "GD-DN",
       "warehouseName": "Gudang Dinar",
+      "typeId": 0,
       "id": 1
     }
   ],
@@ -1676,6 +1726,35 @@
       "taxAmount": 12477.27,
       "grandTotal": 187250,
       "id": 1
+    },
+    {
+      "code": "SO000002",
+      "orderDate": "2021-02-15",
+      "salesCode": "W00004",
+      "curr": "IDR",
+      "rate": 1,
+      "includeTax": 1,
+      "custCode": "C00010",
+      "deliveryDate": "2021-02-15",
+      "billAddr": null,
+      "top": null,
+      "tax": "000",
+      "downPayment": 0,
+      "applyTax": 0,
+      "notes": null,
+      "dpTax": 0,
+      "shipmentFee": 0,
+      "handlingFee": 0,
+      "dpp": 3350000,
+      "subTotal": 3350000,
+      "finalDiscPercent": 0,
+      "finalDisc": 0,
+      "taxPercent": 0,
+      "taxAmount": 0,
+      "grandTotal": 3350000,
+      "createdDate": "2021-02-15",
+      "updatedDate": "2021-02-15",
+      "id": 2
     }
   ],
   "salesOrder_D": [
@@ -1716,6 +1795,67 @@
       "nettPrice": 15750,
       "total": 47250,
       "id": 2
+    },
+    {
+      "rowId": "f3bf3c10-6f5d-11eb-9d61-a3f0bdd2a571",
+      "code": "SO000002",
+      "lineNo": 1,
+      "itemId": 4,
+      "itemCode": "ABK",
+      "itemName": "ATM BISKUIT KACANG",
+      "qty": 50,
+      "uomId": 3,
+      "unitId": 8,
+      "unitName": "DUS",
+      "uomSellName": "DUS",
+      "unitPrice": 67000,
+      "itemSellPrice": 67000,
+      "disc": 0,
+      "nettPrice": 67000,
+      "total": 3350000,
+      "description": null,
+      "id": 3
+    }
+  ],
+  "deliveryOrder_H": [
+    {
+      "code": "DO000001",
+      "deliveryDate": "2021-02-15",
+      "soCode": "SO000002",
+      "custCode": "C00010",
+      "deliveryAddr": null,
+      "warehouseCode": "WH00007",
+      "notes": null,
+      "shippedBy": {
+        "code": "W00006",
+        "name": "Christian Nwamba"
+      },
+      "approveBy": {
+        "code": "W00009",
+        "name": "Bill Gates"
+      },
+      "createdBy": null,
+      "createdDate": "2021-02-15",
+      "updatedBy": null,
+      "updatedDate": "2021-02-15",
+      "id": 1
+    }
+  ],
+  "deliveryOrder_D": [
+    {
+      "rowId": "f3bf3c10-6f5d-11eb-9d61-a3f0bdd2a571",
+      "code": "DO000001",
+      "lineNo": 1,
+      "itemId": 4,
+      "itemCode": "ABK",
+      "itemName": "ATM BISKUIT KACANG",
+      "orderQty": 50,
+      "qty": 50,
+      "uomId": 3,
+      "unitId": 8,
+      "unitName": "DUS",
+      "description": null,
+      "id": 1
     }
   ]
 }

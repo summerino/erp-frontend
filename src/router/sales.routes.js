@@ -5,4 +5,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/sales/transaction/sales/delivery',
+  name: 'delivery-order',
+  component: () => import('@/views/sales/transaction/DeliveryOrder.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
