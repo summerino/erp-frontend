@@ -665,8 +665,8 @@ export default {
         { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'Code', value: 'code', divider: true, width: '100' },
         { text: 'Date', value: 'orderDate', divider: true, width: '120' },
-        { text: 'Purchaser', value: 'workerCode', divider: true, width: '120' },
-        { text: 'Supplier', value: 'supCode', divider: true, width: '120' },
+        { text: 'Purchaser', value: 'workerName', divider: true, width: '200' },
+        { text: 'Supplier', value: 'supName', divider: true, width: '200' },
         { text: 'Curr.', value: 'curr', divider: true, width: '90' },
         { text: 'Total', value: 'grandTotal', divider: true, width: '120' },
         { text: 'TOP', value: 'paymentTerm', divider: true, width: '120' }
@@ -890,7 +890,7 @@ export default {
       }
     },
     save() {
-      if (this.dialog.add) return
+      if (!this.dialog.add) return
       
       const data = this.data
       data.includeTax = this.data.includeTax | 0
@@ -898,7 +898,7 @@ export default {
       data.tax = this.data.tax.code
       data.applyTax = this.data.applyTax | 0
       data.itemDetails = this.gridItem.data
-
+      
       if (data.action === 'add') {
         api.create(this.endpoint.purchase.order, data)
           .then(response => {

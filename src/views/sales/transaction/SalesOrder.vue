@@ -725,8 +725,8 @@ export default {
         { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'Code', value: 'code', divider: true, width: '100' },
         { text: 'Date', value: 'orderDate', divider: true, width: '120' },
-        { text: 'Sales', value: 'salesCode', divider: true, width: '120' },
-        { text: 'Customer', value: 'custCode', divider: true, width: '120' },
+        { text: 'Sales', value: 'salesName', divider: true, width: '200' },
+        { text: 'Customer', value: 'custName', divider: true, width: '200' },
         { text: 'Curr.', value: 'curr', divider: true, width: '90' },
         { text: 'Total', value: 'grandTotal', divider: true, width: '120' },
         { text: 'TOP', value: 'paymentTerm', divider: true, width: '120' }
@@ -956,7 +956,7 @@ export default {
       }
     },
     save() {
-      if (this.dialog.add) return
+      if (!this.dialog.add) return
       
       const data = this.data
       data.includeTax = this.data.includeTax | 0
