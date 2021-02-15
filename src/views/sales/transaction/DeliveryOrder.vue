@@ -397,7 +397,7 @@
                               </template>
                               <span>Edit</span>
                             </v-tooltip>
-                            <v-tooltip bottom>
+                            <!-- <v-tooltip bottom>
                               <template v-slot:activator="{ on, attrs }">
                                 <v-btn
                                   v-bind="attrs"
@@ -411,7 +411,7 @@
                                 </v-btn>
                               </template>
                               <span>Delete</span>
-                            </v-tooltip>
+                            </v-tooltip> -->
                           </template>
                           <template v-slot:[`item.warehouse`]="{ item }">
                             {{ item.warehouseInitial }} - {{ item.warehouseName }}
