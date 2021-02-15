@@ -410,7 +410,7 @@ import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
 import FindSupplier from '@/components/dialog/FindSupplier'
-import ReceiveItem from '@/components/dialog/RcvDlvItem'
+import ReceiveItem from '@/components/dialog/ReceiveItem'
 
 export default {
   components: {
