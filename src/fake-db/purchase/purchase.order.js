@@ -11,9 +11,20 @@ mock.onGet(`/api/${endpoint.purchase.order}`).reply(async (config) => {
   }
   search = search || ''
   
-  const response = await axiosJsonServer.get(`/purchaseOrder_H?q=${search}`)
+  const resp_h = await axiosJsonServer.get(`/purchaseOrder_H?q=${search}`)
+  const resp_w = await axiosJsonServer.get(`/workers`)
+  const resp_s = await axiosJsonServer.get(`/suppliers`)
 
-  return [response.status, response.data]
+  var results = []
+  for (var i = 0; i < resp_h.data.length; i++) {
+    const result = resp_h.data[i]
+    result.workerName = resp_w.data.find(w => w.code == resp_h.data[i].workerCode).name
+    result.supName = resp_s.data.find(s => s.code == resp_h.data[i].supCode).name
+    
+    results.push(result)
+  }
+
+  return [200, results]
 })
 
 mock.onGet(`/api/${endpoint.purchase.order}/item`).reply(async (config) => {
@@ -93,7 +104,7 @@ mock.onPost(`/api/${endpoint.purchase.order}`).reply(async (request) => {
   const data_h = response_h.data
 
   const code = data_h.length > 0
-    ? `PO${(data_h[data_h.length - 1].id + 1).toString().padStart(5, '0')}`
+    ? `PO${(data_h[data_h.length - 1].id + 1).toString().padStart(6, '0')}`
     : 'PO000001'
   
   // Insert purchase order header
