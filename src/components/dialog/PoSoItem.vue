@@ -362,7 +362,7 @@ export default {
         this.data.unitPrice = item.sellPrice
         this.data.itemSellPrice = item.sellPrice
       } else {
-        this.data.unit = { id: item.uomSellId, unitEquivalent: item.uomSellName }
+        this.data.unit = { id: item.uomBuyId, unitEquivalent: item.uomBuyName }
         this.data.uomBuyName = item.uomBuyName
         this.data.unitPrice = item.buyPrice
         this.data.itemBuyPrice = item.buyPrice
