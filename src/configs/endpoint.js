@@ -23,11 +23,13 @@ export default {
 
   purchase: {
     order: 'purchase-order',
-    receive: 'purchase-receive'
+    receive: 'purchase-receive',
+    invoice: 'purchase-invoice'
   },
 
   sales: {
     order: 'sales-order',
-    delivery: 'delivery-order'
+    delivery: 'delivery-order',
+    invoice: 'sales-invoice'
   }
 }
