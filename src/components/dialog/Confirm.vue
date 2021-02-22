@@ -2,7 +2,9 @@
   <v-dialog
     v-model="dialog"
     :width="options.width"
-    persistent>
+    persistent
+    @keydown.esc="cancel"
+  >
     <v-card>
       <v-card-title class="error--text">{{ title }}</v-card-title>
       <v-card-text v-show="message">{{ message }}</v-card-text>
@@ -18,6 +20,7 @@
           OK
         </v-btn>
         <v-btn
+          ref="cancel"
           class="font-weight-regular ml-1"
           small
           tile

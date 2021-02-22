@@ -4,6 +4,7 @@
     :width="options.width"
     persistent
     scrollable
+    @keydown.esc="close"
   >
     <v-card>
       <v-toolbar
@@ -15,7 +16,7 @@
         <v-spacer></v-spacer>
         <v-btn
           icon
-          @click="dialog = false"
+          @click="close"
         >
           <v-icon>mdi-window-close</v-icon>
         </v-btn>
@@ -49,6 +50,7 @@
             :items-per-page="-1"
             height="300"
             class="elevation-1 row-pointer"
+            dense
             fixed-header
             hide-default-footer
             @dblclick:row="dblclickRow"
@@ -63,7 +65,7 @@
           dark
           small
           tile
-          @click="dialog = false"
+          @click="close"
         >
           <v-icon left>mdi-close-circle-outline</v-icon>
           Cancel
@@ -123,6 +125,9 @@ export default {
       setTimeout(() => {
         this.$refs.search.focus()
       }, 0)
+    },
+    close() {
+      this.dialog = false
     },
     search() {
       api.getAll(this.endpoint.general.supplier, {
