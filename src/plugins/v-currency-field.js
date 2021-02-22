@@ -15,5 +15,5 @@ Vue.use(VCurrencyField, {
   max: null,
   defaultValue: 0,
   valueAsInteger: false,
-  allowNegative: true
+  allowNegative: false
 })
