@@ -1,4 +1,5 @@
 import { format } from 'date-fns'
+import { orderBy as _orderBy } from 'lodash'
 
 import endpoint from '@/configs/endpoint'
 import mock from '@/fake-db/mock.js'
@@ -30,9 +31,19 @@ mock.onGet(`/api/${endpoint.purchase.order}`).reply(async (config) => {
 mock.onGet(`/api/${endpoint.purchase.order}/item`).reply(async (config) => {
   const { code } = config.params
   
-  const response = await axiosJsonServer.get(`/purchaseOrder_D?code=${code}`)
+  const resp_d = await axiosJsonServer.get(`/purchaseOrder_D?code=${code}`)
+  const resp_uc = await axiosJsonServer.get(`/uomConversions`)
+  
+  var results = []
+  for (var i = 0; i < resp_d.data.length; i++) {
+    const result = resp_d.data[i]
+    result.units = _orderBy(resp_uc.data.filter(uc => uc.uomId == result.uomId), 'seq')
+    result.state = ''
 
-  return [response.status, response.data]
+    results.push(result)
+  }
+
+  return [200, results]
 })
 
 mock.onGet(`/api/${endpoint.purchase.order}/incomplete`).reply(async (config) => {

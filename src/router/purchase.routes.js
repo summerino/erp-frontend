@@ -12,4 +12,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/purchase/transaction/purchase/invoice',
+  name: 'purchase-invoice',
+  component: () => import('@/views/purchase/transaction/PurchaseInvoice.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
