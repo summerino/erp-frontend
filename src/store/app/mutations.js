@@ -65,6 +65,6 @@ export default {
    * Data table
    */
   setGridDefaultHeight: (state, contentHeight) => {
-    state.grid.height = contentHeight - 130
+    state.grid.height = contentHeight - 154
   }
 }
