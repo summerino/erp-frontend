@@ -16,19 +16,26 @@
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" md="6" class="text-right">
-            <v-btn
-              v-shortkey="['ctrl', 'alt', 'n']"
-              color="green darken-1"
-              class="font-weight-regular"
-              dark
-              small
-              tile
-              @click="add"
-              @shortkey="add"
-            >
-              <v-icon left>mdi-plus</v-icon>
-              New
-            </v-btn>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'n']"
+                  color="green darken-1"
+                  class="font-weight-regular"
+                  dark
+                  small
+                  tile
+                  @click="add"
+                  @shortkey="add"
+                >
+                  <v-icon left>mdi-plus</v-icon>
+                  New
+                </v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Alt + N)</span>
+            </v-tooltip>
           </v-col>
         </v-row>
       </v-card-title>
@@ -39,6 +46,7 @@
         :items="grid.data"
         :items-per-page="5"
         class="elevation-1"
+        fixed-header
       >
         <template v-slot:[`item.action`]="{ item }">
           <v-tooltip bottom>
@@ -54,7 +62,7 @@
                 <v-icon small>mdi-pencil</v-icon>
               </v-btn>
             </template>
-            <span>Edit</span>
+            <span class="text-caption">Edit</span>
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -69,7 +77,7 @@
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <span>Delete</span>
+            <span class="text-caption">Delete</span>
           </v-tooltip>
         </template>
       </v-data-table>
@@ -94,13 +102,20 @@
           <v-toolbar-title>Sales Order</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
-            <v-btn
-              v-shortkey="['ctrl', 's']"
-              dark
-              text
-              @click="save"
-              @shortkey="save"
-            >Save</v-btn>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 's']"
+                  dark
+                  text
+                  @click="save"
+                  @shortkey="save"
+                >Save</v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + S)</span>
+            </v-tooltip>
           </v-toolbar-items>
         </v-toolbar>
 
@@ -123,7 +138,7 @@
                         v-model="data.includeTax"
                         label="Tax Included"
                         class="shrink ml-1"
-                        @change="calcPrice(true)"
+                        @change="calcPrice"
                       ></v-checkbox>
                     </v-row>
 
@@ -215,17 +230,20 @@
                       transition="false"
                     >
                       <v-row no-gutters>
-                        <v-col cols="3">
-                          <v-text-field
+                        <v-col cols="4">
+                          <v-autocomplete
                             v-model="data.custCode"
+                            :items="customers"
+                            :item-text="item => `${item.code} - ${item.initial}`"
                             label="Code"
+                            item-value="code"
                             class="mt-0"
-                            readonly
                             required
-                          ></v-text-field>
+                            @change="custCodeChange"
+                          ></v-autocomplete>
                         </v-col>
 
-                        <v-col cols="9" class="pl-1">
+                        <v-col cols="8" class="pl-1">
                           <v-text-field
                             v-model="data.custName"
                             label="Name"
@@ -261,7 +279,7 @@
                       </v-row>
 
                       <v-row no-gutters>
-                        <v-col cols="6">
+                        <v-col cols="12">
                           <v-text-field
                             v-model="data.custPhone"
                             label="Phone"
@@ -269,8 +287,10 @@
                             readonly
                           ></v-text-field>
                         </v-col>
+                      </v-row>
 
-                        <v-col cols="6" class="pl-1">
+                      <v-row no-gutters>
+                        <v-col cols="12">
                           <v-text-field
                             v-model="data.custFax"
                             label="Fax"
@@ -391,7 +411,7 @@
                             item-text="name"
                             item-value="code"
                             return-object
-                            @change="calcPrice(true)"
+                            @change="calcPrice"
                           ></v-select>
                         </v-col>
                       </v-row>
@@ -415,15 +435,24 @@
                       <v-card>
                         <v-app-bar dense flat>
                           <v-spacer></v-spacer>
-                          <v-btn
-                            class="blue--text"
-                            small
-                            tile
-                            @click="addItem"
-                          >
-                            <v-icon left>mdi-plus</v-icon>
-                            Add
-                          </v-btn>
+                          <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                v-bind="attrs"
+                                v-on="on"
+                                v-shortkey="['ctrl', 'i']"
+                                class="blue--text"
+                                small
+                                tile
+                                @click="addItem"
+                                @shortkey="addItem"
+                              >
+                                <v-icon left>mdi-plus</v-icon>
+                                Add
+                              </v-btn>
+                            </template>
+                            <span class="text-caption">(Ctrl + I)</span>
+                          </v-tooltip>
                         </v-app-bar>
 
                         <v-data-table
@@ -432,24 +461,10 @@
                           :items-per-page="-1"
                           height="300"
                           class="elevation-1"
+                          fixed-header
                           hide-default-footer
                         >
                           <template v-slot:[`item.action`]="{ item }">
-                            <v-tooltip bottom>
-                              <template v-slot:activator="{ on, attrs }">
-                                <v-btn
-                                  v-bind="attrs"
-                                  v-on="on"
-                                  icon
-                                  small
-                                  color="orange lighten-1"
-                                  @click="$refs.crudItem.edit(item)"
-                                >
-                                  <v-icon small>mdi-pencil</v-icon>
-                                </v-btn>
-                              </template>
-                              <span>Edit</span>
-                            </v-tooltip>
                             <v-tooltip bottom>
                               <template v-slot:activator="{ on, attrs }">
                                 <v-btn
@@ -463,8 +478,60 @@
                                   <v-icon small>mdi-close-thick</v-icon>
                                 </v-btn>
                               </template>
-                              <span>Delete</span>
+                              <span class="text-caption">Delete</span>
                             </v-tooltip>
+                          </template>
+                          <template v-slot:[`item.itemCode`]="{ item }">
+                            <v-text-field
+                              ref="itemCode"
+                              v-model="item.itemCode"
+                              class="mt-0"
+                              @change="itemCodeChange(item)"
+                            >
+                              <template v-slot:append>
+                                <v-btn
+                                  color="primary"
+                                  icon
+                                  x-small
+                                  @click="showFindItemDialog(item)"
+                                >
+                                  <v-icon>
+                                    mdi-settings-helper
+                                  </v-icon>
+                                </v-btn>
+                              </template>
+                            </v-text-field>
+                          </template>
+                          <template v-slot:[`item.qty`]="{ item }">
+                            <v-currency-field
+                              v-model="item.qty"
+                              :decimal-length="0"
+                              class="text-right mt-0"
+                              @change="calcItemPrice(item)"
+                            ></v-currency-field>
+                          </template>
+                          <template v-slot:[`item.unitName`]="{ item }">
+                            <v-select
+                              v-model="item.unitId"
+                              :items="item.units"
+                              item-text="unitEquivalent"
+                              item-value="id"
+                              class="text-right mt-0"
+                              @change="unitItemChange(item)"
+                            ></v-select>
+                          </template>
+                          <template v-slot:[`item.disc`]="{ item }">
+                            <v-currency-field
+                              v-model="item.disc"
+                              class="text-right mt-0"
+                              @change="calcItemPrice(item)"
+                            ></v-currency-field>
+                          </template>
+                          <template v-slot:[`item.description`]="{ item }">
+                            <v-text-field
+                              v-model="item.description"
+                              class="mt-0"
+                            ></v-text-field>
                           </template>
                         </v-data-table>
                       </v-card>
@@ -487,8 +554,6 @@
                   <v-tabs v-model="tab.foot">
                     <v-tab key="notes">Notes</v-tab>
                     <v-tab key="detail">Detail</v-tab>
-                    <v-tab key="dp">Down Payment</v-tab>
-                    <v-tab key="fee">Fee</v-tab>
                     <v-tab key="user">User</v-tab>
                   </v-tabs>
 
@@ -516,59 +581,6 @@
                         label="Total Before Tax"
                         class="text-right mt-0"
                         readonly
-                      ></v-currency-field>
-                    </v-tab-item>
-
-                    <v-tab-item
-                      key="dp"
-                      transition="false"
-                    >
-                      <v-row no-gutters>
-                        <v-currency-field
-                          v-model="data.downPayment"
-                          :allow-negative="false"
-                          label="Down Payment"
-                          class="text-right mt-0"
-                          @change="calcDP"
-                        ></v-currency-field>
-                        <v-checkbox
-                          v-model="data.applyTax"
-                          label="Apply Tax"
-                          class="shrink ml-1"
-                          @change="calcDP"
-                        ></v-checkbox>
-                      </v-row>
-                      <v-currency-field
-                        v-model="data.dpTax"
-                        label="Tax"
-                        class="text-right mt-0"
-                        readonly
-                      ></v-currency-field>
-                      <v-currency-field
-                        v-model="data.dpTotal"
-                        label="Total DP"
-                        class="text-right mt-0"
-                        readonly
-                      ></v-currency-field>
-                    </v-tab-item>
-
-                    <v-tab-item
-                      key="fee"
-                      transition="false"
-                    >
-                      <v-currency-field
-                        v-model="data.shipmentFee"
-                        :allow-negative="false"
-                        label="Shipment Fee"
-                        class="text-right mt-0"
-                        @change="calcFee"
-                      ></v-currency-field>
-                      <v-currency-field
-                        v-model="data.handlingFee"
-                        :allow-negative="false"
-                        label="Handling Fee"
-                        class="text-right mt-0"
-                        @change="calcFee"
                       ></v-currency-field>
                     </v-tab-item>
 
@@ -651,15 +663,6 @@
 
                     <v-row no-gutters>
                       <v-currency-field
-                        v-model="data.fee"
-                        label="Fee"
-                        class="text-right mt-0"
-                        readonly
-                      ></v-currency-field>
-                    </v-row>
-
-                    <v-row no-gutters>
-                      <v-currency-field
                         v-model="data.grandTotal"
                         label="Grand Total"
                         class="text-right mt-0"
@@ -680,11 +683,10 @@
       ref="findCust"
       @dblclick:row="bindCustData"
     ></find-customer>
-    <crud-item
-      ref="crudItem"
-      caller="sls"
-      @save="saveItem"
-    ></crud-item>
+    <find-item
+      ref="findItem"
+      @dblclick:row="bindItemData"
+    ></find-item>
   </div>
 </template>
 
@@ -697,13 +699,13 @@ import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
 import FindCustomer from '@/components/dialog/FindCustomer'
-import CrudItem from '@/components/dialog/PoSoItem'
+import FindItem from '@/components/dialog/FindItem'
 
 export default {
   components: {
     Confirm,
     FindCustomer,
-    CrudItem
+    FindItem
   },
 
   data: () => ({
@@ -736,7 +738,7 @@ export default {
       data: [],
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Item', value: 'itemCode', divider: true, width: '100' },
+        { text: 'Item', value: 'itemCode', divider: true, width: '120' },
         { text: 'Name', value: 'itemName', divider: true, width: '300' },
         { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
         { text: 'Unit', value: 'unitName', divider: true, width: '90' },
@@ -744,15 +746,17 @@ export default {
         { text: 'Disc', value: 'disc', align: 'right', divider: true, width: '120' },
         { text: 'Nett Price', value: 'nettPrice', align: 'right', divider: true, width: '120' },
         { text: 'Total Price', value: 'total', align: 'right', divider: true, width: '120' },
-        { text: 'Description', value: 'description' }
+        { text: 'Description', value: 'description', width: '200' }
       ]
     },
     valid: false,
     salesmans: [],
     currencies: [],
+    customers: [],
     deliveries: [],
     tops: [],
     taxes: [],
+    items: [],
     data: {},
     rules: {
       date: [
@@ -768,7 +772,9 @@ export default {
     this.getList()
     this.getSalesmanLists()
     this.getCurrLists()
+    this.getCustomerLists()
     this.getTaxLists()
+    this.getItemLists()
   },
 
   mounted: function () {
@@ -819,18 +825,11 @@ export default {
         tax: this.taxes[0],
         notes: null,
         dpp: 0,
-        downPayment: 0,
-        applyTax: false,
-        dpTax: 0,
-        dpTotal: 0,
-        shipmentFee: 0,
-        handlingFee: 0,
         subTotal: 0,
         finalDiscPercent: 0,
         finalDisc: 0,
         taxPercent: 0,
         taxAmount: 0,
-        fee: 0,
         grandTotal: 0
       }
     },
@@ -854,6 +853,12 @@ export default {
           this.currencies = response.data
         })
     },
+    getCustomerLists() {
+      api.getAll(this.endpoint.general.customer)
+        .then(response => {
+          this.customers = response.data
+        })
+    },
     getTaxLists() {
       api.getAll(this.endpoint.general.tax, {
         params: { src: 'sls' }
@@ -861,6 +866,20 @@ export default {
         .then(response => {
           this.taxes = response.data
           this.data.tax = response.data[0]
+        })
+    },
+    getItemLists() {
+      api.getAll(this.endpoint.inventory.item.item)
+        .then(response => {
+          this.items = response.data
+        })
+    },
+    getUnitItemLists(item) {
+      api.getAll(this.endpoint.inventory.uom.conversion, {
+        params: { uomId: item.uomId }
+      })
+        .then(response => {
+          item.units = response.data
         })
     },
     add() {
@@ -912,22 +931,7 @@ export default {
       }
 
       // Get customer details
-      api.getAll(this.endpoint.general.customer, {
-        params: {
-          searchBy: 'code',
-          search: item.custCode
-        }
-      })
-        .then(response => {
-          const data = response.data[0]
-          this.data.custName = data.name
-          this.data.custAddr = data.address
-          this.data.custPhone = data.phone1
-          this.data.custFax = data.fax
-          this.data.custDeliveryAddr = data.address
-          this.data.custDeliveryPhone = data.phone1
-          this.data.custDeliveryFax = data.fax
-        })
+      this.custCodeChange()
 
       // Get item details
       api.getAll(`${this.endpoint.sales.order}/item`, {
@@ -936,9 +940,6 @@ export default {
         .then(response => {
           this.gridItem.data = response.data
         })
-
-      this.calcDP()
-      this.calcFee()
     },
     async remove(item) {
       if (
@@ -990,7 +991,34 @@ export default {
         this.$refs.btnFindCust.$el.focus()
         return
       }
-      this.$refs.crudItem.add()
+      
+      if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0].itemId ?? null)) {
+        const item = {
+          rowId: this.$uuid.v1(),
+          code: this.data.code,
+          itemId: null,
+          itemCode: null,
+          itemName: null,
+          qty: 0,
+          units: [],
+          uomId: null,
+          unitId: null,
+          unitName: null,
+          uomSellName: null,
+          unitPrice: 0,
+          itemSellPrice: 0,
+          disc: 0,
+          nettPrice: 0,
+          total: 0,
+          description: null,
+          state: 'A'
+        }
+        this.gridItem.data.push(item)
+
+        setTimeout(() => {
+          this.$refs.itemCode.focus()
+        }, 0)
+      }
     },
     async removeItem(item) {
       if (
@@ -1003,61 +1031,82 @@ export default {
 
         this.data.subTotal = _sumBy(this.gridItem.data, 'total')
         this.data.dpp = this.data.subTotal - this.data.finalDisc
-        this.calcPrice(false)
+        this.calcPrice()
       }
     },
-    saveItem(data) {
-      if (data.action === 'add') {
-        const item = {
-          rowId: this.$uuid.v1(),
-          code: this.data.code,
-          itemId: data.itemId,
-          itemCode: data.itemCode,
-          itemName: data.itemName,
-          qty: data.qty,
-          uomId: data.uomId,
-          unitId: data.unit.id,
-          unitName: data.unit.unitEquivalent,
-          uomSellName: data.uomSellName,
-          unitPrice: data.unitPrice,
-          itemSellPrice: data.itemSellPrice,
-          disc: data.disc,
-          nettPrice: data.nettPrice,
-          total: data.total,
-          description: data.description,
-          state: 'A'
-        }
-        this.gridItem.data.push(item)
-      } else {
-        const item = this.gridItem.data.find(i => i.rowId === data.rowId)
-        item.itemId = data.itemId
-        item.itemCode = data.itemCode
-        item.itemName = data.itemName
-        item.qty = data.qty
-        item.unitId = data.unit.id
-        item.unitName = data.unit.unitEquivalent
-        item.unitPrice = data.unitPrice
-        item.disc = data.disc
-        item.nettPrice = data.nettPrice
-        item.total = data.total
-        item.description = data.description
+    custCodeChange() {
+      const customer = this.customers.find(s => s.code === this.data.custCode)
+      if (customer) {
+        this.data.custName = customer.name
+        this.data.custAddr = customer.address
+        this.data.custPhone = customer.phone1
+        this.data.custFax = customer.fax
+        this.data.custDeliveryAddr = customer.address
+        this.data.custDeliveryPhone = customer.phone1
+        this.data.custDeliveryFax = customer.fax
+      }
+    },
+    itemCodeChange(item) {
+      const data_i = this.items.find(i => i.code.toLowerCase() === item.itemCode.toLowerCase())
+      if (data_i) {
+        item.itemId = data_i.id
+        item.itemName = data_i.name
+        item.qty = 1
+        item.uomId = data_i.uomId
+        item.unitId = data_i.uomSellId
+        item.unitName = data_i.uomSellName
+        item.uomSellName = data_i.uomSellName
+        item.unitPrice = data_i.sellPrice
+        item.itemSellPrice = data_i.sellPrice
+        item.disc = 0
+        item.nettPrice = data_i.sellPrice
+        item.total = data_i.sellPrice
+        item.description = null
         if (item.state !== 'A') {
           item.state = 'M'
         }
-        this.gridItem.data.concat(item)
+
+        // Get unit item lists
+        this.getUnitItemLists(item)
+
+        // Calc unit item lists
+        this.calcItemPrice(item)
       }
+    },
+    unitItemChange(item) {
+      item.uomConversion = 1
+
+      const conversion = item.units.find(u => u.id === item.unitId)
+      if (conversion.unitEquivalent !== item.unitName) {
+        this.calcUomConversion(item, conversion.unitEquivalent)
+      }
+      item.unitPrice = item.itemSellPrice / item.uomConversion
+
+      this.calcItemPrice(item)
+    },
+    calcUomConversion(item, unitToConvert) {
+      const data = item.units.find(u => u.unitToConvert === unitToConvert && u.unitToConvert !== u.unitEquivalent)
+      item.uomConversion *= data.conversion
+      
+      if (data.unitEquivalent !== item.uomSellName) {
+        this.calcUomConversion(item, data.unitEquivalent)
+      }
+    },
+    calcItemPrice(item) {
+      item.nettPrice = item.unitPrice - item.disc
+      item.total = item.qty * item.nettPrice
 
       this.data.subTotal = _sumBy(this.gridItem.data, 'total')
       this.data.dpp = this.data.subTotal - this.data.finalDisc
-      this.calcPrice(false)
+      this.calcPrice()
     },
     discPercentChange() {
       this.data.finalDisc = this.data.subTotal * (this.data.finalDiscPercent / 100)
-      this.calcPrice(false)
+      this.calcPrice()
     },
     discChange() {
       this.data.finalDiscPercent = this.data.finalDisc / this.data.subTotal * 100
-      this.calcPrice(false)
+      this.calcPrice()
     },
     calcTax() {
       if (this.data.includeTax) {
@@ -1070,37 +1119,19 @@ export default {
         this.data.dpp = (this.data.subTotal - this.data.finalDisc)
       }
     },
-    calcDP() {
-      if (this.data.applyTax) {
-        if (this.data.includeTax) {
-          this.data.dpTax = this.data.downPayment - (this.data.downPayment / (1 + (this.data.tax.rate / 100)))
-          this.data.dpTotal = this.data.downPayment
-        } else {
-          this.data.dpTax = this.data.downPayment * (this.data.tax.rate / 100)
-          this.data.dpTotal = this.data.downPayment + this.data.dpTax
-        }
-      } else {
-        this.data.dpTax = 0
-        this.data.dpTotal = this.data.downPayment
-      }
-    },
-    calcFee() {
-      this.data.fee = this.data.shipmentFee + this.data.handlingFee
-      this.calcPrice(false)
-    },
-    calcPrice(calcDP) {
-      if (calcDP) {
-        this.calcDP()
-      }
+    calcPrice() {
       this.calcTax()
       if (this.data.includeTax) {
-        this.data.grandTotal = this.data.subTotal - this.data.finalDisc + this.data.fee
+        this.data.grandTotal = this.data.subTotal - this.data.finalDisc
       } else {
-        this.data.grandTotal = this.data.subTotal - this.data.finalDisc + this.data.taxAmount + this.data.fee
+        this.data.grandTotal = this.data.subTotal - this.data.finalDisc + this.data.taxAmount
       }
     },
     showFindCustDialog() {
       this.$refs.findCust.open()
+    },
+    showFindItemDialog(item) {
+      this.$refs.findItem.open(item)
     },
     bindCustData(item) {
       this.data.custCode = item.code
@@ -1115,6 +1146,9 @@ export default {
       // this.data.billAddr = item.code
       // this.data.top = item.code
       // this.data.tax = item.code
+    },
+    bindItemData(rowItem) {
+      this.itemCodeChange(rowItem)
     }
   }
 }

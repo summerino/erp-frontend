@@ -33,7 +33,7 @@
               <v-card-text>
                 <v-row no-gutters>
                   <v-treeview
-                    v-model="search.category"
+                    v-model="data.category"
                     :items="categories"
                     :open.sync="initOpenTV"
                     activatable
@@ -53,8 +53,8 @@
                 <v-row no-gutters>
                   <v-col cols="12" md="4">
                     <v-select
-                      v-model="search.by"
-                      :items="search.items"
+                      v-model="data.by"
+                      :items="data.items"
                       label="Search By"
                       class="mt-0"
                     ></v-select>
@@ -62,7 +62,7 @@
                   <v-col cols="12" md="8" class="pl-md-1">
                     <v-text-field
                       ref="search"
-                      v-model="search.value"
+                      v-model="data.value"
                       label="Search Text"
                       class="mt-0"
                       @keyup.enter="doSearch"
@@ -97,18 +97,13 @@ import { mapState } from 'vuex'
 import api from '@/services/axios.service'
 
 export default {
-  props: {
-    caller: String
-  },
-  
   data() {
     return {
       dialog: false,
       valid: false,
       categories: [],
       initOpenTV: [],
-      units: [],
-      search: {
+      data: {
         category: [0],
         by: 'name',
         value: '',
@@ -119,7 +114,6 @@ export default {
         ]
       },
       rowItem: {},
-      data: {},
       grid: {
         height: 300,
         data: [],
@@ -148,9 +142,9 @@ export default {
   
   methods: {
     reset() {
-      this.search.category = [0]
-      this.search.by = 'name'
-      this.search.value = ''
+      this.data.category = [0]
+      this.data.by = 'name'
+      this.data.value = ''
       this.grid.data = []
     },
     open(rowItem) {
@@ -166,59 +160,26 @@ export default {
       api.getAll(`${this.endpoint.inventory.item.category}/hierarchy`)
         .then(response => {
           this.categories = response.data
-          this.search.category = [0]
+          this.data.category = [0]
           this.initOpenTV = [0]
         })
     },
     doSearch() {
       api.getAll(this.endpoint.inventory.item.item, {
         params: {
-          category: this.search.category,
-          searchBy: this.search.by,
-          search: this.search.value
+          category: this.data.category,
+          searchBy: this.data.by,
+          search: this.data.value
         }
       })
         .then(response => {
           this.grid.data = response.data
         })
     },
-    calcUomConversion(unitToConvert) {
-      const data = this.units.find(u => u.unitToConvert === unitToConvert && u.unitToConvert !== u.unitEquivalent)
-      this.data.uomConversion *= data.conversion
-      
-      if (this.caller === 'sls') {
-        if (data.unitEquivalent !== this.data.uomSellName) {
-          this.calcUomConversion(data.unitEquivalent)
-        }
-      } else if (data.unitEquivalent !== this.data.uomBuyName) {
-        this.calcUomConversion(data.unitEquivalent)
-      }
-    },
-    calcPrice() {
-      this.data.nettPrice = this.data.unitPrice - this.data.disc
-      this.data.total = this.data.qty * this.data.nettPrice
-    },
     dblclickRow(event, { item }) {
       this.rowItem.itemCode = item.code
       this.$emit('dblclick:row', this.rowItem, item)
       this.dialog = false
-    },
-    unitChange() {
-      this.data.uomConversion = 1
-
-      if (this.caller === 'sls') {
-        if (this.data.unit.unitEquivalent !== this.data.uomSellName) {
-          this.calcUomConversion(this.data.unit.unitEquivalent)
-        }
-        this.data.unitPrice = this.data.itemSellPrice / this.data.uomConversion
-      } else {
-        if (this.data.unit.unitEquivalent !== this.data.uomBuyName) {
-          this.calcUomConversion(this.data.unit.unitEquivalent)
-        }
-        this.data.unitPrice = this.data.itemBuyPrice / this.data.uomConversion
-      }
-
-      this.calcPrice()
     }
   }
 }

@@ -376,7 +376,8 @@
   "customers": [
     {
       "id": 1,
-      "code": "S00001",
+      "code": "C00001",
+      "initial": "JD",
       "name": "John Doe",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -389,7 +390,8 @@
     },
     {
       "id": 2,
-      "code": "S00002",
+      "code": "C00002",
+      "initial": "MJ",
       "name": "Mary Jane",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -402,7 +404,8 @@
     },
     {
       "id": 3,
-      "code": "S00003",
+      "code": "C00003",
+      "initial": "TS",
       "name": "Trevor Smith",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -415,7 +418,8 @@
     },
     {
       "id": 4,
-      "code": "S00004",
+      "code": "C00004",
+      "initial": "LC",
       "name": "Lauren Clark",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -428,7 +432,8 @@
     },
     {
       "id": 5,
-      "code": "S00005",
+      "code": "C00005",
+      "initial": "AJ",
       "name": "Andrew Johnson",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -441,7 +446,8 @@
     },
     {
       "id": 6,
-      "code": "S00006",
+      "code": "C00006",
+      "initial": "TK",
       "name": "Tyler Kendall",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -454,7 +460,8 @@
     },
     {
       "id": 7,
-      "code": "S00007",
+      "code": "C00007",
+      "initial": "JK",
       "name": "Jacob King",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -467,7 +474,8 @@
     },
     {
       "id": 8,
-      "code": "S00008",
+      "code": "C00008",
+      "initial": "AK",
       "name": "Amand Kliens",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -480,7 +488,8 @@
     },
     {
       "id": 9,
-      "code": "S00009",
+      "code": "C00009",
+      "initial": "GR",
       "name": "Gregg Ross",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -494,6 +503,7 @@
     {
       "id": 10,
       "code": "C00010",
+      "initial": "KE",
       "name": "Kara Evans",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -507,6 +517,7 @@
     {
       "id": 11,
       "code": "C00011",
+      "initial": "EC",
       "name": "Eve Crawford",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -520,6 +531,7 @@
     {
       "id": 12,
       "code": "C00012",
+      "initial": "ZR",
       "name": "Zak Reid",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -533,6 +545,7 @@
     {
       "id": 13,
       "code": "C00013",
+      "initial": "JG",
       "name": "Jack Graham",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -546,6 +559,7 @@
     {
       "id": 14,
       "code": "C00014",
+      "initial": "AB",
       "name": "Aura Brook",
       "address": "This Is My Address",
       "phone1": "021 - 999 999",
@@ -1789,7 +1803,7 @@
       "curr": "IDR",
       "rate": 1,
       "includeTax": 1,
-      "custCode": "S00002",
+      "custCode": "C00002",
       "deliveryDate": "2021-02-02",
       "billAddr": null,
       "top": null,
@@ -1837,6 +1851,30 @@
       "createdDate": "2021-02-15",
       "updatedDate": "2021-02-15",
       "id": 2
+    },
+    {
+      "code": "SO000003",
+      "orderDate": "2021-02-23",
+      "salesCode": "W00005",
+      "curr": "IDR",
+      "rate": 1,
+      "includeTax": 1,
+      "custCode": "C00013",
+      "deliveryDate": "2021-02-23",
+      "billAddr": null,
+      "top": null,
+      "tax": "001",
+      "applyTax": 0,
+      "notes": null,
+      "dpp": 306818.18,
+      "subTotal": 337500,
+      "finalDiscPercent": 0,
+      "finalDisc": 0,
+      "taxPercent": 10,
+      "taxAmount": 30681.82,
+      "grandTotal": 337500,
+      "updatedDate": "2021-02-23",
+      "id": 3
     }
   ],
   "salesOrder_D": [
@@ -1897,6 +1935,26 @@
       "total": 3350000,
       "description": null,
       "id": 3
+    },
+    {
+      "rowId": "9e283f60-75aa-11eb-a555-3b1905d5d426",
+      "code": "SO000003",
+      "lineNo": 1,
+      "itemId": 6,
+      "itemCode": "abq",
+      "itemName": "ATM BONBIN QUARTO",
+      "qty": 30,
+      "uomId": 3,
+      "unitId": 7,
+      "unitName": "DUS",
+      "uomSellName": "DUS",
+      "unitPrice": 11250,
+      "itemSellPrice": 45000,
+      "disc": 0,
+      "nettPrice": 11250,
+      "total": 337500,
+      "description": null,
+      "id": 4
     }
   ],
   "deliveryOrder_H": [
