@@ -498,26 +498,6 @@
                     </v-tab-item>
 
                     <v-tab-item
-                      key="fee"
-                      transition="false"
-                    >
-                      <v-currency-field
-                        v-model="data.shipmentFee"
-                        :allow-negative="false"
-                        label="Shipment Fee"
-                        class="text-right mt-0"
-                        @change="calcFee"
-                      ></v-currency-field>
-                      <v-currency-field
-                        v-model="data.handlingFee"
-                        :allow-negative="false"
-                        label="Handling Fee"
-                        class="text-right mt-0"
-                        @change="calcFee"
-                      ></v-currency-field>
-                    </v-tab-item>
-
-                    <v-tab-item
                       key="user"
                       transition="false"
                     >
@@ -596,15 +576,6 @@
 
                     <v-row no-gutters>
                       <v-currency-field
-                        v-model="data.fee"
-                        label="Fee"
-                        class="text-right mt-0"
-                        readonly
-                      ></v-currency-field>
-                    </v-row>
-
-                    <v-row no-gutters>
-                      <v-currency-field
                         v-model="data.grandTotal"
                         label="Grand Total"
                         class="text-right mt-0"
@@ -627,7 +598,6 @@
     ></find-supplier>
     <find-item
       ref="findItem"
-      caller="purc"
       @dblclick:row="bindItemData"
     ></find-item>
   </div>
@@ -761,14 +731,11 @@ export default {
         tax: this.taxes[0],
         notes: null,
         dpp: 0,
-        shipmentFee: 0,
-        handlingFee: 0,
         subTotal: 0,
         finalDiscPercent: 0,
         finalDisc: 0,
         taxPercent: 0,
         taxAmount: 0,
-        fee: 0,
         grandTotal: 0
       }
 
@@ -865,8 +832,6 @@ export default {
         downPayment: item.downPayment,
         applyTax: item.applyTax,
         dpTax: item.dpTax,
-        shipmentFee: item.shipmentFee,
-        handlingFee: item.handlingFee,
         subTotal: item.subTotal,
         finalDiscPercent: item.finalDiscPercent,
         finalDisc: item.finalDisc,
@@ -887,8 +852,6 @@ export default {
         .then(response => {
           this.gridItem.data = response.data
         })
-
-      this.calcFee()
     },
     async remove(item) {
       if (
@@ -978,51 +941,6 @@ export default {
         this.calcPrice()
       }
     },
-    saveItem(data) {
-      if (data.action === 'add') {
-        const item = {
-          rowId: this.$uuid.v1(),
-          code: this.data.code,
-          itemId: data.itemId,
-          itemCode: data.itemCode,
-          itemName: data.itemName,
-          qty: data.qty,
-          uomId: data.uomId,
-          unitId: data.unit.id,
-          unitName: data.unit.unitEquivalent,
-          uomBuyName: data.uomBuyName,
-          unitPrice: data.unitPrice,
-          itemBuyPrice: data.itemBuyPrice,
-          disc: data.disc,
-          nettPrice: data.nettPrice,
-          total: data.total,
-          description: data.description,
-          state: 'A'
-        }
-        this.gridItem.data.push(item)
-      } else {
-        const item = this.gridItem.data.find(i => i.rowId === data.rowId)
-        item.itemId = data.itemId
-        item.itemCode = data.itemCode
-        item.itemName = data.itemName
-        item.qty = data.qty
-        item.unitId = data.unit.id
-        item.unitName = data.unit.unitEquivalent
-        item.unitPrice = data.unitPrice
-        item.disc = data.disc
-        item.nettPrice = data.nettPrice
-        item.total = data.total
-        item.description = data.description
-        if (item.state !== 'A') {
-          item.state = 'M'
-        }
-        this.gridItem.data.concat(item)
-      }
-
-      this.data.subTotal = _sumBy(this.gridItem.data, 'total')
-      this.data.dpp = this.data.subTotal - this.data.finalDisc
-      this.calcPrice()
-    },
     supCodeChange() {
       const supplier = this.suppliers.find(s => s.code === this.data.supCode)
       if (supplier) {
@@ -1105,16 +1023,12 @@ export default {
         this.data.dpp = (this.data.subTotal - this.data.finalDisc)
       }
     },
-    calcFee() {
-      this.data.fee = this.data.shipmentFee + this.data.handlingFee
-      this.calcPrice()
-    },
     calcPrice() {
       this.calcTax()
       if (this.data.includeTax) {
-        this.data.grandTotal = this.data.subTotal - this.data.finalDisc + this.data.fee
+        this.data.grandTotal = this.data.subTotal - this.data.finalDisc
       } else {
-        this.data.grandTotal = this.data.subTotal - this.data.finalDisc + this.data.taxAmount + this.data.fee
+        this.data.grandTotal = this.data.subTotal - this.data.finalDisc + this.data.taxAmount
       }
     },
     showFindSupDialog() {
