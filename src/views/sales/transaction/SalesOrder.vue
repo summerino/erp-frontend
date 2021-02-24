@@ -1088,7 +1088,7 @@ export default {
       item.uomConversion = 1
 
       const conversion = item.units.find(u => u.id === item.unitId)
-      if (conversion.unitEquivalent !== item.unitName) {
+      if (conversion.unitEquivalent !== item.uomSellName) {
         this.calcUomConversion(item, conversion.unitEquivalent)
       }
       item.unitPrice = item.itemSellPrice / item.uomConversion

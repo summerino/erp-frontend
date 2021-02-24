@@ -667,11 +667,8 @@ export default {
     currencies: [],
     suppliers: [],
     warehouses: [],
-    deliveries:[],
-    tops: [],
     taxes: [],
     items: [],
-    units: [],
     data: {},
     rules: {
       date: [
@@ -992,7 +989,7 @@ export default {
       item.uomConversion = 1
 
       const conversion = item.units.find(u => u.id === item.unitId)
-      if (conversion.unitEquivalent !== item.unitName) {
+      if (conversion.unitEquivalent !== item.uomBuyName) {
         this.calcUomConversion(item, conversion.unitEquivalent)
       }
       item.unitPrice = item.itemBuyPrice / item.uomConversion
