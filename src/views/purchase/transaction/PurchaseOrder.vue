@@ -129,6 +129,7 @@
                   <v-card-text>
                     <v-row no-gutters>
                       <v-text-field
+                        ref="code"
                         v-model="data.code"
                         label="Order Code"
                         class="mt-0"
@@ -805,6 +806,11 @@ export default {
       this.dialog.add = true
       this.reset()
       this.data.action = 'add'
+
+      // Set focus to order code field
+      setTimeout(() => {
+        this.$refs.code.focus()
+      }, 0)
     },
     edit(item) {
       this.dialog.add = true
@@ -852,6 +858,11 @@ export default {
         .then(response => {
           this.gridItem.data = response.data
         })
+
+      // Set focus to order code field
+      setTimeout(() => {
+        this.$refs.code.focus()
+      }, 0)
     },
     async remove(item) {
       if (
