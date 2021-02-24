@@ -28,11 +28,13 @@ mock.onGet(`/api/${endpoint.purchase.receive}`).reply(async (config) => {
 mock.onGet(`/api/${endpoint.purchase.receive}/item`).reply(async (config) => {
   const { code } = config.params
   
-  const resp_d = await axiosJsonServer.get(`/purchaseReceive_D?code=${code}`)
+  const resp_d = await axiosJsonServer.get(`/purchaseReceive_D?code=${code}&_sort=lineNo`)
+  const resp_uc = await axiosJsonServer.get(`/uomConversions`)
 
   var results = []
   for (var i = 0; i < resp_d.data.length; i++) {
     const result = resp_d.data[i]
+    result.unitName = resp_uc.data.find(uc => uc.id == result.unitId).unitEquivalent
     result.typeName = result.typeId == 0 ? 'Normal' : 'Bonus'
     
     results.push(result)
@@ -54,11 +56,17 @@ mock.onPost(`/api/${endpoint.purchase.receive}`).reply(async (request) => {
   // Insert purchase receive header
   axiosJsonServer.post('/purchaseReceive_H', {
     code: code,
+    refNo: data.refNo,
     receiveDate: data.receiveDate,
-    supDocNo: data.supDocNo,
+    poCode: data.poCode,
     supCode: data.supCode,
     receiveBy: data.receiveBy,
     approveBy: data.approveBy,
+    dpp: data.dpp,
+    subTotal: data.subTotal,
+    finalDisc: data.finalDisc,
+    taxAmount: data.taxAmount,
+    grandTotal: data.grandTotal,
     createdBy: data.createdBy,
     createdDate: format(new Date(), 'yyyy-MM-dd'),
     updatedBy: data.updatedBy,
@@ -80,6 +88,11 @@ mock.onPost(`/api/${endpoint.purchase.receive}`).reply(async (request) => {
       uomId: data.itemDetails[i].uomId,
       unitId: data.itemDetails[i].unitId,
       unitName: data.itemDetails[i].unitName,
+      unitPrice: data.itemDetails[i].unitPrice,
+      itemBuyPrice: data.itemDetails[i].itemBuyPrice,
+      disc: data.itemDetails[i].disc,
+      nettPrice: data.itemDetails[i].nettPrice,
+      total: data.itemDetails[i].total,
       warehouseCode: data.itemDetails[i].warehouseCode,
       warehouseInitial: data.itemDetails[i].warehouseInitial,
       warehouseName: data.itemDetails[i].warehouseName,
@@ -100,11 +113,17 @@ mock.onPut(/\/api\/purchase-receive\/./).reply(async (config) => {
   // Update purchase receive header
   axiosJsonServer.put(`/purchaseReceive_H/${id}`, {
     code: data.code,
+    refNo: data.refNo,
     receiveDate: data.receiveDate,
-    supDocNo: data.supDocNo,
+    poCode: data.poCode,
     supCode: data.supCode,
     receiveBy: data.receiveBy,
     approveBy: data.approveBy,
+    dpp: data.dpp,
+    subTotal: data.subTotal,
+    finalDisc: data.finalDisc,
+    taxAmount: data.taxAmount,
+    grandTotal: data.grandTotal,
     updatedBy: data.updatedBy,
     updatedDate: format(new Date(), 'yyyy-MM-dd')
   })
@@ -133,6 +152,11 @@ mock.onPut(/\/api\/purchase-receive\/./).reply(async (config) => {
         uomId: data.itemDetails[i].uomId,
         unitId: data.itemDetails[i].unitId,
         unitName: data.itemDetails[i].unitName,
+        unitPrice: data.itemDetails[i].unitPrice,
+        itemBuyPrice: data.itemDetails[i].itemBuyPrice,
+        disc: data.itemDetails[i].disc,
+        nettPrice: data.itemDetails[i].nettPrice,
+        total: data.itemDetails[i].total,
         warehouseCode: data.itemDetails[i].warehouseCode,
         warehouseInitial: data.itemDetails[i].warehouseInitial,
         warehouseName: data.itemDetails[i].warehouseName,
@@ -152,6 +176,11 @@ mock.onPut(/\/api\/purchase-receive\/./).reply(async (config) => {
         uomId: data.itemDetails[i].uomId,
         unitId: data.itemDetails[i].unitId,
         unitName: data.itemDetails[i].unitName,
+        unitPrice: data.itemDetails[i].unitPrice,
+        itemBuyPrice: data.itemDetails[i].itemBuyPrice,
+        disc: data.itemDetails[i].disc,
+        nettPrice: data.itemDetails[i].nettPrice,
+        total: data.itemDetails[i].total,
         warehouseCode: data.itemDetails[i].warehouseCode,
         warehouseInitial: data.itemDetails[i].warehouseInitial,
         warehouseName: data.itemDetails[i].warehouseName,

@@ -16,19 +16,26 @@
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" md="6" class="text-right">
-            <v-btn
-              v-shortkey="['ctrl', 'alt', 'n']"
-              color="green darken-1"
-              class="font-weight-regular"
-              dark
-              small
-              tile
-              @click="add"
-              @shortkey="add"
-            >
-              <v-icon left>mdi-plus</v-icon>
-              New
-            </v-btn>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'n']"
+                  color="green darken-1"
+                  class="font-weight-regular"
+                  dark
+                  small
+                  tile
+                  @click="add"
+                  @shortkey="add"
+                >
+                  <v-icon left>mdi-plus</v-icon>
+                  New
+                </v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Alt + N)</span>
+            </v-tooltip>
           </v-col>
         </v-row>
       </v-card-title>
@@ -54,7 +61,7 @@
                 <v-icon small>mdi-pencil</v-icon>
               </v-btn>
             </template>
-            <span>Edit</span>
+            <span class="text-caption">Edit</span>
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -69,7 +76,7 @@
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <span>Delete</span>
+            <span class="text-caption">Delete</span>
           </v-tooltip>
         </template>
       </v-data-table>
@@ -94,13 +101,20 @@
           <v-toolbar-title>Receive Item</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
-            <v-btn
-              v-shortkey="['ctrl', 's']"
-              dark
-              text
-              @click="save"
-              @shortkey="save"
-            >Save</v-btn>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 's']"
+                  dark
+                  text
+                  @click="save"
+                  @shortkey="save"
+                >Save</v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + S)</span>
+            </v-tooltip>
           </v-toolbar-items>
         </v-toolbar>
 
@@ -113,12 +127,20 @@
 
                   <v-card-text>
                     <v-row no-gutters>
-                      <v-col cols="12">
+                      <v-col cols="12" md="6">
                         <v-text-field
+                          ref="code"
                           v-model="data.code"
                           label="Receive Code"
                           class="mt-0"
                           readonly
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" md="6" class="pl-1">
+                        <v-text-field
+                          v-model="data.refNo"
+                          label="Ref. No."
+                          class="mt-0"
                         ></v-text-field>
                       </v-col>
                     </v-row>
@@ -157,11 +179,26 @@
                     <v-row no-gutters>
                       <v-col cols="12">
                         <v-text-field
-                          v-model="data.supDocNo"
-                          label="Supplier Doc. No."
+                          v-model="data.poCode"
+                          label="PO Code"
                           class="mt-0"
-                          readonly
-                        ></v-text-field>
+                          required
+                          @change="poCodeChange"
+                        >
+                          <template v-slot:append>
+                              <v-btn
+                                ref="btnFindPO"
+                                color="primary"
+                                icon
+                                small
+                                @click="showFindPODialog"
+                              >
+                                <v-icon>
+                                  mdi-shopping-search
+                                </v-icon>
+                              </v-btn>
+                            </template>
+                        </v-text-field>
                       </v-col>
                     </v-row>
                   </v-card-text>
@@ -198,20 +235,7 @@
                             class="mt-0"
                             readonly
                             required
-                          >
-                            <template v-slot:append-outer>
-                              <v-btn
-                                ref="btnFindSup"
-                                icon
-                                color="primary"
-                                @click="showFindSupDialog"
-                              >
-                                <v-icon>
-                                  mdi-account-search
-                                </v-icon>
-                              </v-btn>
-                            </template>
-                          </v-text-field>
+                          ></v-text-field>
                         </v-col>
                       </v-row>
 
@@ -245,7 +269,7 @@
                         </v-col>
                       </v-row>
                     </v-tab-item>
-                    
+
                     <v-tab-item
                       key="user"
                       transition="false"
@@ -268,7 +292,7 @@
                           ></v-text-field>
                         </v-col>
                       </v-row>
-                      
+
                       <v-row no-gutters>
                         <v-col cols="12">
                           <v-combobox
@@ -281,7 +305,7 @@
                           ></v-combobox>
                         </v-col>
                       </v-row>
-                      
+
                       <v-row no-gutters>
                         <v-col cols="12">
                           <v-combobox
@@ -314,15 +338,24 @@
                       <v-card>
                         <v-app-bar dense flat>
                           <v-spacer></v-spacer>
-                          <v-btn
-                            class="blue--text"
-                            small
-                            tile
-                            @click="addItem"
-                          >
-                            <v-icon left>mdi-plus</v-icon>
-                            Add
-                          </v-btn>
+                          <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                v-bind="attrs"
+                                v-on="on"
+                                v-shortkey="['ctrl', 'i']"
+                                class="blue--text"
+                                small
+                                tile
+                                @click="addItem"
+                                @shortkey="addItem"
+                              >
+                                <v-icon left>mdi-plus</v-icon>
+                                Add
+                              </v-btn>
+                            </template>
+                            <span class="text-caption">(Ctrl + I)</span>
+                          </v-tooltip>
                         </v-app-bar>
 
                         <v-data-table
@@ -331,6 +364,7 @@
                           :items-per-page="-1"
                           height="300"
                           class="elevation-1"
+                          fixed-header
                           hide-default-footer
                         >
                           <template v-slot:[`item.action`]="{ item }">
@@ -339,34 +373,59 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
-                                  icon
-                                  small
-                                  color="orange lighten-1"
-                                  @click="$refs.receiveItem.edit(item)"
-                                >
-                                  <v-icon small>mdi-pencil</v-icon>
-                                </v-btn>
-                              </template>
-                              <span>Edit</span>
-                            </v-tooltip>
-                            <v-tooltip bottom>
-                              <template v-slot:activator="{ on, attrs }">
-                                <v-btn
-                                  v-bind="attrs"
-                                  v-on="on"
-                                  icon
-                                  small
+                                  :disabled="item.typeId == 0"
                                   color="red"
+                                  icon
+                                  small
                                   @click="removeItem(item)"
                                 >
                                   <v-icon small>mdi-close-thick</v-icon>
                                 </v-btn>
                               </template>
-                              <span>Delete</span>
+                              <span class="text-caption">Delete</span>
                             </v-tooltip>
                           </template>
-                          <template v-slot:[`item.warehouse`]="{ item }">
-                            {{ item.warehouseInitial }} - {{ item.warehouseName }}
+                          <template v-slot:[`item.itemCode`]="{ item }">
+                            <v-text-field
+                              ref="itemCode"
+                              v-model="item.itemCode"
+                              :readonly="item.typeId == 0"
+                              class="mt-0"
+                              required
+                              @change="itemCodeChange(item)"
+                            >
+                              <template v-slot:append>
+                                <v-btn
+                                  :disabled="item.typeId == 0"
+                                  color="primary"
+                                  icon
+                                  x-small
+                                  @click="showFindItemDialog(item)"
+                                >
+                                  <v-icon>
+                                    mdi-settings-helper
+                                  </v-icon>
+                                </v-btn>
+                              </template>
+                            </v-text-field>
+                          </template>
+                          <template v-slot:[`item.qty`]="{ item }">
+                            <v-currency-field
+                              v-model="item.qty"
+                              :decimal-length="0"
+                              class="text-right mt-0"
+                              @change="calcItemPrice(item)"
+                            ></v-currency-field>
+                          </template>
+                          <template v-slot:[`item.warehouseInitial`]="{ item }">
+                            <v-autocomplete
+                              v-model="item.warehouseCode"
+                              :items="warehouses"
+                              item-text="initial"
+                              item-value="code"
+                              class="text-right mt-0"
+                              required
+                            ></v-autocomplete>
                           </template>
                         </v-data-table>
                       </v-card>
@@ -388,35 +447,27 @@
     </v-dialog>
 
     <confirm ref="confirm"></confirm>
-    <find-supplier
-      ref="findSup"
-      @dblclick:row="bindSupData"
-    ></find-supplier>
-    <receive-item
-      ref="receiveItem"
-      :sup-code="data.supCode"
-      :warehouses="warehouses"
-      caller="purc"
-      @save="saveItem"
-    ></receive-item>
+    <find-purchase-order
+      ref="findPO"
+      @dblclick:row="bindPOData"
+    ></find-purchase-order>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
+import { sumBy as _sumBy } from 'lodash'
 
 import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
-import FindSupplier from '@/components/dialog/FindSupplier'
-import ReceiveItem from '@/components/dialog/ReceiveItem'
+import FindPurchaseOrder from '@/components/dialog/FindPurchaseOrder'
 
 export default {
   components: {
     Confirm,
-    FindSupplier,
-    ReceiveItem
+    FindPurchaseOrder
   },
 
   data: () => ({
@@ -438,7 +489,7 @@ export default {
         { text: 'Code', value: 'code', divider: true, width: '100' },
         { text: 'Date', value: 'receiveDate', align: 'right', divider: true, width: '120' },
         { text: 'Supplier', value: 'supName', divider: true, width: '200' },
-        { text: 'Supplier Doc. No.', value: 'supDocNo', divider: true, width: '150' }
+        { text: 'Ref. No.', value: 'refNo', divider: true, width: '150' }
       ]
     },
     gridItem: {
@@ -446,26 +497,24 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'Item', value: 'itemCode', divider: true, width: '100' },
-        { text: 'Name', value: 'itemName', divider: true, width: '300' },
+        { text: 'Name', value: 'itemName', divider: true, width: '280' },
         { text: 'Order Qty', value: 'orderQty', align: 'right', divider: true, width: '90' },
         { text: 'Outstanding', value: 'outstandingQty', align: 'right', divider: true, width: '90' },
         { text: 'Received Qty', value: 'qty', align: 'right', divider: true, width: '90' },
         { text: 'Unit', value: 'unitName', divider: true, width: '90' },
-        { text: 'Location', value: 'warehouse', width: '250' },
+        { text: 'Location', value: 'warehouseInitial', width: '180' },
         { text: 'Type', value: 'typeName', width: '90' }
       ]
     },
     valid: false,
     workers: [],
     currencies: [],
+    items: [],
     warehouses: [],
-    deliveries:[],
-    tops: [],
-    taxes: [],
     data: {},
     rules: {
       date: [
-        (v) => !!v || 'Order Date is required'
+        (v) => !!v || 'Receive Date is required'
       ],
       notes: [
         (v) => (v || '').length <= 2000 || 'Notes must be less than 2000 characters'
@@ -476,6 +525,7 @@ export default {
   created: function () {
     this.getList()
     this.getWorkerLists()
+    this.getItemLists()
     this.getWarehouseLists()
     this.reset()
   },
@@ -505,8 +555,9 @@ export default {
       this.data = {
         action: '',
         code: null,
+        refNo: null,
         receiveDate: format(new Date(), 'yyyy-MM-dd'),
-        supDocNo: null,
+        poCode: null,
         supCode: null,
         supName: null,
         supAddr: null,
@@ -514,6 +565,11 @@ export default {
         supFax: null,
         receiveBy: null,
         approveBy: null,
+        dpp: 0,
+        subTotal: 0,
+        finalDisc: 0,
+        taxAmount: 0,
+        grandTotal: 0,
         createdBy: null,
         createdDate: null,
         updatedBy: null,
@@ -534,6 +590,12 @@ export default {
           this.workers = response.data
         })
     },
+    getItemLists() {
+      api.getAll(this.endpoint.inventory.item.item)
+        .then(response => {
+          this.items = response.data
+        })
+    },
     getWarehouseLists() {
       api.getAll(this.endpoint.inventory.warehouse)
         .then(response => {
@@ -545,6 +607,11 @@ export default {
       this.dialog.add = true
       this.reset()
       this.data.action = 'add'
+
+      // Set focus to receive code field
+      setTimeout(() => {
+        this.$refs.code.focus()
+      }, 0)
     },
     edit(item) {
       this.dialog.add = true
@@ -553,8 +620,9 @@ export default {
       this.data = {
         action: 'edit',
         code: item.code,
+        refNo: item.refNo,
         receiveDate: format(parseISO(item.receiveDate), 'yyyy-MM-dd'),
-        supDocNo: item.supDocNo,
+        poCode: item.poCode,
         supCode: item.supCode,
         // supName: null,
         // supAddr: null,
@@ -562,6 +630,11 @@ export default {
         // supFax: null,
         receiveBy: item.receiveBy,
         approveBy: item.approveBy,
+        dpp: item.dpp,
+        subTotal: item.subTotal,
+        finalDisc: item.finalDisc,
+        taxAmount: item.taxAmount,
+        grandTotal: item.grandTotal,
         createdBy: item.createdBy,
         createdDate: item.createdDate,
         updatedBy: item.updatedBy,
@@ -590,6 +663,11 @@ export default {
         .then(response => {
           this.gridItem.data = response.data
         })
+
+      // Set focus to receive code field
+      setTimeout(() => {
+        this.$refs.code.focus()
+      }, 0)
     },
     async remove(item) {
       if (
@@ -608,7 +686,7 @@ export default {
     },
     save() {
       if (!this.dialog.add) return
-  
+
       const data = this.data
       data.itemDetails = this.gridItem.data
 
@@ -633,12 +711,40 @@ export default {
       }
     },
     addItem() {
-      if (!this.data.supCode) {
-        this.$store.dispatch('app/showInfo', 'Please choose supplier first')
-        this.$refs.btnFindSup.$el.focus()
-        return
+      // if (!this.data.supCode) {
+      //   this.$store.dispatch('app/showInfo', 'Please choose supplier first')
+      //   return
+      // }
+
+      if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0].itemId ?? null)) {
+        const item = {
+          rowId: this.$uuid.v1(),
+          code: this.data.code,
+          itemId: null,
+          itemCode: null,
+          itemName: null,
+          orderQty: 0,
+          outstandingQty: 0,
+          qty: 1,
+          uomId: null,
+          unitId: null,
+          unitName: null,
+          unitPrice: 0,
+          itemBuyPrice: 0,
+          disc: 0,
+          nettPrice: 0,
+          total: 0,
+          warehouseCode: null,
+          typeId: 1,
+          typeName: 'Bonus',
+          state: 'A'
+        }
+        this.gridItem.data.push(item)
+
+        setTimeout(() => {
+          this.$refs.itemCode.focus()
+        }, 0)
       }
-      this.$refs.receiveItem.add()
     },
     async removeItem(item) {
       if (
@@ -696,18 +802,88 @@ export default {
         this.gridItem.data.concat(item)
       }
     },
-    showFindSupDialog() {
-      this.$refs.findSup.open()
+    poCodeChange() {
+      api.getAll(`${this.endpoint.purchase.order}/incomplete`, {
+        params: {
+          searchBy: 'pocode_eq',
+          search: this.data.poCode
+        }
+      })
+        .then(response => {
+          this.bindPOData(response.data[0] ?? null)
+        })
     },
-    bindSupData(item) {
-      this.data.supCode = item.code
-      this.data.supName = item.name
-      this.data.supAddr = item.address
-      this.data.supPhone = item.phone1
-      this.data.supFax = item.fax
-      // this.data.billAddr = item.code
-      // this.data.top = item.code
-      // this.data.tax = item.code
+    itemCodeChange(item) {
+      const data_i = this.items.find(i => i.code.toLowerCase() === item.itemCode.toLowerCase())
+      if (data_i) {
+        item.itemId = data_i.id
+        item.itemName = data_i.name
+        item.orderQty = 0
+        item.outstandingQty = 0
+        item.qty = 1
+        item.uomId = data_i.uomId
+        item.unitId = data_i.uomBuyId
+        item.unitName = data_i.uomBuyName
+        item.uomBuyName = data_i.uomBuyName
+        item.unitPrice = data_i.buyPrice
+        item.itemBuyPrice = data_i.buyPrice
+        item.disc = 0
+        item.nettPrice = data_i.buyPrice
+        item.total = data_i.buyPrice
+        if (item.state !== 'A') {
+          item.state = 'M'
+        }
+
+        // Calc unit item lists
+        this.calcItemPrice(item)
+      }
+    },
+    calcItemPrice(item) {
+      item.nettPrice = item.unitPrice - item.disc
+      item.total = item.qty * item.nettPrice
+
+      this.data.subTotal = _sumBy(this.gridItem.data, 'total')
+      // this.data.dpp = this.data.subTotal - this.data.finalDisc
+      this.calcPrice()
+    },
+    calcPrice() {
+      // this.calcTax()
+      // if (this.data.includeTax) {
+      //   this.data.grandTotal = this.data.subTotal - this.data.finalDisc
+      // } else {
+      this.data.grandTotal = this.data.subTotal - this.data.finalDisc + this.data.taxAmount
+      // }
+    },
+    showFindPODialog() {
+      this.$refs.findPO.open()
+    },
+    showFindItemDialog(item) {
+      this.$refs.findItem.open(item)
+    },
+    bindPOData(item) {
+      if (item) {
+        this.data.poCode = item.code
+        this.data.supCode = item.supCode
+        this.data.supName = item.supName
+        this.data.supAddr = item.supAddr
+        this.data.supPhone = item.supPhone
+        this.data.supFax = item.supFax
+
+        // Get purchase order item details
+        api.getAll(`${this.endpoint.purchase.order}/outstanding-item`, {
+          params: { code: item.code }
+        })
+          .then(response => {
+            this.gridItem.data = response.data
+          })
+      } else {
+        this.data.supCode = null
+        this.data.supName = null
+        this.data.supAddr = null
+        this.data.supPhone = null
+        this.data.supFax = null
+        this.gridItem.data = []
+      }
     }
   }
 }

@@ -4,14 +4,24 @@ import axiosJsonServer from '@/axios.jsonserver'
 
 mock.onGet(`/api/${endpoint.general.supplier}`).reply(async (config) => {
   var searchBy = ''
+  var searchOp = ''
   var search = ''
   if (config.params) {
-    var { searchBy, search } = config.params
+    var { searchBy, searchOp, search } = config.params
   }
 
+  var flt_op = ''
+  switch (searchOp) {
+    case 'neq':
+      flt_op = '_ne'
+      break;
+    case 'contains':
+      flt_op = '_like'
+      break;
+  }
   const param = (searchBy.toLowerCase() == 'code')
-    ? `code_like=${search}&_sort=code`
-    : `name_like=${search}&_sort=name`
+    ? `code${flt_op}=${search}&_sort=code`
+    : `name${flt_op}=${search}&_sort=name`
     
   const response = await axiosJsonServer.get(`/suppliers?${param}`)
 

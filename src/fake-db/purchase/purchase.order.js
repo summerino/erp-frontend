@@ -8,7 +8,7 @@ import axiosJsonServer from '@/axios.jsonserver'
 mock.onGet(`/api/${endpoint.purchase.order}`).reply(async (config) => {
   var search = null
   if (config.params) {
-    var { search } = config.params
+    var { test, search } = config.params
   }
   search = search || ''
   
@@ -46,63 +46,130 @@ mock.onGet(`/api/${endpoint.purchase.order}/item`).reply(async (config) => {
   return [200, results]
 })
 
+// mock.onGet(`/api/${endpoint.purchase.order}/incomplete`).reply(async (config) => {
+//   var supCode = ''
+//   var searchBy = ''
+//   var search = ''
+//   var results = []
+
+//   if (config.params) {
+//     var { supCode, searchBy, search } = config.params
+//   }
+//   searchBy = searchBy.toLowerCase()
+//   search = search.toLowerCase()
+  
+//   const resp_h = await axiosJsonServer.get(`/purchaseOrder_H?supCode=${supCode}`)
+  
+//   let result_h = resp_h.data.filter(h => {
+//     if (searchBy == 'pocode') return h.code.toLowerCase().includes(search)
+//     else return h
+//   })
+
+//   if (result_h.length > 0) {
+//     var params = ''
+//     for (var i = 0; i < result_h.length; i++) {
+//       params += `&code=${result_h[i].code}`
+//     }
+//     params = `?${params.substring(1)}`
+
+//     const resp_d = await axiosJsonServer.get(`/purchaseOrder_D${params}`)
+
+//     const result_d = resp_d.data.filter(d => {
+//       if (searchBy == 'itemcode') return d.itemCode.toLowerCase().includes(search)
+//       else return d.itemName.toLowerCase().includes(search)
+//     })
+
+//     const resp_w = await axiosJsonServer.get(`/warehouses`)
+//     const result_w = resp_w.data
+
+//     for (var j = 0; j < result_d.length; j++) {
+//       const result = {
+//         poCode: result_d[j].code,
+//         poDate: result_h.find(x => x.code == result_d[j].code).orderDate,
+//         warehouseCode: result_h.find(x => x.code == result_d[j].code).warehouseCode,
+//         itemCode: result_d[j].itemCode,
+//         itemName: result_d[j].itemName,
+//         qty: result_d[j].qty,
+//         uomId: result_d[j].uomId,
+//         unitId: result_d[j].unitId,
+//         unitName: result_d[j].unitName,
+//         uomBuyName: result_d[j].uomBuyName,
+//         itemBuyPrice: result_d[j].itemBuyPrice,
+//         disc: result_d[j].disc,
+//         nettPrice: result_d[j].nettPrice,
+//         total: result_d[j].total
+//       }
+//       result.warehouseInitial = result_w.find(x => x.code == result.warehouseCode).initial
+//       result.warehouseName = result_w.find(x => x.code == result.warehouseCode).name
+//       results.push(result)
+//     }
+//   }
+  
+//   return [200, results]
+// })
+
 mock.onGet(`/api/${endpoint.purchase.order}/incomplete`).reply(async (config) => {
-  var supCode = ''
   var searchBy = ''
   var search = ''
   var results = []
 
   if (config.params) {
-    var { supCode, searchBy, search } = config.params
+    var { searchBy, search } = config.params
   }
   searchBy = searchBy.toLowerCase()
   search = search.toLowerCase()
   
-  const resp_h = await axiosJsonServer.get(`/purchaseOrder_H?supCode=${supCode}`)
+  const resp_h = await axiosJsonServer.get(`/purchaseOrder_H`)
   
   let result_h = resp_h.data.filter(h => {
-    if (searchBy == 'pocode') return h.code.toLowerCase().includes(search)
+    if (searchBy == 'pocode_eq') return h.code.toLowerCase() == search
+    else if (searchBy == 'pocode_contains') return h.code.toLowerCase().includes(search)
+    else if (searchBy == 'curr') return h.curr.toLowerCase().includes(search)
     else return h
   })
 
   if (result_h.length > 0) {
-    var params = ''
+    const resp_w = await axiosJsonServer.get(`/workers`)
+    const resp_s = await axiosJsonServer.get(`/suppliers`)
+
     for (var i = 0; i < result_h.length; i++) {
-      params += `&code=${result_h[i].code}`
-    }
-    params = `?${params.substring(1)}`
+      const result = result_h[i]
+      result.workerName = resp_w.data.find(w => w.code == result_h[i].workerCode).name
 
-    const resp_d = await axiosJsonServer.get(`/purchaseOrder_D${params}`)
+      const sup = resp_s.data.find(s => s.code == result_h[i].supCode)
+      result.supName = sup.name
+      result.supAddr = sup.address
+      result.supPhone = sup.phone1
+      result.supFax = sup.fax
 
-    const result_d = resp_d.data.filter(d => {
-      if (searchBy == 'itemcode') return d.itemCode.toLowerCase().includes(search)
-      else return d.itemName.toLowerCase().includes(search)
-    })
-
-    const resp_w = await axiosJsonServer.get(`/warehouses`)
-    const result_w = resp_w.data
-
-    for (var j = 0; j < result_d.length; j++) {
-      const result = {
-        poCode: result_d[j].code,
-        poDate: result_h.find(x => x.code == result_d[j].code).orderDate,
-        warehouseCode: result_h.find(x => x.code == result_d[j].code).warehouseCode,
-        itemCode: result_d[j].itemCode,
-        itemName: result_d[j].itemName,
-        qty: result_d[j].qty,
-        uomId: result_d[j].uomId,
-        unitId: result_d[j].unitId,
-        unitName: result_d[j].unitName,
-        uomBuyName: result_d[j].uomBuyName,
-        itemBuyPrice: result_d[j].itemBuyPrice,
-        disc: result_d[j].disc,
-        nettPrice: result_d[j].nettPrice,
-        total: result_d[j].total
-      }
-      result.warehouseInitial = result_w.find(x => x.code == result.warehouseCode).initial
-      result.warehouseName = result_w.find(x => x.code == result.warehouseCode).name
       results.push(result)
     }
+    
+    results = results.filter(r => {
+      if (searchBy == 'supname') return r.supName.toLowerCase().includes(search)
+      else return r
+    })
+  }
+
+  return [200, results]
+})
+
+mock.onGet(`/api/${endpoint.purchase.order}/outstanding-item`).reply(async (config) => {
+  const { code } = config.params
+  
+  const resp_h = await axiosJsonServer.get(`/purchaseOrder_H?code=${code}`)
+  const response = await axiosJsonServer.get(`/purchaseOrder_D?code=${code}`)
+
+  var results = []
+  for (var i = 0; i < response.data.length; i++) {
+    const result = response.data[i]
+    result.orderQty = result.qty
+    result.outstandingQty = result.qty
+    result.qty = result.qty
+    result.warehouseCode = resp_h.data[0].warehouseCode
+    result.typeId = 0
+    result.typeName = 'Normal'
+    results.push(result)
   }
   
   return [200, results]
