@@ -256,6 +256,7 @@
                             v-model="data.supPhone"
                             label="Phone"
                             class="mt-0"
+                            readonly
                           ></v-text-field>
                         </v-col>
 
