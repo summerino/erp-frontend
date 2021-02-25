@@ -452,6 +452,10 @@
       ref="findPO"
       @dblclick:row="bindPOData"
     ></find-purchase-order>
+    <find-item
+      ref="findItem"
+      @dblclick:row="bindItemData"
+    ></find-item>
   </div>
 </template>
 
@@ -464,11 +468,13 @@ import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
 import FindPurchaseOrder from '@/components/dialog/FindPurchaseOrder'
+import FindItem from '@/components/dialog/FindItem'
 
 export default {
   components: {
     Confirm,
-    FindPurchaseOrder
+    FindPurchaseOrder,
+    FindItem
   },
 
   data: () => ({
@@ -840,6 +846,9 @@ export default {
         this.data.supFax = null
         this.gridItem.data = []
       }
+    },
+    bindItemData(rowItem) {
+      this.itemCodeChange(rowItem)
     }
   }
 }
