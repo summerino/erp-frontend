@@ -16,19 +16,26 @@
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" md="6" class="text-right">
-            <v-btn
-              v-shortkey="['ctrl', 'alt', 'n']"
-              color="green darken-1"
-              class="font-weight-regular"
-              dark
-              small
-              tile
-              @click="add"
-              @shortkey="add"
-            >
-              <v-icon left>mdi-plus</v-icon>
-              New
-            </v-btn>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'n']"
+                  color="green darken-1"
+                  class="font-weight-regular"
+                  dark
+                  small
+                  tile
+                  @click="add"
+                  @shortkey="add"
+                >
+                  <v-icon left>mdi-plus</v-icon>
+                  New
+                </v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Alt + N)</span>
+            </v-tooltip>
           </v-col>
         </v-row>
       </v-card-title>
@@ -54,7 +61,7 @@
                 <v-icon small>mdi-pencil</v-icon>
               </v-btn>
             </template>
-            <span>Edit</span>
+            <span class="text-caption">Edit</span>
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -69,7 +76,7 @@
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <span>Delete</span>
+            <span class="text-caption">Delete</span>
           </v-tooltip>
         </template>
       </v-data-table>
@@ -94,13 +101,20 @@
           <v-toolbar-title>Delivery Order</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
-            <v-btn
-              v-shortkey="['ctrl', 's']"
-              dark
-              text
-              @click="save"
-              @shortkey="save"
-            >Save</v-btn>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 's']"
+                  dark
+                  text
+                  @click="save"
+                  @shortkey="save"
+                >Save</v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + S)</span>
+            </v-tooltip>
           </v-toolbar-items>
         </v-toolbar>
 
@@ -160,13 +174,15 @@
                           v-model="data.soCode"
                           label="SO Code"
                           class="mt-0"
-                          readonly
+                          required
+                          @change="poCodeChange"
                         >
                           <template v-slot:append-outer>
                               <v-btn
                                 ref="btnFindSO"
-                                icon
                                 color="primary"
+                                icon
+                                small
                                 @click="showFindSODialog"
                               >
                                 <v-icon>
