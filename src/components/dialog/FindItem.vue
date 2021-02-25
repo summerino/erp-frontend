@@ -52,12 +52,12 @@
               <v-card-text>
                 <v-row no-gutters>
                   <v-col cols="12" md="4">
-                    <v-select
+                    <v-autocomplete
                       v-model="data.by"
                       :items="data.items"
                       label="Search By"
                       class="mt-0"
-                    ></v-select>
+                    ></v-autocomplete>
                   </v-col>
                   <v-col cols="12" md="8" class="pl-md-1">
                     <v-text-field
@@ -65,7 +65,7 @@
                       v-model="data.value"
                       label="Search Text"
                       class="mt-0"
-                      @keyup.enter="doSearch"
+                      @keyup.enter="search"
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -81,7 +81,17 @@
                     fixed-header
                     hide-default-footer
                     @dblclick:row="dblclickRow"
-                  ></v-data-table>
+                  >
+                    <template v-slot:[`item.code`]="{ item }">
+                      <v-text-field
+                        v-model="item.code"
+                        class="mt-0 no-border"
+                        dense
+                        readonly
+                        @keyup.enter="dblclickRow(null, { item })"
+                      ></v-text-field>
+                    </template>
+                  </v-data-table>
                 </v-card>
               </v-card-text>
             </v-card>
@@ -164,7 +174,7 @@ export default {
           this.initOpenTV = [0]
         })
     },
-    doSearch() {
+    search() {
       api.getAll(this.endpoint.inventory.item.item, {
         params: {
           category: this.data.category,

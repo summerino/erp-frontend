@@ -25,12 +25,12 @@
       <v-card-text class="px-2 pt-1">
         <v-row no-gutters>
           <v-col cols="12" md="4">
-            <v-select
+            <v-autocomplete
               v-model="data.by"
               :items="data.items"
               label="Search By"
               class="mt-0"
-            ></v-select>
+            ></v-autocomplete>
           </v-col>
           <v-col cols="12" md="8" class="pl-md-1">
             <v-text-field
@@ -54,7 +54,17 @@
             fixed-header
             hide-default-footer
             @dblclick:row="dblclickRow"
-          ></v-data-table>
+          >
+            <template v-slot:[`item.code`]="{ item }">
+              <v-text-field
+                v-model="item.code"
+                class="mt-0 no-border"
+                dense
+                readonly
+                @keyup.enter="dblclickRow(null, { item })"
+              ></v-text-field>
+            </template>
+          </v-data-table>
         </v-card>
       </v-card-text>
 
