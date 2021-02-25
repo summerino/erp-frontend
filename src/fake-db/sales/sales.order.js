@@ -60,7 +60,8 @@ mock.onGet(`/api/${endpoint.sales.order}/incomplete`).reply(async (config) => {
   const resp_h = await axiosJsonServer.get(`/salesOrder_H`)
   
   let result_h = resp_h.data.filter(h => {
-    if (searchBy == 'socode') return h.code.toLowerCase().includes(search)
+    if (searchBy == 'socode_eq') return h.code.toLowerCase() == search
+    else if (searchBy == 'socode_contains') return h.code.toLowerCase().includes(search)
     else if (searchBy == 'curr') return h.curr.toLowerCase().includes(search)
     else return h
   })
@@ -72,10 +73,13 @@ mock.onGet(`/api/${endpoint.sales.order}/incomplete`).reply(async (config) => {
     for (var i = 0; i < result_h.length; i++) {
       const result = result_h[i]
       result.salesName = resp_s.data.find(s => s.code == result_h[i].salesCode).name
-      result.custName = resp_c.data.find(c => c.code == result_h[i].custCode).name
-      result.custAddr = resp_c.data.find(c => c.code == result_h[i].custCode).address
-      result.custPhone = resp_c.data.find(c => c.code == result_h[i].custCode).phone1
-      result.custFax = resp_c.data.find(c => c.code == result_h[i].custCode).fax
+
+      const cust = resp_c.data.find(c => c.code == result_h[i].custCode)
+      result.custName = cust.name
+      result.custAddr = cust.address
+      result.custPhone = cust.phone1
+      result.custFax = cust.fax
+
       results.push(result)
     }
     
@@ -97,6 +101,11 @@ mock.onGet(`/api/${endpoint.sales.order}/outstanding-item`).reply(async (config)
   for (var i = 0; i < response.data.length; i++) {
     const result = response.data[i]
     result.orderQty = result.qty
+    result.outstandingQty = result.qty
+    result.qty = result.qty
+    result.description = null
+    result.typeId = 0
+    result.typeName = 'Normal'
     results.push(result)
   }
 

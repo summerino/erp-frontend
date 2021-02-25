@@ -758,52 +758,6 @@ export default {
         this.gridItem.data.splice(idx, 1)
       }
     },
-    saveItem(data) {
-      if (data.action === 'add') {
-        const item = {
-          rowId: this.$uuid.v1(),
-          code: this.data.code,
-          poCode: data.poCode,
-          itemId: data.itemId,
-          itemCode: data.itemCode,
-          itemName: data.itemName,
-          orderQty: data.orderQty,
-          outstandingQty: data.outstandingQty,
-          qty: data.qty,
-          uomId: data.uomId,
-          unitId: data.unitId,
-          unitName: data.unitName,
-          warehouseCode: data.warehouse.code,
-          warehouseInitial: data.warehouse.initial,
-          warehouseName: data.warehouse.name,
-          typeId: data.typeId,
-          typeName: data.typeId === 0 ? 'Normal' : 'Bonus',
-          state: 'A'
-        }
-        this.gridItem.data.push(item)
-      } else {
-        const item = this.gridItem.data.find(i => i.rowId === data.rowId)
-        item.poCode = data.poCode
-        item.itemId = data.itemId
-        item.itemCode = data.itemCode
-        item.itemName = data.itemName
-        item.orderQty = data.orderQty
-        item.outstandingQty = data.outstandingQty
-        item.qty = data.qty
-        item.uomId = data.uomId
-        item.unitId = data.unitId
-        item.unitName = data.unitName
-        item.warehouseCode = data.warehouse.code
-        item.warehouseInitial = data.warehouse.initial
-        item.warehouseName = data.warehouse.name
-        item.typeId = data.typeId
-        item.typeName = data.typeId === 0 ? 'Normal' : 'Bonus'
-        if (item.state !== 'A') {
-          item.state = 'M'
-        }
-        this.gridItem.data.concat(item)
-      }
-    },
     poCodeChange() {
       api.getAll(`${this.endpoint.purchase.order}/incomplete`, {
         params: {
@@ -845,7 +799,7 @@ export default {
       item.total = item.qty * item.nettPrice
 
       this.data.subTotal = _sumBy(this.gridItem.data, 'total')
-      // this.data.dpp = this.data.subTotal - this.data.finalDisc
+      this.data.dpp = this.data.subTotal - this.data.finalDisc
       this.calcPrice()
     },
     calcPrice() {

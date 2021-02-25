@@ -375,6 +375,7 @@
                           :items-per-page="-1"
                           height="300"
                           class="elevation-1"
+                          dense
                           fixed-header
                           hide-default-footer
                         >
@@ -400,6 +401,7 @@
                               ref="itemCode"
                               v-model="item.itemCode"
                               class="mt-0"
+                              dense
                               @change="itemCodeChange(item)"
                             >
                               <template v-slot:append>
@@ -421,23 +423,26 @@
                               v-model="item.qty"
                               :decimal-length="0"
                               class="text-right mt-0"
+                              dense
                               @change="calcItemPrice(item)"
                             ></v-currency-field>
                           </template>
                           <template v-slot:[`item.unitName`]="{ item }">
-                            <v-select
+                            <v-autocomplete
                               v-model="item.unitId"
                               :items="item.units"
                               item-text="unitEquivalent"
                               item-value="id"
                               class="text-right mt-0"
+                              dense
                               @change="unitItemChange(item)"
-                            ></v-select>
+                            ></v-autocomplete>
                           </template>
                           <template v-slot:[`item.disc`]="{ item }">
                             <v-currency-field
                               v-model="item.disc"
                               class="text-right mt-0"
+                              dense
                               @change="calcItemPrice(item)"
                             ></v-currency-field>
                           </template>
@@ -445,6 +450,7 @@
                             <v-text-field
                               v-model="item.description"
                               class="mt-0"
+                              dense
                             ></v-text-field>
                           </template>
                         </v-data-table>

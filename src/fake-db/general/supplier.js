@@ -19,6 +19,7 @@ mock.onGet(`/api/${endpoint.general.supplier}`).reply(async (config) => {
       flt_op = '_like'
       break;
   }
+  
   const param = (searchBy.toLowerCase() == 'code')
     ? `code${flt_op}=${search}&_sort=code`
     : `name${flt_op}=${search}&_sort=name`

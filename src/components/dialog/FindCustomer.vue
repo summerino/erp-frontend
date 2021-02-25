@@ -134,6 +134,7 @@ export default {
       api.getAll(this.endpoint.general.customer, {
         params: {
           searchBy: this.data.by,
+          searchOp: 'contains',
           search: this.data.value
         }
       })

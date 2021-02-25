@@ -49,6 +49,7 @@
             :items-per-page="-1"
             height="300"
             class="elevation-1 row-pointer"
+            dense
             fixed-header
             hide-default-footer
             @dblclick:row="dblclickRow"
@@ -82,11 +83,11 @@ export default {
     return {
       dialog: false,
       data: {
-        by: 'soCode',
+        by: 'soCode_contains',
         value: '',
         items: [
           { text: 'SO Date', value: 'soDate' },
-          { text: 'SO Code', value: 'soCode' },
+          { text: 'SO Code', value: 'soCode_contains' },
           { text: 'Customer', value: 'custName' },
           { text: 'Curr.', value: 'curr' }
         ]
@@ -94,7 +95,7 @@ export default {
       grid: {
         data: [],
         columns: [
-          { text: 'SO Date', value: 'orderDate', divider: true, width: '120' },
+          { text: 'SO Date', value: 'orderDate', align: 'right', divider: true, width: '120' },
           { text: 'SO Code', value: 'code', divider: true, width: '100' },
           { text: 'Amount', value: 'grandTotal', align: 'right', divider: true, width: '120' },
           { text: 'Customer', value: 'custName', divider: true, width: '150' },
@@ -115,7 +116,7 @@ export default {
   
   methods: {
     reset() {
-      this.data.by = 'soCode'
+      this.data.by = 'soCode_contains'
       this.data.value = ''
       this.grid.data = []
     },
