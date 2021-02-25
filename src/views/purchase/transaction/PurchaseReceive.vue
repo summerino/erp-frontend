@@ -490,6 +490,7 @@ export default {
         { text: 'Code', value: 'code', divider: true, width: '100' },
         { text: 'Date', value: 'receiveDate', align: 'right', divider: true, width: '120' },
         { text: 'Supplier', value: 'supName', divider: true, width: '200' },
+        { text: 'PO Code', value: 'poCode', divider: true, width: '100' },
         { text: 'Ref. No.', value: 'refNo', divider: true, width: '150' }
       ]
     },
