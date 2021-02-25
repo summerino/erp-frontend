@@ -308,11 +308,11 @@
                     >
                       <v-row no-gutters>
                         <v-col cols="12">
-                          <v-select
+                          <v-autocomplete
                             v-model="data.deliveryAddr"
                             :items="deliveries"
                             label="Delivery Address"
-                          ></v-select>
+                          ></v-autocomplete>
                         </v-col>
                       </v-row>
 
@@ -385,27 +385,27 @@
                     >
                       <v-row no-gutters>
                         <v-col cols="12">
-                          <v-select
+                          <v-autocomplete
                             v-model="data.billAddr"
                             :items="deliveries"
                             label="Biling Address"
-                          ></v-select>
+                          ></v-autocomplete>
                         </v-col>
                       </v-row>
 
                       <v-row no-gutters>
                         <v-col cols="12">
-                          <v-select
+                          <v-autocomplete
                             v-model="data.top"
                             :items="tops"
                             label="Payment Term"
-                          ></v-select>
+                          ></v-autocomplete>
                         </v-col>
                       </v-row>
 
                       <v-row no-gutters>
                         <v-col cols="12">
-                          <v-select
+                          <v-autocomplete
                             v-model="data.tax"
                             :items="taxes"
                             label="Tax"
@@ -413,7 +413,7 @@
                             item-value="code"
                             return-object
                             @change="calcPrice"
-                          ></v-select>
+                          ></v-autocomplete>
                         </v-col>
                       </v-row>
                     </v-tab-item>
@@ -512,14 +512,14 @@
                             ></v-currency-field>
                           </template>
                           <template v-slot:[`item.unitName`]="{ item }">
-                            <v-select
+                            <v-autocomplete
                               v-model="item.unitId"
                               :items="item.units"
                               item-text="unitEquivalent"
                               item-value="id"
                               class="text-right mt-0"
                               @change="unitItemChange(item)"
-                            ></v-select>
+                            ></v-autocomplete>
                           </template>
                           <template v-slot:[`item.disc`]="{ item }">
                             <v-currency-field

@@ -318,7 +318,7 @@
 
                       <v-row no-gutters>
                         <v-col cols="12">
-                          <v-select
+                          <v-autocomplete
                             v-model="data.tax"
                             :items="taxes"
                             label="Tax"
@@ -326,7 +326,7 @@
                             item-value="code"
                             return-object
                             @change="calcPrice"
-                          ></v-select>
+                          ></v-autocomplete>
                         </v-col>
                       </v-row>
                     </v-tab-item>

@@ -19,12 +19,13 @@ mock.onGet(`/api/${endpoint.general.supplier}`).reply(async (config) => {
       flt_op = '_like'
       break;
   }
-  
-  const param = (searchBy.toLowerCase() == 'code')
-    ? `code${flt_op}=${search}&_sort=code`
-    : `name${flt_op}=${search}&_sort=name`
+
+  var param = ''
+  if (searchBy) {
+    param = `?${searchBy.toLowerCase()}${flt_op}=${search}&_sort=${searchBy.toLowerCase()}`
+  }
     
-  const response = await axiosJsonServer.get(`/suppliers?${param}`)
+  const response = await axiosJsonServer.get(`/suppliers${param}`)
 
   return [response.status, response.data]
 })
