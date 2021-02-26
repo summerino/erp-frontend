@@ -54,9 +54,9 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
+                color="orange lighten-1"
                 icon
                 small
-                color="orange lighten-1"
                 @click="edit(item)"
               >
                 <v-icon small>mdi-pencil</v-icon>
@@ -69,9 +69,9 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
+                color="red"
                 icon
                 small
-                color="red"
                 @click="remove(item)"
               >
                 <v-icon small>mdi-close-thick</v-icon>
@@ -253,8 +253,8 @@
                           >
                             <template v-slot:append-outer>
                               <v-btn
-                                icon
                                 color="primary"
+                                icon
                                 @click="showFindSupDialog"
                               >
                                 <v-icon>
@@ -385,9 +385,9 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
+                                  color="red"
                                   icon
                                   small
-                                  color="red"
                                   @click="removeItem(item)"
                                 >
                                   <v-icon small>mdi-close-thick</v-icon>
@@ -397,11 +397,15 @@
                             </v-tooltip>
                           </template>
                           <template v-slot:[`item.itemCode`]="{ item }">
-                            <v-text-field
+                            <v-autocomplete
                               ref="itemCode"
                               v-model="item.itemCode"
+                              :items="items"
+                              item-text="code"
+                              item-value="code"
                               class="mt-0"
                               dense
+                              required
                               @change="itemCodeChange(item)"
                             >
                               <template v-slot:append>
@@ -416,7 +420,7 @@
                                   </v-icon>
                                 </v-btn>
                               </template>
-                            </v-text-field>
+                            </v-autocomplete>
                           </template>
                           <template v-slot:[`item.qty`]="{ item }">
                             <v-currency-field
@@ -424,6 +428,7 @@
                               :decimal-length="0"
                               class="text-right mt-0"
                               dense
+                              required
                               @change="calcItemPrice(item)"
                             ></v-currency-field>
                           </template>
@@ -433,8 +438,9 @@
                               :items="item.units"
                               item-text="unitEquivalent"
                               item-value="id"
-                              class="text-right mt-0"
+                              class="mt-0"
                               dense
+                              required
                               @change="unitItemChange(item)"
                             ></v-autocomplete>
                           </template>
@@ -443,6 +449,7 @@
                               v-model="item.disc"
                               class="text-right mt-0"
                               dense
+                              required
                               @change="calcItemPrice(item)"
                             ></v-currency-field>
                           </template>

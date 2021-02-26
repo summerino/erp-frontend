@@ -53,9 +53,9 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
+                color="orange lighten-1"
                 icon
                 small
-                color="orange lighten-1"
                 @click="edit(item)"
               >
                 <v-icon small>mdi-pencil</v-icon>
@@ -68,9 +68,9 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
+                color="red"
                 icon
                 small
-                color="red"
                 @click="remove(item)"
               >
                 <v-icon small>mdi-close-thick</v-icon>
@@ -424,6 +424,7 @@
                               :decimal-length="0"
                               class="text-right mt-0"
                               dense
+                              required
                               @change="calcItemPrice(item)"
                             ></v-currency-field>
                           </template>
