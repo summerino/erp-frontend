@@ -85,7 +85,7 @@
                     <template v-slot:[`item.code`]="{ item }">
                       <v-text-field
                         v-model="item.code"
-                        class="mt-0 no-border"
+                        class="text-body-2 mt-0 no-border"
                         dense
                         readonly
                         @keyup.enter="dblclickRow(null, { item })"
@@ -164,7 +164,7 @@ export default {
       setTimeout(() => {
         this.grid.height = this.$refs.dialog.$refs.content.clientHeight - 186
         this.$refs.search.focus()
-      }, 0)
+      }, 1000)
     },
     getCategoryHierarchy() {
       api.getAll(`${this.endpoint.inventory.item.category}/hierarchy`)

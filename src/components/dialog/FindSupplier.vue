@@ -58,7 +58,7 @@
             <template v-slot:[`item.code`]="{ item }">
               <v-text-field
                 v-model="item.code"
-                class="mt-0 no-border"
+                class="text-body-2 mt-0 no-border"
                 dense
                 readonly
                 @keyup.enter="dblclickRow(null, { item })"
