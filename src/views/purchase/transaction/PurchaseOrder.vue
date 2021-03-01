@@ -657,7 +657,7 @@ export default {
         { text: 'Supplier', value: 'supName', divider: true, width: '200' },
         { text: 'Curr.', value: 'curr', divider: true, width: '90' },
         { text: 'Total', value: 'grandTotal', align: 'right', divider: true, width: '120' },
-        { text: 'TOP', value: 'paymentTerm', divider: true, width: '120' }
+        { text: 'TOP', value: 'paymentTerm', width: '120' }
       ]
     },
     gridItem: {

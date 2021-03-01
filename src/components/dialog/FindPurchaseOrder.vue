@@ -111,7 +111,7 @@ export default {
           { text: 'Amount', value: 'grandTotal', align: 'right', divider: true, width: '120' },
           { text: 'Supplier', value: 'supName', divider: true, width: '150' },
           { text: 'Purchaser', value: 'workerName', divider: true, width: '150' },
-          { text: 'Curr.', value: 'curr', divider: true, width: '90' }
+          { text: 'Curr.', value: 'curr', width: '90' }
         ]
       },
       options: {

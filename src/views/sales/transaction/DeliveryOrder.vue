@@ -497,7 +497,7 @@ export default {
         { text: 'Code', value: 'code', divider: true, width: '100' },
         { text: 'Date', value: 'deliveryDate', align: 'right', divider: true, width: '120' },
         { text: 'Customer', value: 'custName', divider: true, width: '200' },
-        { text: 'SO Code', value: 'soCode', divider: true, width: '150' }
+        { text: 'SO Code', value: 'soCode', width: '150' }
       ]
     },
     gridItem: {

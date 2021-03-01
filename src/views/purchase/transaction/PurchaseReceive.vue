@@ -136,7 +136,7 @@
                           readonly
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="12" md="6" class="pl-1">
+                      <v-col cols="12" md="6" class="pl-md-1">
                         <v-text-field
                           v-model="data.refNo"
                           label="Ref. No."
@@ -501,7 +501,7 @@ export default {
         { text: 'Date', value: 'receiveDate', align: 'right', divider: true, width: '120' },
         { text: 'Supplier', value: 'supName', divider: true, width: '200' },
         { text: 'PO Code', value: 'poCode', divider: true, width: '100' },
-        { text: 'Ref. No.', value: 'refNo', divider: true, width: '150' }
+        { text: 'Ref. No.', value: 'refNo', width: '150' }
       ]
     },
     gridItem: {
@@ -514,7 +514,7 @@ export default {
         { text: 'Outstanding', value: 'outstandingQty', align: 'right', divider: true, width: '90' },
         { text: 'Received Qty', value: 'qty', align: 'right', divider: true, width: '90' },
         { text: 'Unit', value: 'unitName', divider: true, width: '90' },
-        { text: 'Location', value: 'warehouseInitial', width: '180' },
+        { text: 'Location', value: 'warehouseInitial', divider: true, width: '180' },
         { text: 'Type', value: 'typeName', width: '90' }
       ]
     },
