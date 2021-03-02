@@ -16,19 +16,26 @@
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" md="6" class="text-right">
-            <v-btn
-              v-shortkey="['ctrl', 'alt', 'n']"
-              color="green darken-1"
-              class="font-weight-regular"
-              dark
-              small
-              tile
-              @click="add"
-              @shortkey="add"
-            >
-              <v-icon left>mdi-plus</v-icon>
-              New
-            </v-btn>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'n']"
+                  color="green darken-1"
+                  class="font-weight-regular"
+                  dark
+                  small
+                  tile
+                  @click="add"
+                  @shortkey="add"
+                >
+                  <v-icon left>mdi-plus</v-icon>
+                  New
+                </v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Alt + N)</span>
+            </v-tooltip>
           </v-col>
         </v-row>
       </v-card-title>
@@ -46,31 +53,40 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
+                color="orange lighten-1"
                 icon
                 small
-                color="orange lighten-1"
                 @click="edit(item)"
               >
                 <v-icon small>mdi-pencil</v-icon>
               </v-btn>
             </template>
-            <span>Edit</span>
+            <span class="text-caption">Edit</span>
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 v-bind="attrs"
                 v-on="on"
+                color="red"
                 icon
                 small
-                color="red"
                 @click="remove(item)"
               >
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <span>Delete</span>
+            <span class="text-caption">Delete</span>
           </v-tooltip>
+        </template>
+        <template v-slot:[`item.invDate`]="{ item }">
+          {{ item.invDate | formatDate('dd-MMM-yyyy') }}
+        </template>
+        <template v-slot:[`item.total`]="{ item }">
+          {{ item.total | formatCurrency }}
+        </template>
+        <template v-slot:[`item.dueDate`]="{ item }">
+          {{ item.invDate | formatDate('dd-MMM-yyyy') }}
         </template>
       </v-data-table>
     </v-card>
@@ -94,13 +110,20 @@
           <v-toolbar-title>Purchase Invoice</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
-            <v-btn
-              v-shortkey="['ctrl', 's']"
-              dark
-              text
-              @click="save"
-              @shortkey="save"
-            >Save</v-btn>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 's']"
+                  dark
+                  text
+                  @click="save"
+                  @shortkey="save"
+                >Save</v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + S)</span>
+            </v-tooltip>
           </v-toolbar-items>
         </v-toolbar>
 
@@ -113,24 +136,27 @@
 
                   <v-card-text>
                     <v-row no-gutters>
-                      <v-text-field
-                        v-model="data.code"
-                        label="Order Code"
-                        class="mt-0"
-                        readonly
-                      ></v-text-field>
-                      <v-checkbox
-                        v-model="data.includeTax"
-                        label="Tax Included"
-                        class="shrink ml-1"
-                        @change="calcPrice(true)"
-                      ></v-checkbox>
+                      <v-col cols="12" md="6">
+                        <v-text-field
+                          v-model="data.code"
+                          label="Inv. Code"
+                          class="mt-0"
+                          readonly
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" md="6" class="pl-md-1">
+                        <v-text-field
+                          v-model="data.refNo"
+                          label="Ref. No."
+                          class="mt-0"
+                        ></v-text-field>
+                      </v-col>
                     </v-row>
 
                     <v-row no-gutters>
-                      <v-col cols="12">
+                      <v-col cols="12" md="6">
                         <v-menu
-                          v-model="menu.orderDate"
+                          v-model="menu.invDate"
                           :close-on-content-click="false"
                           transition="scale-transition"
                           min-width="290px"
@@ -141,35 +167,48 @@
                               v-bind="attrs"
                               v-on="on"
                               :rules="rules.date"
-                              :value="formatOrderDate"
-                              label="Order Date"
+                              :value="formatInvDate"
+                              label="Inv. Date"
                               class="mt-0"
                               readonly
                               required
                             ></v-text-field>
                           </template>
                           <v-date-picker
-                            v-model="data.orderDate"
+                            v-model="data.invDate"
                             no-title
                             scrollable
-                            @change="menu.orderDate = false"
+                            @change="menu.invDate = false"
                           ></v-date-picker>
                         </v-menu>
                       </v-col>
-                    </v-row>
-
-                    <v-row no-gutters>
-                      <v-col cols="12">
-                        <v-autocomplete
-                          v-model="data.workerCode"
-                          :items="workers"
-                          :rules="rules.purchaser"
-                          label="Purchaser"
-                          item-text="name"
-                          item-value="code"
-                          class="mt-0"
-                          required
-                        ></v-autocomplete>
+                      <v-col cols="12" md="6" class="pl-md-1">
+                        <v-menu
+                          v-model="menu.dueDate"
+                          :close-on-content-click="false"
+                          transition="scale-transition"
+                          min-width="290px"
+                          offset-y
+                        >
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-text-field
+                              v-bind="attrs"
+                              v-on="on"
+                              :rules="rules.date"
+                              :value="formatDueDate"
+                              label="Due Date"
+                              class="mt-0"
+                              readonly
+                              required
+                            ></v-text-field>
+                          </template>
+                          <v-date-picker
+                            v-model="data.dueDate"
+                            no-title
+                            scrollable
+                            @change="menu.dueDate = false"
+                          ></v-date-picker>
+                        </v-menu>
                       </v-col>
                     </v-row>
 
@@ -203,29 +242,31 @@
 
               <v-col cols="12" md="8">
                 <v-card>
-                  <v-tabs v-model="tab.sup">
+                  <v-tabs v-model="tab.head">
                     <v-tab key="sup">Supplier</v-tab>
-                    <v-tab key="sup-delivery">Delivery</v-tab>
-                    <v-tab key="sup-payment">Payment</v-tab>
+                    <v-tab key="tax">Tax</v-tab>
                   </v-tabs>
 
-                  <v-tabs-items v-model="tab.sup" class="pa-2">
+                  <v-tabs-items v-model="tab.head" class="pa-2">
                     <v-tab-item
                       key="sup"
                       transition="false"
                     >
                       <v-row no-gutters>
-                        <v-col cols="3">
-                          <v-text-field
+                        <v-col cols="4">
+                          <v-autocomplete
                             v-model="data.supCode"
+                            :items="suppliers"
+                            :item-text="item => `${item.code} - ${item.initial}`"
                             label="Code"
+                            item-value="code"
                             class="mt-0"
-                            readonly
                             required
-                          ></v-text-field>
+                            @change="supCodeChange"
+                          ></v-autocomplete>
                         </v-col>
 
-                        <v-col cols="9" class="pl-1">
+                        <v-col cols="8" class="pl-1">
                           <v-text-field
                             v-model="data.supName"
                             label="Name"
@@ -235,8 +276,8 @@
                           >
                             <template v-slot:append-outer>
                               <v-btn
-                                icon
                                 color="primary"
+                                icon
                                 @click="showFindSupDialog"
                               >
                                 <v-icon>
@@ -260,7 +301,7 @@
                       </v-row>
 
                       <v-row no-gutters>
-                        <v-col cols="12">
+                        <v-col cols="6">
                           <v-text-field
                             v-model="data.supPhone"
                             label="Phone"
@@ -268,10 +309,7 @@
                             readonly
                           ></v-text-field>
                         </v-col>
-                      </v-row>
-
-                      <v-row no-gutters>
-                        <v-col cols="12">
+                        <v-col cols="6" class="pl-1">
                           <v-text-field
                             v-model="data.supFax"
                             label="Fax"
@@ -283,57 +321,34 @@
                     </v-tab-item>
 
                     <v-tab-item
-                      key="sup-delivery"
+                      key="tax"
                       transition="false"
                     >
                       <v-row no-gutters>
-                        <v-col cols="12">
-                          <v-combobox
-                            v-model="data.warehouseCode"
-                            :items="warehouses"
-                            :item-text="item => `${item.initial} - ${item.name}`"
-                            label="Location"
-                            item-value="code"
-                          ></v-combobox>
-                        </v-col>
-                      </v-row>
-                    </v-tab-item>
-
-                    <v-tab-item
-                      key="sup-payment"
-                      transition="false"
-                    >
-                      <v-row no-gutters>
-                        <v-col cols="12">
-                          <v-select
-                            v-model="data.billAddr"
-                            :items="deliveries"
-                            label="Biling Address"
-                          ></v-select>
-                        </v-col>
+                        <v-autocomplete
+                          v-model="data.tax"
+                          :items="taxes"
+                          label="Tax"
+                          item-text="name"
+                          item-value="code"
+                          return-object
+                          @change="calcPrice(false)"
+                        ></v-autocomplete>
+                        <v-checkbox
+                          v-model="data.includeTax"
+                          label="Tax Included"
+                          class="shrink ml-1"
+                          @change="calcPrice(false)"
+                        ></v-checkbox>
                       </v-row>
 
                       <v-row no-gutters>
                         <v-col cols="12">
-                          <v-select
-                            v-model="data.top"
-                            :items="tops"
-                            label="Payment Term"
-                          ></v-select>
-                        </v-col>
-                      </v-row>
-
-                      <v-row no-gutters>
-                        <v-col cols="12">
-                          <v-select
-                            v-model="data.tax"
-                            :items="taxes"
-                            label="Tax"
-                            item-text="name"
-                            item-value="code"
-                            return-object
-                            @change="calcPrice(true)"
-                          ></v-select>
+                          <v-text-field
+                            v-model="data.taxInvNo"
+                            label="Tax Inv. No."
+                            class="mt-0"
+                          ></v-text-field>
                         </v-col>
                       </v-row>
                     </v-tab-item>
@@ -346,33 +361,43 @@
               <v-col cols="12">
                 <v-card>
                   <v-tabs>
-                    <v-tab key="item">Item</v-tab>
+                    <v-tab key="detail-trans">Detail</v-tab>
                     <v-tab key="related-trans">Related Transaction(s)</v-tab>
 
                     <v-tab-item
-                      key="item"
+                      key="detail-trans"
                       transition="false"
                     >
                       <v-card>
                         <v-app-bar dense flat>
                           <v-spacer></v-spacer>
-                          <v-btn
-                            class="blue--text"
-                            small
-                            tile
-                            @click="$refs.crudItem.add()"
-                          >
-                            <v-icon left>mdi-plus</v-icon>
-                            Add
-                          </v-btn>
+                          <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                v-bind="attrs"
+                                v-on="on"
+                                v-shortkey="['ctrl', 'i']"
+                                class="blue--text"
+                                small
+                                tile
+                                @click="addItem"
+                                @shortkey="addItem"
+                              >
+                                <v-icon left>mdi-plus</v-icon>
+                                Add
+                              </v-btn>
+                            </template>
+                            <span class="text-caption">(Ctrl + I)</span>
+                          </v-tooltip>
                         </v-app-bar>
 
                         <v-data-table
-                          :headers="gridItem.columns"
-                          :items="gridItem.data"
+                          :headers="gridDet.columns"
+                          :items="gridDet.data"
                           :items-per-page="-1"
                           height="300"
                           class="elevation-1"
+                          dense
                           hide-default-footer
                         >
                           <template v-slot:[`item.action`]="{ item }">
@@ -381,31 +406,45 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
-                                  icon
-                                  small
-                                  color="orange lighten-1"
-                                  @click="$refs.crudItem.edit(item)"
-                                >
-                                  <v-icon small>mdi-pencil</v-icon>
-                                </v-btn>
-                              </template>
-                              <span>Edit</span>
-                            </v-tooltip>
-                            <v-tooltip bottom>
-                              <template v-slot:activator="{ on, attrs }">
-                                <v-btn
-                                  v-bind="attrs"
-                                  v-on="on"
-                                  icon
-                                  small
                                   color="red"
+                                  icon
+                                  small
                                   @click="removeItem(item)"
                                 >
                                   <v-icon small>mdi-close-thick</v-icon>
                                 </v-btn>
                               </template>
-                              <span>Delete</span>
+                              <span class="text-caption">Delete</span>
                             </v-tooltip>
+                          </template>
+                          <template v-slot:[`item.rcvCode`]="{ item }">
+                            <v-autocomplete
+                              ref="rcvCode"
+                              v-model="item.rcvCode"
+                              :items="purRcvs"
+                              item-text="code"
+                              item-value="code"
+                              class="text-body-2 mt-0"
+                              dense
+                              required
+                              @change="rcvCodeChange(item)"
+                            >
+                              <template v-slot:append>
+                                <v-btn
+                                  color="primary"
+                                  icon
+                                  x-small
+                                  @click="showFindPurcRcvDialog(item)"
+                                >
+                                  <v-icon>
+                                    mdi-settings-helper
+                                  </v-icon>
+                                </v-btn>
+                              </template>
+                            </v-autocomplete>
+                          </template>
+                          <template v-slot:[`item.total`]="{ item }">
+                            {{ item.total | formatCurrency }}
                           </template>
                         </v-data-table>
                       </v-card>
@@ -428,7 +467,6 @@
                   <v-tabs v-model="tab.foot">
                     <v-tab key="notes">Notes</v-tab>
                     <v-tab key="detail">Detail</v-tab>
-                    <v-tab key="dp">Down Payment</v-tab>
                     <v-tab key="fee">Fee</v-tab>
                     <v-tab key="user">User</v-tab>
                   </v-tabs>
@@ -460,7 +498,7 @@
                       ></v-currency-field>
                     </v-tab-item>
 
-                    <v-tab-item
+                    <!-- <v-tab-item
                       key="dp"
                       transition="false"
                     >
@@ -491,7 +529,7 @@
                         class="text-right mt-0"
                         readonly
                       ></v-currency-field>
-                    </v-tab-item>
+                    </v-tab-item> -->
 
                     <v-tab-item
                       key="fee"
@@ -601,7 +639,7 @@
 
                     <v-row no-gutters>
                       <v-currency-field
-                        v-model="data.grandTotal"
+                        v-model="data.total"
                         label="Grand Total"
                         class="text-right mt-0"
                         readonly
@@ -621,11 +659,11 @@
       ref="findSup"
       @dblclick:row="bindSupData"
     ></find-supplier>
-    <crud-item
-      ref="crudItem"
-      caller="purc"
-      @save="saveItem"
-    ></crud-item>
+    <find-purchase-receive
+      ref="findPurcRcv"
+      :sup-code="data.supCode"
+      @dblclick:row="bindPurcRcvData"
+    ></find-purchase-receive>
   </div>
 </template>
 
@@ -638,13 +676,13 @@ import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
 import FindSupplier from '@/components/dialog/FindSupplier'
-import CrudItem from '@/components/dialog/PoSoItem'
+import FindPurchaseReceive from '@/components/dialog/FindPurchaseReceive'
 
 export default {
   components: {
     Confirm,
     FindSupplier,
-    CrudItem
+    FindPurchaseReceive
   },
 
   data: () => ({
@@ -652,10 +690,11 @@ export default {
       add: false
     },
     menu: {
-      orderDate: false
+      invDate: false,
+      dueDate: false
     },
     tab: {
-      sup: null,
+      head: null,
       foot: null
     },
     grid: {
@@ -663,41 +702,36 @@ export default {
       data: [],
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Code', value: 'code', divider: true, width: '100' },
-        { text: 'Date', value: 'orderDate', align: 'right', divider: true, width: '120' },
-        { text: 'Purchaser', value: 'workerName', divider: true, width: '200' },
+        { text: 'Code', value: 'code', divider: true, width: '120' },
+        { text: 'Date', value: 'invDate', align: 'right', divider: true, width: '120' },
         { text: 'Supplier', value: 'supName', divider: true, width: '200' },
         { text: 'Curr.', value: 'curr', divider: true, width: '90' },
-        { text: 'Total', value: 'grandTotal', align: 'right', divider: true, width: '120' },
-        { text: 'TOP', value: 'paymentTerm', divider: true, width: '120' }
+        { text: 'Total', value: 'total', align: 'right', divider: true, width: '120' },
+        { text: 'Due Date', value: 'dueDate', align: 'right', divider: true, width: '120' },
+        { text: 'Ref. No.', value: 'refNo', width: '120' }
       ]
     },
-    gridItem: {
+    gridDet: {
       data: [],
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Item', value: 'itemCode', divider: true, width: '100' },
-        { text: 'Name', value: 'itemName', divider: true, width: '300' },
-        { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
-        { text: 'Unit', value: 'unitName', divider: true, width: '90' },
-        { text: 'Unit Price', value: 'unitPrice', align: 'right', divider: true, width: '120' },
-        { text: 'Disc', value: 'disc', align: 'right', divider: true, width: '120' },
-        { text: 'Nett Price', value: 'nettPrice', align: 'right', divider: true, width: '120' },
-        { text: 'Total Price', value: 'total', align: 'right', divider: true, width: '120' },
-        { text: 'Description', value: 'description' }
+        { text: 'Rcv. Code', value: 'rcvCode', divider: true },
+        // { text: 'Total Before tax', value: 'dpp', align: 'right', divider: true, width: '120' },
+        // { text: 'Tax', value: 'taxAmount', align: 'right', divider: true, width: '120' },
+        { text: 'Total', value: 'total', align: 'right' }
       ]
     },
     valid: false,
     workers: [],
     currencies: [],
-    warehouses: [],
-    deliveries:[],
-    tops: [],
+    suppliers: [],
     taxes: [],
+    purRcvs:[],
+    deliveries:[],
     data: {},
     rules: {
       date: [
-        (v) => !!v || 'Order Date is required'
+        (v) => !!v || 'Inv. Date / Due Date is required'
       ],
       notes: [
         (v) => (v || '').length <= 2000 || 'Notes must be less than 2000 characters'
@@ -709,9 +743,8 @@ export default {
     this.getList()
     this.getPurchaserLists()
     this.getCurrLists()
-    this.getWarehouseLists()
+    this.getSupplierLists()
     this.getTaxLists()
-    this.add()
   },
 
   mounted: function () {
@@ -728,33 +761,32 @@ export default {
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'
     },
-    formatOrderDate() {
-      return this.data.orderDate ? format(parseISO(this.data.orderDate), 'dd-MMM-yyyy') : ''
+    formatInvDate() {
+      return this.data.invDate ? format(parseISO(this.data.invDate), 'dd-MMM-yyyy') : ''
+    },
+    formatDueDate() {
+      return this.data.dueDate ? format(parseISO(this.data.dueDate), 'dd-MMM-yyyy') : ''
     }
   },
 
   methods: {
     reset() {
-      this.gridItem.data = []
+      this.gridDet.data = []
       this.data = {
         action: '',
         code: null,
-        orderDate: format(new Date(), 'yyyy-MM-dd'),
-        workerCode: null,
+        invDate: format(new Date(), 'yyyy-MM-dd'),
+        dueDate: format(new Date(), 'yyyy-MM-dd'),
         curr: 'IDR',
         rate: 1,
-        includeTax: true,
         supCode: null,
         supName: null,
         supAddr: null,
         supPhone: null,
         supFax: null,
-        warehouseCode: this.warehouses.find(w => w.isDefault === 1),
-        billAddr: null,
-        top: null,
         tax: this.taxes[0],
+        includeTax: true,
         notes: null,
-        dpp: 0,
         downPayment: 0,
         applyTax: false,
         dpTax: 0,
@@ -767,11 +799,12 @@ export default {
         taxPercent: 0,
         taxAmount: 0,
         fee: 0,
-        grandTotal: 0
+        dpp: 0,
+        total: 0
       }
     },
     getList() {
-      api.getAll(this.endpoint.purchase.order, {
+      api.getAll(this.endpoint.purchase.invoice, {
         params: { search: this.grid.search }
       })
         .then(response => {
@@ -790,10 +823,10 @@ export default {
           this.currencies = response.data
         })
     },
-    getWarehouseLists() {
-      api.getAll(this.endpoint.inventory.warehouse)
+    getSupplierLists() {
+      api.getAll(this.endpoint.general.supplier)
         .then(response => {
-          this.warehouses = response.data
+          this.suppliers = response.data
         })
     },
     getTaxLists() {
@@ -818,25 +851,21 @@ export default {
       this.data = {
         action: 'edit',
         code: item.code,
-        orderDate: format(parseISO(item.orderDate), 'yyyy-MM-dd'),
-        workerCode: item.workerCode,
+        invDate: format(parseISO(item.invDate), 'yyyy-MM-dd'),
+        dueDate: format(parseISO(item.dueDate), 'yyyy-MM-dd'),
         curr: item.curr,
         rate: item.rate,
-        includeTax: item.includeTax,
         supCode: item.supCode,
         // supName: null,
         // supAddr: null,
         // supPhone: null,
         // supFax: null,
-        warehouseCode: this.warehouses.find(w => w.code === item.warehouseCode),
-        billAddr: item.billAddr,
-        top: item.top,
         tax: this.taxes.find(t => t.code === item.tax),
+        includeTax: item.includeTax,
         notes: item.notes,
-        dpp: item.dpp,
-        downPayment: item.downPayment,
-        applyTax: item.applyTax,
-        dpTax: item.dpTax,
+        // downPayment: item.downPayment,
+        // applyTax: item.applyTax,
+        // dpTax: item.dpTax,
         shipmentFee: item.shipmentFee,
         handlingFee: item.handlingFee,
         subTotal: item.subTotal,
@@ -844,35 +873,26 @@ export default {
         finalDisc: item.finalDisc,
         taxPercent: item.taxPercent,
         taxAmount: item.taxAmount,
-        grandTotal: item.grandTotal,
+        fee: item.fee,
+        dpp: item.dpp,
+        total: item.total,
         updatedBy: item.updatedBy,
         updatedDate: item.updatedDate
       }
 
       // Get supplier details
-      api.getAll(this.endpoint.general.supplier, {
-        params: {
-          searchBy: 'code',
-          search: item.supCode
-        }
-      })
-        .then(response => {
-          const data = response.data[0]
-          this.data.supName = data.name
-          this.data.supAddr = data.address
-          this.data.supPhone = data.phone1
-          this.data.supFax = data.fax
-        })
+      const supplier = this.suppliers.find(s => s.code === item.supCode)
+      this.bindSupData(supplier)
 
-      // Get item details
-      api.getAll(`${this.endpoint.purchase.order}/item`, {
+      // Get invoice details
+      api.getAll(`${this.endpoint.purchase.invoice}/detail`, {
         params: { code: item.code }
       })
         .then(response => {
-          this.gridItem.data = response.data
+          this.gridDet.data = response.data
         })
 
-      this.calcDP()
+      // this.calcDP()
       this.calcFee()
     },
     async remove(item) {
@@ -881,7 +901,7 @@ export default {
           'Delete?',
           'Are you sure want to delete this data?')
       ) {
-        api.delete(this.endpoint.purchase.order, item.code)
+        api.delete(this.endpoint.purchase.invoice, item.code)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -895,13 +915,12 @@ export default {
       
       const data = this.data
       data.includeTax = this.data.includeTax | 0
-      data.warehouseCode = this.data.warehouseCode.code
       data.tax = this.data.tax.code
       data.applyTax = this.data.applyTax | 0
-      data.itemDetails = this.gridItem.data
+      data.itemDetails = this.gridDet.data
       
       if (data.action === 'add') {
-        api.create(this.endpoint.purchase.order, data)
+        api.create(this.endpoint.purchase.invoice, data)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -910,7 +929,7 @@ export default {
             }
           })
       } else if (data.action === 'edit') {
-        api.update(this.endpoint.purchase.order, data)
+        api.update(this.endpoint.purchase.invoice, data)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -920,63 +939,79 @@ export default {
           })
       }
     },
+    addItem() {
+      if (this.gridDet.data.length === 0 || (this.gridDet.data.slice(-1)[0].rcvCode ?? null)) {
+        const item = {
+          rowId: this.$uuid.v1(),
+          code: this.data.code,
+          rcvCode: null,
+          subTotal: 0,
+          disc: 0,
+          finalDisc: 0,
+          taxAmount: 0,
+          dpp: 0,
+          total: 0,
+          state: 'A'
+        }
+        this.gridDet.data.push(item)
+
+        setTimeout(() => {
+          this.$refs.rcvCode.focus()
+        }, 0)
+      }
+    },
     async removeItem(item) {
       if (
         await this.$refs.confirm.open(
           'Delete?',
           'Are you sure want to delete this data?')
       ) {
-        const idx = this.gridItem.data.findIndex(i => i.rowId === item.rowId)
-        this.gridItem.data.splice(idx, 1)
+        const idx = this.gridDet.data.findIndex(i => i.rowId === item.rowId)
+        this.gridDet.data.splice(idx, 1)
 
-        this.data.subTotal = _sumBy(this.gridItem.data, 'total')
-        this.data.dpp = this.data.subTotal - this.data.finalDisc
+        // Calc price
+        this.data.subTotal = _sumBy(this.gridDet.data, 'total')
         this.calcPrice(false)
       }
     },
-    saveItem(data) {
-      if (data.action === 'add') {
-        const item = {
-          rowId: this.$uuid.v1(),
-          code: this.data.code,
-          itemId: data.itemId,
-          itemCode: data.itemCode,
-          itemName: data.itemName,
-          qty: data.qty,
-          uomId: data.uomId,
-          unitId: data.unit.id,
-          unitName: data.unit.unitEquivalent,
-          uomBuyName: data.uomBuyName,
-          unitPrice: data.unitPrice,
-          itemBuyPrice: data.itemBuyPrice,
-          disc: data.disc,
-          nettPrice: data.nettPrice,
-          total: data.total,
-          description: data.description,
-          state: 'A'
-        }
-        this.gridItem.data.push(item)
-      } else {
-        const item = this.gridItem.data.find(i => i.rowId === data.rowId)
-        item.itemId = data.itemId
-        item.itemCode = data.itemCode
-        item.itemName = data.itemName
-        item.qty = data.qty
-        item.unitId = data.unit.id
-        item.unitName = data.unit.unitEquivalent
-        item.unitPrice = data.unitPrice
-        item.disc = data.disc
-        item.nettPrice = data.nettPrice
-        item.total = data.total
-        item.description = data.description
+    supCodeChange() {
+      const supplier = this.suppliers.find(s => s.code === this.data.supCode)
+      this.bindSupData(supplier)
+    },
+    rcvCodeChange(item) {
+      const data_d = this.purRcvs.find(r => r.code.toLowerCase() === item.rcvCode.toLowerCase())
+      if (data_d) {
+        item.subTotal = data_d.subTotal
+        item.finalDisc = data_d.finalDisc
+        item.taxAmount = data_d.taxAmount
+        item.dpp = data_d.dpp
+        item.total = data_d.total
         if (item.state !== 'A') {
           item.state = 'M'
         }
-        this.gridItem.data.concat(item)
+
+        // Calc detail price
+        // this.calcDetPrice(item)
+
+        // Calc price
+        this.data.subTotal = _sumBy(this.gridDet.data, 'total')
+        this.calcPrice(false)
+      }
+    },
+    calcDetPrice(item) {
+      if (this.data.includeTax) {
+        this.data.taxPercent = this.data.tax.rate
+        item.taxAmount = Math.round((item.subTotal - item.finalDisc) - ((item.subTotal - item.finalDisc) / (1 + (this.data.tax.rate / 100))))
+        item.dpp = (item.subTotal - item.finalDisc) - item.taxAmount
+        item.total = item.subTotal + item.finalDisc
+      } else {
+        this.data.taxPercent = this.data.tax.rate
+        item.taxAmount = Math.round((item.subTotal - item.finalDisc) * (this.data.tax.rate / 100))
+        item.dpp = item.subTotal - item.finalDisc
+        item.total = item.subTotal - item.finalDisc + item.taxAmount
       }
 
-      this.data.subTotal = _sumBy(this.gridItem.data, 'total')
-      this.data.dpp = this.data.subTotal - this.data.finalDisc
+      this.data.subTotal = _sumBy(this.gridDet.data, 'total')
       this.calcPrice(false)
     },
     discPercentChange() {
@@ -990,11 +1025,11 @@ export default {
     calcTax() {
       if (this.data.includeTax) {
         this.data.taxPercent = this.data.tax.rate
-        this.data.taxAmount = (this.data.subTotal - this.data.finalDisc) - ((this.data.subTotal - this.data.finalDisc) / (1 + (this.data.tax.rate / 100)))
+        this.data.taxAmount = Math.round((this.data.subTotal - this.data.finalDisc) - ((this.data.subTotal - this.data.finalDisc) / (1 + (this.data.tax.rate / 100))))
         this.data.dpp = (this.data.subTotal - this.data.finalDisc) - this.data.taxAmount
       } else {
         this.data.taxPercent = this.data.tax.rate
-        this.data.taxAmount = (this.data.subTotal - this.data.finalDisc) * (this.data.tax.rate / 100)
+        this.data.taxAmount = Math.round((this.data.subTotal - this.data.finalDisc) * (this.data.tax.rate / 100))
         this.data.dpp = (this.data.subTotal - this.data.finalDisc)
       }
     },
@@ -1022,23 +1057,35 @@ export default {
       }
       this.calcTax()
       if (this.data.includeTax) {
-        this.data.grandTotal = this.data.subTotal - this.data.finalDisc + this.data.fee
+        this.data.total = this.data.subTotal - this.data.finalDisc + this.data.fee
       } else {
-        this.data.grandTotal = this.data.subTotal - this.data.finalDisc + this.data.taxAmount + this.data.fee
+        this.data.total = this.data.subTotal - this.data.finalDisc + this.data.taxAmount + this.data.fee
       }
     },
     showFindSupDialog() {
       this.$refs.findSup.open()
     },
+    showFindPurcRcvDialog(item) {
+      this.$refs.findPurcRcv.open(item)
+    },
     bindSupData(item) {
-      this.data.supCode = item.code
-      this.data.supName = item.name
-      this.data.supAddr = item.address
-      this.data.supPhone = item.phone1
-      this.data.supFax = item.fax
-      // this.data.billAddr = item.code
-      // this.data.top = item.code
-      // this.data.tax = item.code
+      if (item) {
+        this.data.supCode = item.code
+        this.data.supName = item.name
+        this.data.supAddr = item.address
+        this.data.supPhone = item.phone1
+        this.data.supFax = item.fax
+        this.gridDet.data = []
+
+        // Get purchase receive lists
+        api.getAll(`${this.endpoint.purchase.receive}/uninv/${this.data.supCode}`)
+          .then(response => {
+            this.purRcvs = response.data
+          })
+      }
+    },
+    bindPurcRcvData(rowItem) {
+      this.rcvCodeChange(rowItem)
     }
   }
 }

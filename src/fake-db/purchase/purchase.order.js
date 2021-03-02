@@ -8,7 +8,7 @@ import axiosJsonServer from '@/axios.jsonserver'
 mock.onGet(`/api/${endpoint.purchase.order}`).reply(async (config) => {
   var search = null
   if (config.params) {
-    var { test, search } = config.params
+    var { search } = config.params
   }
   search = search || ''
   
@@ -204,13 +204,13 @@ mock.onPost(`/api/${endpoint.purchase.order}`).reply(async (request) => {
     dpTax: data.dpTax,
     shipmentFee: data.shipmentFee,
     handlingFee: data.handlingFee,
-    dpp: data.dpp,
     subTotal: data.subTotal,
     finalDiscPercent: data.finalDiscPercent,
     finalDisc: data.finalDisc,
     taxPercent: data.taxPercent,
     taxAmount: data.taxAmount,
-    grandTotal: data.grandTotal,
+    dpp: data.dpp,
+    total: data.total,
     createdBy: data.createdBy,
     createdDate: format(new Date(), 'yyyy-MM-dd'),
     updatedBy: data.updatedBy,
@@ -271,13 +271,13 @@ mock.onPut(/\/api\/purchase-order\/./).reply(async (config) => {
     dpTax: data.dpTax,
     shipmentFee: data.shipmentFee,
     handlingFee: data.handlingFee,
-    dpp: data.dpp,
     subTotal: data.subTotal,
     finalDiscPercent: data.finalDiscPercent,
     finalDisc: data.finalDisc,
     taxPercent: data.taxPercent,
     taxAmount: data.taxAmount,
-    grandTotal: data.grandTotal,
+    dpp: data.dpp,
+    total: data.total,
     updatedBy: data.updatedBy,
     updatedDate: format(new Date(), 'yyyy-MM-dd')
   })

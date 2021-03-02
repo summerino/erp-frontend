@@ -43,6 +43,29 @@ mock.onGet(`/api/${endpoint.purchase.receive}/item`).reply(async (config) => {
   return [200, results]
 })
 
+mock.onGet(/\/api\/purchase-receive\/uninv\/./).reply(async (config) => {
+  const urlSegment = config.url.split('/')
+  var searchBy = ''
+  var search = ''
+
+  if (config.params) {
+    var { searchBy, search } = config.params
+  }
+  searchBy = searchBy.toLowerCase()
+  search = search.toLowerCase()
+  
+  const resp_h = await axiosJsonServer.get(`/purchaseReceive_H?supCode=${urlSegment[urlSegment.length - 1]}`)
+  
+  let results = resp_h.data.filter(h => {
+    if (searchBy == 'code') return h.code.toLowerCase().includes(search)
+    else if (searchBy == 'pocode') return h.poCode.toLowerCase().includes(search)
+    else if (searchBy == 'refno') return h.refNo.toLowerCase().includes(search)
+    else return h
+  })
+
+  return [200, results]
+})
+
 mock.onPost(`/api/${endpoint.purchase.receive}`).reply(async (request) => {
   const data = JSON.parse(request.data)
   
@@ -62,11 +85,11 @@ mock.onPost(`/api/${endpoint.purchase.receive}`).reply(async (request) => {
     supCode: data.supCode,
     receiveBy: data.receiveBy,
     approveBy: data.approveBy,
-    dpp: data.dpp,
     subTotal: data.subTotal,
     finalDisc: data.finalDisc,
     taxAmount: data.taxAmount,
-    grandTotal: data.grandTotal,
+    dpp: data.dpp,
+    total: data.total,
     createdBy: data.createdBy,
     createdDate: format(new Date(), 'yyyy-MM-dd'),
     updatedBy: data.updatedBy,
@@ -119,11 +142,11 @@ mock.onPut(/\/api\/purchase-receive\/./).reply(async (config) => {
     supCode: data.supCode,
     receiveBy: data.receiveBy,
     approveBy: data.approveBy,
-    dpp: data.dpp,
     subTotal: data.subTotal,
     finalDisc: data.finalDisc,
     taxAmount: data.taxAmount,
-    grandTotal: data.grandTotal,
+    dpp: data.dpp,
+    total: data.total,
     updatedBy: data.updatedBy,
     updatedDate: format(new Date(), 'yyyy-MM-dd')
   })
