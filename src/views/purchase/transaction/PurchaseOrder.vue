@@ -80,6 +80,12 @@
             <span class="text-caption">Delete</span>
           </v-tooltip>
         </template>
+        <template v-slot:[`item.orderDate`]="{ item }">
+          {{ item.orderDate | formatDate('dd-MMM-yyyy') }}
+        </template>
+        <template v-slot:[`item.total`]="{ item }">
+          {{ item.total | formatCurrency }}
+        </template>
       </v-data-table>
     </v-card>
 
@@ -444,6 +450,9 @@
                               @change="unitItemChange(item)"
                             ></v-autocomplete>
                           </template>
+                          <template v-slot:[`item.unitPrice`]="{ item }">
+                            {{ item.unitPrice | formatCurrency }}
+                          </template>
                           <template v-slot:[`item.disc`]="{ item }">
                             <v-currency-field
                               v-model="item.disc"
@@ -452,6 +461,12 @@
                               required
                               @change="calcItemPrice(item)"
                             ></v-currency-field>
+                          </template>
+                          <template v-slot:[`item.nettPrice`]="{ item }">
+                            {{ item.nettPrice | formatCurrency }}
+                          </template>
+                          <template v-slot:[`item.total`]="{ item }">
+                            {{ item.total | formatCurrency }}
                           </template>
                           <template v-slot:[`item.description`]="{ item }">
                             <v-text-field

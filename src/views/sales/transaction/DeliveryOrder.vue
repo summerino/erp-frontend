@@ -79,6 +79,9 @@
             <span class="text-caption">Delete</span>
           </v-tooltip>
         </template>
+        <template v-slot:[`item.deliveryDate`]="{ item }">
+          {{ item.deliveryDate | formatDate('dd-MMM-yyyy') }}
+        </template>
       </v-data-table>
     </v-card>
 
@@ -576,7 +579,7 @@ export default {
         subTotal: 0,
         finalDisc: 0,
         taxAmount: 0,
-        grandTotal: 0,
+        total: 0,
         createdBy: null,
         createdDate: null,
         updatedBy: null,
@@ -637,7 +640,7 @@ export default {
         subTotal: item.subTotal,
         finalDisc: item.finalDisc,
         taxAmount: item.taxAmount,
-        grandTotal: item.grandTotal,
+        total: item.total,
         createdBy: item.createdBy,
         createdDate: item.createdDate,
         updatedBy: item.updatedBy,
@@ -782,9 +785,9 @@ export default {
     calcPrice() {
       // this.calcTax()
       // if (this.data.includeTax) {
-      //   this.data.grandTotal = this.data.subTotal - this.data.finalDisc
+      //   this.data.total = this.data.subTotal - this.data.finalDisc
       // } else {
-      this.data.grandTotal = this.data.subTotal - this.data.finalDisc + this.data.taxAmount
+      this.data.total = this.data.subTotal - this.data.finalDisc + this.data.taxAmount
       // }
     },
     showFindSODialog() {

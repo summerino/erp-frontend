@@ -79,6 +79,9 @@
             <span class="text-caption">Delete</span>
           </v-tooltip>
         </template>
+        <template v-slot:[`item.receiveDate`]="{ item }">
+          {{ item.receiveDate | formatDate('dd-MMM-yyyy') }}
+        </template>
       </v-data-table>
     </v-card>
 
