@@ -6,6 +6,7 @@ import toolbar from './toolbar'
 import locales from './locales'
 import analytics from './analytics'
 import navigation from './navigation'
+import currency from './currency'
 import endpoint from './endpoint'
 
 export default {
@@ -35,6 +36,9 @@ export default {
 
   // analytics configs
   analytics,
+
+  // currency configs
+  currency,
 
   // navigation configs
   navigation,
