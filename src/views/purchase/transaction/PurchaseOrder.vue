@@ -590,7 +590,7 @@
 
                     <v-row no-gutters>
                       <v-currency-field
-                        v-model="data.grandTotal"
+                        v-model="data.total"
                         label="Grand Total"
                         class="text-right mt-0"
                         readonly
@@ -656,7 +656,7 @@ export default {
         { text: 'Purchaser', value: 'workerName', divider: true, width: '200' },
         { text: 'Supplier', value: 'supName', divider: true, width: '200' },
         { text: 'Curr.', value: 'curr', divider: true, width: '90' },
-        { text: 'Total', value: 'grandTotal', align: 'right', divider: true, width: '120' },
+        { text: 'Total', value: 'total', align: 'right', divider: true, width: '120' },
         { text: 'TOP', value: 'paymentTerm', width: '120' }
       ]
     },
@@ -747,7 +747,7 @@ export default {
         finalDisc: 0,
         taxPercent: 0,
         taxAmount: 0,
-        grandTotal: 0
+        total: 0
       }
 
       // Set default warehouse
@@ -853,7 +853,7 @@ export default {
         finalDisc: item.finalDisc,
         taxPercent: item.taxPercent,
         taxAmount: item.taxAmount,
-        grandTotal: item.grandTotal,
+        total: item.total,
         updatedBy: item.updatedBy,
         updatedDate: item.updatedDate
       }
@@ -1047,9 +1047,9 @@ export default {
     calcPrice() {
       this.calcTax()
       if (this.data.includeTax) {
-        this.data.grandTotal = this.data.subTotal - this.data.finalDisc
+        this.data.total = this.data.subTotal - this.data.finalDisc
       } else {
-        this.data.grandTotal = this.data.subTotal - this.data.finalDisc + this.data.taxAmount
+        this.data.total = this.data.subTotal - this.data.finalDisc + this.data.taxAmount
       }
     },
     showFindSupDialog() {

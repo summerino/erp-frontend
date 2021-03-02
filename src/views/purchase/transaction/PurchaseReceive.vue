@@ -581,7 +581,7 @@ export default {
         subTotal: 0,
         finalDisc: 0,
         taxAmount: 0,
-        grandTotal: 0,
+        total: 0,
         createdBy: null,
         createdDate: null,
         updatedBy: null,
@@ -646,7 +646,7 @@ export default {
         subTotal: item.subTotal,
         finalDisc: item.finalDisc,
         taxAmount: item.taxAmount,
-        grandTotal: item.grandTotal,
+        total: item.total,
         createdBy: item.createdBy,
         createdDate: item.createdDate,
         updatedBy: item.updatedBy,
@@ -815,9 +815,9 @@ export default {
     calcPrice() {
       // this.calcTax()
       // if (this.data.includeTax) {
-      //   this.data.grandTotal = this.data.subTotal - this.data.finalDisc
+      //   this.data.total = this.data.subTotal - this.data.finalDisc
       // } else {
-      this.data.grandTotal = this.data.subTotal - this.data.finalDisc + this.data.taxAmount
+      this.data.total = this.data.subTotal - this.data.finalDisc + this.data.taxAmount
       // }
     },
     showFindPODialog() {
@@ -834,6 +834,11 @@ export default {
         this.data.supAddr = item.supAddr
         this.data.supPhone = item.supPhone
         this.data.supFax = item.supFax
+        this.data.dpp = item.dpp
+        this.data.subTotal = item.subTotal
+        this.data.finalDisc = item.finalDisc
+        this.data.taxAmount = item.taxAmount
+        this.data.total = item.total
 
         // Get purchase order item details
         api.getAll(`${this.endpoint.purchase.order}/outstanding-item`, {
