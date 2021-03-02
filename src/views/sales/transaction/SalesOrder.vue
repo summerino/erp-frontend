@@ -489,7 +489,7 @@
                               :items="items"
                               item-text="code"
                               item-value="code"
-                              class="mt-0"
+                              class="text-body-2 mt-0"
                               dense
                               required
                               @change="itemCodeChange(item)"
@@ -512,7 +512,7 @@
                             <v-currency-field
                               v-model="item.qty"
                               :decimal-length="0"
-                              class="text-right mt-0"
+                              class="text-body-2 text-right mt-0"
                               dense
                               required
                               @change="calcItemPrice(item)"
@@ -524,7 +524,7 @@
                               :items="item.units"
                               item-text="unitEquivalent"
                               item-value="id"
-                              class="text-right mt-0"
+                              class="text-body-2 text-right mt-0"
                               dense
                               required
                               @change="unitItemChange(item)"
@@ -533,7 +533,7 @@
                           <template v-slot:[`item.disc`]="{ item }">
                             <v-currency-field
                               v-model="item.disc"
-                              class="text-right mt-0"
+                              class="text-body-2 text-right mt-0"
                               dense
                               required
                               @change="calcItemPrice(item)"
@@ -542,7 +542,7 @@
                           <template v-slot:[`item.description`]="{ item }">
                             <v-text-field
                               v-model="item.description"
-                              class="mt-0"
+                              class="text-body-2 mt-0"
                               dense
                             ></v-text-field>
                           </template>

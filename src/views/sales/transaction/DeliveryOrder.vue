@@ -422,7 +422,7 @@
                             <v-currency-field
                               v-model="item.qty"
                               :decimal-length="0"
-                              class="text-right mt-0"
+                              class="text-body-2 text-right mt-0"
                               dense
                               required
                               @change="calcItemPrice(item)"
@@ -431,7 +431,7 @@
                           <template v-slot:[`item.description`]="{ item }">
                             <v-text-field
                               v-model="item.description"
-                              class="mt-0"
+                              class="text-body-2 mt-0"
                               dense
                             ></v-text-field>
                           </template>

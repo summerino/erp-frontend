@@ -394,7 +394,7 @@
                               :readonly="item.typeId == 0"
                               item-text="code"
                               item-value="code"
-                              class="mt-0"
+                              class="text-body-2 mt-0"
                               required
                               @change="itemCodeChange(item)"
                             >
@@ -417,7 +417,7 @@
                             <v-currency-field
                               v-model="item.qty"
                               :decimal-length="0"
-                              class="text-right mt-0"
+                              class="text-body-2 text-right mt-0"
                               required
                               @change="calcItemPrice(item)"
                             ></v-currency-field>
@@ -428,7 +428,7 @@
                               :items="warehouses"
                               item-text="initial"
                               item-value="code"
-                              class="text-right mt-0"
+                              class="text-body-2 text-right mt-0"
                               required
                             ></v-autocomplete>
                           </template>
