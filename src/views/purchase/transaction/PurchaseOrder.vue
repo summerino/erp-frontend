@@ -173,23 +173,22 @@
 
                   <v-card-text>
                     <v-row no-gutters>
-                      <v-text-field
-                        ref="code"
-                        v-model="data.code"
-                        label="Order Code"
-                        class="mt-0"
-                        readonly
-                      ></v-text-field>
-                      <v-checkbox
-                        v-model="data.includeTax"
-                        label="Tax Included"
-                        class="shrink ml-1"
-                        @change="calcPrice"
-                      ></v-checkbox>
-                    </v-row>
-
-                    <v-row no-gutters>
-                      <v-col cols="12">
+                      <v-col cols="12" md="6">
+                        <v-text-field
+                          ref="code"
+                          v-model="data.code"
+                          label="Order Code"
+                          class="mt-0"
+                          readonly
+                        ></v-text-field>
+                        <!-- <v-checkbox
+                          v-model="data.includeTax"
+                          label="Tax Included"
+                          class="shrink ml-1"
+                          @change="calcPrice"
+                        ></v-checkbox> -->
+                      </v-col>
+                      <v-col cols="12" md="6" class="pl-md-1">
                         <v-menu
                           v-model="menu.orderDate"
                           :close-on-content-click="false"
@@ -323,7 +322,7 @@
                       </v-row>
 
                       <v-row no-gutters>
-                        <v-col cols="12">
+                        <v-col cols="6">
                           <v-text-field
                             v-model="data.supPhone"
                             label="Phone"
@@ -331,10 +330,7 @@
                             readonly
                           ></v-text-field>
                         </v-col>
-                      </v-row>
-
-                      <v-row no-gutters>
-                        <v-col cols="12">
+                        <v-col cols="6" class="pl-1">
                           <v-text-field
                             v-model="data.supFax"
                             label="Fax"
@@ -361,7 +357,7 @@
                         </v-col>
                       </v-row>
 
-                      <v-row no-gutters>
+                      <!-- <v-row no-gutters>
                         <v-col cols="12">
                           <v-autocomplete
                             v-model="data.tax"
@@ -373,7 +369,7 @@
                             @change="calcPrice"
                           ></v-autocomplete>
                         </v-col>
-                      </v-row>
+                      </v-row> -->
                     </v-tab-item>
                   </v-tabs-items>
                 </v-card>
@@ -620,7 +616,7 @@
                       </v-col>
                     </v-row>
 
-                    <v-row no-gutters>
+                    <!-- <v-row no-gutters>
                       <v-col cols="4">
                         <v-currency-field
                           v-model="data.taxPercent"
@@ -640,7 +636,7 @@
                           readonly
                         ></v-currency-field>
                       </v-col>
-                    </v-row>
+                    </v-row> -->
 
                     <v-row no-gutters>
                       <v-currency-field
