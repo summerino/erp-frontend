@@ -16,8 +16,10 @@ mock.onGet(`/api/${endpoint.sales.delivery}`).reply(async (config) => {
 
   var results = []
   for (var i = 0; i < resp_h.data.length; i++) {
+    const cust = resp_c.data.find(c => c.code == resp_h.data[i].custCode)
+    
     const result = resp_h.data[i]
-    result.custName = resp_c.data.find(c => c.code == resp_h.data[i].custCode).name
+    result.custName = cust ? cust.name : ''
     
     results.push(result)
   }

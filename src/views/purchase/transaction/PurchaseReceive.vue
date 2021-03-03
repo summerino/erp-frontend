@@ -109,15 +109,54 @@
                 <v-btn
                   v-bind="attrs"
                   v-on="on"
-                  v-shortkey="['ctrl', 's']"
+                  v-shortkey="['ctrl', 'enter']"
                   dark
                   text
-                  @click="save"
-                  @shortkey="save"
-                >Save</v-btn>
+                  @click="save(true)"
+                  @shortkey="save(true)"
+                >Save & Close</v-btn>
               </template>
-              <span class="text-caption">(Ctrl + S)</span>
+              <span class="text-caption">(Ctrl + Enter)</span>
             </v-tooltip>
+            <v-divider vertical></v-divider>
+            <v-menu
+              bottom
+              left
+              open-on-hover
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  dark
+                  icon
+                >
+                  <v-icon>mdi-menu-down</v-icon>
+                </v-btn>
+              </template>
+              <v-list class="cursor-pointer">
+                <v-list-item
+                  v-shortkey="['ctrl', 's']"
+                  @click="save(false)"
+                  @shortkey="save(false)"
+                >
+                  <v-list-item-title>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <span
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          Save
+                        </span>
+                      </template>
+                      <span class="text-caption">(Ctrl + S)</span>
+                    </v-tooltip>
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+            <v-divider vertical></v-divider>
           </v-toolbar-items>
         </v-toolbar>
 
@@ -699,30 +738,27 @@ export default {
           })
       }
     },
-    save() {
+    async save(closeDialog) {
       if (!this.dialog.add) return
 
       const data = this.data
       data.itemDetails = this.gridItem.data
 
+      let result = { success: false, message: '' }
       if (data.action === 'add') {
-        api.create(this.endpoint.purchase.receive, data)
-          .then(response => {
-            if (response.data.success) {
-              this.$store.dispatch('app/showSuccess', response.data.message)
-              this.getList()
-              this.dialog.add = false
-            }
-          })
+        const resp = await api.create(this.endpoint.purchase.receive, data)
+        result = resp.data
       } else if (data.action === 'edit') {
-        api.update(this.endpoint.purchase.receive, data)
-          .then(response => {
-            if (response.data.success) {
-              this.$store.dispatch('app/showSuccess', response.data.message)
-              this.getList()
-              this.dialog.add = false
-            }
-          })
+        const resp = await api.update(this.endpoint.purchase.receive, data)
+        result = resp.data
+      }
+
+      if (result.success) {
+        this.$store.dispatch('app/showSuccess', result.message)
+        this.getList()
+        if (closeDialog) {
+          this.dialog.add = false
+        }
       }
     },
     addItem() {

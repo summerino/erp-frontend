@@ -17,8 +17,10 @@ mock.onGet(`/api/${endpoint.purchase.invoice}`).reply(async (config) => {
 
   var results = []
   for (var i = 0; i < resp_h.data.length; i++) {
+    const supplier = resp_s.data.find(s => s.code == resp_h.data[i].supCode)
+    
     const result = resp_h.data[i]
-    result.supName = resp_s.data.find(s => s.code == resp_h.data[i].supCode).name
+    result.supName = supplier ? supplier.name : ''
     
     results.push(result)
   }
@@ -177,8 +179,8 @@ mock.onPut(/\/api\/purchase-invoice\/./).reply(async (config) => {
   // Update purchase invoice header
   axiosJsonServer.put(`/purchaseInvoice_H/${id}`, {
     code: data.code,
-    orderDate: data.orderDate,
-    workerCode: data.workerCode,
+    invDate: data.invDate,
+    dueDate: data.dueDate,
     curr: data.curr,
     rate: data.rate,
     supCode: data.supCode,

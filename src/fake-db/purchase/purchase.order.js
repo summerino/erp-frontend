@@ -18,9 +18,12 @@ mock.onGet(`/api/${endpoint.purchase.order}`).reply(async (config) => {
 
   var results = []
   for (var i = 0; i < resp_h.data.length; i++) {
+    const worker = resp_w.data.find(w => w.code == resp_h.data[i].workerCode)
+    const supplier = resp_s.data.find(s => s.code == resp_h.data[i].supCode)
+    
     const result = resp_h.data[i]
-    result.workerName = resp_w.data.find(w => w.code == resp_h.data[i].workerCode).name
-    result.supName = resp_s.data.find(s => s.code == resp_h.data[i].supCode).name
+    result.workerName = worker ? worker.name : ''
+    result.supName = supplier ? supplier.name : ''
     
     results.push(result)
   }
