@@ -150,7 +150,7 @@ mock.onPost(`/api/${endpoint.sales.order}`).reply(async (request) => {
     finalDisc: data.finalDisc,
     taxPercent: data.taxPercent,
     taxAmount: data.taxAmount,
-    grandTotal: data.grandTotal,
+    total: data.total,
     createdBy: data.createdBy,
     createdDate: format(new Date(), 'yyyy-MM-dd'),
     updatedBy: data.updatedBy,
@@ -217,7 +217,7 @@ mock.onPut(/\/api\/sales-order\/./).reply(async (config) => {
     finalDisc: data.finalDisc,
     taxPercent: data.taxPercent,
     taxAmount: data.taxAmount,
-    grandTotal: data.grandTotal,
+    total: data.total,
     updatedBy: data.updatedBy,
     updatedDate: format(new Date(), 'yyyy-MM-dd')
   })

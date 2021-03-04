@@ -2071,20 +2071,23 @@
   "deliveryOrder_H": [
     {
       "code": "DO000001",
-      "deliveryDate": "2021-02-25",
+      "deliveryDate": "2021-03-04",
       "soCode": "SO000001",
       "custCode": "C00002",
       "deliveryAddr": null,
-      "warehouseCode": "WH00003",
+      "warehouseCode": null,
       "notes": null,
       "shippedBy": null,
       "approveBy": null,
-      "dpp": 0,
-      "subTotal": 0,
+      "dpp": 124772.72727272726,
+      "subTotal": 137250,
       "finalDisc": 0,
-      "taxAmount": 0,
+      "taxAmount": 12477.27,
+      "total": 187250,
+      "createdBy": null,
+      "createdDate": "2021-03-04",
       "updatedBy": null,
-      "updatedDate": "2021-03-03",
+      "updatedDate": "2021-03-04",
       "id": 1
     }
   ],
@@ -2109,29 +2112,45 @@
       "description": null,
       "typeId": 0,
       "id": 1
-    },
-    {
-      "rowId": "24065ea0-6548-11eb-8ea6-6f6267c67e31",
-      "code": "DO000001",
-      "lineNo": 2,
-      "itemId": 3,
-      "itemCode": "ABC24",
-      "itemName": "ATM BUTTER 24 CHOCOLATE",
-      "orderQty": 3,
-      "qty": 3,
-      "uomId": 3,
-      "unitId": 7,
-      "unitName": "PAK",
-      "unitPrice": 15750,
-      "itemSellPrice": 63000,
-      "disc": 0,
-      "nettPrice": 15750,
-      "total": 47250,
-      "description": null,
-      "typeId": 0,
-      "id": 2
     }
   ],
-  "salesInvoice_H": [],
-  "salesInvoice_D": []
+  "salesInvoice_H": [
+    {
+      "code": "SI000001",
+      "invDate": "2021-03-04",
+      "dueDate": "2021-03-04",
+      "curr": "IDR",
+      "rate": 1,
+      "custCode": "C00002",
+      "tax": "001",
+      "includeTax": 0,
+      "notes": null,
+      "shipmentFee": 0,
+      "handlingFee": 0,
+      "subTotal": 187250,
+      "finalDiscPercent": 0,
+      "finalDisc": 0,
+      "taxPercent": 10,
+      "taxAmount": 18725,
+      "dpp": 187250,
+      "total": 205975,
+      "updatedDate": "2021-03-04",
+      "id": 1
+    }
+  ],
+  "salesInvoice_D": [
+    {
+      "rowId": "c5adf550-7ce1-11eb-875a-8781b95c2907",
+      "code": "SI000001",
+      "lineNo": 1,
+      "doCode": "DO000001",
+      "subTotal": 137250,
+      "disc": 0,
+      "finalDisc": 0,
+      "taxAmount": 12477.27,
+      "dpp": 124772.72727272726,
+      "total": 187250,
+      "id": 1
+    }
+  ]
 }
