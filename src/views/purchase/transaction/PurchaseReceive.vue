@@ -763,7 +763,7 @@ export default {
     },
     addItem() {
       // if (!this.data.supCode) {
-      //   this.$store.dispatch('app/showInfo', 'Please choose supplier first')
+      //   this.$store.dispatch('app/showInfo', 'Please choose supplier first.')
       //   return
       // }
 
@@ -892,6 +892,11 @@ export default {
         this.data.supAddr = null
         this.data.supPhone = null
         this.data.supFax = null
+        this.data.dpp = 0
+        this.data.subTotal = 0
+        this.data.finalDisc = 0
+        this.data.taxAmount = 0
+        this.data.total = 0
         this.gridItem.data = []
       }
     },

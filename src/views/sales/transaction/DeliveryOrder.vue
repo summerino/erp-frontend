@@ -754,7 +754,7 @@ export default {
     },
     addItem() {
       // if (!this.data.custCode) {
-      //   this.$store.dispatch('app/showInfo', 'Please choose customer first')
+      //   this.$store.dispatch('app/showInfo', 'Please choose customer first.')
       //   return
       // }
       this.$refs.receiveItem.add()
@@ -838,6 +838,11 @@ export default {
         this.data.custPhone = item.custPhone
         this.data.custFax = item.custFax
         // this.data.deliveryAddr = item.deliveryAddr
+        this.data.dpp = item.dpp
+        this.data.subTotal = item.subTotal
+        this.data.finalDisc = item.finalDisc
+        this.data.taxAmount = item.taxAmount
+        this.data.total = item.total
 
         // Get sales order item details
         api.getAll(`${this.endpoint.sales.order}/outstanding-item`, {
@@ -854,6 +859,11 @@ export default {
         this.data.custFax = null
         this.data.deliveryAddr = null
         this.data.warehouseCode = null
+        this.data.dpp = 0
+        this.data.subTotal = 0
+        this.data.finalDisc = 0
+        this.data.taxAmount = 0
+        this.data.total = 0
         this.gridItem.data = []
       }
     }

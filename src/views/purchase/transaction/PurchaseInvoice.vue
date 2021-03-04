@@ -987,6 +987,11 @@ export default {
       }
     },
     addItem() {
+      if (!this.data.supCode) {
+        this.$store.dispatch('app/showInfo', 'Please choose supplier first.')
+        return
+      }
+
       if (this.gridDet.data.length === 0 || (this.gridDet.data.slice(-1)[0].rcvCode ?? null)) {
         const item = {
           rowId: this.$uuid.v1(),

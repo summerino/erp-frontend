@@ -272,7 +272,7 @@
                   <v-tabs v-model="tab.cust">
                     <v-tab key="cust">Customer</v-tab>
                     <v-tab key="cust-delivery">Delivery</v-tab>
-                    <v-tab key="cust-payment">Payment</v-tab>
+                    <!-- <v-tab key="cust-payment">Payment</v-tab> -->
                   </v-tabs>
 
                   <v-tabs-items v-model="tab.cust" class="pa-2">
@@ -1067,7 +1067,7 @@ export default {
     },
     addItem() {
       if (!this.data.custCode) {
-        this.$store.dispatch('app/showInfo', 'Please choose customer first')
+        this.$store.dispatch('app/showInfo', 'Please choose customer first.')
         this.$refs.btnFindCust.$el.focus()
         return
       }
