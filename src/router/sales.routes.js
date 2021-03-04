@@ -12,4 +12,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/sales/transaction/sales/invoice',
+  name: 'sales-invoice',
+  component: () => import('@/views/sales/transaction/SalesInvoice.vue'),
+  meta: {
+    authRequired: true
+  }
 }]

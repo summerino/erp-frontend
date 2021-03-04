@@ -35,10 +35,10 @@ mock.onGet(`/api/${endpoint.sales.delivery}/item`).reply(async (config) => {
   return [response.status, response.data]
 })
 
-mock.onGet(`/api/${endpoint.sales.delivery}/incomplete`).reply(async (config) => {
+mock.onGet(/\/api\/delivery-order\/uninv\/./).reply(async (config) => {
+  const urlSegment = config.url.split('/')
   var searchBy = ''
   var search = ''
-  var results = []
 
   if (config.params) {
     var { searchBy, search } = config.params
@@ -46,48 +46,13 @@ mock.onGet(`/api/${endpoint.sales.delivery}/incomplete`).reply(async (config) =>
   searchBy = searchBy.toLowerCase()
   search = search.toLowerCase()
   
-  const resp_h = await axiosJsonServer.get(`/deliveryOrder_H`)
+  const resp_h = await axiosJsonServer.get(`/deliveryOrder_H?custCode=${urlSegment[urlSegment.length - 1]}`)
   
-  let result_h = resp_h.data.filter(h => {
-    if (searchBy == 'socode') return h.code.toLowerCase().includes(search)
-    else if (searchBy == 'curr') return h.curr.toLowerCase().includes(search)
+  let results = resp_h.data.filter(h => {
+    if (searchBy == 'code') return h.code.toLowerCase().includes(search)
+    else if (searchBy == 'socode') return h.soCode.toLowerCase().includes(search)
     else return h
   })
-
-  if (result_h.length > 0) {
-    const resp_s = await axiosJsonServer.get(`/salesmans`)
-    const resp_c = await axiosJsonServer.get(`/customers`)
-
-    for (var i = 0; i < result_h.length; i++) {
-      const result = result_h[i]
-      result.salesName = resp_s.data.find(s => s.code == result_h[i].salesCode).name
-      result.custName = resp_c.data.find(c => c.code == result_h[i].custCode).name
-      result.custAddr = resp_c.data.find(c => c.code == result_h[i].custCode).address
-      result.custPhone = resp_c.data.find(c => c.code == result_h[i].custCode).phone1
-      result.custFax = resp_c.data.find(c => c.code == result_h[i].custCode).fax
-      results.push(result)
-    }
-    
-    results = results.filter(r => {
-      if (searchBy == 'custname') return r.custName.toLowerCase().includes(search)
-      else return r
-    })
-  }
-
-  return [200, results]
-})
-
-mock.onGet(`/api/${endpoint.sales.delivery}/outstanding-item`).reply(async (config) => {
-  const { code } = config.params
-  
-  const response = await axiosJsonServer.get(`/deliveryOrder_D?code=${code}`)
-
-  var results = []
-  for (var i = 0; i < response.data.length; i++) {
-    const result = response.data[i]
-    result.orderQty = result.qty
-    results.push(result)
-  }
 
   return [200, results]
 })
@@ -117,7 +82,7 @@ mock.onPost(`/api/${endpoint.sales.delivery}`).reply(async (request) => {
     subTotal: data.subTotal,
     finalDisc: data.finalDisc,
     taxAmount: data.taxAmount,
-    grandTotal: data.grandTotal,
+    total: data.total,
     createdBy: data.createdBy,
     createdDate: format(new Date(), 'yyyy-MM-dd'),
     updatedBy: data.updatedBy,
@@ -173,7 +138,7 @@ mock.onPut(/\/api\/delivery-order\/./).reply(async (config) => {
     subTotal: data.subTotal,
     finalDisc: data.finalDisc,
     taxAmount: data.taxAmount,
-    grandTotal: data.grandTotal,
+    total: data.total,
     updatedBy: data.updatedBy,
     updatedDate: format(new Date(), 'yyyy-MM-dd')
   })
