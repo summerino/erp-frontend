@@ -4,6 +4,7 @@
     :width="options.width"
     persistent
     scrollable
+    @keydown.esc="close"
   >
     <v-card>
       <v-toolbar
@@ -15,7 +16,7 @@
         <v-spacer></v-spacer>
         <v-btn
           icon
-          @click="dialog = false"
+          @click="close"
         >
           <v-icon>mdi-window-close</v-icon>
         </v-btn>
@@ -54,6 +55,9 @@
             hide-default-footer
             @dblclick:row="dblclickRow"
           >
+            <template v-slot:[`item.orderDate`]="{ item }">
+              {{ item.orderDate | formatDate('dd-MMM-yyyy') }}
+            </template>
             <template v-slot:[`item.code`]="{ item }">
               <v-text-field
                 v-model="item.code"
@@ -62,6 +66,9 @@
                 readonly
                 @keyup.enter="dblclickRow(null, { item })"
               ></v-text-field>
+            </template>
+            <template v-slot:[`item.total`]="{ item }">
+              {{ item.total | formatCurrency }}
             </template>
           </v-data-table>
         </v-card>
@@ -74,7 +81,7 @@
           dark
           small
           tile
-          @click="dialog = false"
+          @click="close"
         >
           <v-icon left>mdi-close-circle-outline</v-icon>
           Cancel
@@ -107,7 +114,7 @@ export default {
         columns: [
           { text: 'SO Date', value: 'orderDate', align: 'right', divider: true, width: '120' },
           { text: 'SO Code', value: 'code', divider: true, width: '100' },
-          { text: 'Amount', value: 'grandTotal', align: 'right', divider: true, width: '120' },
+          { text: 'Amount', value: 'total', align: 'right', divider: true, width: '120' },
           { text: 'Customer', value: 'custName', divider: true, width: '150' },
           { text: 'Salesman', value: 'salesName', divider: true, width: '150' },
           { text: 'Curr.', value: 'curr', divider: true, width: '90' },
@@ -137,6 +144,9 @@ export default {
       setTimeout(() => {
         this.$refs.search.focus()
       }, 0)
+    },
+    close() {
+      this.dialog = false
     },
     search() {
       api.getAll(`${this.endpoint.sales.order}/incomplete`, {

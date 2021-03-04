@@ -55,6 +55,9 @@
             hide-default-footer
             @dblclick:row="dblclickRow"
           >
+            <template v-slot:[`item.orderDate`]="{ item }">
+              {{ item.orderDate | formatDate('dd-MMM-yyyy') }}
+            </template>
             <template v-slot:[`item.code`]="{ item }">
               <v-text-field
                 v-model="item.code"
@@ -63,6 +66,9 @@
                 readonly
                 @keyup.enter="dblclickRow(null, { item })"
               ></v-text-field>
+            </template>
+            <template v-slot:[`item.total`]="{ item }">
+              {{ item.total | formatCurrency }}
             </template>
           </v-data-table>
         </v-card>
@@ -108,7 +114,7 @@ export default {
         columns: [
           { text: 'PO Date', value: 'orderDate', align: 'right', divider: true, width: '120' },
           { text: 'PO Code', value: 'code', divider: true, width: '100' },
-          { text: 'Amount', value: 'grandTotal', align: 'right', divider: true, width: '120' },
+          { text: 'Amount', value: 'total', align: 'right', divider: true, width: '120' },
           { text: 'Supplier', value: 'supName', divider: true, width: '150' },
           { text: 'Purchaser', value: 'workerName', divider: true, width: '150' },
           { text: 'Curr.', value: 'curr', width: '90' }

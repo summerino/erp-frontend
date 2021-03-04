@@ -55,6 +55,9 @@
             hide-default-footer
             @dblclick:row="dblclickRow"
           >
+            <template v-slot:[`item.receiveDate`]="{ item }">
+              {{ item.receiveDate | formatDate('dd-MMM-yyyy') }}
+            </template>
             <template v-slot:[`item.code`]="{ item }">
               <v-text-field
                 v-model="item.code"
@@ -63,6 +66,9 @@
                 readonly
                 @keyup.enter="dblclickRow(null, { item })"
               ></v-text-field>
+            </template>
+            <template v-slot:[`item.total`]="{ item }">
+              {{ item.total | formatCurrency }}
             </template>
           </v-data-table>
         </v-card>
@@ -115,7 +121,7 @@ export default {
           { text: 'Rcv. Code', value: 'code', divider: true, width: '100' },
           { text: 'PO Code', value: 'poCode', divider: true, width: '100' },
           { text: 'Ref. No.', value: 'refNo', divider: true, width: '120' },
-          { text: 'Amount', value: 'grandTotal', align: 'right', width: '120' }
+          { text: 'Amount', value: 'total', align: 'right', width: '120' }
         ]
       },
       options: {
@@ -141,7 +147,7 @@ export default {
       this.reset()
       setTimeout(() => {
         this.$refs.search.focus()
-      }, 1000)
+      }, 500)
     },
     close() {
       this.dialog = false
