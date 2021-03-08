@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import auth from '@/auth/authService'
 
 // Routes
-import InventoryRoutes from './invetory.routes'
+import InventoryRoutes from './inventory.routes'
 import PurchaseRoutes from './purchase.routes'
 import SalesRoutes from './sales.routes'
 import UsersRoutes from './users.routes'
