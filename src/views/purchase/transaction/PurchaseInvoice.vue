@@ -438,6 +438,7 @@
                           height="300"
                           class="elevation-1"
                           dense
+                          disable-sort
                           hide-default-footer
                         >
                           <template v-slot:[`item.action`]="{ item }">

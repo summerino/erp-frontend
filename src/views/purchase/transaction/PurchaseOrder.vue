@@ -417,6 +417,7 @@
                           height="300"
                           class="elevation-1"
                           dense
+                          disable-sort
                           fixed-header
                           hide-default-footer
                         >
