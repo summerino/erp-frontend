@@ -12,11 +12,16 @@
       {{ toast.message }}
       <v-btn v-if="toast.timeout === 0" color="white" text @click="toast.show = false">{{ $t('common.close') }}</v-btn>
     </v-snackbar>
+
+    <v-overlay :value="loadOverlay" z-index="9999999">
+      <dot-loader color="#0051a2" size="80px"></dot-loader>
+    </v-overlay>
   </v-app>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import DotLoader from 'vue-spinner/src/DotLoader'
 
 import config from './configs'
 
@@ -36,13 +41,14 @@ import errorLayout from './layouts/ErrorLayout'
 */
 export default {
   components: {
+    DotLoader,
     defaultLayout,
     simpleLayout,
     authLayout,
     errorLayout
   },
   computed: {
-    ...mapState('app', ['toast']),
+    ...mapState('app', ['toast', 'loadOverlay']),
     isRouterLoaded: function () {
       if (this.$route.name !== null) return true
 
