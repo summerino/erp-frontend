@@ -23,8 +23,8 @@ class AxiosService {
     return axios.post(`/${url}`, data, config)
   }
 
-  update(url, data, config) {
-    return axios.put(`/${url}/${data.id}`, data, config)
+  update(url, id, data, config) {
+    return axios.put(`/${url}/${id}`, data, config)
   }
 
   delete(endpoint, id, config) {
