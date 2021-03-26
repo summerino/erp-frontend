@@ -31,10 +31,23 @@ const state = {
     timeout: 3000
   },
 
+  // App.vue rule
+  rules: {
+    required: [
+      (v) => !!v || 'required'
+    ],
+    max256: [
+      (v) => (v || '').length <= 256 || 'Max 256 characters'
+    ]
+  },
+
   // App.vue data table
   grid: {
     height: 300
-  }
+  },
+
+  // App.vue loading overlay
+  loadOverlay: true
 }
 
 export default {
