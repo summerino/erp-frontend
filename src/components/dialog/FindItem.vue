@@ -22,7 +22,7 @@
         </v-btn>
       </v-toolbar>
 
-      <v-card-text class="px-2">
+      <v-card-text class="px-2 py-0">
         <v-row dense>
           <v-col cols="12" md="4">
             <v-card
@@ -104,6 +104,8 @@
 
 <script>
 import { mapState } from 'vuex'
+import { remove as _remove } from 'lodash'
+
 import api from '@/services/axios.service'
 
 export default {
@@ -118,9 +120,9 @@ export default {
         by: 'name',
         value: '',
         items: [
-          { text: 'Code', value: 'code' },
+          { text: 'Initial', value: 'initial' },
           { text: 'Name', value: 'name' },
-          { text: 'Type', value: 'type' }
+          { text: 'Type', value: 'typeName' }
         ]
       },
       rowItem: {},
@@ -128,12 +130,12 @@ export default {
         height: 300,
         data: [],
         columns: [
-          { text: 'Code', value: 'code', divider: true, width: '120' },
+          { text: 'Initial', value: 'initial', divider: true, width: '120' },
           { text: 'Name', value: 'name', divider: true, width: '300' },
-          { text: 'Type', value: 'type', divider: true, width: '150' },
+          { text: 'Type', value: 'typeName', divider: true, width: '150' },
           { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '100' },
-          { text: 'Unit', value: 'unit', divider: true, width: '150' },
-          { text: 'Category', value: 'category', width: '150' }
+          { text: 'Unit', value: 'uomBuyName', divider: true, width: '150' },
+          { text: 'Category', value: 'categoryName', width: '150' }
         ]
       }
     }
@@ -162,14 +164,14 @@ export default {
       this.rowItem = rowItem
       this.reset()
       setTimeout(() => {
-        this.grid.height = this.$refs.dialog.$refs.content.clientHeight - 186
+        this.grid.height = this.$refs.dialog.$refs.content.clientHeight - 178
         this.$refs.search.focus()
-      }, 1000)
+      }, 500)
     },
     getCategoryHierarchy() {
       api.getAll(`${this.endpoint.inventory.item.category}/hierarchy`)
         .then(response => {
-          this.categories = response.data
+          this.categories = [response.data]
           this.data.category = [0]
           this.initOpenTV = [0]
         })
@@ -177,13 +179,20 @@ export default {
     search() {
       api.getAll(this.endpoint.inventory.item.item, {
         params: {
-          category: this.data.category,
-          searchBy: this.data.by,
-          search: this.data.value
+          category: JSON.stringify(
+            _remove(this.data.category, function (val) {
+              return val > 0
+            })
+          ),
+          filters: JSON.stringify([{
+            field: this.data.by,
+            operator: 'contains',
+            keyword: this.data.value
+          }])
         }
       })
         .then(response => {
-          this.grid.data = response.data
+          this.grid.data = response.data.tableData
         })
     },
     dblclickRow(event, { item }) {
