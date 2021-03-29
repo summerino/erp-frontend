@@ -43,11 +43,13 @@ const state = {
 
   // App.vue data table
   grid: {
-    height: 300
+    height: 300,
+    pageSize: 50,
+    pageSizes: [50, 100, 150, 200]
   },
 
   // App.vue loading overlay
-  loadOverlay: true
+  loadOverlay: false
 }
 
 export default {
