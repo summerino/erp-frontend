@@ -1,4 +1,6 @@
 export default {
+  master: 'master',
+  
   general: {
     currency: 'currency',
     customer: 'customer',
@@ -10,8 +12,8 @@ export default {
 
   inventory: {
     item: {
-      category: 'item/category',
-      group: 'item/group',
+      category: 'item-category',
+      group: 'item-group',
       item: 'item'
     },
     uom: {
@@ -24,7 +26,8 @@ export default {
   purchase: {
     order: 'purchase-order',
     receive: 'purchase-receive',
-    invoice: 'purchase-invoice'
+    invoice: 'purchase-invoice',
+    return: 'purchase-return'
   },
 
   sales: {

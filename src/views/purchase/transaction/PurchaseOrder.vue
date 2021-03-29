@@ -42,9 +42,12 @@
 
       <v-data-table
         :headers="grid.columns"
-        :height="gridDefaultHeight"
+        :footer-props="{ itemsPerPageOptions: gridDefOpts.pageSizes }"
+        :height="gridDefOpts.height"
         :items="grid.data"
-        :items-per-page="5"
+        :items-per-page="gridDefOpts.pageSize"
+        :options.sync="grid.options"
+        :server-items-length="grid.total"
         class="elevation-1"
         fixed-header
       >
@@ -69,6 +72,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
+                :disabled="item.mark.toLowerCase() === 'v'"
                 color="red"
                 icon
                 small
@@ -77,14 +81,21 @@
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <span class="text-caption">Delete</span>
+            <span class="text-caption">Void</span>
           </v-tooltip>
         </template>
-        <template v-slot:[`item.orderDate`]="{ item }">
-          {{ item.orderDate | formatDate('dd-MMM-yyyy') }}
+        <template v-slot:[`item.date`]="{ item }">
+          {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
         <template v-slot:[`item.total`]="{ item }">
           {{ item.total | formatCurrency }}
+        </template>
+        <template v-slot:[`item.mark`]="{ item }">
+          <v-badge
+            :content="item.mark"
+            :color="item.mark.toLowerCase() === 'v' ? 'error' : 'green'"
+            inline
+          ></v-badge>
         </template>
       </v-data-table>
     </v-card>
@@ -114,6 +125,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
+                  :disabled="isVoid"
                   dark
                   text
                   @click="save(true)"
@@ -141,6 +153,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
+                  :disabled="isVoid"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -165,7 +178,10 @@
         </v-toolbar>
 
         <v-card-text class="px-2">
-          <!-- <v-form v-model="valid"> -->
+          <v-form
+            ref="form"
+            v-model="valid"
+          >
             <v-row dense>
               <v-col cols="12" md="4">
                 <v-card>
@@ -181,12 +197,6 @@
                           class="mt-0"
                           readonly
                         ></v-text-field>
-                        <!-- <v-checkbox
-                          v-model="data.includeTax"
-                          label="Tax Included"
-                          class="shrink ml-1"
-                          @change="calcPrice"
-                        ></v-checkbox> -->
                       </v-col>
                       <v-col cols="12" md="6" class="pl-md-1">
                         <v-menu
@@ -200,7 +210,7 @@
                             <v-text-field
                               v-bind="attrs"
                               v-on="on"
-                              :rules="rules.date"
+                              :rules="rules.required"
                               :value="formatOrderDate"
                               label="Order Date"
                               class="mt-0"
@@ -209,7 +219,7 @@
                             ></v-text-field>
                           </template>
                           <v-date-picker
-                            v-model="data.orderDate"
+                            v-model="data.date"
                             no-title
                             scrollable
                             @change="menu.orderDate = false"
@@ -221,12 +231,12 @@
                     <v-row no-gutters>
                       <v-col cols="12">
                         <v-autocomplete
-                          v-model="data.workerCode"
-                          :items="workers"
-                          :rules="rules.purchaser"
-                          label="Purchaser"
-                          item-text="name"
-                          item-value="code"
+                          v-model="data.requestBy"
+                          :items="employees"
+                          :item-text="item => `${item.initial} - ${item.firstName}`"
+                          :rules="rules.required"
+                          label="Request By"
+                          item-value="id"
                           class="mt-0"
                           required
                         ></v-autocomplete>
@@ -236,9 +246,9 @@
                     <v-row no-gutters>
                       <v-col cols="5">
                         <v-combobox
-                          v-model="data.curr"
+                          v-model="data.currCode"
                           :items="currencies"
-                          :rules="rules.curr"
+                          :rules="rules.required"
                           label="Currrency"
                           item-text="code"
                           item-value="code"
@@ -250,7 +260,7 @@
                       <v-col cols="7" class="pl-1">
                         <v-currency-field
                           v-model="data.rate"
-                          :rules="rules.rate"
+                          :rules="rules.required"
                           label="Rate"
                           class="text-right mt-0"
                           required
@@ -279,6 +289,7 @@
                             v-model="data.supCode"
                             :items="suppliers"
                             :item-text="item => `${item.code} - ${item.initial}`"
+                            :rules="rules.required"
                             label="Code"
                             item-value="code"
                             class="mt-0"
@@ -290,6 +301,7 @@
                         <v-col cols="8" class="pl-1">
                           <v-text-field
                             v-model="data.supName"
+                            :rules="rules.required"
                             label="Name"
                             class="mt-0"
                             readonly
@@ -379,7 +391,7 @@
             <v-row dense>
               <v-col cols="12">
                 <v-card>
-                  <v-tabs>
+                  <v-tabs v-model="tab.item">
                     <v-tab key="item">Item</v-tab>
                     <v-tab key="related-trans">Related Transaction(s)</v-tab>
 
@@ -396,6 +408,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
+                                :disabled="isVoid"
                                 class="blue--text"
                                 small
                                 tile
@@ -427,6 +440,7 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
+                                  :disabled="isVoid"
                                   color="red"
                                   icon
                                   small
@@ -438,17 +452,18 @@
                               <span class="text-caption">Delete</span>
                             </v-tooltip>
                           </template>
-                          <template v-slot:[`item.itemCode`]="{ item }">
+                          <template v-slot:[`item.itemId`]="{ item }">
                             <v-autocomplete
-                              ref="itemCode"
-                              v-model="item.itemCode"
+                              ref="itemId"
+                              v-model="item.itemId"
                               :items="items"
-                              item-text="code"
-                              item-value="code"
+                              :rules="rules.required"
+                              item-text="initial"
+                              item-value="id"
                               class="text-body-2 mt-0"
                               dense
                               required
-                              @change="itemCodeChange(item)"
+                              @change="itemIdChange(item)"
                             >
                               <template v-slot:append>
                                 <v-btn
@@ -478,6 +493,7 @@
                             <v-autocomplete
                               v-model="item.unitId"
                               :items="item.units"
+                              :rules="rules.required"
                               item-text="unitEquivalent"
                               item-value="id"
                               class="text-body-2 mt-0"
@@ -498,15 +514,26 @@
                               @change="calcItemPrice(item)"
                             ></v-currency-field>
                           </template>
+                          <template v-slot:[`item.includeTax`]="{ item }">
+                            <v-checkbox
+                              v-model="item.includeTax"
+                              class="mt-1"
+                              dense
+                              @change="calcItemPrice(item)"
+                            ></v-checkbox>
+                          </template>
+                          <template v-slot:[`item.taxAmount`]="{ item }">
+                            {{ item.taxAmount | formatCurrency }}
+                          </template>
                           <template v-slot:[`item.nettPrice`]="{ item }">
                             {{ item.nettPrice | formatCurrency }}
                           </template>
                           <template v-slot:[`item.total`]="{ item }">
                             {{ item.total | formatCurrency }}
                           </template>
-                          <template v-slot:[`item.description`]="{ item }">
+                          <template v-slot:[`item.notes`]="{ item }">
                             <v-text-field
-                              v-model="item.description"
+                              v-model="item.notes"
                               class="text-body-2 mt-0"
                               dense
                             ></v-text-field>
@@ -542,9 +569,9 @@
                     >
                       <v-textarea
                         v-model="data.notes"
-                        :rules="rules.notes"
+                        :rules="rules.max256"
                         label="Notes"
-                        counter="2000"
+                        counter="256"
                         class="mt-0"
                         rows="4"
                       ></v-textarea>
@@ -651,7 +678,7 @@
                 </v-card>
               </v-col>
             </v-row>
-          <!-- </v-form> -->
+          </v-form>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -695,57 +722,56 @@ export default {
     },
     tab: {
       sup: null,
+      item: null,
       foot: null
     },
     grid: {
-      search: null,
-      data: [],
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Code', value: 'code', divider: true, width: '100' },
-        { text: 'Date', value: 'orderDate', align: 'right', divider: true, width: '120' },
-        { text: 'Purchaser', value: 'workerName', divider: true, width: '200' },
+        { text: 'Code', value: 'code', divider: true, width: '150' },
+        { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
+        { text: 'Request By', value: 'requestInitial', divider: true, width: '200' },
         { text: 'Supplier', value: 'supName', divider: true, width: '200' },
-        { text: 'Curr.', value: 'curr', divider: true, width: '90' },
+        { text: 'Curr.', value: 'currCode', divider: true, width: '90' },
         { text: 'Total', value: 'total', align: 'right', divider: true, width: '120' },
-        { text: 'TOP', value: 'paymentTerm', width: '120' }
-      ]
+        { text: 'Status', value: 'mark', width: '50' }
+      ],
+      data: [],
+      options: {sortBy: []},
+      total: 0,
+      search: null
     },
     gridItem: {
-      data: [],
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Item', value: 'itemCode', divider: true, width: '120' },
+        { value: 'action', sortable: false, divider: true, width: '1%' },
+        { text: 'Item', value: 'itemId', divider: true, width: '120' },
         { text: 'Name', value: 'itemName', divider: true, width: '300' },
         { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
         { text: 'Unit', value: 'unitName', divider: true, width: '90' },
         { text: 'Unit Price', value: 'unitPrice', align: 'right', divider: true, width: '120' },
         { text: 'Disc', value: 'disc', align: 'right', divider: true, width: '120' },
+        { text: 'Inc.', value: 'includeTax', divider: true, width: '1%' },
+        { text: 'Tax', value: 'taxAmount', align: 'right', divider: true, width: '120' },
         { text: 'Nett Price', value: 'nettPrice', align: 'right', divider: true, width: '120' },
         { text: 'Total Price', value: 'total', align: 'right', divider: true, width: '120' },
-        { text: 'Description', value: 'description', width: '200' }
-      ]
+        { text: 'Description', value: 'notes', width: '200' }
+      ],
+      data: []
     },
     valid: false,
-    workers: [],
+    defTaxInc: false,
+    employees: [],
     currencies: [],
     suppliers: [],
     warehouses: [],
     taxes: [],
     items: [],
-    data: {},
-    rules: {
-      date: [
-        (v) => !!v || 'Order Date is required'
-      ],
-      notes: [
-        (v) => (v || '').length <= 2000 || 'Notes must be less than 2000 characters'
-      ]
-    }
+    data: {}
   }),
 
   created: function () {
     this.getList()
+    this.getDefTaxIncSetting()
     this.getPurchaserLists()
     this.getCurrLists()
     this.getSupplierLists()
@@ -760,37 +786,47 @@ export default {
     }, 0)
   },
 
+  watch: {
+    'grid.options': {
+      handler() {
+        this.getList()
+      },
+      deep: true
+    }
+  },
+
   computed: {
     ...mapState({
-      gridDefaultHeight: state => state.app.grid.height,
+      gridDefOpts: state => state.app.grid,
+      rules: state => state.app.rules,
       endpoint: state => state.api.endpoint
     }),
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'
     },
     formatOrderDate() {
-      return this.data.orderDate ? format(parseISO(this.data.orderDate), 'dd-MMM-yyyy') : ''
+      return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
+    },
+    isVoid() {
+      return (this.data?.mark?.toLowerCase() === 'v')
     }
   },
 
   methods: {
     reset() {
-      this.gridItem.data = []
       this.data = {
         action: '',
         code: null,
-        orderDate: format(new Date(), 'yyyy-MM-dd'),
-        workerCode: null,
-        curr: 'IDR',
+        date: format(new Date(), 'yyyy-MM-dd'),
+        requestBy: null,
+        currCode: 'IDR',
         rate: 1,
-        includeTax: true,
         supCode: null,
         supName: null,
         supAddr: null,
         supPhone: null,
         supFax: null,
         warehouseCode: null,
-        tax: this.taxes[0],
         notes: null,
         dpp: 0,
         subTotal: 0,
@@ -800,6 +836,14 @@ export default {
         taxAmount: 0,
         total: 0
       }
+      this.gridItem.data = []
+      this.tab.sup = 0
+      this.tab.item = 0
+      this.tab.foot = 0
+      
+      setTimeout(() => {
+        this.$refs.form.resetValidation()
+      }, 0)
 
       // Set default warehouse
       const defWarehouse = this.warehouses.find(w => w.isDefault === 1)
@@ -807,59 +851,174 @@ export default {
         this.data.warehouseCode = defWarehouse.code
       }
     },
-    getList() {
+    getList(bindToForm = false) {
+      const sorts = []
+      for (let i = 0; i < this.grid.options.sortBy.length; i++) {
+        sorts.push({
+          field: this.grid.options.sortBy[i],
+          direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
+        })
+      }
+      
       api.getAll(this.endpoint.purchase.order, {
-        params: { search: this.grid.search }
+        params: {
+          search: this.grid.search,
+          skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
+          take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
+          sorts: JSON.stringify(sorts)
+        }
       })
         .then(response => {
-          this.grid.data = response.data
+          this.grid.data = response.data.tableData
+          this.grid.total = response.data.rowCount
+          if (bindToForm) {
+            const item = this.grid.data.find(h => h.code === this.data.code)
+            this.edit(item)
+          }
+        })
+    },
+    getDefTaxIncSetting() {
+      api.getAll(this.endpoint.master, {
+        params: {
+          param: 'systemParameter',
+          fieldNames: 'code,value',
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'equal',
+            keyword: 'DEF_PURC_TAX_INC'
+          }]),
+          sorts: JSON.stringify([{
+            field: 'code',
+            Direction: 'asc'
+          }]),
+          includeMetaData: false
+        }
+      })
+        .then(response => {
+          this.defTaxInc = (response.data.tableData[0].value === '1')
         })
     },
     getPurchaserLists() {
-      api.getAll(this.endpoint.general.worker)
+      api.getAll(this.endpoint.master, {
+        params: {
+          param: 'employee',
+          fieldNames: 'id,initial,firstName',
+          sorts: JSON.stringify([{
+            field: 'initial',
+            Direction: 'asc'
+          }]),
+          includeMetaData: false
+        }
+      })
         .then(response => {
-          this.workers = response.data
+          this.employees = response.data.tableData
         })
     },
     getCurrLists() {
-      api.getAll(this.endpoint.general.currency)
+      api.getAll(this.endpoint.master, {
+        params: {
+          param: 'currency',
+          fieldNames: 'code',
+          sorts: JSON.stringify([{
+            field: 'sort',
+            Direction: 'asc'
+          }]),
+          includeMetaData: false
+        }
+      })
         .then(response => {
-          this.currencies = response.data
+          this.currencies = response.data.tableData
         })
     },
     getSupplierLists() {
-      api.getAll(this.endpoint.general.supplier)
+      api.getAll(this.endpoint.master, {
+        params: {
+          param: 'supplier',
+          fieldNames: 'code,initial,name,address1,phone,fax',
+          sorts: JSON.stringify([{
+            field: 'initial',
+            Direction: 'asc'
+          }]),
+          includeMetaData: false
+        }
+      })
         .then(response => {
-          this.suppliers = response.data
+          this.suppliers = response.data.tableData
         })
     },
     getWarehouseLists() {
-      api.getAll(this.endpoint.inventory.warehouse)
+      api.getAll(this.endpoint.master, {
+        params: {
+          param: 'warehouse',
+          fieldNames: 'code,initial,name',
+          sorts: JSON.stringify([{
+            field: 'initial',
+            Direction: 'asc'
+          }]),
+          includeMetaData: false
+        }
+      })
         .then(response => {
-          this.warehouses = response.data
+          this.warehouses = response.data.tableData
         })
     },
     getTaxLists() {
-      api.getAll(this.endpoint.general.tax, {
-        params: { src: 'purc' }
+      api.getAll(this.endpoint.master, {
+        params: {
+          param: 'tax',
+          fieldNames: 'id,initial,name,rate',
+          filters: JSON.stringify([{
+            field: 'typeId',
+            operator: 'equal',
+            keyword: 0
+          }]),
+          sorts: JSON.stringify([{
+            field: 'seq',
+            Direction: 'asc'
+          }]),
+          includeMetaData: false
+        }
       })
         .then(response => {
-          this.taxes = response.data
-          this.data.tax = response.data[0]
+          this.taxes = response.data.tableData
+          this.data.tax = response.data.tableData[0]
         })
     },
     getItemLists() {
-      api.getAll(this.endpoint.inventory.item.item)
+      api.getAll(this.endpoint.inventory.item.item, {
+        // params: {
+        //   param: 'item',
+        //   fieldNames: 'id,initial,name,uomId,uomBuyId,buyPrice,purchaseTaxId',
+        //   sorts: JSON.stringify([{
+        //     field: 'initial',
+        //     Direction: 'asc'
+        //   }]),
+        //   includeMetaData: false
+        // }
+      })  
         .then(response => {
-          this.items = response.data
+          this.items = response.data.tableData
         })
     },
     getUnitItemLists(item) {
-      api.getAll(this.endpoint.inventory.uom.conversion, {
-        params: { uomId: item.uomId }
+      api.getAll(this.endpoint.master, {
+        params: {
+          param: 'uomConversion',
+          fieldNames: 'id,uomId,unitToConvert,unitEquivalent,conversion,isBaseUnit,seq',
+          filters: JSON.stringify([{
+            field: 'uomId',
+            operator: 'equal',
+            keyword: item.uomId
+          }]),
+          sorts: JSON.stringify([{
+            field: 'seq',
+            Direction: 'asc'
+          }]),
+          includeMetaData: false
+        }
       })
         .then(response => {
-          item.units = response.data
+          item.units = response.data.tableData
         })
     },
     add() {
@@ -874,39 +1033,15 @@ export default {
       }, 0)
     },
     edit(item) {
+      if (!item) return
+
       this.dialog.add = true
       this.reset()
 
       this.data = {
+        ...item,
         action: 'edit',
-        code: item.code,
-        orderDate: format(parseISO(item.orderDate), 'yyyy-MM-dd'),
-        workerCode: item.workerCode,
-        curr: item.curr,
-        rate: item.rate,
-        includeTax: item.includeTax,
-        supCode: item.supCode,
-        // supName: null,
-        // supAddr: null,
-        // supPhone: null,
-        // supFax: null,
-        warehouseCode: item.warehouseCode,
-        billAddr: item.billAddr,
-        top: item.top,
-        tax: this.taxes.find(t => t.code === item.tax),
-        notes: item.notes,
-        dpp: item.dpp,
-        downPayment: item.downPayment,
-        applyTax: item.applyTax,
-        dpTax: item.dpTax,
-        subTotal: item.subTotal,
-        finalDiscPercent: item.finalDiscPercent,
-        finalDisc: item.finalDisc,
-        taxPercent: item.taxPercent,
-        taxAmount: item.taxAmount,
-        total: item.total,
-        updatedBy: item.updatedBy,
-        updatedDate: item.updatedDate
+        updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
 
       // Get supplier details
@@ -917,7 +1052,7 @@ export default {
         params: { code: item.code }
       })
         .then(response => {
-          this.gridItem.data = response.data
+          this.gridItem.data = response.data.tableData
         })
 
       // Set focus to order code field
@@ -928,8 +1063,8 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Delete?',
-          'Are you sure want to delete this data?')
+          'Void?',
+          'Are you sure want to void this data?')
       ) {
         api.delete(this.endpoint.purchase.order, item.code)
           .then(response => {
@@ -942,75 +1077,72 @@ export default {
     },
     async save(closeDialog) {
       if (!this.dialog.add) return
-      
+
+      if (!this.$refs.form.validate()) {
+        return
+      }
+
       const data = this.data
-      data.includeTax = this.data.includeTax | 0
-      data.warehouseCode = this.data.warehouseCode
-      data.tax = this.data.tax.code
-      data.applyTax = this.data.applyTax | 0
       data.itemDetails = this.gridItem.data
       
       let result = { success: false, message: '' }
       if (data.action === 'add') {
         const resp = await api.create(this.endpoint.purchase.order, data)
         result = resp.data
-        // api.create(this.endpoint.purchase.order, data)
-        //   .then(response => {
-        //     if (response.data.success) {
-        //       this.$store.dispatch('app/showSuccess', response.data.message)
-        //       this.getList()
-        //       if (closeDialog) {
-        //         this.dialog.add = false
-        //       }
-        //     }
-        //   })
       } else if (data.action === 'edit') {
-        const resp = await api.update(this.endpoint.purchase.order, data)
+        const resp = await api.update(this.endpoint.purchase.order, data.code, data)
         result = resp.data
-        // api.update(this.endpoint.purchase.order, data)
-        //   .then(response => {
-        //     if (response.data.success) {
-        //       this.$store.dispatch('app/showSuccess', response.data.message)
-        //       this.getList()
-        //       this.dialog.add = false
-        //     }
-        //   })
       }
 
       if (result.success) {
         this.$store.dispatch('app/showSuccess', result.message)
-        this.getList()
         if (closeDialog) {
           this.dialog.add = false
+        } else {
+          this.data.code = result.data
         }
+        this.getList(!closeDialog)
       }
     },
     addItem() {
-      if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0].itemId ?? null)) {
+      if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemId ?? null)) {
         const item = {
-          rowId: this.$uuid.v1(),
           code: this.data.code,
           itemId: null,
           itemCode: null,
           itemName: null,
           qty: 0,
+          length: null,
+          width: null,
+          height: null,
+          weight: null,
+          dimensionMeasurement: null,
+          weightMeasurement: null,
+          qtyRcv: 0,
           units: [],
           uomId: null,
+          oldUnitId: null,
+          oldUnitName: null,
+          oldUnitPrice: 0,
           unitId: null,
           unitName: null,
-          uomBuyName: null,
           unitPrice: 0,
-          itemBuyPrice: 0,
           disc: 0,
+          includeTax: this.defTaxInc,
+          taxId: null,
+          taxAmount: 0,
           nettPrice: 0,
           total: 0,
-          description: null,
+          dpp: 0,
+          totTax: 0,
+          totDPP: 0,
+          notes: null,
           state: 'A'
         }
         this.gridItem.data.push(item)
 
         setTimeout(() => {
-          this.$refs.itemCode.focus()
+          this.$refs.itemId.focus()
         }, 0)
       }
     },
@@ -1032,27 +1164,45 @@ export default {
       const supplier = this.suppliers.find(s => s.code === this.data.supCode)
       if (supplier) {
         this.data.supName = supplier.name
-        this.data.supAddr = supplier.address
-        this.data.supPhone = supplier.phone1
+        this.data.supAddr = supplier.address1
+        this.data.supPhone = supplier.phone
         this.data.supFax = supplier.fax
       }
     },
-    itemCodeChange(item) {
-      const data_i = this.items.find(i => i.code.toLowerCase() === item.itemCode.toLowerCase())
+    itemIdChange(item) {
+      const data_i = this.items.find(i => i.id === item.itemId)
       if (data_i) {
         item.itemId = data_i.id
         item.itemName = data_i.name
         item.qty = 1
+        item.length = data_i.length
+        item.width = data_i.width
+        item.height = data_i.height
+        item.weight = data_i.weight
+        item.dimensionMeasurement = data_i.dimensionMeasurement
+        item.weightMeasurement = data_i.weightMeasurement
+        item.qtyRcv = 0
         item.uomId = data_i.uomId
+        item.oldUnitId = data_i.uomBuyId
+        item.oldUnitName = data_i.uomBuyName
+        item.oldUnitPrice = data_i.buyPrice
         item.unitId = data_i.uomBuyId
         item.unitName = data_i.uomBuyName
-        item.uomBuyName = data_i.uomBuyName
         item.unitPrice = data_i.buyPrice
-        item.itemBuyPrice = data_i.buyPrice
         item.disc = 0
+        item.taxId = data_i.purchaseTaxId
+        item.taxAmount = 0
         item.nettPrice = data_i.buyPrice
         item.total = data_i.buyPrice
-        item.description = null
+        item.dpp = data_i.buyPrice
+        item.totTax = 0
+        item.totDPP = data_i.buyPrice
+        item.notes = null
+        item.coaInventory = data_i.coaInventory
+        item.coaCogs = data_i.coaCogs
+        item.coaPurc = data_i.coaPurc
+        item.coaPurcDisc = data_i.coaPurcDisc
+        item.coaPurcReturn = data_i.coaPurcReturn
         if (item.state !== 'A') {
           item.state = 'M'
         }
@@ -1065,30 +1215,65 @@ export default {
       }
     },
     unitItemChange(item) {
-      item.uomConversion = 1
+      const oldUnit = item.units.find(u => u.id === item.oldUnitId)
+      const unit = item.units.find(u => u.id === item.unitId)
 
-      const conversion = item.units.find(u => u.id === item.unitId)
-      if (conversion.unitEquivalent !== item.uomBuyName) {
-        this.calcUomConversion(item, conversion.unitEquivalent)
+      if (oldUnit.seq < unit.seq) {
+        item.uomConversion = unit.conversion
+        if (unit.unitToConvert !== item.oldUnitName) {
+          this.calcUomConversion(true, item, unit.unitToConvert)
+        }
+        item.unitPrice = item.oldUnitPrice * item.uomConversion
+      } else {
+        item.uomConversion = 1
+        if (unit.unitEquivalent !== item.oldUnitName) {
+          this.calcUomConversion(false, item, unit.unitEquivalent)
+        }
+        item.unitPrice = item.oldUnitPrice / item.uomConversion
       }
-      item.unitPrice = item.itemBuyPrice / item.uomConversion
-
+      
       this.calcItemPrice(item)
     },
-    calcUomConversion(item, unitToConvert) {
-      const data = item.units.find(u => u.unitToConvert === unitToConvert && u.unitToConvert !== u.unitEquivalent)
-      item.uomConversion *= data.conversion
-      
-      if (data.unitEquivalent !== item.uomBuyName) {
-        this.calcUomConversion(item, data.unitEquivalent)
+    calcUomConversion(seqSmaller, item, unitCode) {
+      if (seqSmaller) {
+        const data = item.units.find(u => u.unitEquivalent === unitCode)
+        item.uomConversion *= data.conversion
+
+        if (data.unitToConvert !== item.oldUnitName) {
+          this.calcUomConversion(seqSmaller, item, data.unitToConvert)
+        }
+      } else {
+        const data = item.units.find(u => u.unitToConvert === unitCode && u.unitToConvert !== u.unitEquivalent)
+        item.uomConversion *= data.conversion
+        
+        if (data.unitEquivalent !== item.oldUnitName) {
+          this.calcUomConversion(seqSmaller, item, data.unitEquivalent)
+        }
+      }
+    },
+    calcItemTax(item) {
+      const tax = this.taxes.find(t => t.id === item.taxId)
+      if (tax) {
+        if (item.includeTax) {
+          item.taxAmount = Math.round((item.unitPrice - item.disc) - ((item.unitPrice - item.disc) / (1 + (tax.rate / 100))))
+          item.nettPrice = item.unitPrice - item.disc
+          item.dpp = item.unitPrice - item.disc - item.taxAmount
+        } else {
+          item.taxAmount = Math.round((item.unitPrice - item.disc) * (tax.rate / 100))
+          item.nettPrice = item.unitPrice - item.disc + item.taxAmount
+          item.dpp = item.unitPrice - item.disc
+        }
       }
     },
     calcItemPrice(item) {
-      item.nettPrice = item.unitPrice - item.disc
+      this.calcItemTax(item)
       item.total = item.qty * item.nettPrice
+      item.totTax = item.qty * item.taxAmount
+      item.totDPP = item.qty * item.dpp
 
       this.data.subTotal = _sumBy(this.gridItem.data, 'total')
-      this.data.dpp = this.data.subTotal - this.data.finalDisc
+      this.data.taxAmount = _sumBy(this.gridItem.data, 'totTax')
+      this.data.dpp = _sumBy(this.gridItem.data, 'totDPP') - this.data.finalDisc
       this.calcPrice()
     },
     discPercentChange() {
@@ -1111,12 +1296,13 @@ export default {
       }
     },
     calcPrice() {
-      this.calcTax()
-      if (this.data.includeTax) {
-        this.data.total = this.data.subTotal - this.data.finalDisc
-      } else {
-        this.data.total = this.data.subTotal - this.data.finalDisc + this.data.taxAmount
-      }
+      // this.calcTax()
+      // if (this.data.includeTax) {
+      //   this.data.total = this.data.subTotal - this.data.finalDisc
+      // } else {
+      //   this.data.total = this.data.subTotal - this.data.finalDisc + this.data.taxAmount
+      // }
+      this.data.total = this.data.subTotal - this.data.finalDisc
     },
     showFindSupDialog() {
       this.$refs.findSup.open()
@@ -1127,15 +1313,12 @@ export default {
     bindSupData(item) {
       this.data.supCode = item.code
       this.data.supName = item.name
-      this.data.supAddr = item.address
-      this.data.supPhone = item.phone1
+      this.data.supAddr = item.address1
+      this.data.supPhone = item.phone
       this.data.supFax = item.fax
-      // this.data.billAddr = item.code
-      // this.data.top = item.code
-      // this.data.tax = item.code
     },
     bindItemData(rowItem) {
-      this.itemCodeChange(rowItem)
+      this.itemIdChange(rowItem)
     }
   }
 }
