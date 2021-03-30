@@ -889,7 +889,7 @@ export default {
           }]),
           sorts: JSON.stringify([{
             field: 'code',
-            Direction: 'asc'
+            direction: 'asc'
           }]),
           includeMetaData: false
         }
@@ -905,7 +905,7 @@ export default {
           fieldNames: 'id,initial,firstName',
           sorts: JSON.stringify([{
             field: 'initial',
-            Direction: 'asc'
+            direction: 'asc'
           }]),
           includeMetaData: false
         }
@@ -921,7 +921,7 @@ export default {
           fieldNames: 'code',
           sorts: JSON.stringify([{
             field: 'sort',
-            Direction: 'asc'
+            direction: 'asc'
           }]),
           includeMetaData: false
         }
@@ -937,7 +937,7 @@ export default {
           fieldNames: 'code,initial,name,address1,phone,fax',
           sorts: JSON.stringify([{
             field: 'initial',
-            Direction: 'asc'
+            direction: 'asc'
           }]),
           includeMetaData: false
         }
@@ -953,7 +953,7 @@ export default {
           fieldNames: 'code,initial,name',
           sorts: JSON.stringify([{
             field: 'initial',
-            Direction: 'asc'
+            direction: 'asc'
           }]),
           includeMetaData: false
         }
@@ -974,7 +974,7 @@ export default {
           }]),
           sorts: JSON.stringify([{
             field: 'seq',
-            Direction: 'asc'
+            direction: 'asc'
           }]),
           includeMetaData: false
         }
@@ -991,7 +991,7 @@ export default {
         //   fieldNames: 'id,initial,name,uomId,uomBuyId,buyPrice,purchaseTaxId',
         //   sorts: JSON.stringify([{
         //     field: 'initial',
-        //     Direction: 'asc'
+        //     direction: 'asc'
         //   }]),
         //   includeMetaData: false
         // }
@@ -1012,7 +1012,7 @@ export default {
           }]),
           sorts: JSON.stringify([{
             field: 'seq',
-            Direction: 'asc'
+            direction: 'asc'
           }]),
           includeMetaData: false
         }

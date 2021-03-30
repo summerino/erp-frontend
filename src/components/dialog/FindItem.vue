@@ -78,6 +78,7 @@
                     :items-per-page="-1"
                     class="elevation-1 row-pointer"
                     dense
+                    disable-sort
                     fixed-header
                     hide-default-footer
                     @dblclick:row="dblclickRow"
@@ -188,6 +189,10 @@ export default {
             field: this.data.by,
             operator: 'contains',
             keyword: this.data.value
+          }]),
+          sorts: JSON.stringify([{
+            field: this.data.by,
+            direction: 'asc'
           }])
         }
       })
@@ -196,7 +201,7 @@ export default {
         })
     },
     dblclickRow(event, { item }) {
-      this.rowItem.itemCode = item.code
+      this.rowItem.itemId = item.id
       this.$emit('dblclick:row', this.rowItem, item)
       this.dialog = false
     }

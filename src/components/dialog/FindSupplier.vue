@@ -51,6 +51,7 @@
             height="300"
             class="elevation-1 row-pointer"
             dense
+            disable-sort
             fixed-header
             hide-default-footer
             @dblclick:row="dblclickRow"
@@ -98,6 +99,7 @@ export default {
         value: '',
         items: [
           { text: 'Code', value: 'code' },
+          { text: 'Initial', value: 'initial' },
           { text: 'Name', value: 'name' }
         ]
       },
@@ -105,11 +107,11 @@ export default {
         data: [],
         columns: [
           { text: 'Code', value: 'code', divider: true, width: '120' },
+          { text: 'Initial', value: 'initial', divider: true, width: '150' },
           { text: 'Name', value: 'name', divider: true, width: '300' },
-          { text: 'Address', value: 'address', divider: true, width: '200' },
-          { text: 'Phone', value: 'phone1', divider: true, width: '150' },
-          { text: 'Credit Limit', value: 'creditLimit', align: 'right', divider: true, width: '120' },
-          { text: 'Contact Person', value: 'contactPerson', width: '150' }
+          { text: 'Address', value: 'address1', divider: true, width: '200' },
+          { text: 'Phone', value: 'phone', divider: true, width: '150' },
+          { text: 'Fax', value: 'fax', divider: true, width: '150' }
         ]
       },
       options: {
@@ -140,15 +142,24 @@ export default {
       this.dialog = false
     },
     search() {
-      api.getAll(this.endpoint.general.supplier, {
+      api.getAll(this.endpoint.master, {
         params: {
-          searchBy: this.data.by,
-          searchOp: 'contains',
-          search: this.data.value
+          param: 'supplier',
+          fieldNames: 'code,initial,name,address1,phone',
+          filters: JSON.stringify([{
+            field: this.data.by,
+            operator: 'STRING_CONTAINS',
+            keyword: this.data.value
+          }]),
+          sorts: JSON.stringify([{
+            field: this.data.by,
+            direction: 'asc'
+          }]),
+          includeMetaData: false
         }
       })
         .then(response => {
-          this.grid.data = response.data
+          this.grid.data = response.data.tableData
         })
     },
     dblclickRow(event, { item }) {
