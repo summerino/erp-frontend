@@ -83,9 +83,9 @@
                     hide-default-footer
                     @dblclick:row="dblclickRow"
                   >
-                    <template v-slot:[`item.code`]="{ item }">
+                    <template v-slot:[`item.initial`]="{ item }">
                       <v-text-field
-                        v-model="item.code"
+                        v-model="item.initial"
                         class="text-body-2 mt-0 no-border"
                         dense
                         readonly
