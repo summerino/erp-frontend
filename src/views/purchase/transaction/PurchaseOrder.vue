@@ -48,6 +48,8 @@
         :items-per-page="gridDefOpts.pageSize"
         :options.sync="grid.options"
         :server-items-length="grid.total"
+        :sort-by="grid.options.sortBy"
+        :sort-desc="grid.options.sortDesc"
         class="elevation-1"
         fixed-header
       >
@@ -737,7 +739,10 @@ export default {
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
-      options: {sortBy: []},
+      options: {
+        sortBy: ['code'],
+        sortDesc: [true]
+      },
       total: 0,
       search: null
     },
