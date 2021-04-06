@@ -128,8 +128,6 @@ export default {
       },
       rowItem: {},
       grid: {
-        height: 300,
-        data: [],
         columns: [
           { text: 'Initial', value: 'initial', divider: true, width: '120' },
           { text: 'Name', value: 'name', divider: true, width: '300' },
@@ -137,7 +135,9 @@ export default {
           { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '100' },
           { text: 'Unit', value: 'uomBuyName', divider: true, width: '150' },
           { text: 'Category', value: 'categoryName', width: '150' }
-        ]
+        ],
+        data: [],
+        height: 300
       }
     }
   },

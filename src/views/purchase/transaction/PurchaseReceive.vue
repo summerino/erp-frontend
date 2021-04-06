@@ -79,8 +79,8 @@
             <span class="text-caption">Delete</span>
           </v-tooltip>
         </template>
-        <template v-slot:[`item.receiveDate`]="{ item }">
-          {{ item.receiveDate | formatDate('dd-MMM-yyyy') }}
+        <template v-slot:[`item.date`]="{ item }">
+          {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
       </v-data-table>
     </v-card>
@@ -161,7 +161,10 @@
         </v-toolbar>
 
         <v-card-text class="px-2">
-          <!-- <v-form v-model="valid"> -->
+          <v-form
+            ref="form"
+            v-model="valid"
+          >
             <v-row dense>
               <v-col cols="12" md="4">
                 <v-card>
@@ -181,7 +184,9 @@
                       <v-col cols="12" md="6" class="pl-md-1">
                         <v-text-field
                           v-model="data.refNo"
+                          :rules="rules.max30chars"
                           label="Ref. No."
+                          counter="30"
                           class="mt-0"
                         ></v-text-field>
                       </v-col>
@@ -200,8 +205,8 @@
                             <v-text-field
                               v-bind="attrs"
                               v-on="on"
-                              :rules="rules.date"
-                              :value="formatReceiveDate"
+                              :rules="rules.required"
+                              :value="formatdate"
                               label="Receive Date"
                               class="mt-0"
                               readonly
@@ -209,7 +214,7 @@
                             ></v-text-field>
                           </template>
                           <v-date-picker
-                            v-model="data.receiveDate"
+                            v-model="data.date"
                             no-title
                             scrollable
                             @change="menu.receiveDate = false"
@@ -222,6 +227,7 @@
                       <v-col cols="12">
                         <v-text-field
                           v-model="data.poCode"
+                          :rules="rules.required"
                           label="PO Code"
                           class="mt-0"
                           required
@@ -263,6 +269,7 @@
                         <v-col cols="3">
                           <v-text-field
                             v-model="data.supCode"
+                            :rules="rules.required"
                             label="Code"
                             class="mt-0"
                             readonly
@@ -276,7 +283,6 @@
                             label="Name"
                             class="mt-0"
                             readonly
-                            required
                           ></v-text-field>
                         </v-col>
                       </v-row>
@@ -318,6 +324,34 @@
                       transition="false"
                     >
                       <v-row no-gutters>
+                        <v-col cols="12">
+                          <v-combobox
+                            v-model="data.receiveBy"
+                            :items="employees"
+                            :item-text="item => `${item.initial} - ${item.firstName}`"
+                            :rules="rules.required"
+                            label="Received By"
+                            item-value="id"
+                            class="mt-0"
+                            required
+                          ></v-combobox>
+                        </v-col>
+                      </v-row>
+
+                      <v-row no-gutters>
+                        <v-col cols="12">
+                          <v-combobox
+                            v-model="data.approveBy"
+                            :items="employees"
+                            :item-text="item => `${item.initial} - ${item.firstName}`"
+                            label="Approved By"
+                            item-value="id"
+                            class="mt-0"
+                          ></v-combobox>
+                        </v-col>
+                      </v-row>
+
+                      <v-row no-gutters>
                         <v-col cols="6">
                           <v-text-field
                             v-model="data.updatedBy"
@@ -335,32 +369,6 @@
                           ></v-text-field>
                         </v-col>
                       </v-row>
-
-                      <v-row no-gutters>
-                        <v-col cols="12">
-                          <v-combobox
-                            v-model="data.receiveBy"
-                            :items="workers"
-                            label="Received By"
-                            item-text="name"
-                            item-value="code"
-                            class="mt-0"
-                          ></v-combobox>
-                        </v-col>
-                      </v-row>
-
-                      <v-row no-gutters>
-                        <v-col cols="12">
-                          <v-combobox
-                            v-model="data.approveBy"
-                            :items="workers"
-                            label="Approved By"
-                            item-text="name"
-                            item-value="code"
-                            class="mt-0"
-                          ></v-combobox>
-                        </v-col>
-                      </v-row>
                     </v-tab-item>
                   </v-tabs-items>
                 </v-card>
@@ -370,7 +378,7 @@
             <v-row dense>
               <v-col cols="12">
                 <v-card>
-                  <v-tabs>
+                  <v-tabs v-model="tab.item">
                     <v-tab key="item">Item</v-tab>
                     <v-tab key="related-trans">Related Transaction(s)</v-tab>
 
@@ -436,6 +444,7 @@
                               v-model="item.itemCode"
                               :items="items"
                               :readonly="item.typeId == 0"
+                              :rules="rules.required"
                               item-text="code"
                               item-value="code"
                               class="text-body-2 mt-0"
@@ -462,7 +471,6 @@
                               v-model="item.qty"
                               :decimal-length="0"
                               class="text-body-2 text-right mt-0"
-                              required
                               @change="calcItemPrice(item)"
                             ></v-currency-field>
                           </template>
@@ -470,6 +478,7 @@
                             <v-autocomplete
                               v-model="item.warehouseCode"
                               :items="warehouses"
+                              :rules="rules.required"
                               item-text="initial"
                               item-value="code"
                               class="text-body-2 text-right mt-0"
@@ -490,16 +499,16 @@
                 </v-card>
               </v-col>
             </v-row>
-          <!-- </v-form> -->
+          </v-form>
         </v-card-text>
       </v-card>
     </v-dialog>
 
     <confirm ref="confirm"></confirm>
-    <find-purchase-order
+    <find-po
       ref="findPO"
       @dblclick:row="bindPOData"
-    ></find-purchase-order>
+    ></find-po>
     <find-item
       ref="findItem"
       @dblclick:row="bindItemData"
@@ -515,13 +524,13 @@ import { sumBy as _sumBy } from 'lodash'
 import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
-import FindPurchaseOrder from '@/components/dialog/FindPurchaseOrder'
-import FindItem from '@/components/dialog/FindItem'
+import FindPo from '@/components/dialog/purchase/FindPO'
+import FindItem from '@/components/dialog/inventory/FindItem'
 
 export default {
   components: {
     Confirm,
-    FindPurchaseOrder,
+    FindPo,
     FindItem
   },
 
@@ -534,6 +543,7 @@ export default {
     },
     tab: {
       sup: null,
+      item: null,
       foot: null
     },
     grid: {
@@ -541,10 +551,10 @@ export default {
       data: [],
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Code', value: 'code', divider: true, width: '100' },
-        { text: 'Date', value: 'receiveDate', align: 'right', divider: true, width: '120' },
+        { text: 'Code', value: 'code', divider: true, width: '150' },
+        { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
         { text: 'Supplier', value: 'supName', divider: true, width: '200' },
-        { text: 'PO Code', value: 'poCode', divider: true, width: '100' },
+        { text: 'PO Code', value: 'poCode', divider: true, width: '150' },
         { text: 'Ref. No.', value: 'refNo', width: '150' }
       ]
     },
@@ -563,7 +573,7 @@ export default {
       ]
     },
     valid: false,
-    workers: [],
+    employees: [],
     currencies: [],
     items: [],
     warehouses: [],
@@ -580,10 +590,11 @@ export default {
 
   created: function () {
     this.getList()
-    this.getWorkerLists()
+    this.getEmployeeLists()
     this.getItemLists()
     this.getWarehouseLists()
     this.reset()
+    this.add()
   },
 
   mounted: function () {
@@ -600,19 +611,18 @@ export default {
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'
     },
-    formatReceiveDate() {
-      return this.data.receiveDate ? format(parseISO(this.data.receiveDate), 'dd-MMM-yyyy') : ''
+    formatdate() {
+      return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
     }
   },
 
   methods: {
     reset() {
-      this.gridItem.data = []
       this.data = {
         action: '',
         code: null,
         refNo: null,
-        receiveDate: format(new Date(), 'yyyy-MM-dd'),
+        date: format(new Date(), 'yyyy-MM-dd'),
         poCode: null,
         supCode: null,
         supName: null,
@@ -631,6 +641,14 @@ export default {
         updatedBy: null,
         updatedDate: null
       }
+      this.gridItem.data = []
+      this.tab.sup = 0
+      this.tab.item = 0
+      this.tab.foot = 0
+
+      setTimeout(() => {
+        this.$refs.form.resetValidation()
+      }, 0)
     },
     getList() {
       api.getAll(this.endpoint.purchase.receive, {
@@ -640,22 +658,42 @@ export default {
           this.grid.data = response.data
         })
     },
-    getWorkerLists() {
-      api.getAll(this.endpoint.general.worker)
+    getEmployeeLists() {
+      api.getAll(this.endpoint.master, {
+        params: {
+          param: 'employee',
+          fieldNames: 'id,initial,firstName',
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }]),
+          includeMetaData: false
+        }
+      })
         .then(response => {
-          this.workers = response.data
+          this.employees = response.data.tableData
         })
     },
     getItemLists() {
       api.getAll(this.endpoint.inventory.item.item)
         .then(response => {
-          this.items = response.data
+          this.items = response.data.tableData
         })
     },
     getWarehouseLists() {
-      api.getAll(this.endpoint.inventory.warehouse)
+      api.getAll(this.endpoint.master, {
+        params: {
+          param: 'warehouse',
+          fieldNames: 'code,initial,name',
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }]),
+          includeMetaData: false
+        }
+      })
         .then(response => {
-          this.warehouses = response.data
+          this.warehouses = response.data.tableData
         })
     },
     add() {
@@ -677,7 +715,7 @@ export default {
         action: 'edit',
         code: item.code,
         refNo: item.refNo,
-        receiveDate: format(parseISO(item.receiveDate), 'yyyy-MM-dd'),
+        date: format(parseISO(item.date), 'yyyy-MM-dd'),
         poCode: item.poCode,
         supCode: item.supCode,
         // supName: null,
@@ -742,6 +780,7 @@ export default {
     },
     async save(closeDialog) {
       if (!this.dialog.add) return
+      if (!this.$refs.form.validate()) return
 
       const data = this.data
       data.itemDetails = this.gridItem.data
@@ -810,14 +849,21 @@ export default {
       }
     },
     poCodeChange() {
-      api.getAll(`${this.endpoint.purchase.order}/incomplete`, {
+      api.getAll(this.endpoint.purchase.order, {
         params: {
-          searchBy: 'pocode_eq',
-          search: this.data.poCode
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: this.data.poCode
+          }, {
+            field: 'mark',
+            operator: 'doesnotcontain',
+            keyword: ['V', 'CLS', 'CMP']
+          }])
         }
       })
         .then(response => {
-          this.bindPOData(response.data[0] ?? null)
+          this.bindPOData(response.data.tableData[0] ?? null)
         })
     },
     itemCodeChange(item) {
@@ -872,9 +918,21 @@ export default {
         this.data.poCode = item.code
         this.data.supCode = item.supCode
         this.data.supName = item.supName
-        this.data.supAddr = item.supAddr
-        this.data.supPhone = item.supPhone
-        this.data.supFax = item.supFax
+
+        // Get supplier details
+        api.getOne(this.endpoint.master, item.supCode, {
+          params: {
+            param: 'supplier',
+            fieldNames: 'code,initial,name,address1,phone,fax',
+            includeMetaData: false
+          }
+        })
+          .then(response => {
+            this.data.supAddr = response.data.tableData.address1
+            this.data.supPhone = response.data.tableData.phone
+            this.data.supFax = response.data.tableData.fax
+          })
+        
         this.data.dpp = item.dpp
         this.data.subTotal = item.subTotal
         this.data.finalDisc = item.finalDisc
@@ -886,7 +944,7 @@ export default {
           params: { code: item.code }
         })
           .then(response => {
-            this.gridItem.data = response.data
+            this.gridItem.data = response.data.tableData
           })
       } else {
         this.data.supCode = null

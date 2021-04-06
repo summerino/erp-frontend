@@ -12,7 +12,7 @@
         dark
         dense
       >
-        <v-toolbar-title>Supplier</v-toolbar-title>
+        <v-toolbar-title>Purchase Order</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn
           icon
@@ -56,6 +56,9 @@
             hide-default-footer
             @dblclick:row="dblclickRow"
           >
+            <template v-slot:[`item.date`]="{ item }">
+              {{ item.date | formatDate('dd-MMM-yyyy') }}
+            </template>
             <template v-slot:[`item.code`]="{ item }">
               <v-text-field
                 v-model="item.code"
@@ -64,6 +67,9 @@
                 readonly
                 @keyup.enter="dblclickRow(null, { item })"
               ></v-text-field>
+            </template>
+            <template v-slot:[`item.total`]="{ item }">
+              {{ item.total | formatCurrency }}
             </template>
           </v-data-table>
         </v-card>
@@ -95,24 +101,25 @@ export default {
     return {
       dialog: false,
       data: {
-        by: 'name',
+        by: 'code',
         value: '',
         items: [
+          { text: 'Date', value: 'date' },
           { text: 'Code', value: 'code' },
-          { text: 'Initial', value: 'initial' },
-          { text: 'Name', value: 'name' }
+          { text: 'Supplier', value: 'supName' },
+          { text: 'Curr.', value: 'curr' }
         ]
       },
       grid: {
-        data: [],
         columns: [
-          { text: 'Code', value: 'code', divider: true, width: '120' },
-          { text: 'Initial', value: 'initial', divider: true, width: '150' },
-          { text: 'Name', value: 'name', divider: true, width: '300' },
-          { text: 'Address', value: 'address1', divider: true, width: '200' },
-          { text: 'Phone', value: 'phone', divider: true, width: '150' },
-          { text: 'Fax', value: 'fax', divider: true, width: '150' }
-        ]
+          { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
+          { text: 'Code', value: 'code', divider: true, width: '150' },
+          { text: 'Amount', value: 'total', align: 'right', divider: true, width: '120' },
+          { text: 'Supplier', value: 'supName', divider: true, width: '200' },
+          { text: 'Request By', value: 'requestInitial', divider: true, width: '200' },
+          { text: 'Curr.', value: 'curr', width: '90' }
+        ],
+        data: []
       },
       options: {
         width: 800
@@ -123,10 +130,10 @@ export default {
   computed: {
     ...mapState('api', { endpoint: state => state.endpoint })
   },
-
+  
   methods: {
     reset() {
-      this.data.by = 'name'
+      this.data.by = 'code'
       this.data.value = ''
       this.grid.data = []
     },
@@ -142,20 +149,21 @@ export default {
       this.dialog = false
     },
     search() {
-      api.getAll(this.endpoint.master, {
+      api.getAll(this.endpoint.purchase.order, {
         params: {
-          param: 'supplier',
-          fieldNames: 'code,initial,name,address1,phone',
           filters: JSON.stringify([{
             field: this.data.by,
-            operator: 'STRING_CONTAINS',
+            operator: 'contains',
             keyword: this.data.value
+          }, {
+            field: 'mark',
+            operator: 'doesnotcontain',
+            keyword: ['V', 'CLS', 'CMP']
           }]),
           sorts: JSON.stringify([{
             field: this.data.by,
             direction: 'asc'
-          }]),
-          includeMetaData: false
+          }])
         }
       })
         .then(response => {

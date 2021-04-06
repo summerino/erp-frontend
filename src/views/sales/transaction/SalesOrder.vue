@@ -774,7 +774,7 @@ import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
 import FindCustomer from '@/components/dialog/FindCustomer'
-import FindItem from '@/components/dialog/FindItem'
+import FindItem from '@/components/dialog/inventory/FindItem'
 
 export default {
   components: {

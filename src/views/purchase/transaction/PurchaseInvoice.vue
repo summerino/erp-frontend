@@ -716,7 +716,7 @@ import { sumBy as _sumBy } from 'lodash'
 import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
-import FindSupplier from '@/components/dialog/FindSupplier'
+import FindSupplier from '@/components/dialog/general/FindSupplier'
 import FindPurchaseReceive from '@/components/dialog/FindPurchaseReceive'
 
 export default {

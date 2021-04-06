@@ -12,7 +12,7 @@
         dark
         dense
       >
-        <v-toolbar-title>Purchase Order</v-toolbar-title>
+        <v-toolbar-title>Supplier</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn
           icon
@@ -51,13 +51,11 @@
             height="300"
             class="elevation-1 row-pointer"
             dense
+            disable-sort
             fixed-header
             hide-default-footer
             @dblclick:row="dblclickRow"
           >
-            <template v-slot:[`item.orderDate`]="{ item }">
-              {{ item.orderDate | formatDate('dd-MMM-yyyy') }}
-            </template>
             <template v-slot:[`item.code`]="{ item }">
               <v-text-field
                 v-model="item.code"
@@ -66,9 +64,6 @@
                 readonly
                 @keyup.enter="dblclickRow(null, { item })"
               ></v-text-field>
-            </template>
-            <template v-slot:[`item.total`]="{ item }">
-              {{ item.total | formatCurrency }}
             </template>
           </v-data-table>
         </v-card>
@@ -100,25 +95,24 @@ export default {
     return {
       dialog: false,
       data: {
-        by: 'poCode_contains',
+        by: 'name',
         value: '',
         items: [
-          { text: 'PO Date', value: 'poDate' },
-          { text: 'PO Code', value: 'poCode_contains' },
-          { text: 'Supplier', value: 'supName' },
-          { text: 'Curr.', value: 'curr' }
+          { text: 'Code', value: 'code' },
+          { text: 'Initial', value: 'initial' },
+          { text: 'Name', value: 'name' }
         ]
       },
       grid: {
-        data: [],
         columns: [
-          { text: 'PO Date', value: 'orderDate', align: 'right', divider: true, width: '120' },
-          { text: 'PO Code', value: 'code', divider: true, width: '100' },
-          { text: 'Amount', value: 'total', align: 'right', divider: true, width: '120' },
-          { text: 'Supplier', value: 'supName', divider: true, width: '150' },
-          { text: 'Purchaser', value: 'workerName', divider: true, width: '150' },
-          { text: 'Curr.', value: 'curr', width: '90' }
-        ]
+          { text: 'Code', value: 'code', divider: true, width: '120' },
+          { text: 'Initial', value: 'initial', divider: true, width: '150' },
+          { text: 'Name', value: 'name', divider: true, width: '300' },
+          { text: 'Address', value: 'address1', divider: true, width: '200' },
+          { text: 'Phone', value: 'phone', divider: true, width: '150' },
+          { text: 'Fax', value: 'fax', divider: true, width: '150' }
+        ],
+        data: []
       },
       options: {
         width: 800
@@ -129,10 +123,10 @@ export default {
   computed: {
     ...mapState('api', { endpoint: state => state.endpoint })
   },
-  
+
   methods: {
     reset() {
-      this.data.by = 'poCode_contains'
+      this.data.by = 'name'
       this.data.value = ''
       this.grid.data = []
     },
@@ -148,14 +142,24 @@ export default {
       this.dialog = false
     },
     search() {
-      api.getAll(`${this.endpoint.purchase.order}/incomplete`, {
+      api.getAll(this.endpoint.master, {
         params: {
-          searchBy: this.data.by,
-          search: this.data.value
+          param: 'supplier',
+          fieldNames: 'code,initial,name,address1,phone',
+          filters: JSON.stringify([{
+            field: this.data.by,
+            operator: 'STRING_CONTAINS',
+            keyword: this.data.value
+          }]),
+          sorts: JSON.stringify([{
+            field: this.data.by,
+            direction: 'asc'
+          }]),
+          includeMetaData: false
         }
       })
         .then(response => {
-          this.grid.data = response.data
+          this.grid.data = response.data.tableData
         })
     },
     dblclickRow(event, { item }) {
