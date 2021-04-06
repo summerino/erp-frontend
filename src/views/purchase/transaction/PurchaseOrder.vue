@@ -367,7 +367,19 @@
                             :item-text="item => `${item.initial} - ${item.name}`"
                             label="Location"
                             item-value="code"
+                            class="mt-0"
                           ></v-autocomplete>
+                        </v-col>
+                      </v-row>
+
+                      <v-row no-gutters>
+                        <v-col cols="12">
+                          <v-checkbox
+                            v-model="data.includeTax"
+                            label="Tax Included"
+                            class="shrink mt-0"
+                            @change="calcTax"
+                          ></v-checkbox>
                         </v-col>
                       </v-row>
 
@@ -380,7 +392,7 @@
                             item-text="name"
                             item-value="code"
                             return-object
-                            @change="calcPrice"
+                            @change="calcGrandTotal"
                           ></v-autocomplete>
                         </v-col>
                       </v-row> -->
@@ -487,7 +499,6 @@
                               :decimal-length="0"
                               class="text-body-2 text-right mt-0"
                               dense
-                              required
                               @change="calcItemPrice(item)"
                             ></v-currency-field>
                           </template>
@@ -505,25 +516,29 @@
                             ></v-autocomplete>
                           </template>
                           <template v-slot:[`item.unitPrice`]="{ item }">
-                            {{ item.unitPrice | formatCurrency }}
+                            <v-currency-field
+                              v-model="item.unitPrice"
+                              class="text-body-2 text-right mt-0"
+                              dense
+                              @change="calcItemPrice(item)"
+                            ></v-currency-field>
                           </template>
                           <template v-slot:[`item.disc`]="{ item }">
                             <v-currency-field
                               v-model="item.disc"
                               class="text-body-2 text-right mt-0"
                               dense
-                              required
                               @change="calcItemPrice(item)"
                             ></v-currency-field>
                           </template>
-                          <template v-slot:[`item.includeTax`]="{ item }">
+                          <!-- <template v-slot:[`item.includeTax`]="{ item }">
                             <v-checkbox
                               v-model="item.includeTax"
                               class="mt-1"
                               dense
                               @change="calcItemPrice(item)"
                             ></v-checkbox>
-                          </template>
+                          </template> -->
                           <template v-slot:[`item.taxAmount`]="{ item }">
                             {{ item.taxAmount | formatCurrency }}
                           </template>
@@ -571,11 +586,11 @@
                     >
                       <v-textarea
                         v-model="data.notes"
-                        :rules="rules.max256"
+                        :rules="rules.max256chars"
                         label="Notes"
                         counter="256"
                         class="mt-0"
-                        rows="4"
+                        rows="7"
                       ></v-textarea>
                     </v-tab-item>
 
@@ -646,8 +661,8 @@
                       </v-col>
                     </v-row>
 
-                    <!-- <v-row no-gutters>
-                      <v-col cols="4">
+                    <v-row no-gutters>
+                      <!-- <v-col cols="4">
                         <v-currency-field
                           v-model="data.taxPercent"
                           :allow-negative="false"
@@ -656,8 +671,8 @@
                           class="text-right mt-0"
                           readonly
                         ></v-currency-field>
-                      </v-col>
-                      <v-col cols="8" class="pl-1">
+                      </v-col> -->
+                      <!-- <v-col cols="8" class="pl-1"> -->
                         <v-currency-field
                           v-model="data.taxAmount"
                           :allow-negative="false"
@@ -665,8 +680,8 @@
                           class="text-right mt-0"
                           readonly
                         ></v-currency-field>
-                      </v-col>
-                    </v-row> -->
+                      <!-- </v-col> -->
+                    </v-row>
 
                     <v-row no-gutters>
                       <v-currency-field
@@ -705,8 +720,8 @@ import { sumBy as _sumBy } from 'lodash'
 import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
-import FindSupplier from '@/components/dialog/FindSupplier'
-import FindItem from '@/components/dialog/FindItem'
+import FindSupplier from '@/components/dialog/general/FindSupplier'
+import FindItem from '@/components/dialog/inventory/FindItem'
 
 export default {
   components: {
@@ -755,7 +770,7 @@ export default {
         { text: 'Unit', value: 'unitName', divider: true, width: '90' },
         { text: 'Unit Price', value: 'unitPrice', align: 'right', divider: true, width: '120' },
         { text: 'Disc', value: 'disc', align: 'right', divider: true, width: '120' },
-        { text: 'Inc.', value: 'includeTax', divider: true, width: '1%' },
+        // { text: 'Inc.', value: 'includeTax', divider: true, width: '1%' },
         { text: 'Tax', value: 'taxAmount', align: 'right', divider: true, width: '120' },
         { text: 'Nett Price', value: 'nettPrice', align: 'right', divider: true, width: '120' },
         { text: 'Total Price', value: 'total', align: 'right', divider: true, width: '120' },
@@ -837,7 +852,7 @@ export default {
         subTotal: 0,
         finalDiscPercent: 0,
         finalDisc: 0,
-        taxPercent: 0,
+        includeTax: this.defTaxInc,
         taxAmount: 0,
         total: 0
       }
@@ -1082,10 +1097,7 @@ export default {
     },
     async save(closeDialog) {
       if (!this.dialog.add) return
-
-      if (!this.$refs.form.validate()) {
-        return
-      }
+      if (!this.$refs.form.validate()) return
 
       const data = this.data
       data.itemDetails = this.gridItem.data
@@ -1133,7 +1145,7 @@ export default {
           unitName: null,
           unitPrice: 0,
           disc: 0,
-          includeTax: this.defTaxInc,
+          // includeTax: this.defTaxInc,
           taxId: null,
           taxAmount: 0,
           nettPrice: 0,
@@ -1160,8 +1172,6 @@ export default {
         const idx = this.gridItem.data.findIndex(i => i.rowId === item.rowId)
         this.gridItem.data.splice(idx, 1)
 
-        this.data.subTotal = _sumBy(this.gridItem.data, 'total')
-        this.data.dpp = this.data.subTotal - this.data.finalDisc
         this.calcPrice()
       }
     },
@@ -1259,7 +1269,7 @@ export default {
     calcItemTax(item) {
       const tax = this.taxes.find(t => t.id === item.taxId)
       if (tax) {
-        if (item.includeTax) {
+        if (this.data.includeTax) {
           item.taxAmount = Math.round((item.unitPrice - item.disc) - ((item.unitPrice - item.disc) / (1 + (tax.rate / 100))))
           item.nettPrice = item.unitPrice - item.disc
           item.dpp = item.unitPrice - item.disc - item.taxAmount
@@ -1270,44 +1280,50 @@ export default {
         }
       }
     },
-    calcItemPrice(item) {
+    calcItemPrice(item, calcPrice = true) {
       this.calcItemTax(item)
       item.total = item.qty * item.nettPrice
       item.totTax = item.qty * item.taxAmount
       item.totDPP = item.qty * item.dpp
 
-      this.data.subTotal = _sumBy(this.gridItem.data, 'total')
-      this.data.taxAmount = _sumBy(this.gridItem.data, 'totTax')
-      this.data.dpp = _sumBy(this.gridItem.data, 'totDPP') - this.data.finalDisc
-      this.calcPrice()
+      if (calcPrice) {
+        this.calcPrice()
+      }
     },
     discPercentChange() {
       this.data.finalDisc = this.data.subTotal * (this.data.finalDiscPercent / 100)
-      this.calcPrice()
+      this.calcGrandTotal()
     },
     discChange() {
       this.data.finalDiscPercent = this.data.finalDisc / this.data.subTotal * 100
-      this.calcPrice()
+      this.calcGrandTotal()
     },
     calcTax() {
-      if (this.data.includeTax) {
-        this.data.taxPercent = this.data.tax.rate
-        this.data.taxAmount = (this.data.subTotal - this.data.finalDisc) - ((this.data.subTotal - this.data.finalDisc) / (1 + (this.data.tax.rate / 100)))
-        this.data.dpp = (this.data.subTotal - this.data.finalDisc) - this.data.taxAmount
-      } else {
-        this.data.taxPercent = this.data.tax.rate
-        this.data.taxAmount = (this.data.subTotal - this.data.finalDisc) * (this.data.tax.rate / 100)
-        this.data.dpp = (this.data.subTotal - this.data.finalDisc)
+      for (let i = 0; i < this.gridItem.data.length; i++) {
+        this.calcItemPrice(this.gridItem.data[i], false)
       }
+      this.calcPrice()
+      // if (this.data.includeTax) {
+      //   this.data.taxAmount = (this.data.subTotal - this.data.finalDisc) - ((this.data.subTotal - this.data.finalDisc) / (1 + (this.data.tax.rate / 100)))
+      //   this.data.dpp = (this.data.subTotal - this.data.finalDisc) - this.data.taxAmount
+      // } else {
+      //   this.data.taxAmount = (this.data.subTotal - this.data.finalDisc) * (this.data.tax.rate / 100)
+      //   this.data.dpp = (this.data.subTotal - this.data.finalDisc)
+      // }
     },
     calcPrice() {
+      this.data.subTotal = _sumBy(this.gridItem.data, 'total')
+      this.data.taxAmount = _sumBy(this.gridItem.data, 'totTax')
+      this.data.dpp = _sumBy(this.gridItem.data, 'totDPP') - this.data.finalDisc
+      this.calcGrandTotal()
+    },
+    calcGrandTotal() {
       // this.calcTax()
-      // if (this.data.includeTax) {
-      //   this.data.total = this.data.subTotal - this.data.finalDisc
-      // } else {
-      //   this.data.total = this.data.subTotal - this.data.finalDisc + this.data.taxAmount
-      // }
-      this.data.total = this.data.subTotal - this.data.finalDisc
+      if (this.data.includeTax) {
+        this.data.total = this.data.subTotal - this.data.finalDisc
+      } else {
+        this.data.total = this.data.subTotal - this.data.finalDisc + this.data.taxAmount
+      }
     },
     showFindSupDialog() {
       this.$refs.findSup.open()
