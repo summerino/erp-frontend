@@ -36,7 +36,10 @@ const state = {
     required: [
       (v) => !!v || 'required'
     ],
-    max256: [
+    max30chars: [
+      (v) => (v || '').length <= 30 || 'Max 30 characters'
+    ],
+    max256chars: [
       (v) => (v || '').length <= 256 || 'Max 256 characters'
     ]
   },

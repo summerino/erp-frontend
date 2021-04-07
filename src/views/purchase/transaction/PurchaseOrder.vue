@@ -1117,7 +1117,6 @@ export default {
         const item = {
           code: this.data.code,
           itemId: null,
-          itemCode: null,
           itemName: null,
           qty: 0,
           length: null,
