@@ -531,14 +531,6 @@
                               @change="calcItemPrice(item)"
                             ></v-currency-field>
                           </template>
-                          <!-- <template v-slot:[`item.includeTax`]="{ item }">
-                            <v-checkbox
-                              v-model="item.includeTax"
-                              class="mt-1"
-                              dense
-                              @change="calcItemPrice(item)"
-                            ></v-checkbox>
-                          </template> -->
                           <template v-slot:[`item.taxAmount`]="{ item }">
                             {{ item.taxAmount | formatCurrency }}
                           </template>
@@ -770,7 +762,6 @@ export default {
         { text: 'Unit', value: 'unitName', divider: true, width: '90' },
         { text: 'Unit Price', value: 'unitPrice', align: 'right', divider: true, width: '120' },
         { text: 'Disc', value: 'disc', align: 'right', divider: true, width: '120' },
-        // { text: 'Inc.', value: 'includeTax', divider: true, width: '1%' },
         { text: 'Tax', value: 'taxAmount', align: 'right', divider: true, width: '120' },
         { text: 'Nett Price', value: 'nettPrice', align: 'right', divider: true, width: '120' },
         { text: 'Total Price', value: 'total', align: 'right', divider: true, width: '120' },
@@ -1145,7 +1136,6 @@ export default {
           unitName: null,
           unitPrice: 0,
           disc: 0,
-          // includeTax: this.defTaxInc,
           taxId: null,
           taxAmount: 0,
           nettPrice: 0,
