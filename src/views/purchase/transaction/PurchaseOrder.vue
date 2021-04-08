@@ -824,7 +824,7 @@ export default {
   },
 
   methods: {
-    reset() {
+    reset(resetValidation = true) {
       this.data = {
         action: '',
         code: null,
@@ -852,9 +852,12 @@ export default {
       this.tab.item = 0
       this.tab.foot = 0
       
-      setTimeout(() => {
-        this.$refs.form.resetValidation()
-      }, 0)
+      // Reset form validation
+      if (resetValidation) {
+        setTimeout(() => {
+          this.$refs.form.resetValidation()
+        }, 0)
+      }
 
       // Set default warehouse
       const defWarehouse = this.warehouses.find(w => w.isDefault === 1)
@@ -1035,12 +1038,15 @@ export default {
     add() {
       if (this.dialog.add) return
       this.dialog.add = true
-      this.reset()
+      this.reset(false)
       this.data.action = 'add'
 
-      // Set focus to order code field
       setTimeout(() => {
+        // Set focus to order code field
         this.$refs.code.focus()
+
+        // Validate form first
+        this.$refs.form.validate()
       }, 0)
     },
     edit(item) {

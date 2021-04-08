@@ -608,7 +608,6 @@ export default {
     this.getTaxLists()
     this.getItemLists()
     this.getWarehouseLists()
-    this.reset()
   },
 
   mounted: function () {
@@ -644,7 +643,7 @@ export default {
   },
 
   methods: {
-    reset() {
+    reset(resetValidation = true) {
       this.data = {
         action: '',
         code: null,
@@ -670,9 +669,12 @@ export default {
       this.tab.sup = 0
       this.tab.item = 0
 
-      setTimeout(() => {
-        this.$refs.form.resetValidation()
-      }, 0)
+      // Reset form validation
+      if (resetValidation) {
+        setTimeout(() => {
+          this.$refs.form.resetValidation()
+        }, 0)
+      }
     },
     getList(bindToForm = false) {
       const sorts = []
@@ -763,12 +765,15 @@ export default {
     add() {
       if (this.dialog.add) return
       this.dialog.add = true
-      this.reset()
+      this.reset(false)
       this.data.action = 'add'
 
-      // Set focus to receive code field
       setTimeout(() => {
+        // Set focus to receive code field
         this.$refs.code.focus()
+        
+        // Validate form first
+        this.$refs.form.validate()
       }, 0)
     },
     edit(item) {
