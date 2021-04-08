@@ -837,7 +837,7 @@ export default {
         const resp = await api.create(this.endpoint.purchase.receive, data)
         result = resp.data
       } else if (data.action === 'edit') {
-        const resp = await api.update(this.endpoint.purchase.receive, data)
+        const resp = await api.update(this.endpoint.purchase.receive, data.code, data)
         result = resp.data
       }
 
@@ -1018,6 +1018,7 @@ export default {
           .then(response => {
             this.gridItem.data = response.data.tableData
             for (let i = 0; i < this.gridItem.data.length; i++) {
+              this.gridItem.data[i].poDetailId = this.gridItem.data[i].id
               this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
               this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyRcv
               this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
