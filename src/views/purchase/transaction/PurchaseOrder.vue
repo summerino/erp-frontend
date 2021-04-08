@@ -1129,7 +1129,10 @@ export default {
     },
     async save(closeDialog) {
       if (!this.dialog.add) return
-      if (!this.$refs.form.validate()) return
+      if (!this.$refs.form.validate()) {
+        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        return
+      }
 
       const data = this.data
       data.itemDetails = this.gridItem.data
