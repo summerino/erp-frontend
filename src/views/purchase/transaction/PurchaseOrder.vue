@@ -107,7 +107,9 @@
       transition="dialog-bottom-transition"
       fullscreen
       hide-overlay
+      persistent
       scrollable
+      @keydown.esc="close"
     >
       <v-card :style="{ background: $vuetify.theme.themes[theme].surface }">
         <v-toolbar
@@ -115,7 +117,7 @@
           max-height="64"
           dark
         >
-          <v-btn icon dark @click="dialog.add = false">
+          <v-btn icon dark @click="close">
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-toolbar-title>Purchase Order</v-toolbar-title>
@@ -250,6 +252,7 @@
                         <v-combobox
                           v-model="data.currCode"
                           :items="currencies"
+                          :readonly="hasRelatedTrans"
                           :rules="rules.required"
                           label="Currrency"
                           item-text="code"
@@ -262,6 +265,7 @@
                       <v-col cols="7" class="pl-1">
                         <v-currency-field
                           v-model="data.rate"
+                          :readonly="hasRelatedTrans"
                           :rules="rules.required"
                           label="Rate"
                           class="text-right mt-0"
@@ -291,6 +295,7 @@
                             v-model="data.supCode"
                             :items="suppliers"
                             :item-text="item => `${item.code} - ${item.initial}`"
+                            :readonly="hasRelatedTrans"
                             :rules="rules.required"
                             label="Code"
                             item-value="code"
@@ -311,6 +316,7 @@
                           >
                             <template v-slot:append-outer>
                               <v-btn
+                                :disabled="hasRelatedTrans"
                                 color="primary"
                                 icon
                                 @click="showFindSupDialog"
@@ -376,26 +382,13 @@
                         <v-col cols="12">
                           <v-checkbox
                             v-model="data.includeTax"
+                            :disabled="hasRelatedTrans"
                             label="Tax Included"
                             class="shrink mt-0"
                             @change="calcTax"
                           ></v-checkbox>
                         </v-col>
                       </v-row>
-
-                      <!-- <v-row no-gutters>
-                        <v-col cols="12">
-                          <v-autocomplete
-                            v-model="data.tax"
-                            :items="taxes"
-                            label="Tax"
-                            item-text="name"
-                            item-value="code"
-                            return-object
-                            @change="calcGrandTotal"
-                          ></v-autocomplete>
-                        </v-col>
-                      </v-row> -->
                     </v-tab-item>
                   </v-tabs-items>
                 </v-card>
@@ -422,7 +415,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid"
+                                :disabled="isVoid || hasRelatedTrans"
                                 class="blue--text"
                                 small
                                 tile
@@ -454,7 +447,7 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
-                                  :disabled="isVoid"
+                                  :disabled="isVoid || hasRelatedTrans"
                                   color="red"
                                   icon
                                   small
@@ -471,6 +464,7 @@
                               ref="itemId"
                               v-model="item.itemId"
                               :items="items"
+                              :readonly="hasRelatedTrans"
                               :rules="rules.required"
                               item-text="initial"
                               item-value="id"
@@ -497,6 +491,7 @@
                             <v-currency-field
                               v-model="item.qty"
                               :decimal-length="0"
+                              :readonly="hasRelatedTrans"
                               class="text-body-2 text-right mt-0"
                               dense
                               @change="calcItemPrice(item)"
@@ -506,6 +501,7 @@
                             <v-autocomplete
                               v-model="item.unitId"
                               :items="item.units"
+                              :readonly="hasRelatedTrans"
                               :rules="rules.required"
                               item-text="unitEquivalent"
                               item-value="id"
@@ -518,6 +514,7 @@
                           <template v-slot:[`item.unitPrice`]="{ item }">
                             <v-currency-field
                               v-model="item.unitPrice"
+                              :readonly="hasRelatedTrans"
                               class="text-body-2 text-right mt-0"
                               dense
                               @change="calcItemPrice(item)"
@@ -526,6 +523,7 @@
                           <template v-slot:[`item.disc`]="{ item }">
                             <v-currency-field
                               v-model="item.disc"
+                              :readonly="hasRelatedTrans"
                               class="text-body-2 text-right mt-0"
                               dense
                               @change="calcItemPrice(item)"
@@ -555,7 +553,21 @@
                       key="related-trans"
                       transition="false"
                     >
-                      this is related transactions
+                      <v-data-table
+                        :headers="gridRelated.columns"
+                        :items="gridRelated.data"
+                        :items-per-page="-1"
+                        height="300"
+                        class="elevation-1"
+                        dense
+                        disable-sort
+                        fixed-header
+                        hide-default-footer
+                      >
+                        <template v-slot:[`item.date`]="{ item }">
+                          {{ item.date | formatDate('dd-MMM-yyyy') }}
+                        </template>
+                      </v-data-table>
                     </v-tab-item>
                   </v-tabs>
                 </v-card>
@@ -769,6 +781,14 @@ export default {
       ],
       data: []
     },
+    gridRelated: {
+      columns: [
+        { text: 'Code', value: 'code', divider: true },
+        { text: 'Date', value: 'date', align: 'right', divider: true },
+        { text: 'Status', value: 'mark' }
+      ],
+      data: []
+    },
     valid: false,
     defTaxInc: false,
     employees: [],
@@ -818,6 +838,9 @@ export default {
     formatOrderDate() {
       return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
     },
+    hasRelatedTrans() {
+      return (this.gridRelated?.data?.length > 0)
+    },
     isVoid() {
       return (this.data?.mark?.toLowerCase() === 'v')
     }
@@ -848,6 +871,7 @@ export default {
         total: 0
       }
       this.gridItem.data = []
+      this.gridRelated.data = []
       this.tab.sup = 0
       this.tab.item = 0
       this.tab.foot = 0
@@ -1035,6 +1059,9 @@ export default {
           item.units = response.data.tableData
         })
     },
+    close() {
+      this.dialog.add = false
+    },
     add() {
       if (this.dialog.add) return
       this.dialog.add = true
@@ -1070,6 +1097,14 @@ export default {
       })
         .then(response => {
           this.gridItem.data = response.data.tableData
+        })
+
+      // Get related transaction details
+      api.getAll(`${this.endpoint.purchase.order}/related-trans`, {
+        params: { code: item.code }
+      })
+        .then(response => {
+          this.gridRelated.data = response.data.tableData
         })
 
       // Set focus to order code field

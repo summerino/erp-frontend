@@ -103,7 +103,9 @@
       transition="dialog-bottom-transition"
       fullscreen
       hide-overlay
+      persistent
       scrollable
+      @keydown.esc="close"
     >
       <v-card :style="{ background: $vuetify.theme.themes[theme].surface }">
         <v-toolbar
@@ -111,7 +113,7 @@
           max-height="64"
           dark
         >
-          <v-btn icon dark @click="dialog.add = false">
+          <v-btn icon dark @click="close">
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-toolbar-title>Receive Item</v-toolbar-title>
@@ -337,6 +339,7 @@
                     <v-tab-item
                       key="user"
                       transition="false"
+                      eager
                     >
                       <v-row no-gutters>
                         <v-col cols="12">
@@ -762,6 +765,9 @@ export default {
           this.warehouses = response.data.tableData
         })
     },
+    close() {
+      this.dialog.add = false
+    },
     add() {
       if (this.dialog.add) return
       this.dialog.add = true
@@ -771,7 +777,7 @@ export default {
       setTimeout(() => {
         // Set focus to receive code field
         this.$refs.code.focus()
-        
+
         // Validate form first
         this.$refs.form.validate()
       }, 0)
