@@ -32,21 +32,21 @@ export const routes = [{
 }, {
   path: '/login',
   name: 'login',
-  component: () => import('@/views/pages/Login.vue'),
+  component: () => import(/* webpackChunkName: "login" */ '@/views/pages/Login.vue'),
   meta: {
     layout: 'auth'
   }
 }, {
   path: '/error/unexpected',
   name: 'error-unexpected',
-  component: () => import('@/views/pages/UnexpectedPage.vue'),
+  component: () => import(/* webpackChunkName: "error-unexpected" */ '@/views/pages/UnexpectedPage.vue'),
   meta: {
     layout: 'error'
   }
 }, {
   path: '*',
   name: 'error',
-  component: () => import('@/views/pages/NotFoundPage.vue'),
+  component: () => import(/* webpackChunkName: "error-not-found" */ '@/views/pages/NotFoundPage.vue'),
   meta: {
     layout: 'error'
   }
