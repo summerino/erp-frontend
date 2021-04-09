@@ -475,6 +475,7 @@
                             >
                               <template v-slot:append>
                                 <v-btn
+                                  :disabled="hasRelatedTrans"
                                   color="primary"
                                   icon
                                   x-small
