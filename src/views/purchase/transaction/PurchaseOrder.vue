@@ -1159,6 +1159,7 @@ export default {
     addItem() {
       if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemId ?? null)) {
         const item = {
+          id: Math.floor(Math.random() * (-1000 + 1 + 1)) - 1, // Random from -1 to -1000
           code: this.data.code,
           itemId: null,
           itemName: null,
@@ -1202,7 +1203,7 @@ export default {
           'Delete?',
           'Are you sure want to delete this data?')
       ) {
-        const idx = this.gridItem.data.findIndex(i => i.rowId === item.rowId)
+        const idx = this.gridItem.data.findIndex(i => i.id === item.id)
         this.gridItem.data.splice(idx, 1)
 
         this.calcPrice()
