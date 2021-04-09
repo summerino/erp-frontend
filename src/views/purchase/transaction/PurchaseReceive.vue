@@ -890,7 +890,6 @@ export default {
           'Delete?',
           'Are you sure want to delete this data?')
       ) {
-        console.log(item)
         const idx = this.gridItem.data.findIndex(i => i.id === item.id)
         this.gridItem.data.splice(idx, 1)
       }
