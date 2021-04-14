@@ -304,7 +304,6 @@
                             @change="supCodeChange"
                           ></v-autocomplete>
                         </v-col>
-
                         <v-col cols="8" class="pl-1">
                           <v-text-field
                             v-model="data.supName"

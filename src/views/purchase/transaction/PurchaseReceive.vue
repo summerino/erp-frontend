@@ -293,7 +293,6 @@
                             required
                           ></v-text-field>
                         </v-col>
-
                         <v-col cols="9" class="pl-1">
                           <v-text-field
                             v-model="data.supName"
@@ -324,7 +323,6 @@
                             readonly
                           ></v-text-field>
                         </v-col>
-
                         <v-col cols="6" class="pl-1">
                           <v-text-field
                             v-model="data.supFax"
