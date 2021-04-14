@@ -492,6 +492,7 @@
                             <v-currency-field
                               v-model="item.qty"
                               :decimal-length="0"
+                              :min="1"
                               :readonly="hasRelatedTrans"
                               class="text-body-2 text-right mt-0"
                               dense
@@ -516,6 +517,7 @@
                             <v-currency-field
                               v-model="item.unitPrice"
                               :readonly="hasRelatedTrans"
+                              :rules="rules.above0"
                               class="text-body-2 text-right mt-0"
                               dense
                               @change="calcItemPrice(item)"
@@ -1165,7 +1167,7 @@ export default {
           code: this.data.code,
           itemId: null,
           itemName: null,
-          qty: 0,
+          qty: 1,
           length: null,
           width: null,
           height: null,
