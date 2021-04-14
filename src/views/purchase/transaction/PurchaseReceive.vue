@@ -212,7 +212,7 @@
                     <v-row no-gutters>
                       <v-col cols="12">
                         <v-menu
-                          v-model="menu.receiveDate"
+                          v-model="menu.rcvDate"
                           :close-on-content-click="false"
                           transition="scale-transition"
                           min-width="290px"
@@ -223,7 +223,7 @@
                               v-bind="attrs"
                               v-on="on"
                               :rules="rules.required"
-                              :value="formatReceiveDate"
+                              :value="formatRcvDate"
                               label="Receive Date"
                               class="mt-0"
                               readonly
@@ -234,7 +234,7 @@
                             v-model="data.date"
                             no-title
                             scrollable
-                            @change="menu.receiveDate = false"
+                            @change="menu.rcvDate = false"
                           ></v-date-picker>
                         </v-menu>
                       </v-col>
@@ -559,7 +559,7 @@ export default {
       add: false
     },
     menu: {
-      receiveDate: false
+      rcvDate: false
     },
     tab: {
       sup: null,
@@ -638,7 +638,7 @@ export default {
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'
     },
-    formatReceiveDate() {
+    formatRcvDate() {
       return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
     },
     isVoid() {
