@@ -540,6 +540,7 @@ import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
 import { sumBy as _sumBy } from 'lodash'
 
+import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
@@ -857,7 +858,7 @@ export default {
     addItem() {
       if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemId ?? null)) {
         const item = {
-          id: Math.floor(Math.random() * (-1000 + 1 + 1)) - 1, // Random from -1 to -1000
+          id: randomNumber(-1, -1000),
           code: this.data.code,
           itemId: null,
           itemName: null,
@@ -1015,9 +1016,10 @@ export default {
           }
         })
           .then(response => {
-            this.gridItem.data = response.data.tableData
+            this.gridItem.data = [...response.data.tableData]
             for (let i = 0; i < this.gridItem.data.length; i++) {
               this.gridItem.data[i].poDetailId = this.gridItem.data[i].id
+              this.gridItem.data[i].id = randomNumber(-1, -1000)
               this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
               this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyRcv
               this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
