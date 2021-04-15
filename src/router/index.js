@@ -3,11 +3,11 @@ import Router from 'vue-router'
 import auth from '@/auth/authService'
 
 // Routes
+import GeneralRoutes from './general.routes'
 import InventoryRoutes from './inventory.routes'
 import PurchaseRoutes from './purchase.routes'
 import SalesRoutes from './sales.routes'
 import UsersRoutes from './users.routes'
-import ParameterRoutes from './parameter.routes'
 
 Vue.use(Router)
 
@@ -19,11 +19,11 @@ export const routes = [{
   name: 'dashboard',
   component: () => import(/* webpackChunkName: "dashboard" */ '@/views/dashboard/Dashboard.vue')
 },
+...GeneralRoutes,
 ...InventoryRoutes,
 ...PurchaseRoutes,
 ...SalesRoutes,
 ...UsersRoutes,
-...ParameterRoutes,
 {
   path: '/blank',
   name: 'blank',

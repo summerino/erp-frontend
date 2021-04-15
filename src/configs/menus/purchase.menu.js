@@ -9,7 +9,8 @@ export default [
         items: [
           { text: 'Order', link: 'purchase-order' },
           { text: 'Receive', link: 'purchase-receive' },
-          { text: 'Invoice', link: 'purchase-invoice' }
+          { text: 'Invoice', link: 'purchase-invoice' },
+          { text: 'Return', link: 'purchase-return' }
         ]
       }
     ]
