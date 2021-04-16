@@ -10,7 +10,7 @@
               label="Search..."
               class="font-weight-regular mt-0 pt-0"
               single-line
-              @keyup.enter="getList"
+              @keyup.enter="getList()"
             ></v-text-field>
             <v-spacer></v-spacer>
           </v-col>
@@ -767,6 +767,7 @@ export default {
       }
     },
     getList(bindToForm = false) {
+      console.log(bindToForm)
       const sorts = []
       for (let i = 0; i < this.grid.options.sortBy.length; i++) {
         sorts.push({

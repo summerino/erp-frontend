@@ -56,9 +56,6 @@
             hide-default-footer
             @dblclick:row="dblclickRow"
           >
-            <template v-slot:[`item.date`]="{ item }">
-              {{ item.date | formatDate('dd-MMM-yyyy') }}
-            </template>
             <template v-slot:[`item.code`]="{ item }">
               <v-text-field
                 v-model="item.code"
@@ -67,6 +64,9 @@
                 readonly
                 @keyup.enter="dblclickRow(null, { item })"
               ></v-text-field>
+            </template>
+            <template v-slot:[`item.date`]="{ item }">
+              {{ item.date | formatDate('dd-MMM-yyyy') }}
             </template>
             <template v-slot:[`item.total`]="{ item }">
               {{ item.total | formatCurrency }}
@@ -97,6 +97,13 @@ import { mapState } from 'vuex'
 import api from '@/services/axios.service'
 
 export default {
+  props: {
+    MarkExclude: {
+      type: Array,
+      required: true
+    }
+  },
+
   data() {
     return {
       dialog: false,
@@ -104,20 +111,20 @@ export default {
         by: 'code',
         value: '',
         items: [
-          { text: 'Date', value: 'date' },
           { text: 'Code', value: 'code' },
+          { text: 'Date', value: 'date' },
           { text: 'Supplier', value: 'supName' },
           { text: 'Curr.', value: 'curr' }
         ]
       },
       grid: {
         columns: [
-          { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
           { text: 'Code', value: 'code', divider: true, width: '150' },
+          { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
+          { text: 'Curr.', value: 'curr', width: '90' },
           { text: 'Amount', value: 'total', align: 'right', divider: true, width: '120' },
           { text: 'Supplier', value: 'supName', divider: true, width: '200' },
-          { text: 'Request By', value: 'requestInitial', divider: true, width: '200' },
-          { text: 'Curr.', value: 'curr', width: '90' }
+          { text: 'Request By', value: 'requestInitial', divider: true, width: '200' }
         ],
         data: []
       },
@@ -158,7 +165,7 @@ export default {
           }, {
             field: 'mark',
             operator: 'doesnotcontain',
-            keyword: ['V', 'CLS', 'CMP']
+            keyword: this.MarkExclude
           }]),
           sorts: JSON.stringify([{
             field: this.data.by,
