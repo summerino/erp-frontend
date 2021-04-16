@@ -28,15 +28,20 @@
         @click="add"
         @shortkey="add">
         <v-icon left>mdi-plus</v-icon>
-        Create New Data
+        New
       </v-btn>
       </v-col>
       </v-row>
       </v-card-title>
       <v-data-table
+        :footer-props="{ itemsPerPageOptions: gridDefOpts.pageSizes }"
         :headers="grid.columns"
+        :height="gridDefOpts.height"
         :items="grid.data"
-        :items-per-page="15"
+        :items-per-page="gridDefOpts.pageSize"
+        :options.sync="grid.options"
+        :sort-by="grid.options.sortBy"
+        :sort-desc="grid.options.sortDesc"
         class="elevation-1"
         fixed-header
       >
@@ -66,7 +71,7 @@
                 color="red"
                 @click="remove(item)"
               >
-                <v-icon small>mdi-close-circle-outline</v-icon>
+                <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
             <template v-else v-slot:activator="{ on, attrs }">
@@ -78,7 +83,7 @@
                 color="green"
                 @click="reactivate(item)"
               >
-                <v-icon small>mdi-check-circle-outline</v-icon>
+                <v-icon small>mdi-check</v-icon>
               </v-btn>
             </template>
             <span v-if="item.isActive">Remove</span>
@@ -86,7 +91,8 @@
           </v-tooltip>
         </template>
         <template v-slot:[`item.isActive`]="{ item }">
-            {{item.isActive? "Active" : "InActive"}}
+          <v-icon v-if="item.isActive" small color="green">mdi-toggle-switch</v-icon>
+          <v-icon v-else small color="red">mdi-toggle-switch-off</v-icon>
         </template>
       </v-data-table>
       <confirm ref="confirm"></confirm>
@@ -100,6 +106,12 @@
             <span v-else>Customer Edit</span>
           </v-col>
           <v-col cols="12" md="6" class="text-right">
+            <label
+              v-if="attrs == 'edit'"
+              class="text-caption mr-1"
+            >
+            Last Updated: {{data.updatedDate}} by {{ data.updatedBy}}
+            </label>
             <v-btn
               v-bind="attrs"
               v-shortkey="['ctrl', 'enter']"
@@ -117,7 +129,7 @@
             </v-btn>
             <v-btn
               v-bind="attrs"
-              v-shortkey="['ctrl', 'alt', 'b']"
+              v-shortkey="['esc']"
               small
               tile
               class="font-weight-regular ml-1"
@@ -136,174 +148,151 @@
     <div>
       <v-row no-gutters>
         <template>
-          <v-col cols="5">
+          <v-col cols="12" md="6" class="pr-md-3">
             <v-text-field
-              required
-              readonly
-              class="mt-0"
-              label="Code"
               v-model="data.code"
+              label="Code"
+              class="mt-0"
+              readonly
+              required
             ></v-text-field>
           </v-col>
-          <v-divider
-            class="mx-3"
-            vertical
-          ></v-divider>
-          <v-col cols="5">
-           <v-text-field
-            :rules="rules.initialRules"
-            required
-            class="mt-0"
-            label="Initial"
-            v-model="data.initial"
-          ></v-text-field>
+          <v-col cols="12" md="6" class="pl-md-3">
+            <v-text-field
+              v-model="data.initial"
+              :rules="[rules.required[0], rules.max20chars[0]]"
+              :counter="20"
+              label="Initial"
+              class="mt-0"
+              required
+            ></v-text-field>
           </v-col>
         </template>        
       </v-row>
       <v-row no-gutters>
         <template>
-          <v-col cols="5">
+          <v-col cols="12" md="6" class="pr-md-3">
             <v-text-field
-              :rules="rules.nameRules"
-              required
-              class="mt-0"
-              label="Name"
               v-model="data.name"
+              :rules="rules.required"
+              label="Name"
+              class="mt-0"
+              required
             ></v-text-field>
           </v-col>
-          <v-divider
-            class="mx-3"
-            vertical
-          ></v-divider>
-
-          <v-col cols="5">
-           <v-text-field
-            :type="number"
-            :rules="rules.typeIdRules"
-            required
-            class="mt-0"
-            label="Type Id"
-            v-model="data.typeId"
-            @keypress="isNumber($event)"
-          ></v-text-field>
+          <v-col cols="12" md="6" class="pl-md-3">
+            <v-autocomplete
+              v-model="data.typeId"
+              :items="customerTypes"
+              :item-text="item => `${item.initial} - ${item.name}`"
+              :rules="rules.required"
+              label="Type Id"
+              item-value="id"
+              class="mt-0"
+              required
+            ></v-autocomplete>
           </v-col>
         </template>        
       </v-row>
       <v-row no-gutters>
         <template>
-          <v-col cols="5">
-              <v-text-field
-              :rules="rules.addressRules"
-              class="mt-0"
-              required
-              label="Address 1"
-              v-model="data.address1"
-              ></v-text-field>
-          </v-col>
-          <v-divider
-            class="mx-3"
-            vertical
-          ></v-divider>
-          <v-col cols="5">
-           <v-text-field
-              class="mt-0"
-              label="Address 2"
-              v-model="data.address2"
-              ></v-text-field>
-          </v-col>
-        </template>        
-      </v-row>
-       <v-row no-gutters>
-        <template>
-          <v-col cols="5">
+          <v-col cols="12">
             <v-text-field
-              :rules="rules.phoneRules"
-              required
+              v-model="data.address1"
+              :rules="rules.required"
+              label="Address 1"
               class="mt-0"
-              label="Phone"
-              v-model="data.phone"
-              @keypress="isNumber($event)"
+              required
             ></v-text-field>
           </v-col>
-          <v-divider
-            class="mx-3"
-            vertical
-          ></v-divider>
-          <v-col cols="5">
-           <v-text-field
-            class="mt-0"
-            label="Fax"
-            v-model="data.fax"
-          ></v-text-field>
+        </template>        
+      </v-row>
+      <v-row no-gutters>
+        <template>
+          <v-col cols="12">
+            <v-text-field
+              v-model="data.address2"
+              label="Address 2"
+              class="mt-0"
+            ></v-text-field>
           </v-col>
         </template>        
       </v-row>
        <v-row no-gutters>
         <template>
-          <v-col cols="5">
+          <v-col cols="12" md="6" class="pr-md-3">
             <v-text-field
-              :rules="rules.emailRules"
+              v-model="data.phone"
+              :rules="rules.required"
+              label="Phone"
+              class="mt-0"
+              @keypress="isNumber($event)"
+              required
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" md="6" class="pl-md-3">
+            <v-text-field
+              v-model="data.fax"
+              label="Fax"
+              class="mt-0"
+            ></v-text-field>
+          </v-col>
+        </template>        
+      </v-row>
+       <v-row no-gutters>
+        <template>
+          <v-col cols="12" md="6" class="pr-md-3">
+            <v-text-field
+              v-model="data.email"
+              :rules="[rules.required[0], rules.email[0]]"
               class="mt-0"
               label="Email"
-              v-model="data.email"
             ></v-text-field>
           </v-col>
-          <v-divider
-            class="mx-3"
-            vertical
-          ></v-divider>
-          <v-col cols="5">
-           <v-text-field
-            class="mt-0"
-            label="Website"
-            v-model="data.website"
-          ></v-text-field>
+          <v-col cols="12" md="6" class="pl-md-3">
+            <v-text-field
+              v-model="data.website"
+              label="Website"
+              class="mt-0"
+            ></v-text-field>
           </v-col>
         </template>        
       </v-row>
        <v-row no-gutters>
         <template>
-          <v-col cols="5">
+          <v-col cols="12" md="6" class="pr-md-3">
             <v-currency-field
+              v-model="data.creditTerm"
               :decimal-length="0"
               class="mt-0"
               label="Credit Term"
-              v-model="data.creditTerm"
-              :max="rules.maxCreditTerm"
+              :max="32767"
             ></v-currency-field>
           </v-col>
-          <v-divider
-            class="mx-3"
-            vertical
-          ></v-divider>
-          <v-col cols="5">
-           <v-currency-field
-            :decimal-length="0"
-            class="mt-0"
-            label="Credit Limit"
-            v-model="data.creditLimit"
-          ></v-currency-field>
+          <v-col cols="12" md="6" class="pl-md-3">
+            <v-currency-field
+              v-model="data.creditLimit"
+              :decimal-length="0"
+              class="mt-0"
+              label="Credit Limit"
+            ></v-currency-field>
           </v-col>
         </template>        
       </v-row>
        <v-row no-gutters>
         <template>
-          <v-col cols="5">
+          <v-col cols="12" md="6" class="pr-md-3">
             <v-text-field
+              v-model="data.refNo"
               class="mt-0"
               label="Ref. No."
-              v-model="data.refNo"
             ></v-text-field>
           </v-col>
-          <v-divider
-            class="mx-3"
-            vertical
-          ></v-divider>
-          <v-col cols="5">
+          <v-col cols="12" md="6" class="pl-md-3">
            <v-text-field
+            v-model="data.notes"
             class="mt-0"
-            label="Note"
-            v-model="data.note"
+            label="Notes"
           ></v-text-field>
           </v-col>
         </template>        
@@ -320,6 +309,8 @@
 import { mapState } from 'vuex'
 import api from '@/services/axios.service'
 import Confirm from '@/components/dialog/Confirm'
+import { format, parseISO }  from 'date-fns'
+
 export default {
   components:{
     Confirm
@@ -342,7 +333,7 @@ export default {
       ],
       options: {
         sortBy: ['code'],
-        sortDesc: [true]
+        sortDesc: [false]
       },
       search: null,
       total: 0
@@ -362,30 +353,35 @@ export default {
       creditTerm: '',
       creditLimit: '',
       refNo: '',
-      note: '',
-      action: ''
+      notes: '',
+      action: '',
+      createdBy: '',
+      createdDate: '',
+      updatedBy: '',
+      updatedDate: ''
     },
-    rules: {
-      initialRules: [
-        v => !!v || 'Initial is required'
-      ],
-      typeIdRules: [
-        v => !!v || 'Type Id is required'
-      ],
-      nameRules: [
-        v => !!v || 'Name is required'
-      ],
-      emailRules: [
-        v => !v || /.+@.+\..+/.test(v) || 'E-mail must be valid'
-      ],
-      addressRules: [
-        v => !!v || 'Address is required'
-      ],
-      phoneRules: [
-        v => !!v || 'Phone is required'
-      ],
-      maxCreditTerm : 32767
-    }
+    customerType: []
+    // rules: {
+    //   initialRules: [
+    //     v => !!v || 'Initial is required'
+    //   ],
+    //   typeIdRules: [
+    //     v => !!v || 'Type Id is required'
+    //   ],
+    //   nameRules: [
+    //     v => !!v || 'Name is required'
+    //   ],
+    //   emailRules: [
+    //     v => !v || /.+@.+\..+/.test(v) || 'E-mail must be valid'
+    //   ],
+    //   addressRules: [
+    //     v => !!v || 'Address is required'
+    //   ],
+    //   phoneRules: [
+    //     v => !!v || 'Phone is required'
+    //   ],
+    //   maxCreditTerm : 32767
+    // }
   }),
   computed: {
     ...mapState({
@@ -397,6 +393,7 @@ export default {
   created: function () {
     this.getAll()
     this.getSearch()
+    this.getCustomerTypesList()
   },
   methods:{
     add() {
@@ -417,7 +414,8 @@ export default {
 
       this.data = {
         ...item,
-        action: 'edit'
+        action: 'edit',
+        updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
     },
     getAll() {
@@ -505,6 +503,22 @@ export default {
           })
       }
     },
+    getCustomerTypesList() {
+      api.getAll(this.endpoint.master, {
+        params: {
+          param: 'customertype',
+          fieldNames: 'id,initial,name',
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }]),
+          includeMetaData: false
+        }
+      })
+        .then(response => {
+          this.customerTypes = response.data.tableData
+        })
+    },
     clearData() {
       this.data.code = ''
       this.data.initial = ''
@@ -519,7 +533,7 @@ export default {
       this.data.creditTerm = ''
       this.data.creditLimit = ''
       this.data.refNo = ''
-      this.data.note = ''
+      this.data.notes = ''
       this.data.action = ''
       this.grid.search = null
     },

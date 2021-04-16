@@ -39,11 +39,17 @@ const state = {
     above0: [
       (v) => parseFloat((v || '0').replace(/,/g, '')) > 0 || 'Value should above 0'
     ],
+    max20chars: [
+      (v) => (v || '').length <= 20 || 'Max 20 characters'
+    ],
     max30chars: [
       (v) => (v || '').length <= 30 || 'Max 30 characters'
     ],
     max256chars: [
       (v) => (v || '').length <= 256 || 'Max 256 characters'
+    ],
+    email: [
+      (v) => !v || /.+@.+\..+/.test(v) || 'Invalid email format'
     ]
   },
 
