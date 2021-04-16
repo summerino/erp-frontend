@@ -456,7 +456,7 @@ export default {
         const resp = await api.create(this.endpoint.general.customer, data)
         result = resp.data
       } else if (data.action === 'edit') {
-        const resp = await api.update(this.endpoint.general.customer, 'edit', data)
+        const resp = await api.update(this.endpoint.general.customer, data.code, data)
         result = resp.data
       }
 
@@ -494,7 +494,7 @@ export default {
         }
         this.data.isActive = true
         const data = this.data
-        api.update(this.endpoint.general.customer, 'reactivate', data)
+        api.update(this.endpoint.general.customer, data.code, data)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
