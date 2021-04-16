@@ -12,4 +12,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/inventory/master/item/inventory-item',
+  name: 'item-inventory',
+  component: () => import(/* webpackChunkName: "inventory-master-item-group" */ '@/views/inventory/master/InventoryItem.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
