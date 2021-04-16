@@ -662,7 +662,6 @@ export default {
       dimensionMeasurement: '',
       weight: 0,
       weightMeasurement: '',
-      oldInitial: '',
       categoryName: '',
       uomInitial: '',
       uomSellName: '',
@@ -753,7 +752,6 @@ export default {
         dimensionMeasurement: '',
         weight: 0,
         weightMeasurement: '',
-        oldInitial: '',
         categoryName: '',
         uomInitial: '',
         uomSellName: '',
@@ -946,8 +944,7 @@ export default {
 
       this.data = {
         ...item,
-        action: 'edit',
-        oldInitial: item.initial
+        action: 'edit'
       }
 
       this.getUnitSellingOrBuying()
@@ -963,7 +960,7 @@ export default {
           'Delete?',
           'Are you sure want to delete this data?')
       ) {
-        api.delete(this.endpoint.inventory.item.item, item.initial)
+        api.delete(this.endpoint.inventory.item.item, item.id)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -981,7 +978,7 @@ export default {
         const resp = await api.create(this.endpoint.inventory.item.item, data)
         result = resp.data
       } else if (data.action === 'edit') {
-        const resp = await api.update(this.endpoint.inventory.item.item, data.oldInitial, data)
+        const resp = await api.update(this.endpoint.inventory.item.item, data.id, data)
         result = resp.data
       }
 
