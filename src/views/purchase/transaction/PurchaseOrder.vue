@@ -304,7 +304,6 @@
                             @change="supCodeChange"
                           ></v-autocomplete>
                         </v-col>
-
                         <v-col cols="8" class="pl-1">
                           <v-text-field
                             v-model="data.supName"
@@ -475,6 +474,7 @@
                             >
                               <template v-slot:append>
                                 <v-btn
+                                  :disabled="hasRelatedTrans"
                                   color="primary"
                                   icon
                                   x-small
@@ -491,6 +491,7 @@
                             <v-currency-field
                               v-model="item.qty"
                               :decimal-length="0"
+                              :min="1"
                               :readonly="hasRelatedTrans"
                               class="text-body-2 text-right mt-0"
                               dense
@@ -515,6 +516,7 @@
                             <v-currency-field
                               v-model="item.unitPrice"
                               :readonly="hasRelatedTrans"
+                              :rules="rules.above0"
                               class="text-body-2 text-right mt-0"
                               dense
                               @change="calcItemPrice(item)"
@@ -721,6 +723,7 @@ import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
 import { sumBy as _sumBy } from 'lodash'
 
+import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
@@ -1159,10 +1162,11 @@ export default {
     addItem() {
       if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemId ?? null)) {
         const item = {
+          id: randomNumber(-1, -1000),
           code: this.data.code,
           itemId: null,
           itemName: null,
-          qty: 0,
+          qty: 1,
           length: null,
           width: null,
           height: null,
@@ -1202,7 +1206,7 @@ export default {
           'Delete?',
           'Are you sure want to delete this data?')
       ) {
-        const idx = this.gridItem.data.findIndex(i => i.rowId === item.rowId)
+        const idx = this.gridItem.data.findIndex(i => i.id === item.id)
         this.gridItem.data.splice(idx, 1)
 
         this.calcPrice()

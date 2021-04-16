@@ -36,6 +36,9 @@ const state = {
     required: [
       (v) => !!v || 'required'
     ],
+    above0: [
+      (v) => parseFloat((v || '0').replace(/,/g, '')) > 0 || 'Value should above 0'
+    ],
     max30chars: [
       (v) => (v || '').length <= 30 || 'Max 30 characters'
     ],

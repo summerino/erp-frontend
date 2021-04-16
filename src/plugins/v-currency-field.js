@@ -12,7 +12,7 @@ Vue.use(VCurrencyField, {
   decimalLength: 2,
   autoDecimalMode: false,
   min: null,
-  max: null,
+  max: Number.MAX_SAFE_INTEGER,
   defaultValue: 0,
   valueAsInteger: false,
   allowNegative: false

@@ -212,7 +212,7 @@
                     <v-row no-gutters>
                       <v-col cols="12">
                         <v-menu
-                          v-model="menu.receiveDate"
+                          v-model="menu.rcvDate"
                           :close-on-content-click="false"
                           transition="scale-transition"
                           min-width="290px"
@@ -223,7 +223,7 @@
                               v-bind="attrs"
                               v-on="on"
                               :rules="rules.required"
-                              :value="formatReceiveDate"
+                              :value="formatRcvDate"
                               label="Receive Date"
                               class="mt-0"
                               readonly
@@ -234,7 +234,7 @@
                             v-model="data.date"
                             no-title
                             scrollable
-                            @change="menu.receiveDate = false"
+                            @change="menu.rcvDate = false"
                           ></v-date-picker>
                         </v-menu>
                       </v-col>
@@ -293,7 +293,6 @@
                             required
                           ></v-text-field>
                         </v-col>
-
                         <v-col cols="9" class="pl-1">
                           <v-text-field
                             v-model="data.supName"
@@ -324,7 +323,6 @@
                             readonly
                           ></v-text-field>
                         </v-col>
-
                         <v-col cols="6" class="pl-1">
                           <v-text-field
                             v-model="data.supFax"
@@ -540,6 +538,7 @@ import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
 import { sumBy as _sumBy } from 'lodash'
 
+import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
@@ -558,7 +557,7 @@ export default {
       add: false
     },
     menu: {
-      receiveDate: false
+      rcvDate: false
     },
     tab: {
       sup: null,
@@ -637,7 +636,7 @@ export default {
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'
     },
-    formatReceiveDate() {
+    formatRcvDate() {
       return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
     },
     isVoid() {
@@ -855,13 +854,9 @@ export default {
       }
     },
     addItem() {
-      // if (!this.data.supCode) {
-      //   this.$store.dispatch('app/showInfo', 'Please choose supplier first.')
-      //   return
-      // }
-
       if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemId ?? null)) {
         const item = {
+          id: randomNumber(-1, -1000),
           code: this.data.code,
           itemId: null,
           itemName: null,
@@ -894,7 +889,7 @@ export default {
           'Delete?',
           'Are you sure want to delete this data?')
       ) {
-        const idx = this.gridItem.data.findIndex(i => i.rowId === item.rowId)
+        const idx = this.gridItem.data.findIndex(i => i.id === item.id)
         this.gridItem.data.splice(idx, 1)
       }
     },
@@ -1019,9 +1014,10 @@ export default {
           }
         })
           .then(response => {
-            this.gridItem.data = response.data.tableData
+            this.gridItem.data = [...response.data.tableData]
             for (let i = 0; i < this.gridItem.data.length; i++) {
               this.gridItem.data[i].poDetailId = this.gridItem.data[i].id
+              this.gridItem.data[i].id = randomNumber(-1, -1000)
               this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
               this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyRcv
               this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty

@@ -181,7 +181,7 @@ export default {
       api.getAll(this.endpoint.inventory.item.item, {
         params: {
           category: JSON.stringify(
-            _remove(this.data.category, function (val) {
+            _remove([...this.data.category], function (val) {
               return val > 0
             })
           ),
