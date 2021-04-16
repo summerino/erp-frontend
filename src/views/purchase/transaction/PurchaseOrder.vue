@@ -156,7 +156,7 @@
               </template>
               <v-list class="cursor-pointer">
                 <v-list-item
-                  v-shortkey="['ctrl', 's']"
+                  v-shortkey="['ctrl', 'alt', 's']"
                   :disabled="isVoid"
                   @click="save(false)"
                   @shortkey="save(false)"
@@ -171,7 +171,7 @@
                           Save
                         </span>
                       </template>
-                      <span class="text-caption">(Ctrl + S)</span>
+                      <span class="text-caption">(Ctrl + Alt + S)</span>
                     </v-tooltip>
                   </v-list-item-title>
                 </v-list-item>
