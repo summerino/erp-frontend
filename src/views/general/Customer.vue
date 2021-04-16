@@ -121,7 +121,7 @@
                 <v-btn
                   v-bind="attrs"
                   v-on="on"
-                  v-shortkey="['ctrl', 'alt', 's']"
+                  v-shortkey="['ctrl', 's']"
                   color="blue darken-2"
                   class="font-weight-regular"
                   dark
@@ -136,7 +136,7 @@
                   Save
                 </v-btn>
               </template>
-              <span class="text-caption">(Ctrl + Alt + S)</span>
+              <span class="text-caption">(Ctrl + S)</span>
             </v-tooltip>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">

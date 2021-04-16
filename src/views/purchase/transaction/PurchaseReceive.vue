@@ -137,6 +137,7 @@
             <v-divider vertical></v-divider>
             <v-menu
               bottom
+              eager
               left
               open-on-hover
             >
@@ -152,7 +153,7 @@
               </template>
               <v-list class="cursor-pointer">
                 <v-list-item
-                  v-shortkey="['ctrl', 'alt', 's']"
+                  v-shortkey="['ctrl', 's']"
                   :disabled="isVoid"
                   @click="save(false)"
                   @shortkey="save(false)"
@@ -167,7 +168,7 @@
                           Save
                         </span>
                       </template>
-                      <span class="text-caption">(Ctrl + Alt + S)</span>
+                      <span class="text-caption">(Ctrl + S)</span>
                     </v-tooltip>
                   </v-list-item-title>
                 </v-list-item>
