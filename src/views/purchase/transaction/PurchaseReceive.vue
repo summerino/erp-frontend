@@ -10,7 +10,7 @@
               label="Search..."
               class="font-weight-regular mt-0 pt-0"
               single-line
-              @keyup.enter="getList"
+              @keyup.enter="getList()"
             ></v-text-field>
             <v-spacer></v-spacer>
           </v-col>
@@ -524,6 +524,7 @@
     <confirm ref="confirm"></confirm>
     <find-po
       ref="findPO"
+      :mark-exclude="['V', 'CLS', 'CMP']"
       @dblclick:row="bindPOData"
     ></find-po>
     <find-item
@@ -891,6 +892,9 @@ export default {
       ) {
         const idx = this.gridItem.data.findIndex(i => i.id === item.id)
         this.gridItem.data.splice(idx, 1)
+
+        // Calc price
+        this.calcPrice()
       }
     },
     poCodeChange() {

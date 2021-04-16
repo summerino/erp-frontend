@@ -10,7 +10,7 @@
               label="Search..."
               class="font-weight-regular mt-0 pt-0"
               single-line
-              @keyup.enter="getList"
+              @keyup.enter="getList()"
             ></v-text-field>
             <v-spacer></v-spacer>
           </v-col>
@@ -668,25 +668,13 @@
                     </v-row>
 
                     <v-row no-gutters>
-                      <!-- <v-col cols="4">
-                        <v-currency-field
-                          v-model="data.taxPercent"
-                          :allow-negative="false"
-                          label="Tax Percent"
-                          suffix="%"
-                          class="text-right mt-0"
-                          readonly
-                        ></v-currency-field>
-                      </v-col> -->
-                      <!-- <v-col cols="8" class="pl-1"> -->
-                        <v-currency-field
-                          v-model="data.taxAmount"
-                          :allow-negative="false"
-                          label="Tax Amount"
-                          class="text-right mt-0"
-                          readonly
-                        ></v-currency-field>
-                      <!-- </v-col> -->
+                      <v-currency-field
+                        v-model="data.taxAmount"
+                        :allow-negative="false"
+                        label="Tax Amount"
+                        class="text-right mt-0"
+                        readonly
+                      ></v-currency-field>
                     </v-row>
 
                     <v-row no-gutters>
@@ -1209,6 +1197,7 @@ export default {
         const idx = this.gridItem.data.findIndex(i => i.id === item.id)
         this.gridItem.data.splice(idx, 1)
 
+        // Calc price
         this.calcPrice()
       }
     },
@@ -1340,13 +1329,6 @@ export default {
         this.calcItemPrice(this.gridItem.data[i], false)
       }
       this.calcPrice()
-      // if (this.data.includeTax) {
-      //   this.data.taxAmount = (this.data.subTotal - this.data.finalDisc) - ((this.data.subTotal - this.data.finalDisc) / (1 + (this.data.tax.rate / 100)))
-      //   this.data.dpp = (this.data.subTotal - this.data.finalDisc) - this.data.taxAmount
-      // } else {
-      //   this.data.taxAmount = (this.data.subTotal - this.data.finalDisc) * (this.data.tax.rate / 100)
-      //   this.data.dpp = (this.data.subTotal - this.data.finalDisc)
-      // }
     },
     calcPrice() {
       this.data.subTotal = _sumBy(this.gridItem.data, 'total')
@@ -1355,7 +1337,6 @@ export default {
       this.calcGrandTotal()
     },
     calcGrandTotal() {
-      // this.calcTax()
       if (this.data.includeTax) {
         this.data.total = this.data.subTotal - this.data.finalDisc
       } else {
