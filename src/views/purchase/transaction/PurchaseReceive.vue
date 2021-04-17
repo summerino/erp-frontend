@@ -511,7 +511,24 @@
                       key="related-trans"
                       transition="false"
                     >
-                      this is related transactions
+                      <v-data-table
+                        :headers="gridRelated.columns"
+                        :items="gridRelated.data"
+                        :items-per-page="-1"
+                        height="300"
+                        class="elevation-1"
+                        dense
+                        disable-sort
+                        fixed-header
+                        hide-default-footer
+                      >
+                        <template v-slot:[`item.date`]="{ item }">
+                          {{ item.date | formatDate('dd-MMM-yyyy') }}
+                        </template>
+                        <template v-slot:[`item.total`]="{ item }">
+                          {{ item.total | formatCurrency }}
+                        </template>
+                      </v-data-table>
                     </v-tab-item>
                   </v-tabs>
                 </v-card>
@@ -598,6 +615,14 @@ export default {
       ],
       data: []
     },
+    gridRelated: {
+      columns: [
+        { text: 'Code', value: 'code', divider: true },
+        { text: 'Date', value: 'date', align: 'right', divider: true },
+        { text: 'Amout', value: 'total', align: 'right', divider: true }
+      ],
+      data: []
+    },
     valid: false,
     employees: [],
     taxes: [],
@@ -641,6 +666,9 @@ export default {
     formatRcvDate() {
       return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
     },
+    hasRelatedTrans() {
+      return (this.gridRelated?.data?.length > 0)
+    },
     isVoid() {
       return (this.data?.mark?.toLowerCase() === 'v')
     }
@@ -670,6 +698,7 @@ export default {
         total: 0
       }
       this.gridItem.data = []
+      this.gridRelated.data = []
       this.tab.sup = 0
       this.tab.item = 0
 
@@ -804,6 +833,14 @@ export default {
       })
         .then(response => {
           this.gridItem.data = response.data.tableData
+        })
+
+      // Get related transaction details
+      api.getAll(`${this.endpoint.purchase.receive}/related-trans`, {
+        params: { code: item.code }
+      })
+        .then(response => {
+          this.gridRelated.data = response.data.tableData
         })
 
       // Set focus to receive code field

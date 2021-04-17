@@ -142,6 +142,7 @@
             <v-divider vertical></v-divider>
             <v-menu
               bottom
+              eager
               left
               open-on-hover
             >
@@ -369,6 +370,7 @@
                     <v-tab-item
                       key="user"
                       transition="false"
+                      eager
                     >
                       <v-row no-gutters>
                         <v-col cols="12">
@@ -693,7 +695,6 @@ export default {
   created: function () {
     this.getList()
     this.getEmployeeLists()
-    this.add()
   },
 
   mounted: function () {
@@ -803,6 +804,17 @@ export default {
           this.employees = response.data.tableData
         })
     },
+    getReceiveLists() {
+      api.getAll(`${this.endpoint.purchase.receive}/un-invoice`, {
+        params: {
+          poCode: this.data.poCode,
+          invCode: this.data.code
+        }
+      })
+        .then(response => {
+          this.receives = response.data.tableData
+        })
+    },
     close() {
       this.dialog.add = false
     },
@@ -821,49 +833,32 @@ export default {
       }, 0)
     },
     edit(item) {
+      if (!item) return
+
       this.dialog.add = true
       this.reset()
 
       this.data = {
+        ...item,
         action: 'edit',
-        code: item.code,
-        invDate: format(parseISO(item.invDate), 'yyyy-MM-dd'),
-        dueDate: format(parseISO(item.dueDate), 'yyyy-MM-dd'),
-        curr: item.curr,
-        rate: item.rate,
-        supCode: item.supCode,
-        includeTax: item.includeTax,
-        notes: item.notes,
-        shipmentFee: item.shipmentFee,
-        handlingFee: item.handlingFee,
-        subTotal: item.subTotal,
-        finalDiscPercent: item.finalDiscPercent,
-        finalDisc: item.finalDisc,
-        taxPercent: item.taxPercent,
-        taxAmount: item.taxAmount,
-        fee: item.fee,
-        dpp: item.dpp,
-        total: item.total,
-        updatedBy: item.updatedBy,
-        updatedDate: item.updatedDate
+        updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
 
       // Get supplier details
-      const supplier = this.suppliers.find(s => s.code === item.supCode)
-      this.bindSupData(supplier)
-
+      this.bindSupData(this.data)
+      
       // Get invoice details
       api.getAll(`${this.endpoint.purchase.invoice}/detail`, {
         params: { code: item.code }
       })
         .then(response => {
-          this.gridDet.data = response.data
+          this.gridDet.data = response.data.tableData
         })
 
-      // this.calcDP()
-      this.calcFee()
+      // Get purchase receive details
+      this.getReceiveLists()
 
-      // Set focus to receive code field
+      // Set focus to invoice code field
       setTimeout(() => {
         this.$refs.code.focus()
       }, 0)
@@ -1009,18 +1004,7 @@ export default {
         this.bindSupData(this.data)
 
         // Get purchase receive details
-        api.getAll(this.endpoint.purchase.receive, {
-          params: {
-            filters: JSON.stringify([{
-              field: 'poCode',
-              operator: 'eq',
-              keyword: this.data.poCode
-            }])
-          }
-        })
-          .then(response => {
-            this.receives = response.data.tableData
-          })
+        this.getReceiveLists()
       } else {
         this.data.supCode = null
         this.data.supName = null
