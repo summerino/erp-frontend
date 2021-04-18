@@ -150,6 +150,10 @@ export default {
             field: this.data.by,
             operator: 'STRING_CONTAINS',
             keyword: this.data.value
+          }, {
+            field: 'isActive',
+            operator: 'EQUAL',
+            keyword: true
           }]),
           sorts: JSON.stringify([{
             field: this.data.by,

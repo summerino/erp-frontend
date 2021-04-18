@@ -12,7 +12,6 @@
               single-line
               @keyup.enter="getList()"
             ></v-text-field>
-            <v-spacer></v-spacer>
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" md="6" class="text-right">
@@ -74,7 +73,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="item.mark.toLowerCase() === 'v'"
+                :disabled="item.mark.toUpperCase() !== 'A'"
                 color="red"
                 icon
                 small
@@ -95,7 +94,7 @@
         <template v-slot:[`item.mark`]="{ item }">
           <v-badge
             :content="item.mark"
-            :color="item.mark.toLowerCase() === 'v' ? 'error' : 'green'"
+            :color="item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
             inline
           ></v-badge>
         </template>
@@ -544,6 +543,7 @@
                           <template v-slot:[`item.notes`]="{ item }">
                             <v-text-field
                               v-model="item.notes"
+                              :rules="rules.max256chars"
                               class="text-body-2 mt-0"
                               dense
                             ></v-text-field>
@@ -834,7 +834,7 @@ export default {
       return (this.gridRelated?.data?.length > 0)
     },
     isVoid() {
-      return (this.data?.mark?.toLowerCase() === 'v')
+      return (this.data?.mark?.toUpperCase() === 'V')
     }
   },
 
@@ -876,7 +876,7 @@ export default {
       }
 
       // Set default warehouse
-      const defWarehouse = this.warehouses.find(w => w.isDefault === 1)
+      const defWarehouse = this.warehouses.find(w => w.isDefault)
       if (defWarehouse) {
         this.data.warehouseCode = defWarehouse.code
       }
@@ -933,6 +933,15 @@ export default {
         params: {
           param: 'employee',
           fieldNames: 'id,initial,firstName',
+          filters: JSON.stringify([{
+            field: 'type',
+            operator: 'EQUAL',
+            keyword: 1
+          }, {
+            field: 'isActive',
+            operator: 'EQUAL',
+            keyword: true
+          }]),
           sorts: JSON.stringify([{
             field: 'initial',
             direction: 'asc'
@@ -949,6 +958,11 @@ export default {
         params: {
           param: 'currency',
           fieldNames: 'code',
+          filters: JSON.stringify([{
+            field: 'isActive',
+            operator: 'EQUAL',
+            keyword: true
+          }]),
           sorts: JSON.stringify([{
             field: 'sort',
             direction: 'asc'
@@ -965,6 +979,11 @@ export default {
         params: {
           param: 'supplier',
           fieldNames: 'code,initial,name,address1,phone,fax',
+          filters: JSON.stringify([{
+            field: 'isActive',
+            operator: 'EQUAL',
+            keyword: true
+          }]),
           sorts: JSON.stringify([{
             field: 'initial',
             direction: 'asc'
@@ -980,7 +999,12 @@ export default {
       api.getAll(this.endpoint.master, {
         params: {
           param: 'warehouse',
-          fieldNames: 'code,initial,name',
+          fieldNames: 'code,initial,name,isDefault',
+          filters: JSON.stringify([{
+            field: 'isActive',
+            operator: 'EQUAL',
+            keyword: true
+          }]),
           sorts: JSON.stringify([{
             field: 'initial',
             direction: 'asc'
@@ -1001,6 +1025,10 @@ export default {
             field: 'typeId',
             operator: 'equal',
             keyword: 0
+          }, {
+            field: 'isActive',
+            operator: 'EQUAL',
+            keyword: true
           }]),
           sorts: JSON.stringify([{
             field: 'seq',

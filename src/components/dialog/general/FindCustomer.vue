@@ -51,6 +51,7 @@
             height="300"
             class="elevation-1 row-pointer"
             dense
+            disable-sort
             fixed-header
             hide-default-footer
             @dblclick:row="dblclickRow"
@@ -63,6 +64,9 @@
                 readonly
                 @keyup.enter="dblclickRow(null, { item })"
               ></v-text-field>
+            </template>
+            <template v-slot:[`item.creditLimit`]="{ item }">
+              {{ item.creditLimit | formatCurrency }}
             </template>
           </v-data-table>
         </v-card>
@@ -98,20 +102,23 @@ export default {
         value: '',
         items: [
           { text: 'Code', value: 'code' },
-          { text: 'Name', value: 'name' }
+          { text: 'Initial', value: 'initial' },
+          { text: 'Name', value: 'name' },
+          { text: 'Type', value: 'typeName' }
         ]
       },
       grid: {
-        data: [],
         columns: [
           { text: 'Code', value: 'code', divider: true, width: '120' },
+          { text: 'Initial', value: 'initial', divider: true, width: '150' },
           { text: 'Name', value: 'name', divider: true, width: '300' },
-          { text: 'Address', value: 'address', divider: true, width: '200' },
-          { text: 'Phone', value: 'phone1', divider: true, width: '150' },
+          { text: 'Address', value: 'address1', divider: true, width: '200' },
+          { text: 'Phone', value: 'phone', divider: true, width: '150' },
+          { text: 'Fax', value: 'fax', divider: true, width: '150' },
           { text: 'Credit Limit', value: 'creditLimit', align: 'right', divider: true, width: '120' },
-          { text: 'Category', value: 'categoryName', divider: true, width: '150' },
-          { text: 'Contact Person', value: 'contactPerson', width: '150' }
-        ]
+          { text: 'Type', value: 'typeName', divider: true, width: '150' }
+        ],
+        data: []
       },
       options: {
         width: 800
@@ -143,13 +150,23 @@ export default {
     search() {
       api.getAll(this.endpoint.general.customer, {
         params: {
-          searchBy: this.data.by,
-          searchOp: 'contains',
-          search: this.data.value
+          filters: JSON.stringify([{
+            field: this.data.by,
+            operator: 'contains',
+            keyword: this.data.value
+          }, {
+            field: 'isActive',
+            operator: 'eq',
+            keyword: true
+          }]),
+          sorts: JSON.stringify([{
+            field: this.data.by,
+            direction: 'asc'
+          }])
         }
       })
         .then(response => {
-          this.grid.data = response.data
+          this.grid.data = response.data.tableData
         })
     },
     dblclickRow(event, { item }) {

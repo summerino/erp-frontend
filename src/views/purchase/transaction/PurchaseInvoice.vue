@@ -12,7 +12,6 @@
               single-line
               @keyup.enter="getList()"
             ></v-text-field>
-            <v-spacer></v-spacer>
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" md="6" class="text-right">
@@ -73,6 +72,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
+                :disabled="item.mark.toUpperCase() !== 'A'"
                 color="red"
                 icon
                 small
@@ -96,7 +96,7 @@
         <template v-slot:[`item.mark`]="{ item }">
           <v-badge
             :content="item.mark"
-            :color="item.mark.toLowerCase() === 'v' ? 'error' : 'green'"
+            :color="item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
             inline
           ></v-badge>
         </template>
@@ -428,7 +428,7 @@
             <v-row dense>
               <v-col cols="12">
                 <v-card>
-                  <v-tabs>
+                  <v-tabs v-model="tab.det">
                     <v-tab key="detail-trans">Detail</v-tab>
                     <v-tab key="related-trans">Related Transaction(s)</v-tab>
 
@@ -650,7 +650,8 @@ export default {
       dueDate: false
     },
     tab: {
-      sup: null
+      sup: null,
+      det: null
     },
     grid: {
       columns: [
@@ -728,7 +729,7 @@ export default {
       return this.data.dueDate ? format(parseISO(this.data.dueDate), 'dd-MMM-yyyy') : ''
     },
     isVoid() {
-      return (this.data?.mark?.toLowerCase() === 'v')
+      return (this.data?.mark?.toUpperCase() === 'V')
     }
   },
 
@@ -754,6 +755,7 @@ export default {
       }
       this.gridDet.data = []
       this.tab.sup = 0
+      this.tab.det = 0
 
       // Reset form validation
       if (resetValidation) {
@@ -793,6 +795,15 @@ export default {
         params: {
           param: 'employee',
           fieldNames: 'id,initial,firstName',
+          filters: JSON.stringify([{
+            field: 'type',
+            operator: 'EQUAL',
+            keyword: 1
+          }, {
+            field: 'isActive',
+            operator: 'EQUAL',
+            keyword: true
+          }]),
           sorts: JSON.stringify([{
             field: 'initial',
             direction: 'asc'
@@ -966,7 +977,7 @@ export default {
         })
     },
     rcvCodeChange(item) {
-      const data_d = this.receives.find(r => r.code.toLowerCase() === item.rcvCode.toLowerCase())
+      const data_d = this.receives.find(r => r.code.toUpperCase() === item.rcvCode.toUpperCase())
       if (data_d) {
         item.shipmentFee = data_d.shipmentFee
         item.handlingFee = data_d.handlingFee

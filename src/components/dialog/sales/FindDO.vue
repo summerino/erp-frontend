@@ -51,13 +51,11 @@
             height="300"
             class="elevation-1 row-pointer"
             dense
+            disable-sort
             fixed-header
             hide-default-footer
             @dblclick:row="dblclickRow"
           >
-            <template v-slot:[`item.deliveryDate`]="{ item }">
-              {{ item.deliveryDate | formatDate('dd-MMM-yyyy') }}
-            </template>
             <template v-slot:[`item.code`]="{ item }">
               <v-text-field
                 v-model="item.code"
@@ -66,6 +64,9 @@
                 readonly
                 @keyup.enter="dblclickRow(null, { item })"
               ></v-text-field>
+            </template>
+            <template v-slot:[`item.date`]="{ item }">
+              {{ item.date | formatDate('dd-MMM-yyyy') }}
             </template>
             <template v-slot:[`item.total`]="{ item }">
               {{ item.total | formatCurrency }}
@@ -97,7 +98,7 @@ import api from '@/services/axios.service'
 
 export default {
   props: {
-    custCode: String
+    soCode: String
   },
 
   data() {
@@ -107,20 +108,21 @@ export default {
         by: 'code',
         value: '',
         items: [
-          { text: 'DO Date', value: 'date' },
-          { text: 'DO Code', value: 'code' },
+          { text: 'Code', value: 'code' },
+          { text: 'Date', value: 'date' },
           { text: 'SO Code', value: 'soCode' }
         ]
       },
       rowItem: {},
       grid: {
-        data: [],
         columns: [
-          { text: 'DO Date', value: 'deliveryDate', align: 'right', divider: true, width: '120' },
-          { text: 'DO Code', value: 'code', divider: true, width: '100' },
-          { text: 'SO Code', value: 'soCode', divider: true, width: '100' },
-          { text: 'Amount', value: 'total', align: 'right', width: '120' }
-        ]
+          { text: 'Code', value: 'code', divider: true, width: '150' },
+          { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
+          { text: 'SO Code', value: 'soCode', divider: true, width: '150' },
+          { text: 'Amount', value: 'total', align: 'right', width: '120' },
+          { text: 'Shipped By', value: 'shippedInitial', divider: true, width: '200' }
+        ],
+        data: []
       },
       options: {
         width: 800
@@ -145,20 +147,36 @@ export default {
       this.reset()
       setTimeout(() => {
         this.$refs.search.focus()
-      }, 500)
+      }, 0)
     },
     close() {
       this.dialog = false
     },
     search() {
-      api.getAll(`${this.endpoint.sales.delivery}/uninv/${this.custCode}`, {
+      api.getAll(this.endpoint.sales.delivery, {
         params: {
-          searchBy: this.data.by,
-          search: this.data.value
+          soCode: this.soCode,
+          filters: JSON.stringify([{
+            field: this.data.by,
+            operator: 'contains',
+            keyword: this.data.value
+          }, {
+            field: 'soCode',
+            operator: 'eq',
+            keyword: this.soCode
+          }, {
+            field: 'mark',
+            operator: 'doesnotcontain',
+            keyword: ['V', 'INV']
+          }]),
+          sorts: JSON.stringify([{
+            field: this.data.by,
+            direction: 'asc'
+          }])
         }
       })
         .then(response => {
-          this.grid.data = response.data
+          this.grid.data = response.data.tableData
         })
     },
     dblclickRow(event, { item }) {
