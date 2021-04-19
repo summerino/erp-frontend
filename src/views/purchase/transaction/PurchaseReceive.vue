@@ -90,7 +90,7 @@
         <template v-slot:[`item.mark`]="{ item }">
           <v-badge
             :content="item.mark"
-            :color="item.mark.toUpperCase() === 'v' ? 'error' : 'green'"
+            :color="item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
             inline
           ></v-badge>
         </template>
