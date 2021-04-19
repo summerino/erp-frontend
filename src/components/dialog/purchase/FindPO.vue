@@ -30,16 +30,45 @@
               :items="data.items"
               label="Search By"
               class="mt-0"
+              @change="searchByChange"
             ></v-autocomplete>
           </v-col>
           <v-col cols="12" md="8" class="pl-md-1">
             <v-text-field
               ref="search"
+              v-if="data.by !== 'date'"
               v-model="data.value"
               label="Search Text"
               class="mt-0"
               @keyup.enter="search"
             ></v-text-field>
+            <v-menu
+              v-else
+              v-model="menu"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              min-width="290px"
+              offset-y
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  ref="search"
+                  v-bind="attrs"
+                  v-on="on"
+                  :value="formatDate"
+                  label="Search Text"
+                  class="mt-0"
+                  readonly
+                  @keyup.enter="search"
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="data.value"
+                no-title
+                scrollable
+                @change="searchDateChange"
+              ></v-date-picker>
+            </v-menu>
           </v-col>
         </v-row>
         
@@ -94,6 +123,8 @@
 
 <script>
 import { mapState } from 'vuex'
+import { format, parseISO } from 'date-fns'
+
 import api from '@/services/axios.service'
 
 export default {
@@ -107,6 +138,7 @@ export default {
   data() {
     return {
       dialog: false,
+      menu:  false,
       data: {
         by: 'code',
         value: '',
@@ -135,7 +167,10 @@ export default {
   },
 
   computed: {
-    ...mapState('api', { endpoint: state => state.endpoint })
+    ...mapState('api', { endpoint: state => state.endpoint }),
+    formatDate() {
+      return this.data.value ? format(parseISO(this.data.value), 'dd-MMM-yyyy') : ''
+    }
   },
   
   methods: {
@@ -160,7 +195,7 @@ export default {
         params: {
           filters: JSON.stringify([{
             field: this.data.by,
-            operator: 'contains',
+            operator: this.data.by === 'date' ? 'eq' : 'contains',
             keyword: this.data.value
           }, {
             field: 'mark',
@@ -176,6 +211,13 @@ export default {
         .then(response => {
           this.grid.data = response.data.tableData
         })
+    },
+    searchByChange() {
+      this.data.value = this.data.by === 'date' ? format(new Date(), 'yyyy-MM-dd') : ''
+    },
+    searchDateChange() {
+      this.menu = false
+      this.$refs.search.focus()
     },
     dblclickRow(event, { item }) {
       this.$emit('dblclick:row', item)
