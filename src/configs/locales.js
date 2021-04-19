@@ -10,7 +10,7 @@ try {
 
   if (supported.includes(browserLang)) locale = browserLang
 } catch (e) {
-  console.log(e)
+  // console.log(e)
 }
 
 export default {
