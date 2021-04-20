@@ -45,6 +45,12 @@ const state = {
     max30chars: [
       (v) => (v || '').length <= 30 || 'Max 30 characters'
     ],
+    max50chars: [
+      (v) => (v || '').length <= 50 || 'Max 50 characters'
+    ],
+    max100chars: [
+      (v) => (v || '').length <= 100 || 'Max 100 characters'
+    ],
     max256chars: [
       (v) => (v || '').length <= 256 || 'Max 256 characters'
     ],
