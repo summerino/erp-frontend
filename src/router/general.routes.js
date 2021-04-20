@@ -8,7 +8,21 @@ export default [{
 }, {
   path: '/general/customer-type',
   name: 'customer-type',
-  component: () => import(/* webpackChunkName: "general-customer-type" */ '@/views/general/Customer.vue'),
+  component: () => import(/* webpackChunkName: "general-customer-type" */ '@/views/general/CustomerType.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/general/supplier',
+  name: 'supplier',
+  component: () => import(/* webpackChunkName: "general-supplier" */ '@/views/general/Supplier.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/general/supplier-type',
+  name: 'supplier-type',
+  component: () => import(/* webpackChunkName: "general-supplier-type" */ '@/views/general/Supplier.vue'),
   meta: {
     authRequired: true
   }

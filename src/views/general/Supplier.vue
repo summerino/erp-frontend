@@ -107,7 +107,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="6">
-            <span>Customer {{ data.action | capitalize }}</span>
+            <span>Supplier {{ data.action | capitalize }}</span>
           </v-col>
           <v-col cols="12" md="6" class="text-right">
             <label
@@ -124,7 +124,6 @@
                   v-shortkey="['ctrl', 's']"
                   color="blue darken-2"
                   class="font-weight-regular"
-                  :disabled="isActive"
                   dark
                   small
                   tile
@@ -196,8 +195,7 @@
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-text-field
                   v-model="data.name"
-                  :rules="[rules.required[0], rules.max50chars[0]]"
-                  :counter="50"
+                  :rules="rules.required"
                   label="Name"
                   class="mt-0"
                   required
@@ -221,8 +219,7 @@
               <v-col cols="12">
                 <v-text-field
                   v-model="data.address1"
-                  :rules="[rules.required[0], rules.max100chars[0]]"
-                  :counter="100"
+                  :rules="rules.required"
                   label="Address 1"
                   class="mt-0"
                   required
@@ -234,8 +231,6 @@
               <v-col cols="12">
                 <v-text-field
                   v-model="data.address2"
-                  :rules="rules.max100chars"
-                  :counter="100"
                   label="Address 2"
                   class="mt-0"
                 ></v-text-field>
@@ -246,8 +241,7 @@
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-text-field
                   v-model="data.phone"
-                  :rules="[rules.required[0], rules.max30chars[0]]"
-                  :counter="30"
+                  :rules="rules.required"
                   label="Phone"
                   class="mt-0"
                   required
@@ -256,8 +250,6 @@
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-text-field
                   v-model="data.fax"
-                  :rules="rules.max15chars"
-                  :counter="15"
                   label="Fax"
                   class="mt-0"
                 ></v-text-field>
@@ -268,60 +260,16 @@
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-text-field
                   v-model="data.email"
-                  :rules="[rules.required[0], rules.email[0], rules.max50chars[0]]"
-                  :counter="50"
+                  :rules="[rules.required[0], rules.email[0]]"
                   class="mt-0"
                   label="Email"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-text-field
-                  v-model="data.website"
-                  :rules="rules.max50chars"
-                  :counter="50"
-                  label="Website"
-                  class="mt-0"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
-                <v-currency-field
-                  v-model="data.creditTerm"
-                  :decimal-length="0"
-                  class="mt-0"
-                  label="Credit Term"
-                  :max="32767"
-                ></v-currency-field>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-currency-field
-                  v-model="data.creditLimit"
-                  :decimal-length="0"
-                  class="mt-0"
-                  label="Credit Limit"
-                ></v-currency-field>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
-                <v-text-field
                   v-model="data.refNo"
-                  :rules="max30chars"
-                  :counter="30"
                   class="mt-0"
                   label="Ref. No."
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-text-field
-                  v-model="data.notes"
-                  :rules="max256chars"
-                  :counter="256"
-                  class="mt-0"
-                  label="Notes"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -358,7 +306,7 @@ export default {
         { text: 'Type', value: 'typeName', divider: true, width: '180' },
         { text: 'Address', value: 'address1', divider: true, width: '200' },
         { text: 'Phone', value: 'phone', divider: true, width: '120' },
-        { text: 'Credit Term', value: 'creditTerm', divider: true, width: '90' },
+        { text: 'Email', value: 'email', divider: true, width: '90' },
         { text: 'Status', value: 'isActive', width: '90' }
       ],
       data: [],
@@ -399,10 +347,7 @@ export default {
       gridDefOpts: state => state.app.grid,
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint
-    }),
-    isActive() {
-      return (!this.data.isActive)
-    }  
+    })  
   },
   
   methods:{
@@ -415,15 +360,10 @@ export default {
         typeId: null,
         address1: null,
         address2: null,
+        email: null,
         phone: null,
         fax: null,
-        email: null,
-        website: null,
-        creditTerm: 0,
-        creditLimit: 0,
-        refNo: null,
-        notes: null,
-        isActive: true
+        refNo: null
       }
 
       // Reset form validation
@@ -442,7 +382,7 @@ export default {
         })
       }
       
-      api.getAll(this.endpoint.general.customer.customer, {
+      api.getAll(this.endpoint.general.supplier, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -460,12 +400,15 @@ export default {
         })
     },
     getTypesList() {
-      api.getAll(`${this.endpoint.general.customer.type}/lists`, {
+      api.getAll(this.endpoint.master, {
         params: {
+          param: 'supplierType',
+          fieldNames: 'id,initial,name',
           sorts: JSON.stringify([{
             field: 'initial',
             direction: 'asc'
-          }])
+          }]),
+          includeMetaData: false
         }
       })
         .then(response => {
@@ -506,7 +449,7 @@ export default {
           'Inactive?',
           'Are you sure want to inactive this data?')
       ) {
-        api.delete(this.endpoint.general.customer.customer, item.code)
+        api.delete(this.endpoint.general.supplier, item.code)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -527,7 +470,7 @@ export default {
           isActive: true
         }
 
-        api.update(this.endpoint.general.customer.customer, this.data.code, this.data)
+        api.update(this.endpoint.general.supplier, this.data.code, this.data)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -544,10 +487,10 @@ export default {
 
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
-        const resp = await api.create(this.endpoint.general.customer.customer, this.data)
+        const resp = await api.create(this.endpoint.general.supplier, this.data)
         result = resp.data
       } else if (this.data.action === 'edit') {
-        const resp = await api.update(this.endpoint.general.customer.customer, this.data.code, this.data)
+        const resp = await api.update(this.endpoint.general.supplier, this.data.code, this.data)
         result = resp.data
       }
 

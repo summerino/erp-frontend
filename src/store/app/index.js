@@ -39,6 +39,9 @@ const state = {
     above0: [
       (v) => parseFloat((v || '0').toString().replace(/,/g, '')) > 0 || 'Value should above 0'
     ],
+    max15chars: [
+      (v) => (v || '').length <= 15 || 'Max 15 characters'
+    ],
     max20chars: [
       (v) => (v || '').length <= 20 || 'Max 20 characters'
     ],

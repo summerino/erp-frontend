@@ -975,20 +975,12 @@ export default {
         })
     },
     getSupplierLists() {
-      api.getAll(this.endpoint.master, {
+      api.getAll(`${this.endpoint.general.supplier}/lists`, {
         params: {
-          param: 'supplier',
-          fieldNames: 'code,initial,name,address1,phone,fax',
-          filters: JSON.stringify([{
-            field: 'isActive',
-            operator: 'EQUAL',
-            keyword: true
-          }]),
           sorts: JSON.stringify([{
             field: 'initial',
             direction: 'asc'
-          }]),
-          includeMetaData: false
+          }])
         }
       })
         .then(response => {

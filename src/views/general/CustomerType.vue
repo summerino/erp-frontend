@@ -10,7 +10,7 @@
               label="Search..."
               class="font-weight-regular mt-0 pt-0"
               single-line
-              @keyup.enter="getList()"
+              @keyup.enter="getList"
             ></v-text-field>
           </v-col>
           <v-spacer></v-spacer>
@@ -121,7 +121,7 @@
                 <v-btn
                   v-bind="attrs"
                   v-on="on"
-                  v-shortkey="['ctrl', 's']"
+                  v-shortkey="['ctrl', 'enter']"
                   color="blue darken-2"
                   class="font-weight-regular"
                   :disabled="isActive"
@@ -137,7 +137,7 @@
                   Save
                 </v-btn>
               </template>
-              <span class="text-caption">(Ctrl + S)</span>
+              <span class="text-caption">(Ctrl + Enter)</span>
             </v-tooltip>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -172,15 +172,6 @@
             <v-row no-gutters>
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-text-field
-                  v-model="data.code"
-                  label="Code"
-                  class="mt-0"
-                  readonly
-                  required
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-text-field
                   ref="initial"
                   v-model="data.initial"
                   :rules="[rules.required[0], rules.max20chars[0]]"
@@ -190,141 +181,17 @@
                   required
                 ></v-text-field>
               </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
+              <v-col cols="12" md="6" class="pl-md-3">
                 <v-text-field
                   v-model="data.name"
-                  :rules="[rules.required[0], rules.max50chars[0]]"
-                  :counter="50"
+                  :rules="rules.required"
                   label="Name"
                   class="mt-0"
                   required
                 ></v-text-field>
               </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-autocomplete
-                  v-model="data.typeId"
-                  :items="types"
-                  :item-text="item => `${item.initial} - ${item.name}`"
-                  :rules="rules.required"
-                  label="Type"
-                  item-value="id"
-                  class="mt-0"
-                  required
-                ></v-autocomplete>
-              </v-col>
             </v-row>
 
-            <v-row no-gutters>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="data.address1"
-                  :rules="[rules.required[0], rules.max100chars[0]]"
-                  :counter="100"
-                  label="Address 1"
-                  class="mt-0"
-                  required
-                ></v-text-field>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="data.address2"
-                  :rules="rules.max100chars"
-                  :counter="100"
-                  label="Address 2"
-                  class="mt-0"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
-                <v-text-field
-                  v-model="data.phone"
-                  :rules="[rules.required[0], rules.max30chars[0]]"
-                  :counter="30"
-                  label="Phone"
-                  class="mt-0"
-                  required
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-text-field
-                  v-model="data.fax"
-                  :rules="rules.max15chars"
-                  :counter="15"
-                  label="Fax"
-                  class="mt-0"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
-                <v-text-field
-                  v-model="data.email"
-                  :rules="[rules.required[0], rules.email[0], rules.max50chars[0]]"
-                  :counter="50"
-                  class="mt-0"
-                  label="Email"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-text-field
-                  v-model="data.website"
-                  :rules="rules.max50chars"
-                  :counter="50"
-                  label="Website"
-                  class="mt-0"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
-                <v-currency-field
-                  v-model="data.creditTerm"
-                  :decimal-length="0"
-                  class="mt-0"
-                  label="Credit Term"
-                  :max="32767"
-                ></v-currency-field>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-currency-field
-                  v-model="data.creditLimit"
-                  :decimal-length="0"
-                  class="mt-0"
-                  label="Credit Limit"
-                ></v-currency-field>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
-                <v-text-field
-                  v-model="data.refNo"
-                  :rules="max30chars"
-                  :counter="30"
-                  class="mt-0"
-                  label="Ref. No."
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-text-field
-                  v-model="data.notes"
-                  :rules="max256chars"
-                  :counter="256"
-                  class="mt-0"
-                  label="Notes"
-                ></v-text-field>
-              </v-col>
-            </v-row>
           </v-container>
         </v-form>
       </v-card-text>
@@ -352,18 +219,14 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Code', value: 'code', divider: true, width: '150' },
+        { text: 'Id', value: 'id', divider: true, width: '50' },
         { text: 'Initial', value: 'initial', divider: true, width: '150' },
         { text: 'Name', value: 'name', divider: true, width: '200' },
-        { text: 'Type', value: 'typeName', divider: true, width: '180' },
-        { text: 'Address', value: 'address1', divider: true, width: '200' },
-        { text: 'Phone', value: 'phone', divider: true, width: '120' },
-        { text: 'Credit Term', value: 'creditTerm', divider: true, width: '90' },
         { text: 'Status', value: 'isActive', width: '90' }
       ],
       data: [],
       options: {
-        sortBy: ['code'],
+        sortBy: ['initial'],
         sortDesc: [false]
       },
       total: 0,
@@ -376,7 +239,6 @@ export default {
 
   created: function () {
     this.getList()
-    this.getTypesList()
   },
 
   mounted: function () {
@@ -409,20 +271,9 @@ export default {
     reset(resetValidation = true) {
       this.data = {
         action: '',
-        code: null,
+        id: null,
         initial: null,
         name: null,
-        typeId: null,
-        address1: null,
-        address2: null,
-        phone: null,
-        fax: null,
-        email: null,
-        website: null,
-        creditTerm: 0,
-        creditLimit: 0,
-        refNo: null,
-        notes: null,
         isActive: true
       }
 
@@ -442,7 +293,7 @@ export default {
         })
       }
       
-      api.getAll(this.endpoint.general.customer.customer, {
+      api.getAll(this.endpoint.general.customer.type, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -454,22 +305,9 @@ export default {
           this.grid.data = response.data.tableData
           this.grid.total = response.data.rowCount
           if (bindToForm) {
-            const item = this.grid.data.find(h => h.code === this.data.code)
+            const item = this.grid.data.find(h => h.id === this.data.id)
             this.edit(item)
           }
-        })
-    },
-    getTypesList() {
-      api.getAll(`${this.endpoint.general.customer.type}/lists`, {
-        params: {
-          sorts: JSON.stringify([{
-            field: 'initial',
-            direction: 'asc'
-          }])
-        }
-      })
-        .then(response => {
-          this.types = response.data.tableData
         })
     },
     back() {
@@ -506,7 +344,7 @@ export default {
           'Inactive?',
           'Are you sure want to inactive this data?')
       ) {
-        api.delete(this.endpoint.general.customer.customer, item.code)
+        api.delete(this.endpoint.general.customer.type, item.id)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -527,7 +365,7 @@ export default {
           isActive: true
         }
 
-        api.update(this.endpoint.general.customer.customer, this.data.code, this.data)
+        api.update(this.endpoint.general.customer.type, this.data.id, this.data)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -544,10 +382,10 @@ export default {
 
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
-        const resp = await api.create(this.endpoint.general.customer.customer, this.data)
+        const resp = await api.create(this.endpoint.general.customer.type, this.data)
         result = resp.data
       } else if (this.data.action === 'edit') {
-        const resp = await api.update(this.endpoint.general.customer.customer, this.data.code, this.data)
+        const resp = await api.update(this.endpoint.general.customer.type, this.data.id, this.data)
         result = resp.data
       }
 
