@@ -999,18 +999,12 @@ export default {
       }
     },
     bindCustData(item) {
-      api.getOne(this.endpoint.master, item.custCode, {
-        params: {
-          param: 'customer',
-          fieldNames: 'code,initial,name,address1,phone,fax',
-          includeMetaData: false
-        }
-      })
+      api.getOne(this.endpoint.general.customer, item.custCode)
         .then(response => {
-          if (response.data.tableData) {
-            item.custAddr = response.data.tableData.address1
-            item.custPhone = response.data.tableData.phone
-            item.custFax = response.data.tableData.fax
+          if (response.data) {
+            item.custAddr = response.data.address1
+            item.custPhone = response.data.phone
+            item.custFax = response.data.fax
           }
         })
     },
