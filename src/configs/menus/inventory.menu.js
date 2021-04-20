@@ -7,6 +7,11 @@ export default [
           { text: 'Category', link: 'item-category' },
           { text: 'Group', link: 'item-group' }
         ]
+      },
+      { text: 'Warehouse', regex: /^\/inventory\/warehouse/,
+        items: [
+          { text: 'Warehouse', link: 'warehouse' }
+        ]
       }
     ]
   },
