@@ -1028,18 +1028,12 @@ export default {
       }
     },
     bindSupData(item) {
-      api.getOne(this.endpoint.master, item.supCode, {
-        params: {
-          param: 'supplier',
-          fieldNames: 'code,initial,name,address1,phone,fax',
-          includeMetaData: false
-        }
-      })
+      api.getOne(this.endpoint.general.supplier, item.supCode)
         .then(response => {
-          if (response.data.tableData) {
-            item.supAddr = response.data.tableData.address1
-            item.supPhone = response.data.tableData.phone
-            item.supFax = response.data.tableData.fax
+          if (response.data) {
+            item.supAddr = response.data.address1
+            item.supPhone = response.data.phone
+            item.supFax = response.data.fax
           }
         })
     },
