@@ -460,15 +460,12 @@ export default {
         })
     },
     getTypesList() {
-      api.getAll(this.endpoint.master, {
+      api.getAll(`${this.endpoint.general.customertype}/lists`, {
         params: {
-          param: 'customerType',
-          fieldNames: 'id,initial,name',
           sorts: JSON.stringify([{
             field: 'initial',
             direction: 'asc'
-          }]),
-          includeMetaData: false
+          }])
         }
       })
         .then(response => {
