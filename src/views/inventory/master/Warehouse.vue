@@ -101,7 +101,7 @@
           <v-icon v-else small color="red">mdi-toggle-switch-off</v-icon>
         </template>
         <template v-slot:[`item.isDefault`]="{ item }">
-          <v-icon v-if="item.isDefault" small color="blue">mdi-checkbox-marked-outline</v-icon>
+          <v-icon v-if="item.isDefault" small color="blue darken-2">mdi-checkbox-marked-outline</v-icon>
           <v-icon v-else small>mdi-checkbox-blank-outline</v-icon>
         </template>
       </v-data-table>
