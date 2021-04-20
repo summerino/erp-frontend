@@ -1,4 +1,11 @@
 export default [{
+  path: '/inventory/master/item/item',
+  name: 'item',
+  component: () => import(/* webpackChunkName: "inventory-master-item" */ '@/views/inventory/master/Item.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
   path: '/inventory/master/item-category',
   name: 'item-category',
   component: () => import(/* webpackChunkName: "inventory-master-item-category" */ '@/views/inventory/master/ItemCategory.vue'),

@@ -29,7 +29,11 @@ instance.interceptors.response.use((response) => {
 }, (error) => {
   store.state.app.loadOverlay = false
   if (error.response) {
-    store.dispatch('app/showError', `${error.response.status} ${error.response.statusText}.`)
+    let errMessage = error.response?.data?.title ?? ''
+    if (!errMessage) {
+      errMessage = `${error.response.statusText}.`
+    }
+    store.dispatch('app/showError', `${error.response.status} ${errMessage}`)
   }
   return Promise.reject(error)
 })

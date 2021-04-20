@@ -10,9 +10,8 @@
               label="Search..."
               class="font-weight-regular mt-0 pt-0"
               single-line
-              @keyup.enter="getList"
+              @keyup.enter="getList()"
             ></v-text-field>
-            <v-spacer></v-spacer>
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" md="6" class="text-right">
@@ -42,9 +41,14 @@
 
       <v-data-table
         :headers="grid.columns"
-        :height="gridDefaultHeight"
+        :footer-props="{ itemsPerPageOptions: gridDefOpts.pageSizes }"
+        :height="gridDefOpts.height"
         :items="grid.data"
-        :items-per-page="5"
+        :items-per-page="gridDefOpts.pageSize"
+        :options.sync="grid.options"
+        :server-items-length="grid.total"
+        :sort-by="grid.options.sortBy"
+        :sort-desc="grid.options.sortDesc"
         class="elevation-1"
       >
         <template v-slot:[`item.action`]="{ item }">
@@ -68,6 +72,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
+                :disabled="item.mark.toUpperCase() !== 'A'"
                 color="red"
                 icon
                 small
@@ -79,8 +84,15 @@
             <span class="text-caption">Delete</span>
           </v-tooltip>
         </template>
-        <template v-slot:[`item.deliveryDate`]="{ item }">
-          {{ item.deliveryDate | formatDate('dd-MMM-yyyy') }}
+        <template v-slot:[`item.date`]="{ item }">
+          {{ item.date | formatDate('dd-MMM-yyyy') }}
+        </template>
+        <template v-slot:[`item.mark`]="{ item }">
+          <v-badge
+            :content="item.mark"
+            :color="item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
+            inline
+          ></v-badge>
         </template>
       </v-data-table>
     </v-card>
@@ -90,7 +102,9 @@
       transition="dialog-bottom-transition"
       fullscreen
       hide-overlay
+      persistent
       scrollable
+      @keydown.esc="close"
     >
       <v-card :style="{ background: $vuetify.theme.themes[theme].surface }">
         <v-toolbar
@@ -98,7 +112,7 @@
           max-height="64"
           dark
         >
-          <v-btn icon dark @click="dialog.add = false">
+          <v-btn icon dark @click="close">
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-toolbar-title>Delivery Order</v-toolbar-title>
@@ -121,6 +135,7 @@
             <v-divider vertical></v-divider>
             <v-menu
               bottom
+              eager
               left
               open-on-hover
             >
@@ -137,6 +152,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
+                  :disabled="isVoid"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -161,7 +177,10 @@
         </v-toolbar>
 
         <v-card-text class="px-2">
-          <!-- <v-form v-model="valid"> -->
+          <v-form
+            ref="form"
+            v-model="valid"
+          >
             <v-row dense>
               <v-col cols="12" md="4">
                 <v-card>
@@ -183,7 +202,7 @@
                     <v-row no-gutters>
                       <v-col cols="12">
                         <v-menu
-                          v-model="menu.deliveryDate"
+                          v-model="menu.dlvDate"
                           :close-on-content-click="false"
                           transition="scale-transition"
                           min-width="290px"
@@ -193,8 +212,8 @@
                             <v-text-field
                               v-bind="attrs"
                               v-on="on"
-                              :rules="rules.date"
-                              :value="formatdeliveryDate"
+                              :rules="rules.required"
+                              :value="formatDlvDate"
                               label="Delivery Date"
                               class="mt-0"
                               readonly
@@ -202,10 +221,10 @@
                             ></v-text-field>
                           </template>
                           <v-date-picker
-                            v-model="data.deliveryDate"
+                            v-model="data.date"
                             no-title
                             scrollable
-                            @change="menu.deliveryDate = false"
+                            @change="menu.dlvDate = false"
                           ></v-date-picker>
                         </v-menu>
                       </v-col>
@@ -215,6 +234,8 @@
                       <v-col cols="12">
                         <v-text-field
                           v-model="data.soCode"
+                          :readonly="hasRelatedTrans"
+                          :rules="rules.required"
                           label="SO Code"
                           class="mt-0"
                           required
@@ -223,6 +244,7 @@
                           <template v-slot:append>
                               <v-btn
                                 ref="btnFindSO"
+                                :disabled="hasRelatedTrans"
                                 color="primary"
                                 icon
                                 small
@@ -242,14 +264,14 @@
 
               <v-col cols="12" md="8">
                 <v-card>
-                  <v-tabs v-model="tab.head">
+                  <v-tabs v-model="tab.cust">
                     <v-tab key="cust">Customer</v-tab>
-                    <v-tab key="delivery">Delivery</v-tab>
+                    <v-tab key="location">Location</v-tab>
                     <v-tab key="notes">Notes</v-tab>
                     <v-tab key="user">User</v-tab>
                   </v-tabs>
 
-                  <v-tabs-items v-model="tab.head" class="pa-2">
+                  <v-tabs-items v-model="tab.cust" class="pa-2">
                     <v-tab-item
                       key="cust"
                       transition="false"
@@ -258,13 +280,13 @@
                         <v-col cols="3">
                           <v-text-field
                             v-model="data.custCode"
+                            :rules="rules.required"
                             label="Code"
                             class="mt-0"
                             readonly
                             required
                           ></v-text-field>
                         </v-col>
-
                         <v-col cols="9" class="pl-1">
                           <v-text-field
                             v-model="data.custName"
@@ -296,7 +318,6 @@
                             readonly
                           ></v-text-field>
                         </v-col>
-
                         <v-col cols="6" class="pl-1">
                           <v-text-field
                             v-model="data.custFax"
@@ -309,26 +330,17 @@
                     </v-tab-item>
 
                     <v-tab-item
-                      key="delivery"
+                      key="location"
                       transition="false"
+                      eager
                     >
-                      <v-row no-gutters>
-                        <v-col cols="12">
-                          <v-autocomplete
-                            v-model="data.deliveryAddr"
-                            :items="deliveries"
-                            label="Delivery Address"
-                            class="mt-0"
-                          ></v-autocomplete>
-                        </v-col>
-                      </v-row>
-
                       <v-row no-gutters>
                         <v-col cols="12">
                           <v-autocomplete
                             v-model="data.warehouseCode"
                             :items="warehouses"
                             :item-text="item => `${item.initial} - ${item.name}`"
+                            :rules="rules.required"
                             item-value="code"
                             label="Location"
                             class="mt-0"
@@ -344,9 +356,9 @@
                       <v-row no-gutters>
                         <v-textarea
                           v-model="data.notes"
-                          :rules="rules.notes"
+                          :rules="rules.max256chars"
                           label="Notes"
-                          counter="2000"
+                          counter="256"
                           class="mt-0"
                           rows="4"
                         ></v-textarea>
@@ -356,7 +368,36 @@
                     <v-tab-item
                       key="user"
                       transition="false"
+                      eager
                     >
+                      <v-row no-gutters>
+                        <v-col cols="12">
+                          <v-autocomplete
+                            v-model="data.shippedBy"
+                            :items="employees"
+                            :item-text="item => `${item.initial} - ${item.firstName}`"
+                            :rules="rules.required"
+                            label="Shipped By"
+                            item-value="id"
+                            class="mt-0"
+                            required
+                          ></v-autocomplete>
+                        </v-col>
+                      </v-row>
+                      
+                      <v-row no-gutters>
+                        <v-col cols="12">
+                          <v-autocomplete
+                            v-model="data.approveBy"
+                            :items="employees"
+                            :item-text="item => `${item.initial} - ${item.firstName}`"
+                            label="Approved By"
+                            item-value="id"
+                            class="mt-0"
+                          ></v-autocomplete>
+                        </v-col>
+                      </v-row>
+
                       <v-row no-gutters>
                         <v-col cols="6">
                           <v-text-field
@@ -375,32 +416,6 @@
                           ></v-text-field>
                         </v-col>
                       </v-row>
-                      
-                      <v-row no-gutters>
-                        <v-col cols="12">
-                          <v-combobox
-                            v-model="data.shippedBy"
-                            :items="workers"
-                            label="Shipped By"
-                            item-text="name"
-                            item-value="code"
-                            class="mt-0"
-                          ></v-combobox>
-                        </v-col>
-                      </v-row>
-                      
-                      <v-row no-gutters>
-                        <v-col cols="12">
-                          <v-combobox
-                            v-model="data.approveBy"
-                            :items="workers"
-                            label="Approved By"
-                            item-text="name"
-                            item-value="code"
-                            class="mt-0"
-                          ></v-combobox>
-                        </v-col>
-                      </v-row>
                     </v-tab-item>
                   </v-tabs-items>
                 </v-card>
@@ -410,7 +425,7 @@
             <v-row dense>
               <v-col cols="12">
                 <v-card>
-                  <v-tabs>
+                  <v-tabs v-model="tab.item">
                     <v-tab key="item">Item</v-tab>
                     <v-tab key="related-trans">Related Transaction(s)</v-tab>
 
@@ -421,15 +436,25 @@
                       <v-card>
                         <!-- <v-app-bar dense flat>
                           <v-spacer></v-spacer>
-                          <v-btn
-                            class="blue--text"
-                            small
-                            tile
-                            @click="addItem"
-                          >
-                            <v-icon left>mdi-plus</v-icon>
-                            Add
-                          </v-btn>
+                          <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                v-bind="attrs"
+                                v-on="on"
+                                v-shortkey="['ctrl', 'i']"
+                                :disabled="isVoid || hasRelatedTrans"
+                                class="blue--text"
+                                small
+                                tile
+                                @click="addItem"
+                                @shortkey="addItem"
+                              >
+                                <v-icon left>mdi-plus</v-icon>
+                                Add
+                              </v-btn>
+                            </template>
+                            <span class="text-caption">(Ctrl + I)</span>
+                          </v-tooltip>
                         </v-app-bar> -->
 
                         <v-data-table
@@ -449,7 +474,7 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
-                                  :disabled="item.typeId == 0"
+                                  :disabled="item.type == 0 || isVoid || hasRelatedTrans"
                                   color="red"
                                   icon
                                   small
@@ -465,15 +490,15 @@
                             <v-currency-field
                               v-model="item.qty"
                               :decimal-length="0"
+                              :readonly="hasRelatedTrans"
                               class="text-body-2 text-right mt-0"
-                              dense
-                              required
                               @change="calcItemPrice(item)"
                             ></v-currency-field>
                           </template>
-                          <template v-slot:[`item.description`]="{ item }">
+                          <template v-slot:[`item.notes`]="{ item }">
                             <v-text-field
-                              v-model="item.description"
+                              v-model="item.notes"
+                              :rules="rules.max256chars"
                               class="text-body-2 mt-0"
                               dense
                             ></v-text-field>
@@ -486,22 +511,40 @@
                       key="related-trans"
                       transition="false"
                     >
-                      this is related transactions
+                      <v-data-table
+                        :headers="gridRelated.columns"
+                        :items="gridRelated.data"
+                        :items-per-page="-1"
+                        height="300"
+                        class="elevation-1"
+                        dense
+                        disable-sort
+                        fixed-header
+                        hide-default-footer
+                      >
+                        <template v-slot:[`item.date`]="{ item }">
+                          {{ item.date | formatDate('dd-MMM-yyyy') }}
+                        </template>
+                        <template v-slot:[`item.total`]="{ item }">
+                          {{ item.total | formatCurrency }}
+                        </template>
+                      </v-data-table>
                     </v-tab-item>
                   </v-tabs>
                 </v-card>
               </v-col>
             </v-row>
-          <!-- </v-form> -->
+          </v-form>
         </v-card-text>
       </v-card>
     </v-dialog>
 
     <confirm ref="confirm"></confirm>
-    <find-sales-order
+    <find-so
       ref="findSO"
+      :mark-exclude="['V', 'CLS', 'CMP']"
       @dblclick:row="bindSOData"
-    ></find-sales-order>
+    ></find-so>
   </div>
 </template>
 
@@ -510,15 +553,16 @@ import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
 import { sumBy as _sumBy } from 'lodash'
 
+import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
-import FindSalesOrder from '@/components/dialog/FindSalesOrder'
+import FindSo from '@/components/dialog/sales/FindSO'
 
 export default {
   components: {
     Confirm,
-    FindSalesOrder
+    FindSo
   },
 
   data: () => ({
@@ -526,56 +570,63 @@ export default {
       add: false
     },
     menu: {
-      deliveryDate: false
+      dlvDate: false
     },
     tab: {
-      head: null,
-      foot: null
+      cust: null,
+      item: null
     },
     grid: {
-      search: null,
-      data: [],
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Code', value: 'code', divider: true, width: '100' },
-        { text: 'Date', value: 'deliveryDate', align: 'right', divider: true, width: '120' },
+        { text: 'Code', value: 'code', divider: true, width: '150' },
+        { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
         { text: 'Customer', value: 'custName', divider: true, width: '200' },
-        { text: 'SO Code', value: 'soCode', width: '150' }
-      ]
+        { text: 'SO Code', value: 'soCode', width: '150' },
+        { text: 'Shipped By', value: 'shippedInitial', divider: true, width: '200' },
+        { text: 'Status', value: 'mark', width: '50' }
+      ],
+      data: [],
+      options: {
+        sortBy: ['code'],
+        sortDesc: [true]
+      },
+      total: 0,
+      search: null
     },
     gridItem: {
-      data: [],
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Item', value: 'itemCode', divider: true, width: '100' },
+        { text: 'Item', value: 'itemInitial', divider: true, width: '120' },
         { text: 'Name', value: 'itemName', divider: true, width: '300' },
         { text: 'Order Qty', value: 'orderQty', align: 'right', divider: true, width: '90' },
+        { text: 'Outstanding', value: 'outstandingQty', align: 'right', divider: true, width: '90' },
+        { text: 'Delivered Qty', value: 'qty', align: 'right', divider: true, width: '90' },
         { text: 'Unit', value: 'unitName', divider: true, width: '90' },
-        { text: 'Deliver Qty', value: 'qty', align: 'right', divider: true, width: '90' },
-        { text: 'Description', value: 'description' }
-      ]
+        { text: 'Description', value: 'notes' }
+      ],
+      data: []
+    },
+    gridRelated: {
+      columns: [
+        { text: 'Code', value: 'code', divider: true },
+        { text: 'Date', value: 'date', align: 'right', divider: true },
+        { text: 'Amout', value: 'total', align: 'right', divider: true }
+      ],
+      data: []
     },
     valid: false,
-    workers: [],
-    currencies: [],
+    employees: [],
     warehouses: [],
-    deliveries:[],
-    data: {},
-    rules: {
-      date: [
-        (v) => !!v || 'Order Date is required'
-      ],
-      notes: [
-        (v) => (v || '').length <= 2000 || 'Notes must be less than 2000 characters'
-      ]
-    }
+    taxes: [],
+    data: {}
   }),
 
   created: function () {
     this.getList()
-    this.getWorkerLists()
+    this.getEmployeeLists()
     this.getWarehouseLists()
-    this.reset()
+    this.getTaxLists()
   },
 
   mounted: function () {
@@ -584,33 +635,47 @@ export default {
     }, 0)
   },
 
+  watch: {
+    'grid.options': {
+      handler() {
+        this.getList()
+      },
+      deep: true
+    }
+  },
+
   computed: {
     ...mapState({
-      gridDefaultHeight: state => state.app.grid.height,
+      gridDefOpts: state => state.app.grid,
+      rules: state => state.app.rules,
       endpoint: state => state.api.endpoint
     }),
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'
     },
-    formatdeliveryDate() {
-      return this.data.deliveryDate ? format(parseISO(this.data.deliveryDate), 'dd-MMM-yyyy') : ''
+    formatDlvDate() {
+      return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
+    },
+    hasRelatedTrans() {
+      return (this.gridRelated?.data?.length > 0)
+    },
+    isVoid() {
+      return (this.data?.mark?.toUpperCase() === 'V')
     }
   },
 
   methods: {
-    reset() {
-      this.gridItem.data = []
+    reset(resetValidation = true) {
       this.data = {
         action: '',
         code: null,
-        deliveryDate: format(new Date(), 'yyyy-MM-dd'),
+        date: format(new Date(), 'yyyy-MM-dd'),
         soCode: null,
         custCode: null,
         custName: null,
         custAddr: null,
         custPhone: null,
         custFax: null,
-        deliveryAddr: null,
         warehouseCode: null,
         notes: null,
         shippedBy: null,
@@ -619,95 +684,164 @@ export default {
         subTotal: 0,
         finalDisc: 0,
         taxAmount: 0,
-        total: 0,
-        createdBy: null,
-        createdDate: null,
-        updatedBy: null,
-        updatedDate: null
+        total: 0
+      }
+      this.gridItem.data = []
+      this.gridRelated.data = []
+      this.tab.cust = 0
+      this.tab.item = 0
+
+      // Reset form validation
+      if (resetValidation) {
+        setTimeout(() => {
+          this.$refs.form.resetValidation()
+        }, 0)
       }
     },
-    getList() {
+    getList(bindToForm = false) {
+      const sorts = []
+      for (let i = 0; i < this.grid.options.sortBy.length; i++) {
+        sorts.push({
+          field: this.grid.options.sortBy[i],
+          direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
+        })
+      }
+
       api.getAll(this.endpoint.sales.delivery, {
-        params: { search: this.grid.search }
+        params: {
+          search: this.grid.search,
+          skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
+          take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
+          sorts: JSON.stringify(sorts)
+        }
       })
         .then(response => {
-          this.grid.data = response.data
+          this.grid.data = response.data.tableData
+          this.grid.total = response.data.rowCount
+          if (bindToForm) {
+            const item = this.grid.data.find(h => h.code === this.data.code)
+            this.edit(item)
+          }
         })
     },
-    getWorkerLists() {
-      api.getAll(this.endpoint.general.worker)
+    getEmployeeLists() {
+      api.getAll(this.endpoint.master, {
+        params: {
+          param: 'employee',
+          fieldNames: 'id,initial,firstName',
+          filters: JSON.stringify([{
+            field: 'type',
+            operator: 'EQUAL',
+            keyword: 1
+          }, {
+            field: 'isActive',
+            operator: 'EQUAL',
+            keyword: true
+          }]),
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }]),
+          includeMetaData: false
+        }
+      })
         .then(response => {
-          this.workers = response.data
+          this.employees = response.data.tableData
         })
     },
     getWarehouseLists() {
-      api.getAll(this.endpoint.inventory.warehouse)
+      api.getAll(this.endpoint.master, {
+        params: {
+          param: 'warehouse',
+          fieldNames: 'code,initial,name,isDefault',
+          filters: JSON.stringify([{
+            field: 'isActive',
+            operator: 'EQUAL',
+            keyword: true
+          }]),
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }]),
+          includeMetaData: false
+        }
+      })
         .then(response => {
-          this.warehouses = response.data
+          this.warehouses = response.data.tableData
         })
+    },
+    getTaxLists() {
+      api.getAll(this.endpoint.master, {
+        params: {
+          param: 'tax',
+          fieldNames: 'id,initial,name,rate',
+          filters: JSON.stringify([{
+            field: 'typeId',
+            operator: 'equal',
+            keyword: 1
+          }, {
+            field: 'isActive',
+            operator: 'EQUAL',
+            keyword: true
+          }]),
+          sorts: JSON.stringify([{
+            field: 'seq',
+            direction: 'asc'
+          }]),
+          includeMetaData: false
+        }
+      })
+        .then(response => {
+          this.taxes = response.data.tableData
+          this.data.tax = response.data.tableData[0]
+        })
+    },
+    close() {
+      this.dialog.add = false
     },
     add() {
       if (this.dialog.add) return
       this.dialog.add = true
-      this.reset()
+      this.reset(false)
       this.data.action = 'add'
 
-      // Set focus to delivery code field
       setTimeout(() => {
+        // Set focus to receive code field
         this.$refs.code.focus()
+
+        // Validate form first
+        this.$refs.form.validate()
       }, 0)
     },
     edit(item) {
+      if (!item) return
+
       this.dialog.add = true
       this.reset()
 
       this.data = {
+        ...item,
         action: 'edit',
-        code: item.code,
-        deliveryDate: format(parseISO(item.deliveryDate), 'yyyy-MM-dd'),
-        soCode: item.soCode,
-        custCode: item.custCode,
-        // custName: null,
-        // custAddr: null,
-        // custPhone: null,
-        // custFax: null,
-        deliveryAddr: item.deliveryAddr,
-        warehouseCode: item.warehouseCode,
-        notes: item.notes,
-        shippedBy: item.shippedBy,
-        approveBy: item.approveBy,
-        dpp: item.dpp,
-        subTotal: item.subTotal,
-        finalDisc: item.finalDisc,
-        taxAmount: item.taxAmount,
-        total: item.total,
-        createdBy: item.createdBy,
-        createdDate: item.createdDate,
-        updatedBy: item.updatedBy,
-        updatedDate: item.updatedDate
+        updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
 
       // Get customer details
-      api.getAll(this.endpoint.general.customer, {
-        params: {
-          searchBy: 'code',
-          search: item.custCode
-        }
-      })
-        .then(response => {
-          const data = response.data[0]
-          this.data.custName = data.name
-          this.data.custAddr = data.address
-          this.data.custPhone = data.phone1
-          this.data.custFax = data.fax
-        })
+      this.bindCustData(this.data)
 
       // Get item details
       api.getAll(`${this.endpoint.sales.delivery}/item`, {
         params: { code: item.code }
       })
         .then(response => {
-          this.gridItem.data = response.data
+          this.gridItem.data = response.data.tableData
+        })
+
+      // Get related transaction details
+      api.getAll(`${this.endpoint.sales.delivery}/related-trans`, {
+        params: { code: item.code }
+      })
+        .then(response => {
+          this.gridRelated.data = response.data.tableData
         })
 
       // Set focus to delivery code field
@@ -732,6 +866,10 @@ export default {
     },
     async save(closeDialog) {
       if (!this.dialog.add) return
+      if (!this.$refs.form.validate()) {
+        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        return
+      }
   
       const data = this.data
       data.itemDetails = this.gridItem.data
@@ -741,54 +879,54 @@ export default {
         const resp = await api.create(this.endpoint.sales.delivery, data)
         result = resp.data
       } else if (data.action === 'edit') {
-        const resp = await api.update(this.endpoint.sales.delivery, data)
+        const resp = await api.update(this.endpoint.sales.delivery, data.code, data)
         result = resp.data
       }
 
       if (result.success) {
         this.$store.dispatch('app/showSuccess', result.message)
-        this.getList()
         if (closeDialog) {
           this.dialog.add = false
+        } else {
+          this.data.code = result.data
         }
+        this.getList(!closeDialog)
       }
     },
     addItem() {
-      // if (!this.data.custCode) {
-      //   this.$store.dispatch('app/showInfo', 'Please choose customer first.')
-      //   return
-      // }
-      this.$refs.receiveItem.add()
+      if (!this.data.soCode) {
+        this.$store.dispatch('app/showInfo', 'Please choose sales order first.')
+        return
+      }
 
-      // if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0].itemId ?? null)) {
-      //   const item = {
-      //     rowId: this.$uuid.v1(),
-      //     code: this.data.code,
-      //     itemId: null,
-      //     itemCode: null,
-      //     itemName: null,
-      //     orderQty: 0,
-      //     outstandingQty: 0,
-      //     qty: 1,
-      //     uomId: null,
-      //     unitId: null,
-      //     unitName: null,
-      //     unitPrice: 0,
-      //     itemSellPrice: 0,
-      //     disc: 0,
-      //     nettPrice: 0,
-      //     total: 0,
-      //     warehouseCode: null,
-      //     typeId: 1,
-      //     typeName: 'Bonus',
-      //     state: 'A'
-      //   }
-      //   this.gridItem.data.push(item)
+      if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemId ?? null)) {
+        const item = {
+          id: randomNumber(-1, -1000),
+          code: this.data.code,
+          itemId: null,
+          itemCode: null,
+          itemName: null,
+          orderQty: 0,
+          outstandingQty: 0,
+          qty: 1,
+          uomId: null,
+          unitId: null,
+          unitName: null,
+          unitPrice: 0,
+          itemSellPrice: 0,
+          disc: 0,
+          nettPrice: 0,
+          total: 0,
+          typeId: 1,
+          typeName: 'Bonus',
+          state: 'A'
+        }
+        this.gridItem.data.push(item)
 
-      //   setTimeout(() => {
-      //     this.$refs.itemCode.focus()
-      //   }, 0)
-      // }
+        setTimeout(() => {
+          this.$refs.itemId.focus()
+        }, 0)
+      }
     },
     async removeItem(item) {
       if (
@@ -796,36 +934,64 @@ export default {
           'Delete?',
           'Are you sure want to delete this data?')
       ) {
-        const idx = this.gridItem.data.findIndex(i => i.rowId === item.rowId)
+        const idx = this.gridItem.data.findIndex(i => i.id === item.id)
         this.gridItem.data.splice(idx, 1)
+
+        // Calc price
+        this.calcPrice()
       }
     },
     soCodeChange() {
-      api.getAll(`${this.endpoint.sales.order}/incomplete`, {
+      api.getAll(this.endpoint.sales.order, {
         params: {
-          searchBy: 'socode_eq',
-          search: this.data.soCode
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: this.data.soCode
+          }, {
+            field: 'mark',
+            operator: 'doesnotcontain',
+            keyword: ['V', 'CLS', 'CMP']
+          }])
         }
       })
         .then(response => {
-          this.bindSOData(response.data[0] ?? null)
+          this.bindSOData(response.data.tableData[0] ?? null)
         })
     },
+    calcItemTax(item) {
+      const tax = this.taxes.find(t => t.id === item.taxId)
+      if (tax) {
+        if (this.data.includeTax) {
+          item.taxAmount = Math.round((item.unitPrice - item.disc) - ((item.unitPrice - item.disc) / (1 + (tax.rate / 100))))
+          item.nettPrice = item.unitPrice - item.disc
+          item.dpp = item.unitPrice - item.disc - item.taxAmount
+        } else {
+          item.taxAmount = Math.round((item.unitPrice - item.disc) * (tax.rate / 100))
+          item.nettPrice = item.unitPrice - item.disc + item.taxAmount
+          item.dpp = item.unitPrice - item.disc
+        }
+      }
+    },
     calcItemPrice(item) {
-      item.nettPrice = item.unitPrice - item.disc
+      this.calcItemTax(item)
       item.total = item.qty * item.nettPrice
-
-      this.data.subTotal = _sumBy(this.gridItem.data, 'total')
-      this.data.dpp = this.data.subTotal - this.data.finalDisc
+      item.totTax = item.qty * item.taxAmount
+      item.totDPP = item.qty * item.dpp
       this.calcPrice()
     },
     calcPrice() {
-      // this.calcTax()
-      // if (this.data.includeTax) {
-      //   this.data.total = this.data.subTotal - this.data.finalDisc
-      // } else {
-      this.data.total = this.data.subTotal - this.data.finalDisc + this.data.taxAmount
-      // }
+      this.data.subTotal = _sumBy(this.gridItem.data, 'total')
+      this.data.taxAmount = _sumBy(this.gridItem.data, 'totTax')
+      this.data.dpp = _sumBy(this.gridItem.data, 'totDPP') - this.data.finalDisc
+      this.calcGrandTotal()
+    },
+    calcGrandTotal() {
+      if (this.data.includeTax) {
+        this.data.total = this.data.subTotal - this.data.finalDisc
+      } else {
+        this.data.total = this.data.subTotal - this.data.finalDisc + this.data.taxAmount
+      }
     },
     showFindSODialog() {
       this.$refs.findSO.open()
@@ -835,22 +1001,35 @@ export default {
         this.data.soCode = item.code
         this.data.custCode = item.custCode
         this.data.custName = item.custName
-        this.data.custAddr = item.custAddr
-        this.data.custPhone = item.custPhone
-        this.data.custFax = item.custFax
-        // this.data.deliveryAddr = item.deliveryAddr
+        this.data.currCode = item.currCode
+        this.data.rate = item.rate
         this.data.dpp = item.dpp
         this.data.subTotal = item.subTotal
         this.data.finalDisc = item.finalDisc
+        this.data.includeTax = item.includeTax
         this.data.taxAmount = item.taxAmount
         this.data.total = item.total
 
+        // Get customer details
+        this.bindCustData(this.data)
+
         // Get sales order item details
-        api.getAll(`${this.endpoint.sales.order}/outstanding-item`, {
-          params: { code: item.code }
+        api.getAll(`${this.endpoint.sales.order}/item`, {
+          params: {
+            code: item.code,
+            fullDelivered: false
+          }
         })
           .then(response => {
-            this.gridItem.data = response.data
+            this.gridItem.data = [...response.data.tableData]
+            for (let i = 0; i < this.gridItem.data.length; i++) {
+              this.gridItem.data[i].soDetailId = this.gridItem.data[i].id
+              this.gridItem.data[i].id = randomNumber(-1, -1000)
+              this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
+              this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyDlv
+              this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
+              this.gridItem.data[i].typeName = 'Normal'
+            }
           })
       } else {
         this.data.custCode = null
@@ -858,7 +1037,6 @@ export default {
         this.data.custAddr = null
         this.data.custPhone = null
         this.data.custFax = null
-        this.data.deliveryAddr = null
         this.data.warehouseCode = null
         this.data.dpp = 0
         this.data.subTotal = 0
@@ -867,6 +1045,22 @@ export default {
         this.data.total = 0
         this.gridItem.data = []
       }
+    },
+    bindCustData(item) {
+      api.getOne(this.endpoint.master, item.custCode, {
+        params: {
+          param: 'customer',
+          fieldNames: 'code,initial,name,address1,phone,fax',
+          includeMetaData: false
+        }
+      })
+        .then(response => {
+          if (response.data.tableData) {
+            item.custAddr = response.data.tableData.address1
+            item.custPhone = response.data.tableData.phone
+            item.custFax = response.data.tableData.fax
+          }
+        })
     }
   }
 }

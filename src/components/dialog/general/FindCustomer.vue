@@ -12,7 +12,7 @@
         dark
         dense
       >
-        <v-toolbar-title>Sales Order</v-toolbar-title>
+        <v-toolbar-title>Customer</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn
           icon
@@ -51,13 +51,11 @@
             height="300"
             class="elevation-1 row-pointer"
             dense
+            disable-sort
             fixed-header
             hide-default-footer
             @dblclick:row="dblclickRow"
           >
-            <template v-slot:[`item.orderDate`]="{ item }">
-              {{ item.orderDate | formatDate('dd-MMM-yyyy') }}
-            </template>
             <template v-slot:[`item.code`]="{ item }">
               <v-text-field
                 v-model="item.code"
@@ -67,8 +65,8 @@
                 @keyup.enter="dblclickRow(null, { item })"
               ></v-text-field>
             </template>
-            <template v-slot:[`item.total`]="{ item }">
-              {{ item.total | formatCurrency }}
+            <template v-slot:[`item.creditLimit`]="{ item }">
+              {{ item.creditLimit | formatCurrency }}
             </template>
           </v-data-table>
         </v-card>
@@ -100,26 +98,27 @@ export default {
     return {
       dialog: false,
       data: {
-        by: 'soCode_contains',
+        by: 'name',
         value: '',
         items: [
-          { text: 'SO Date', value: 'soDate' },
-          { text: 'SO Code', value: 'soCode_contains' },
-          { text: 'Customer', value: 'custName' },
-          { text: 'Curr.', value: 'curr' }
+          { text: 'Code', value: 'code' },
+          { text: 'Initial', value: 'initial' },
+          { text: 'Name', value: 'name' },
+          { text: 'Type', value: 'typeName' }
         ]
       },
       grid: {
-        data: [],
         columns: [
-          { text: 'SO Date', value: 'orderDate', align: 'right', divider: true, width: '120' },
-          { text: 'SO Code', value: 'code', divider: true, width: '100' },
-          { text: 'Amount', value: 'total', align: 'right', divider: true, width: '120' },
-          { text: 'Customer', value: 'custName', divider: true, width: '150' },
-          { text: 'Salesman', value: 'salesName', divider: true, width: '150' },
-          { text: 'Curr.', value: 'curr', divider: true, width: '90' },
-          { text: 'TOP', value: 'paymentTerm', width: '120' }
-        ]
+          { text: 'Code', value: 'code', divider: true, width: '120' },
+          { text: 'Initial', value: 'initial', divider: true, width: '150' },
+          { text: 'Name', value: 'name', divider: true, width: '300' },
+          { text: 'Address', value: 'address1', divider: true, width: '200' },
+          { text: 'Phone', value: 'phone', divider: true, width: '150' },
+          { text: 'Fax', value: 'fax', divider: true, width: '150' },
+          { text: 'Credit Limit', value: 'creditLimit', align: 'right', divider: true, width: '120' },
+          { text: 'Type', value: 'typeName', divider: true, width: '150' }
+        ],
+        data: []
       },
       options: {
         width: 800
@@ -133,7 +132,7 @@ export default {
   
   methods: {
     reset() {
-      this.data.by = 'soCode_contains'
+      this.data.by = 'name'
       this.data.value = ''
       this.grid.data = []
     },
@@ -149,14 +148,25 @@ export default {
       this.dialog = false
     },
     search() {
-      api.getAll(`${this.endpoint.sales.order}/incomplete`, {
+      api.getAll(this.endpoint.general.customer, {
         params: {
-          searchBy: this.data.by,
-          search: this.data.value
+          filters: JSON.stringify([{
+            field: this.data.by,
+            operator: 'contains',
+            keyword: this.data.value
+          }, {
+            field: 'isActive',
+            operator: 'eq',
+            keyword: true
+          }]),
+          sorts: JSON.stringify([{
+            field: this.data.by,
+            direction: 'asc'
+          }])
         }
       })
         .then(response => {
-          this.grid.data = response.data
+          this.grid.data = response.data.tableData
         })
     },
     dblclickRow(event, { item }) {

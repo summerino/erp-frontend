@@ -3,6 +3,7 @@ export default [
     items: [
       { text: 'Item', regex: /^\/inventory\/master\/item/,
         items: [
+          { text: 'Item', link: 'item' },
           { text: 'Category', link: 'item-category' },
           { text: 'Group', link: 'item-group' }
         ]

@@ -33,7 +33,7 @@ export default {
 
   sales: {
     order: 'sales-order',
-    delivery: 'delivery-order',
+    delivery: 'sales-delivery',
     invoice: 'sales-invoice'
   }
 }

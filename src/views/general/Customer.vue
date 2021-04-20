@@ -10,7 +10,7 @@
               label="Search..."
               class="font-weight-regular mt-0 pt-0"
               single-line
-              @keyup.enter="getList"
+              @keyup.enter="getList()"
             ></v-text-field>
           </v-col>
           <v-spacer></v-spacer>
@@ -121,7 +121,7 @@
                 <v-btn
                   v-bind="attrs"
                   v-on="on"
-                  v-shortkey="['ctrl', 'enter']"
+                  v-shortkey="['ctrl', 's']"
                   color="blue darken-2"
                   class="font-weight-regular"
                   :disabled="isActive"
@@ -137,7 +137,7 @@
                   Save
                 </v-btn>
               </template>
-              <span class="text-caption">(Ctrl + Enter)</span>
+              <span class="text-caption">(Ctrl + S)</span>
             </v-tooltip>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">

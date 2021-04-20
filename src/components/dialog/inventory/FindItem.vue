@@ -189,6 +189,10 @@ export default {
             field: this.data.by,
             operator: 'contains',
             keyword: this.data.value
+          }, {
+            field: 'isActive',
+            operator: 'eq',
+            keyword: true
           }]),
           sorts: JSON.stringify([{
             field: this.data.by,

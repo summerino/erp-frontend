@@ -10,9 +10,8 @@
               label="Search..."
               class="font-weight-regular mt-0 pt-0"
               single-line
-              @keyup.enter="getList"
+              @keyup.enter="getList()"
             ></v-text-field>
-            <v-spacer></v-spacer>
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" md="6" class="text-right">
@@ -73,7 +72,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="item.mark.toLowerCase() === 'v'"
+                :disabled="item.mark.toUpperCase() !== 'A'"
                 color="red"
                 icon
                 small
@@ -91,7 +90,7 @@
         <template v-slot:[`item.mark`]="{ item }">
           <v-badge
             :content="item.mark"
-            :color="item.mark.toLowerCase() === 'v' ? 'error' : 'green'"
+            :color="item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
             inline
           ></v-badge>
         </template>
@@ -137,6 +136,7 @@
             <v-divider vertical></v-divider>
             <v-menu
               bottom
+              eager
               left
               open-on-hover
             >
@@ -244,6 +244,7 @@
                       <v-col cols="12">
                         <v-text-field
                           v-model="data.poCode"
+                          :readonly="hasRelatedTrans"
                           :rules="rules.required"
                           label="PO Code"
                           class="mt-0"
@@ -253,6 +254,7 @@
                           <template v-slot:append>
                               <v-btn
                                 ref="btnFindPO"
+                                :disabled="hasRelatedTrans"
                                 color="primary"
                                 icon
                                 small
@@ -411,7 +413,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid"
+                                :disabled="isVoid || hasRelatedTrans"
                                 class="blue--text"
                                 small
                                 tile
@@ -443,7 +445,7 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
-                                  :disabled="item.type == 0 || isVoid"
+                                  :disabled="item.type == 0 || isVoid || hasRelatedTrans"
                                   color="red"
                                   icon
                                   small
@@ -460,7 +462,7 @@
                               ref="itemId"
                               v-model="item.itemId"
                               :items="items"
-                              :readonly="item.type == 0"
+                              :readonly="item.type == 0 || hasRelatedTrans"
                               :rules="rules.required"
                               item-text="initial"
                               item-value="id"
@@ -470,7 +472,7 @@
                             >
                               <template v-slot:append>
                                 <v-btn
-                                  :disabled="item.type == 0"
+                                  :disabled="item.type == 0 || hasRelatedTrans"
                                   color="primary"
                                   icon
                                   x-small
@@ -487,6 +489,7 @@
                             <v-currency-field
                               v-model="item.qty"
                               :decimal-length="0"
+                              :readonly="hasRelatedTrans"
                               class="text-body-2 text-right mt-0"
                               @change="calcItemPrice(item)"
                             ></v-currency-field>
@@ -510,7 +513,24 @@
                       key="related-trans"
                       transition="false"
                     >
-                      this is related transactions
+                      <v-data-table
+                        :headers="gridRelated.columns"
+                        :items="gridRelated.data"
+                        :items-per-page="-1"
+                        height="300"
+                        class="elevation-1"
+                        dense
+                        disable-sort
+                        fixed-header
+                        hide-default-footer
+                      >
+                        <template v-slot:[`item.date`]="{ item }">
+                          {{ item.date | formatDate('dd-MMM-yyyy') }}
+                        </template>
+                        <template v-slot:[`item.total`]="{ item }">
+                          {{ item.total | formatCurrency }}
+                        </template>
+                      </v-data-table>
                     </v-tab-item>
                   </v-tabs>
                 </v-card>
@@ -524,6 +544,7 @@
     <confirm ref="confirm"></confirm>
     <find-po
       ref="findPO"
+      :mark-exclude="['V', 'CLS', 'CMP']"
       @dblclick:row="bindPOData"
     ></find-po>
     <find-item
@@ -596,6 +617,14 @@ export default {
       ],
       data: []
     },
+    gridRelated: {
+      columns: [
+        { text: 'Code', value: 'code', divider: true },
+        { text: 'Date', value: 'date', align: 'right', divider: true },
+        { text: 'Amout', value: 'total', align: 'right', divider: true }
+      ],
+      data: []
+    },
     valid: false,
     employees: [],
     taxes: [],
@@ -639,8 +668,11 @@ export default {
     formatRcvDate() {
       return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
     },
+    hasRelatedTrans() {
+      return (this.gridRelated?.data?.length > 0)
+    },
     isVoid() {
-      return (this.data?.mark?.toLowerCase() === 'v')
+      return (this.data?.mark?.toUpperCase() === 'V')
     }
   },
 
@@ -668,6 +700,7 @@ export default {
         total: 0
       }
       this.gridItem.data = []
+      this.gridRelated.data = []
       this.tab.sup = 0
       this.tab.item = 0
 
@@ -709,6 +742,15 @@ export default {
         params: {
           param: 'employee',
           fieldNames: 'id,initial,firstName',
+          filters: JSON.stringify([{
+            field: 'type',
+            operator: 'EQUAL',
+            keyword: 1
+          }, {
+            field: 'isActive',
+            operator: 'EQUAL',
+            keyword: true
+          }]),
           sorts: JSON.stringify([{
             field: 'initial',
             direction: 'asc'
@@ -729,6 +771,10 @@ export default {
             field: 'typeId',
             operator: 'equal',
             keyword: 0
+          }, {
+            field: 'isActive',
+            operator: 'EQUAL',
+            keyword: true
           }]),
           sorts: JSON.stringify([{
             field: 'seq',
@@ -753,6 +799,11 @@ export default {
         params: {
           param: 'warehouse',
           fieldNames: 'code,initial,name',
+          filters: JSON.stringify([{
+            field: 'isActive',
+            operator: 'EQUAL',
+            keyword: true
+          }]),
           sorts: JSON.stringify([{
             field: 'initial',
             direction: 'asc'
@@ -802,6 +853,14 @@ export default {
       })
         .then(response => {
           this.gridItem.data = response.data.tableData
+        })
+
+      // Get related transaction details
+      api.getAll(`${this.endpoint.purchase.receive}/related-trans`, {
+        params: { code: item.code }
+      })
+        .then(response => {
+          this.gridRelated.data = response.data.tableData
         })
 
       // Set focus to receive code field
@@ -854,6 +913,11 @@ export default {
       }
     },
     addItem() {
+      if (!this.data.poCode) {
+        this.$store.dispatch('app/showInfo', 'Please choose purchase order first.')
+        return
+      }
+
       if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemId ?? null)) {
         const item = {
           id: randomNumber(-1, -1000),
@@ -891,6 +955,9 @@ export default {
       ) {
         const idx = this.gridItem.data.findIndex(i => i.id === item.id)
         this.gridItem.data.splice(idx, 1)
+
+        // Calc price
+        this.calcPrice()
       }
     },
     poCodeChange() {

@@ -10,9 +10,8 @@
               label="Search..."
               class="font-weight-regular mt-0 pt-0"
               single-line
-              @keyup.enter="getList"
+              @keyup.enter="getList()"
             ></v-text-field>
-            <v-spacer></v-spacer>
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" md="6" class="text-right">
@@ -74,7 +73,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="item.mark.toLowerCase() === 'v'"
+                :disabled="item.mark.toUpperCase() !== 'A'"
                 color="red"
                 icon
                 small
@@ -95,7 +94,7 @@
         <template v-slot:[`item.mark`]="{ item }">
           <v-badge
             :content="item.mark"
-            :color="item.mark.toLowerCase() === 'v' ? 'error' : 'green'"
+            :color="item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
             inline
           ></v-badge>
         </template>
@@ -141,6 +140,7 @@
             <v-divider vertical></v-divider>
             <v-menu
               bottom
+              eager
               left
               open-on-hover
             >
@@ -543,6 +543,7 @@
                           <template v-slot:[`item.notes`]="{ item }">
                             <v-text-field
                               v-model="item.notes"
+                              :rules="rules.max256chars"
                               class="text-body-2 mt-0"
                               dense
                             ></v-text-field>
@@ -668,25 +669,13 @@
                     </v-row>
 
                     <v-row no-gutters>
-                      <!-- <v-col cols="4">
-                        <v-currency-field
-                          v-model="data.taxPercent"
-                          :allow-negative="false"
-                          label="Tax Percent"
-                          suffix="%"
-                          class="text-right mt-0"
-                          readonly
-                        ></v-currency-field>
-                      </v-col> -->
-                      <!-- <v-col cols="8" class="pl-1"> -->
-                        <v-currency-field
-                          v-model="data.taxAmount"
-                          :allow-negative="false"
-                          label="Tax Amount"
-                          class="text-right mt-0"
-                          readonly
-                        ></v-currency-field>
-                      <!-- </v-col> -->
+                      <v-currency-field
+                        v-model="data.taxAmount"
+                        :allow-negative="false"
+                        label="Tax Amount"
+                        class="text-right mt-0"
+                        readonly
+                      ></v-currency-field>
                     </v-row>
 
                     <v-row no-gutters>
@@ -845,7 +834,7 @@ export default {
       return (this.gridRelated?.data?.length > 0)
     },
     isVoid() {
-      return (this.data?.mark?.toLowerCase() === 'v')
+      return (this.data?.mark?.toUpperCase() === 'V')
     }
   },
 
@@ -887,7 +876,7 @@ export default {
       }
 
       // Set default warehouse
-      const defWarehouse = this.warehouses.find(w => w.isDefault === 1)
+      const defWarehouse = this.warehouses.find(w => w.isDefault)
       if (defWarehouse) {
         this.data.warehouseCode = defWarehouse.code
       }
@@ -944,6 +933,15 @@ export default {
         params: {
           param: 'employee',
           fieldNames: 'id,initial,firstName',
+          filters: JSON.stringify([{
+            field: 'type',
+            operator: 'EQUAL',
+            keyword: 1
+          }, {
+            field: 'isActive',
+            operator: 'EQUAL',
+            keyword: true
+          }]),
           sorts: JSON.stringify([{
             field: 'initial',
             direction: 'asc'
@@ -960,6 +958,11 @@ export default {
         params: {
           param: 'currency',
           fieldNames: 'code',
+          filters: JSON.stringify([{
+            field: 'isActive',
+            operator: 'EQUAL',
+            keyword: true
+          }]),
           sorts: JSON.stringify([{
             field: 'sort',
             direction: 'asc'
@@ -976,6 +979,11 @@ export default {
         params: {
           param: 'supplier',
           fieldNames: 'code,initial,name,address1,phone,fax',
+          filters: JSON.stringify([{
+            field: 'isActive',
+            operator: 'EQUAL',
+            keyword: true
+          }]),
           sorts: JSON.stringify([{
             field: 'initial',
             direction: 'asc'
@@ -991,7 +999,12 @@ export default {
       api.getAll(this.endpoint.master, {
         params: {
           param: 'warehouse',
-          fieldNames: 'code,initial,name',
+          fieldNames: 'code,initial,name,isDefault',
+          filters: JSON.stringify([{
+            field: 'isActive',
+            operator: 'EQUAL',
+            keyword: true
+          }]),
           sorts: JSON.stringify([{
             field: 'initial',
             direction: 'asc'
@@ -1012,6 +1025,10 @@ export default {
             field: 'typeId',
             operator: 'equal',
             keyword: 0
+          }, {
+            field: 'isActive',
+            operator: 'EQUAL',
+            keyword: true
           }]),
           sorts: JSON.stringify([{
             field: 'seq',
@@ -1209,6 +1226,7 @@ export default {
         const idx = this.gridItem.data.findIndex(i => i.id === item.id)
         this.gridItem.data.splice(idx, 1)
 
+        // Calc price
         this.calcPrice()
       }
     },
@@ -1340,13 +1358,6 @@ export default {
         this.calcItemPrice(this.gridItem.data[i], false)
       }
       this.calcPrice()
-      // if (this.data.includeTax) {
-      //   this.data.taxAmount = (this.data.subTotal - this.data.finalDisc) - ((this.data.subTotal - this.data.finalDisc) / (1 + (this.data.tax.rate / 100)))
-      //   this.data.dpp = (this.data.subTotal - this.data.finalDisc) - this.data.taxAmount
-      // } else {
-      //   this.data.taxAmount = (this.data.subTotal - this.data.finalDisc) * (this.data.tax.rate / 100)
-      //   this.data.dpp = (this.data.subTotal - this.data.finalDisc)
-      // }
     },
     calcPrice() {
       this.data.subTotal = _sumBy(this.gridItem.data, 'total')
@@ -1355,7 +1366,6 @@ export default {
       this.calcGrandTotal()
     },
     calcGrandTotal() {
-      // this.calcTax()
       if (this.data.includeTax) {
         this.data.total = this.data.subTotal - this.data.finalDisc
       } else {
