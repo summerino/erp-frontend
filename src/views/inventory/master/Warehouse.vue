@@ -174,17 +174,11 @@
           <v-container class="px-1 pt-0 pb-1">
             <v-row no-gutters>
               <v-col cols="12" md="6" class="pr-md-3">
-                <!-- <v-text-field
-                  v-model="data.code"
-                  label="Code"
-                  class="mt-0"
-                  readonly
-                  required
-                ></v-text-field> -->
                 <v-text-field
                   v-model="data.code"
                   label="Code"
                   class="mt-0"
+                  readonly
                   required
                 ></v-text-field>
               </v-col>
@@ -202,7 +196,7 @@
             </v-row>
 
             <v-row no-gutters>
-              <v-col cols="12" class="pr-md-3">
+              <v-col cols="12">
                 <v-text-field
                   v-model="data.name"
                   :rules="[rules.required[0], rules.max50chars[0]]"
@@ -226,9 +220,8 @@
                 ></v-text-field>
               </v-col>
             </v-row>
-
             <v-row no-gutters>
-              <v-col cols="12" class="pr-md-3">
+              <v-col cols="12">
                 <v-text-field
                   v-model="data.phone"
                   :rules="[rules.required[0], rules.max30chars[0]]"
