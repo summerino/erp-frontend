@@ -8,7 +8,7 @@ export default [{
 }, {
   path: '/general/customer-type',
   name: 'customer-type',
-  component: () => import(/* webpackChunkName: "general-customer-type" */ '@/views/general/Customer.vue'),
+  component: () => import(/* webpackChunkName: "general-customer-type" */ '@/views/general/CustomerType.vue'),
   meta: {
     authRequired: true
   }

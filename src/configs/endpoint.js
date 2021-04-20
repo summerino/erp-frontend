@@ -4,6 +4,7 @@ export default {
   general: {
     currency: 'currency',
     customer: 'customer',
+    customertype: 'customertype',
     salesman: 'salesman',
     supplier: 'supplier',
     tax: 'tax',
