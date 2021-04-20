@@ -88,11 +88,21 @@
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
         <template v-slot:[`item.mark`]="{ item }">
-          <v-badge
-            :content="item.mark"
-            :color="item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
-            inline
-          ></v-badge>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-chip
+                v-bind="attrs"
+                v-on="on"
+                :color="item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
+                class="px-1"
+                dark
+                small
+              >
+                {{ item.mark }}
+              </v-chip>
+            </template>
+            <span class="text-caption">{{ item.status }}</span>
+          </v-tooltip>
         </template>
       </v-data-table>
     </v-card>
