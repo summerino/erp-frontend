@@ -12,4 +12,18 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/general/supplier',
+  name: 'supplier',
+  component: () => import(/* webpackChunkName: "general-supplier" */ '@/views/general/Supplier.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/general/supplier-type',
+  name: 'supplier-type',
+  component: () => import(/* webpackChunkName: "general-supplier-type" */ '@/views/general/Supplier.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
