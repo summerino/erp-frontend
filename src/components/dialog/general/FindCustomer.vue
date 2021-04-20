@@ -148,7 +148,7 @@ export default {
       this.dialog = false
     },
     search() {
-      api.getAll(this.endpoint.general.customer, {
+      api.getAll(this.endpoint.general.customer.customer, {
         params: {
           filters: JSON.stringify([{
             field: this.data.by,

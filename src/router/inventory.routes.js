@@ -12,19 +12,17 @@ export default [{
   meta: {
     authRequired: true
   }
-},
-{
-  path: '/inventory/master/warehouse',
-  name: 'warehouse',
-  component: () => import(/* webpackChunkName: "inventory-master-item-category" */ '@/views/inventory/master/Warehouse.vue'),
-  meta: {
-    authRequired: true
-  }
-},
-{
+}, {
   path: '/inventory/master/item-group',
   name: 'item-group',
   component: () => import(/* webpackChunkName: "inventory-master-item-group" */ '@/views/inventory/master/ItemGroup.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/inventory/master/warehouse',
+  name: 'warehouse',
+  component: () => import(/* webpackChunkName: "inventory-master-warehouse" */ '@/views/inventory/master/Warehouse.vue'),
   meta: {
     authRequired: true
   }

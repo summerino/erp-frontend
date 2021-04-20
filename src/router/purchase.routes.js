@@ -19,13 +19,11 @@ export default [{
   meta: {
     authRequired: true
   }
-}
-// , {
-//   path: '/purchase/transaction/purchase-return',
-//   name: 'purchase-return',
-//   component: () => import(/* webpackChunkName: "purchase-trans-return" */ '@/views/purchase/transaction/PurchaseReturn.vue'),
-//   meta: {
-//     authRequired: true
-//   }
-// }
-]
+}, {
+  path: '/purchase/transaction/purchase-return',
+  name: 'purchase-return',
+  component: () => import(/* webpackChunkName: "purchase-trans-return" */ '@/views/purchase/transaction/PurchaseReturn.vue'),
+  meta: {
+    authRequired: true
+  }
+}]
