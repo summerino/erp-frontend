@@ -442,7 +442,7 @@ export default {
         })
       }
       
-      api.getAll(this.endpoint.general.customer, {
+      api.getAll(this.endpoint.general.customer.customer, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -460,7 +460,7 @@ export default {
         })
     },
     getTypesList() {
-      api.getAll(`${this.endpoint.general.customertype}/lists`, {
+      api.getAll(`${this.endpoint.general.customer.type}/lists`, {
         params: {
           sorts: JSON.stringify([{
             field: 'initial',
@@ -506,7 +506,7 @@ export default {
           'Inactive?',
           'Are you sure want to inactive this data?')
       ) {
-        api.delete(this.endpoint.general.customer, item.code)
+        api.delete(this.endpoint.general.customer.customer, item.code)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -527,7 +527,7 @@ export default {
           isActive: true
         }
 
-        api.update(this.endpoint.general.customer, this.data.code, this.data)
+        api.update(this.endpoint.general.customer.customer, this.data.code, this.data)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -544,10 +544,10 @@ export default {
 
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
-        const resp = await api.create(this.endpoint.general.customer, this.data)
+        const resp = await api.create(this.endpoint.general.customer.customer, this.data)
         result = resp.data
       } else if (this.data.action === 'edit') {
-        const resp = await api.update(this.endpoint.general.customer, this.data.code, this.data)
+        const resp = await api.update(this.endpoint.general.customer.customer, this.data.code, this.data)
         result = resp.data
       }
 

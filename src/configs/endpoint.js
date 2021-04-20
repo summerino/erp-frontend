@@ -3,8 +3,10 @@ export default {
   
   general: {
     currency: 'currency',
-    customer: 'customer',
-    customertype: 'customertype',
+    customer: {
+      customer: 'customer',
+      type: 'customer-type'
+    },
     salesman: 'salesman',
     supplier: 'supplier',
     tax: 'tax',

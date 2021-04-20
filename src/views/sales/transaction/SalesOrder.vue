@@ -1033,7 +1033,7 @@ export default {
         })
     },
     getCustomerLists() {
-      api.getAll(`${this.endpoint.general.customer}/lists`, {
+      api.getAll(`${this.endpoint.general.customer.customer}/lists`, {
         params: {
           sorts: JSON.stringify([{
             field: 'initial',

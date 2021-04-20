@@ -293,7 +293,7 @@ export default {
         })
       }
       
-      api.getAll(this.endpoint.general.customertype, {
+      api.getAll(this.endpoint.general.customer.type, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -344,7 +344,7 @@ export default {
           'Inactive?',
           'Are you sure want to inactive this data?')
       ) {
-        api.delete(this.endpoint.general.customertype, item.id)
+        api.delete(this.endpoint.general.customer.type, item.id)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -365,7 +365,7 @@ export default {
           isActive: true
         }
 
-        api.update(this.endpoint.general.customertype, this.data.id, this.data)
+        api.update(this.endpoint.general.customer.type, this.data.id, this.data)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -382,10 +382,10 @@ export default {
 
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
-        const resp = await api.create(this.endpoint.general.customertype, this.data)
+        const resp = await api.create(this.endpoint.general.customer.type, this.data)
         result = resp.data
       } else if (this.data.action === 'edit') {
-        const resp = await api.update(this.endpoint.general.customertype, this.data.id, this.data)
+        const resp = await api.update(this.endpoint.general.customer.type, this.data.id, this.data)
         result = resp.data
       }
 

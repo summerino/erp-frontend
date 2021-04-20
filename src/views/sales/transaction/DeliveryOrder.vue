@@ -1047,7 +1047,7 @@ export default {
       }
     },
     bindCustData(item) {
-      api.getOne(this.endpoint.general.customer, item.custCode)
+      api.getOne(this.endpoint.general.customer.customer, item.custCode)
         .then(response => {
           if (response.data) {
             item.custAddr = response.data.address1
