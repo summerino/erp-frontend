@@ -1117,7 +1117,7 @@ export default {
       }
     },
     bindSupData(item) {
-      api.getOne(this.endpoint.general.supplier, item.supCode)
+      api.getOne(this.endpoint.general.supplier.supplier, item.supCode)
         .then(response => {
           if (response.data) {
             item.supAddr = response.data.address1

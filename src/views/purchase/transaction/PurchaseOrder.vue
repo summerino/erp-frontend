@@ -985,7 +985,7 @@ export default {
         })
     },
     getSupplierLists() {
-      api.getAll(`${this.endpoint.general.supplier}/lists`, {
+      api.getAll(`${this.endpoint.general.supplier.supplier}/lists`, {
         params: {
           sorts: JSON.stringify([{
             field: 'initial',

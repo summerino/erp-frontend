@@ -768,7 +768,6 @@ export default {
       }
     },
     getList(bindToForm = false) {
-      console.log(bindToForm)
       const sorts = []
       for (let i = 0; i < this.grid.options.sortBy.length; i++) {
         sorts.push({

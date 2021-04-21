@@ -97,8 +97,8 @@
           </v-tooltip>
         </template>
         <template v-slot:[`item.isActive`]="{ item }">
-          <v-icon v-if="item.isActive" small color="green">mdi-toggle-switch</v-icon>
-          <v-icon v-else small color="red">mdi-toggle-switch-off</v-icon>
+          <v-icon v-if="item.isActive" color="green">mdi-toggle-switch-outline</v-icon>
+          <v-icon v-else color="red">mdi-toggle-switch-off-outline</v-icon>
         </template>
       </v-data-table>
     </v-card>

@@ -97,8 +97,8 @@
           </v-tooltip>
         </template>
         <template v-slot:[`item.isActive`]="{ item }">
-          <v-icon v-if="item.isActive" small color="green">mdi-toggle-switch</v-icon>
-          <v-icon v-else small color="red">mdi-toggle-switch-off</v-icon>
+          <v-icon v-if="item.isActive" color="green">mdi-toggle-switch-outline</v-icon>
+          <v-icon v-else color="red">mdi-toggle-switch-off-outline</v-icon>
         </template>
       </v-data-table>
     </v-card>
@@ -382,7 +382,7 @@ export default {
         })
       }
       
-      api.getAll(this.endpoint.general.supplier.supplier, {
+      api.getAll(this.endpoint.general.supplier.supplier.supplier, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -400,7 +400,7 @@ export default {
         })
     },
     getTypesList() {
-      api.getAll(`${this.endpoint.general.supplier.type}/lists`, {
+      api.getAll(`${this.endpoint.general.supplier.supplier.type}/lists`, {
         params: {
           sorts: JSON.stringify([{
             field: 'initial',
@@ -446,7 +446,7 @@ export default {
           'Inactive?',
           'Are you sure want to inactive this data?')
       ) {
-        api.delete(this.endpoint.general.supplier.supplier, item.code)
+        api.delete(this.endpoint.general.supplier.supplier.supplier, item.code)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -467,7 +467,7 @@ export default {
           isActive: true
         }
 
-        api.update(this.endpoint.general.supplier.supplier, this.data.code, this.data)
+        api.update(this.endpoint.general.supplier.supplier.supplier, this.data.code, this.data)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -484,10 +484,10 @@ export default {
 
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
-        const resp = await api.create(this.endpoint.general.supplier.supplier, this.data)
+        const resp = await api.create(this.endpoint.general.supplier.supplier.supplier, this.data)
         result = resp.data
       } else if (this.data.action === 'edit') {
-        const resp = await api.update(this.endpoint.general.supplier.supplier, this.data.code, this.data)
+        const resp = await api.update(this.endpoint.general.supplier.supplier.supplier, this.data.code, this.data)
         result = resp.data
       }
 
