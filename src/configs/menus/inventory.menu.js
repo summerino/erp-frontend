@@ -8,11 +8,7 @@ export default [
           { text: 'Group', link: 'item-group' }
         ]
       },
-      { text: 'Warehouse', regex: /^\/inventory\/warehouse/,
-        items: [
-          { text: 'Warehouse', link: 'warehouse' }
-        ]
-      }
+      { text: 'Warehouse', link: 'warehouse' }
     ]
   },
   { icon: 'mdi-clipboard-edit-outline', text: 'Transaction', regex: /^\/inventory\/transaction/,
