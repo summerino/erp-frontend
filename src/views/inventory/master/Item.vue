@@ -93,20 +93,18 @@
         </template>
         <template v-slot:[`item.isActive`]="{ item }">
           <v-tooltip bottom>
-            <template v-if="item.isActive === true" v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ on, attrs }">
               <v-icon 
                 v-bind="attrs" 
                 v-on="on" 
-                color="green">mdi-toggle-switch-outline</v-icon>
+                :color="item.isActive === true ? 'green' : 'red'"
+              >
+                {{ item.isActive === true ? 'mdi-toggle-switch-outline' : 'mdi-toggle-switch-off-outline' }}
+              </v-icon>
             </template>
-            <template v-else v-slot:activator="{ on, attrs }">
-              <v-icon
-                v-bind="attrs" 
-                v-on="on"
-                color="red">mdi-toggle-switch-off-outline</v-icon>
-            </template>
-            <span v-if="item.isActive === true" class="text-caption">Active</span>
-            <span v-else class="text-caption">Inactive</span>
+            <span class="text-caption">
+                {{ item.isActive === true ? 'Active' : 'Inactive' }}
+            </span>
           </v-tooltip>
         </template>
       </v-data-table>
