@@ -985,7 +985,7 @@ export default {
         })
     },
     getSupplierLists() {
-      api.getAll(`${this.endpoint.general.supplier}/lists`, {
+      api.getAll(`${this.endpoint.general.supplier.supplier}/lists`, {
         params: {
           sorts: JSON.stringify([{
             field: 'initial',
@@ -998,20 +998,18 @@ export default {
         })
     },
     getWarehouseLists() {
-      api.getAll(this.endpoint.master, {
+      api.getAll(`${this.endpoint.inventory.warehouse}/lists`, {
         params: {
-          param: 'warehouse',
-          fieldNames: 'code,initial,name,isDefault',
+          skip: 0, take: -1,
           filters: JSON.stringify([{
             field: 'isActive',
-            operator: 'EQUAL',
+            operator: 'eq',
             keyword: true
           }]),
           sorts: JSON.stringify([{
             field: 'initial',
             direction: 'asc'
-          }]),
-          includeMetaData: false
+          }])
         }
       })
         .then(response => {
