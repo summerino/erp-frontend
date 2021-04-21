@@ -22,7 +22,7 @@ export default [{
 }, {
   path: '/general/supplier-type',
   name: 'supplier-type',
-  component: () => import(/* webpackChunkName: "general-supplier-type" */ '@/views/general/Supplier.vue'),
+  component: () => import(/* webpackChunkName: "general-supplier-type" */ '@/views/general/SupplierType.vue'),
   meta: {
     authRequired: true
   }
