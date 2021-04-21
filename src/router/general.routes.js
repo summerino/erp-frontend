@@ -26,4 +26,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/general/worker',
+  name: 'worker',
+  component: () => import(/* webpackChunkName: "general-worker" */ '@/views/general/Employee.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
