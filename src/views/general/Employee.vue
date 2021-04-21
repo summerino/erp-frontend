@@ -478,7 +478,7 @@ export default {
         })
       }
       
-      api.getAll(this.endpoint.general.worker, {
+      api.getAll(this.endpoint.general.employee, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -529,7 +529,7 @@ export default {
           'Inactive?',
           'Are you sure want to inactive this data?')
       ) {
-        api.delete(this.endpoint.general.worker, item.id)
+        api.delete(this.endpoint.general.employee, item.id)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -550,7 +550,7 @@ export default {
           isActive: true
         }
 
-        api.update(this.endpoint.general.worker, this.data.id, this.data)
+        api.update(this.endpoint.general.employee, this.data.id, this.data)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -567,10 +567,10 @@ export default {
 
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
-        const resp = await api.create(this.endpoint.general.worker, this.data)
+        const resp = await api.create(this.endpoint.general.employee, this.data)
         result = resp.data
       } else if (this.data.action === 'edit') {
-        const resp = await api.update(this.endpoint.general.worker, this.data.initial, this.data)
+        const resp = await api.update(this.endpoint.general.employee, this.data.initial, this.data)
         result = resp.data
       }
 

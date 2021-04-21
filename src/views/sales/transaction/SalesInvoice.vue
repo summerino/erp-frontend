@@ -285,7 +285,6 @@
                         >
                           <template v-slot:append>
                               <v-btn
-                                ref="btnFindSO"
                                 color="primary"
                                 icon
                                 small
@@ -772,24 +771,17 @@ export default {
         })
     },
     getEmployeeLists() {
-      api.getAll(this.endpoint.master, {
+      api.getAll(`${this.endpoint.general.employee}/lists`, {
         params: {
-          param: 'employee',
-          fieldNames: 'id,initial,firstName',
           filters: JSON.stringify([{
             field: 'type',
-            operator: 'EQUAL',
+            operator: 'eq',
             keyword: 1
-          }, {
-            field: 'isActive',
-            operator: 'EQUAL',
-            keyword: true
           }]),
           sorts: JSON.stringify([{
             field: 'initial',
             direction: 'asc'
-          }]),
-          includeMetaData: false
+          }])
         }
       })
         .then(response => {
