@@ -69,8 +69,8 @@ export default {
 
       // form
       isFormValid: true,
-      username: 'admin@admin.com',
-      password: 'admin',
+      username: '',
+      password: '',
 
       // form error
       error: false,
