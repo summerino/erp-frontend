@@ -96,6 +96,16 @@
             <span v-else>Reactivate</span>
           </v-tooltip>
         </template>
+        <template v-slot:[`item.sex`]="{ item }">
+          <span v-if="item.sex">Male</span>
+          <span v-else>Female</span>
+        </template>
+        <template v-slot:[`item.type`]="{ item }">
+          <span v-if="item.type === 1">Employee</span>
+          <span v-else-if="item.type === 2">Salesman</span>
+          <span v-else-if="item.type === 3">Driver</span>
+          <span v-else>Unknown</span>
+        </template>
         <template v-slot:[`item.isActive`]="{ item }">
           <v-icon v-if="item.isActive" color="green">mdi-toggle-switch-outline</v-icon>
           <v-icon v-else color="red">mdi-toggle-switch-off-outline</v-icon>
@@ -107,7 +117,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="6">
-            <span>Supplier {{ data.action | capitalize }}</span>
+            <span>Employee {{ data.action | capitalize }}</span>
           </v-col>
           <v-col cols="12" md="6" class="text-right">
             <label
@@ -171,15 +181,6 @@
             <v-row no-gutters>
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-text-field
-                  v-model="data.code"
-                  label="Code"
-                  class="mt-0"
-                  readonly
-                  required
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-text-field
                   ref="initial"
                   v-model="data.initial"
                   :rules="[rules.required[0], rules.max20chars[0]]"
@@ -189,29 +190,87 @@
                   required
                 ></v-text-field>
               </v-col>
+              <v-col cols="12" md="6" class="pl-md-3">
+                <v-row no-gutters>
+                  <v-col cols="12">
+                    <span>Gender</span>
+                  </v-col>
+                </v-row>
+                <v-row no-gutters>
+                  <v-col cols="3">
+                    <input 
+                     type="radio" 
+                     id="male" 
+                     value="true" 
+                     v-model="data.sex">
+                    <label for="male">&nbsp;Male</label>
+                  </v-col>
+                  <v-col cols="9">
+                    <input 
+                     type="radio" 
+                     id="female" 
+                     value="false" 
+                     v-model="data.sex">
+                    <label for="female">&nbsp;Female</label>
+                  </v-col>
+                </v-row>
+              </v-col>
             </v-row>
 
             <v-row no-gutters>
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-text-field
-                  v-model="data.name"
+                  v-model="data.firstName"
                   :rules="rules.required"
-                  label="Name"
+                  label="First Name"
                   class="mt-0"
                   required
                 ></v-text-field>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
-                <v-autocomplete
-                  v-model="data.typeId"
-                  :items="types"
-                  :item-text="item => `${item.initial} - ${item.name}`"
-                  :rules="rules.required"
-                  label="Type"
-                  item-value="id"
+                <v-text-field
+                  v-model="data.lastName"
+                  label="Last Name"
                   class="mt-0"
-                  required
-                ></v-autocomplete>
+                ></v-text-field>
+              </v-col>
+            </v-row>
+
+            <v-row no-gutters>
+              <v-col cols="12" md="6" class="pr-md-3">
+                <v-menu
+                  v-model="menu.calBirthDate"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  min-width="290px"
+                  offset-y
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-bind="attrs"
+                      v-on="on"
+                      :rules="rules.required"
+                      :value="formatBirthDate"
+                      label="Birth Date"
+                      class="mt-0"
+                      readonly
+                      required
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="data.birthDate"
+                    no-title
+                    scrollable
+                    @change="menu.calBirthDate = false"
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-col cols="12" md="6" class="pl-md-3">
+                <v-text-field
+                  v-model="data.birthPlace"
+                  label="Birth Place"
+                  class="mt-0"
+                ></v-text-field>
               </v-col>
             </v-row>
 
@@ -241,16 +300,14 @@
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-text-field
                   v-model="data.phone"
-                  :rules="rules.required"
                   label="Phone"
                   class="mt-0"
-                  required
                 ></v-text-field>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-text-field
-                  v-model="data.fax"
-                  label="Fax"
+                  v-model="data.identityCardNo"
+                  label="Identity No."
                   class="mt-0"
                 ></v-text-field>
               </v-col>
@@ -258,21 +315,49 @@
 
             <v-row no-gutters>
               <v-col cols="12" md="6" class="pr-md-3">
-                <v-text-field
-                  v-model="data.email"
-                  :rules="[rules.required[0], rules.email[0]]"
+                <v-autocomplete
+                  v-model="data.maritalStatus"
+                  :items="maritalStatusRef"
+                  :item-text="item => `${item.text}`"
+                  :rules="rules.required"
+                  label="Marital Status"
+                  item-value="value"
                   class="mt-0"
-                  label="Email"
-                ></v-text-field>
+                  required
+                ></v-autocomplete>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
-                <v-text-field
-                  v-model="data.refNo"
+                <v-autocomplete
+                  v-model="data.religion"
+                  :items="religionRef"
+                  :item-text="item => `${item.text}`"
+                  :rules="rules.required"
+                  label="Religion"
+                  item-value="value"
                   class="mt-0"
-                  label="Ref. No."
-                ></v-text-field>
+                  required
+                ></v-autocomplete>
               </v-col>
             </v-row>
+
+            <v-row no-gutters>
+              <v-col cols="12" md="6" class="pr-md-3">
+                <v-autocomplete
+                  v-model="data.type"
+                  :items="employeeTypeRef"
+                  :item-text="item => `${item.text}`"
+                  :rules="rules.required"
+                  label="Employee Type"
+                  item-value="value"
+                  class="mt-0"
+                  required
+                ></v-autocomplete>
+              </v-col>
+              <v-col cols="12" md="6" class="pl-md-3">
+                &nbsp;
+              </v-col>
+            </v-row>
+
           </v-container>
         </v-form>
       </v-card-text>
@@ -297,34 +382,38 @@ export default {
 
   data: () => ({
     main: true,
+    menu: {
+      calBirthDate: false
+    },
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Code', value: 'code', divider: true, width: '150' },
         { text: 'Initial', value: 'initial', divider: true, width: '150' },
-        { text: 'Name', value: 'name', divider: true, width: '200' },
-        { text: 'Type', value: 'typeName', divider: true, width: '180' },
-        { text: 'Address', value: 'address1', divider: true, width: '200' },
+        { text: 'First Name', value: 'firstName', divider: true, width: '200' },
+        { text: 'Last Name', value: 'lastName', divider: true, width: '200' },
+        { text: 'Gender', value: 'sex', divider: true, width: '60' },
+        { text: 'Address', value: 'address1', divider: true, width: '250' },
         { text: 'Phone', value: 'phone', divider: true, width: '120' },
-        { text: 'Email', value: 'email', divider: true, width: '90' },
+        { text: 'Employee Type', value: 'type', divider: true, width: '60' },
         { text: 'Status', value: 'isActive', width: '90' }
       ],
       data: [],
       options: {
-        sortBy: ['code'],
+        sortBy: ['initial'],
         sortDesc: [false]
       },
       total: 0,
       search: null
     },
     valid: false,
-    types: [],
+    employeeTypeRef: [{text: 'Employee', value: 1}, {text: 'Salesman', value: 2}, {text: 'Driver', value: 3}],
+    maritalStatusRef: [{text: 'Single', value: 1}, {text: 'Married', value: 2}, {text: 'Divorced', value: 3}],
+    religionRef: [{text: 'Islam', value: 1}, {text: 'Protestant', value: 2}, {text: 'Catholic', value: 3}, {text: 'Buddha', value: 4}, {text: 'Hindu', value: 5}, {text: 'Konghucu', value: 6}, {text: 'Others', value: 7}],
     data: {}
   }),
 
   created: function () {
     this.getList()
-    this.getTypesList()
   },
 
   mounted: function () {
@@ -347,23 +436,30 @@ export default {
       gridDefOpts: state => state.app.grid,
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint
-    })  
+    }),
+    formatBirthDate() {
+      return this.data.birthDate ? format(parseISO(this.data.birthDate), 'dd-MMM-yyyy') : ''
+    }
   },
   
   methods:{
     reset(resetValidation = true) {
       this.data = {
         action: '',
-        code: null,
+        id: 0,
         initial: null,
-        name: null,
-        typeId: null,
+        firstName: null,
+        lastName: null,
+        sex: true,
+        birthDate: null,
+        birthPlace: null,
+        maritalStatus: null,
+        identityCardNo: null,
+        religion: null,
         address1: null,
         address2: null,
-        email: null,
         phone: null,
-        fax: null,
-        refNo: null
+        type: null
       }
 
       // Reset form validation
@@ -382,7 +478,7 @@ export default {
         })
       }
       
-      api.getAll(this.endpoint.general.supplier.supplier, {
+      api.getAll(this.endpoint.general.worker, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -394,22 +490,9 @@ export default {
           this.grid.data = response.data.tableData
           this.grid.total = response.data.rowCount
           if (bindToForm) {
-            const item = this.grid.data.find(h => h.code === this.data.code)
+            const item = this.grid.data.find(h => h.initial === this.data.initial)
             this.edit(item)
           }
-        })
-    },
-    getTypesList() {
-      api.getAll(`${this.endpoint.general.supplier.type}/lists`, {
-        params: {
-          sorts: JSON.stringify([{
-            field: 'initial',
-            direction: 'asc'
-          }])
-        }
-      })
-        .then(response => {
-          this.types = response.data.tableData
         })
     },
     back() {
@@ -446,7 +529,7 @@ export default {
           'Inactive?',
           'Are you sure want to inactive this data?')
       ) {
-        api.delete(this.endpoint.general.supplier.supplier, item.code)
+        api.delete(this.endpoint.general.worker, item.id)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -467,7 +550,7 @@ export default {
           isActive: true
         }
 
-        api.update(this.endpoint.general.supplier.supplier, this.data.code, this.data)
+        api.update(this.endpoint.general.worker, this.data.id, this.data)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -484,10 +567,10 @@ export default {
 
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
-        const resp = await api.create(this.endpoint.general.supplier.supplier, this.data)
+        const resp = await api.create(this.endpoint.general.worker, this.data)
         result = resp.data
       } else if (this.data.action === 'edit') {
-        const resp = await api.update(this.endpoint.general.supplier.supplier, this.data.code, this.data)
+        const resp = await api.update(this.endpoint.general.worker, this.data.initial, this.data)
         result = resp.data
       }
 
