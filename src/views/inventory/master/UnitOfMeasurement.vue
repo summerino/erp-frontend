@@ -488,7 +488,6 @@ export default {
         .then(response => {
           this.gridItem.data = response.data.tableData
           this.bindListItems(response.data.tableData)
-          console.log('this.gridItem.data', this.gridItem.data)
         })
 
       setTimeout(() => {
@@ -633,7 +632,6 @@ export default {
       return result
     },
     validateDetails() {
-      debugger
       let result = true
       const items = this.gridItem.data
       items.forEach(item => {
