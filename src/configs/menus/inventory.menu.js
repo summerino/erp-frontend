@@ -8,7 +8,8 @@ export default [
           { text: 'Group', link: 'item-group' }
         ]
       },
-      { text: 'Warehouse', link: 'warehouse' }
+      { text: 'Warehouse', link: 'warehouse' },
+      { text: 'Unit Of Measurement', link: 'unitofmeasurement' }
     ]
   },
   { icon: 'mdi-clipboard-edit-outline', text: 'Transaction', regex: /^\/inventory\/transaction/,

@@ -45,6 +45,7 @@
         :height="gridDefOpts.height"
         :items="grid.data"
         :items-per-page="gridDefOpts.pageSize"
+        :server-items-length="grid.total"
         :options.sync="grid.options"
         :sort-by="grid.options.sortBy"
         :sort-desc="grid.options.sortDesc"
@@ -97,12 +98,39 @@
           </v-tooltip>
         </template>
         <template v-slot:[`item.isActive`]="{ item }">
-          <v-icon v-if="item.isActive" color="green">mdi-toggle-switch-outline</v-icon>
-          <v-icon v-else color="red">mdi-toggle-switch-off-outline</v-icon>
+          <v-tooltip bottom>
+            <template v-if="item.isActive === true" v-slot:activator="{ on, attrs }">
+              <v-icon 
+                v-bind="attrs" 
+                v-on="on" 
+                color="green">mdi-toggle-switch-outline</v-icon>
+            </template>
+            <template v-else v-slot:activator="{ on, attrs }">
+              <v-icon
+                v-bind="attrs" 
+                v-on="on"
+                color="red">mdi-toggle-switch-off-outline</v-icon>
+            </template>
+            <span v-if="item.isActive === true" class="text-caption">Active</span>
+            <span v-else class="text-caption">Inactive</span>
+          </v-tooltip>
         </template>
         <template v-slot:[`item.isDefault`]="{ item }">
-          <v-icon v-if="item.isDefault" small color="blue darken-2">mdi-checkbox-marked-outline</v-icon>
-          <v-icon v-else small>mdi-checkbox-blank-outline</v-icon>
+          <v-tooltip bottom>
+            <template v-if="item.isDefault === true" v-slot:activator="{ on, attrs }">
+              <v-icon 
+                v-bind="attrs" 
+                v-on="on" 
+                color="blue darken-2">mdi-checkbox-marked-outline</v-icon>
+            </template>
+            <template v-else v-slot:activator="{ on, attrs }">
+              <v-icon
+                v-bind="attrs" 
+                v-on="on">mdi-checkbox-blank-outline</v-icon>
+            </template>
+            <span v-if="item.isDefault === true" class="text-caption">Yes</span>
+            <span v-else class="text-caption">No</span>
+          </v-tooltip>
         </template>
       </v-data-table>
     </v-card>
@@ -237,7 +265,7 @@
               <v-col cols="12" class="pr-md-3">
                 <v-checkbox
                   v-model="data.isDefault"
-                  label="Is Defalut"
+                  label="Default"
                   class="mt-0"
                 ></v-checkbox>
               </v-col>
@@ -273,7 +301,7 @@ export default {
         { text: 'Name', value: 'name', divider: true, width: '200' },
         { text: 'Address', value: 'address', divider: true, width: '200' },
         { text: 'Phone', value: 'phone', divider: true, width: '120' },
-        { text: 'Is Default', value: 'isDefault', divider: true, width: '120' },
+        { text: 'Default', value: 'isDefault', divider: true, width: '120' },
         { text: 'Status', value: 'isActive', width: '90' }
       ],
       data: [],
@@ -335,7 +363,7 @@ export default {
         }, 0)
       }
     },
-    getList(bindToForm = false) {
+    getList() {
       const sorts = []
       for (let i = 0; i < this.grid.options.sortBy.length; i++) {
         sorts.push({
@@ -354,11 +382,8 @@ export default {
       })
         .then(response => {
           this.grid.data = response.data.tableData
-          this.grid.total = response.data.rowCount
-          if (bindToForm) {
-            const item = this.grid.data.find(h => h.code === this.data.code)
-            this.edit(item)
-          }
+          this.grid.total = response.data.rowCount 
+          console.log(this.grid)         
         })
     },
     back() {
@@ -428,7 +453,7 @@ export default {
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
         return
-      }
+      }      
 
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
