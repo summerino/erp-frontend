@@ -45,6 +45,7 @@
         :height="gridDefOpts.height"
         :items="grid.data"
         :items-per-page="gridDefOpts.pageSize"
+        :server-items-length="grid.total"
         :options.sync="grid.options"
         :sort-by="grid.options.sortBy"
         :sort-desc="grid.options.sortDesc"
@@ -362,7 +363,7 @@ export default {
         }, 0)
       }
     },
-    getList(bindToForm = false) {
+    getList() {
       const sorts = []
       for (let i = 0; i < this.grid.options.sortBy.length; i++) {
         sorts.push({
@@ -381,11 +382,8 @@ export default {
       })
         .then(response => {
           this.grid.data = response.data.tableData
-          this.grid.total = response.data.rowCount
-          if (bindToForm) {
-            const item = this.grid.data.find(h => h.code === this.data.code)
-            this.edit(item)
-          }
+          this.grid.total = response.data.rowCount 
+          console.log(this.grid)         
         })
     },
     back() {
@@ -452,15 +450,10 @@ export default {
       }
     },
     async save() {
-      debugger
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
         return
-      }
-      if (!this.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
-        return
-      }
+      }      
 
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
