@@ -8,9 +8,12 @@ export default {
       type: 'customer-type'
     },
     salesman: 'salesman',
-    supplier: 'supplier',
+    supplier: {
+      supplier: 'supplier',
+      type: 'supplier-type'
+    },
     tax: 'tax',
-    worker: 'worker'
+    employee: 'employee'
   },
 
   inventory: {

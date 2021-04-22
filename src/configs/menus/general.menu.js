@@ -12,6 +12,11 @@ export default [
           { text: 'Supplier', link: 'supplier' },
           { text: 'Type', link: 'supplier-type' }
         ]
+      },
+      { text: 'Employee', regex: /^\/general\/employee/,
+        items: [
+          { text: 'Employee', link: 'employee' }
+        ]
       }
     ]
   }

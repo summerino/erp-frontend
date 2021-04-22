@@ -97,8 +97,8 @@
           </v-tooltip>
         </template>
         <template v-slot:[`item.isActive`]="{ item }">
-          <v-icon v-if="item.isActive" small color="green">mdi-toggle-switch</v-icon>
-          <v-icon v-else small color="red">mdi-toggle-switch-off</v-icon>
+          <v-icon v-if="item.isActive" color="green">mdi-toggle-switch-outline</v-icon>
+          <v-icon v-else color="red">mdi-toggle-switch-off-outline</v-icon>
         </template>
       </v-data-table>
     </v-card>
@@ -184,7 +184,8 @@
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-text-field
                   v-model="data.name"
-                  :rules="rules.required"
+                  :rules="[rules.required[0], rules.max50chars[0]]"
+                  :counter="50"
                   label="Name"
                   class="mt-0"
                   required
@@ -219,7 +220,6 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Id', value: 'id', divider: true, width: '50' },
         { text: 'Initial', value: 'initial', divider: true, width: '150' },
         { text: 'Name', value: 'name', divider: true, width: '200' },
         { text: 'Status', value: 'isActive', width: '90' }
@@ -271,7 +271,6 @@ export default {
     reset(resetValidation = true) {
       this.data = {
         action: '',
-        id: null,
         initial: null,
         name: null,
         isActive: true
