@@ -33,4 +33,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/general/tax',
+  name: 'tax',
+  component: () => import(/* webpackChunkName: "general-tax" */ '@/views/general/Tax.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
