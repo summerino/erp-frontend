@@ -22,7 +22,14 @@ export default [{
 }, {
   path: '/inventory/master/warehouse',
   name: 'warehouse',
-  component: () => import(/* webpackChunkName: "inventory-master-warehouse" */ '@/views/inventory/master/Warehouse.vue'),
+  component: () => import('@/views/inventory/master/Warehouse.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/inventory/master/unitofmeasurement',
+  name: 'unitofmeasurement',
+  component: () => import('@/views/inventory/master/UnitOfMeasurement.vue'),
   meta: {
     authRequired: true
   }
