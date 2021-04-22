@@ -17,6 +17,11 @@ export default [
         items: [
           { text: 'Employee', link: 'employee' }
         ]
+      },
+      { text: 'Tax', regex: /^\/general\/tax/,
+        items: [
+          { text: 'Tax', link: 'tax' }
+        ]
       }
     ]
   }

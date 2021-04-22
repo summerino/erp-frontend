@@ -1,5 +1,8 @@
 export default {
   master: 'master',
+  accounting:{
+    coa: 'coa'
+  },
   
   general: {
     currency: 'currency',
