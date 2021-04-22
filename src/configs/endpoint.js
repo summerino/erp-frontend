@@ -1,8 +1,5 @@
 export default {
   master: 'master',
-  accounting:{
-    coa: 'coa'
-  },
   
   general: {
     currency: 'currency',
@@ -43,5 +40,9 @@ export default {
     order: 'sales-order',
     delivery: 'sales-delivery',
     invoice: 'sales-invoice'
+  },
+
+  accounting: {
+    coa: 'coa'
   }
 }

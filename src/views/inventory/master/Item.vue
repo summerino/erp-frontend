@@ -857,7 +857,7 @@ export default {
           filters: JSON.stringify([{
             field: 'typeid',
             operator: 'equal',
-            keyword: 1
+            keyword: 2
           }]),
           sorts: JSON.stringify([{
             field: 'initial',
@@ -878,7 +878,7 @@ export default {
           filters: JSON.stringify([{
             field: 'typeid',
             operator: 'equal',
-            keyword: 0
+            keyword: 1
           }]),
           sorts: JSON.stringify([{
             field: 'initial',

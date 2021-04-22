@@ -13,16 +13,8 @@ export default [
           { text: 'Type', link: 'supplier-type' }
         ]
       },
-      { text: 'Employee', regex: /^\/general\/employee/,
-        items: [
-          { text: 'Employee', link: 'employee' }
-        ]
-      },
-      { text: 'Tax', regex: /^\/general\/tax/,
-        items: [
-          { text: 'Tax', link: 'tax' }
-        ]
-      }
+      { text: 'Employee', link: 'employee' },
+      { text: 'Tax', link: 'tax' }
     ]
   }
 ]

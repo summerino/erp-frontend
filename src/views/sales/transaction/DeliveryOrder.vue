@@ -778,7 +778,7 @@ export default {
           filters: JSON.stringify([{
             field: 'typeId',
             operator: 'equal',
-            keyword: 1
+            keyword: 2
           }, {
             field: 'isActive',
             operator: 'EQUAL',
