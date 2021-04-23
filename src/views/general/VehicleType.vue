@@ -96,11 +96,6 @@
             <span v-else>Reactivate</span>
           </v-tooltip>
         </template>
-        <template v-slot:[`item.typeId`]="{ item }">
-          <span v-if="item.typeId == 1">Tax In</span>
-          <span v-else-if="item.typeId == 2">Tax Out</span>
-          <span v-else-if="item.typeId == 3">PPh</span>
-        </template>
         <template v-slot:[`item.isActive`]="{ item }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -124,14 +119,14 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="6">
-            <span>Tax {{ data.action | capitalize }}</span>
+            <span>Vehicle Type {{ data.action | capitalize }}</span>
           </v-col>
           <v-col cols="12" md="6" class="text-right">
             <label
               v-if="data.action == 'edit'"
               class="text-caption mr-1"
             >
-              Last Updated: {{ data.updatedDate }} by {{ data.updatedInitial }}
+              Last Updated: {{ data.updatedDate }} by {{ data.updatedBy }}
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -209,45 +204,7 @@
                 ></v-text-field>
               </v-col>
             </v-row>
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
-                <v-autocomplete
-                  v-model="data.typeId"
-                  :items="types"
-                  :item-text="item => `${item.value}`"
-                  label="Type"
-                  item-value="id"
-                  class="mt-0"
-                ></v-autocomplete>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-text-field
-                  v-model="data.rate"
-                  label="Rate"
-                  suffix="%"
-                  class="mt-0"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
-                <v-autocomplete
-                  v-model="data.coaCode"
-                  :items="coas"
-                  :item-text="item => `${item.code} - ${item.name}`"
-                  label="COA"
-                  item-value="code"
-                  class="mt-0"
-                ></v-autocomplete>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-text-field
-                  v-model="data.seq"
-                  label="Seq"
-                  class="mt-0"
-                ></v-text-field>
-              </v-col>
-            </v-row>
+
           </v-container>
         </v-form>
       </v-card-text>
@@ -277,9 +234,6 @@ export default {
         { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'Initial', value: 'initial', divider: true, width: '150' },
         { text: 'Name', value: 'name', divider: true, width: '200' },
-        { text: 'Type', value: 'typeId', divider: true, width: '180' },
-        { text: 'COA', value: 'coaName', divider: true, width: '180' },
-        { text: 'Rate', value: 'rate', divider: true, width: '150' },
         { text: 'Status', value: 'isActive', width: '90' }
       ],
       data: [],
@@ -291,18 +245,12 @@ export default {
       search: null
     },
     valid: false,
-    types: [
-      { id: 1, value:'Tax In' },
-      { id: 2, value:'Tax Out' },
-      { id: 3, value:'PPh' }
-    ],
-    coas: [],
+    types: [],
     data: {}
   }),
 
   created: function () {
     this.getList()
-    this.getTypesList()
   },
 
   mounted: function () {
@@ -337,12 +285,7 @@ export default {
         action: '',
         initial: null,
         name: null,
-        typeId: 0,
-        rate: 0,
-        coaCode: null,
-        seq: 0,
-        isActive: true,
-        updatedInitial: null
+        isActive: true
       }
 
       // Reset form validation
@@ -361,7 +304,7 @@ export default {
         })
       }
       
-      api.getAll(this.endpoint.general.tax, {
+      api.getAll(this.endpoint.general.vehicle.type, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -376,27 +319,6 @@ export default {
             const item = this.grid.data.find(h => h.id === this.data.id)
             this.edit(item)
           }
-        })
-    },
-    getTypesList() {
-      api.getAll(`${this.endpoint.accounting.coa}/lists`, {
-        filters: JSON.stringify([{
-          field: 'typeid',
-          operator: 'neq',
-          keyword: 2
-        },
-        {
-          field: 'lod',
-          operator: 'eq',
-          keyword: 5
-        }]),
-        sorts: JSON.stringify([{
-          field: 'code',
-          direction: 'asc'
-        }])
-      })
-        .then(response => {
-          this.coas = response.data.tableData
         })
     },
     back() {
@@ -433,7 +355,7 @@ export default {
           'Inactive?',
           'Are you sure want to inactive this data?')
       ) {
-        api.delete(this.endpoint.general.tax, item.id)
+        api.delete(this.endpoint.general.vehicle.type, item.id)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -454,7 +376,7 @@ export default {
           isActive: true
         }
 
-        api.update(this.endpoint.general.tax, this.data.id, this.data)
+        api.update(this.endpoint.general.vehicle.type, this.data.id, this.data)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -471,10 +393,10 @@ export default {
 
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
-        const resp = await api.create(this.endpoint.general.tax, this.data)
+        const resp = await api.create(this.endpoint.general.vehicle.type, this.data)
         result = resp.data
       } else if (this.data.action === 'edit') {
-        const resp = await api.update(this.endpoint.general.tax, this.data.id, this.data)
+        const resp = await api.update(this.endpoint.general.vehicle.type, this.data.id, this.data)
         result = resp.data
       }
 

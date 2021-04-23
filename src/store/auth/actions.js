@@ -21,7 +21,7 @@ const login = ({ commit }, payload) => {
 
           resolve(response)
         } else {
-          reject({ message: 'The username / password combination is invalid.' })
+          reject({ message: response.data.message })
         }
       })
       .catch(error => { reject(error) })

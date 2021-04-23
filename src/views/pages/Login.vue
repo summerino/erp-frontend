@@ -101,6 +101,7 @@ export default {
           this.isLoading = false
         })
         .catch(error => {
+          this.isLoading = false
           this.errorProvider = true
           this.errorProviderMessages = error.message || 'An error occured.'
         })

@@ -126,7 +126,7 @@
               v-if="data.action == 'edit'"
               class="text-caption mr-1"
             >
-              Last Updated: {{ data.updatedDate }} by {{ data.updatedBy }}
+              Last Updated: {{ data.updatedDate }} by {{ data.updatedInitial }}
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -321,7 +321,7 @@
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-text-field
                   v-model="data.refNo"
-                  :rules="max30chars"
+                  :rules="rules.max30chars"
                   :counter="30"
                   class="mt-0"
                   label="Ref. No."
@@ -330,7 +330,7 @@
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-text-field
                   v-model="data.notes"
-                  :rules="max256chars"
+                  :rules="rules.max256chars"
                   :counter="256"
                   class="mt-0"
                   label="Notes"
@@ -435,7 +435,8 @@ export default {
         creditLimit: 0,
         refNo: null,
         notes: null,
-        isActive: true
+        isActive: true,
+        updatedInitial: null
       }
 
       // Reset form validation

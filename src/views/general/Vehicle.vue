@@ -10,7 +10,7 @@
               label="Search..."
               class="font-weight-regular mt-0 pt-0"
               single-line
-              @keyup.enter="getList"
+              @keyup.enter="getList()"
             ></v-text-field>
           </v-col>
           <v-spacer></v-spacer>
@@ -96,11 +96,6 @@
             <span v-else>Reactivate</span>
           </v-tooltip>
         </template>
-        <template v-slot:[`item.typeId`]="{ item }">
-          <span v-if="item.typeId == 1">Tax In</span>
-          <span v-else-if="item.typeId == 2">Tax Out</span>
-          <span v-else-if="item.typeId == 3">PPh</span>
-        </template>
         <template v-slot:[`item.isActive`]="{ item }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -124,7 +119,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="6">
-            <span>Tax {{ data.action | capitalize }}</span>
+            <span>Vehicle {{ data.action | capitalize }}</span>
           </v-col>
           <v-col cols="12" md="6" class="text-right">
             <label
@@ -138,7 +133,7 @@
                 <v-btn
                   v-bind="attrs"
                   v-on="on"
-                  v-shortkey="['ctrl', 'enter']"
+                  v-shortkey="['ctrl', 's']"
                   color="blue darken-2"
                   class="font-weight-regular"
                   :disabled="isActive"
@@ -154,7 +149,7 @@
                   Save
                 </v-btn>
               </template>
-              <span class="text-caption">(Ctrl + Enter)</span>
+              <span class="text-caption">(Ctrl + S)</span>
             </v-tooltip>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -189,62 +184,80 @@
             <v-row no-gutters>
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-text-field
-                  ref="initial"
-                  v-model="data.initial"
+                  ref="vehicleNo"
+                  v-model="data.vehicleNo"
                   :rules="[rules.required[0], rules.max20chars[0]]"
                   :counter="20"
-                  label="Initial"
+                  label="Vehicle No."
                   class="mt-0"
                   required
                 ></v-text-field>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
-                <v-text-field
-                  v-model="data.name"
-                  :rules="[rules.required[0], rules.max50chars[0]]"
-                  :counter="50"
-                  label="Name"
-                  class="mt-0"
-                  required
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
                 <v-autocomplete
                   v-model="data.typeId"
                   :items="types"
-                  :item-text="item => `${item.value}`"
+                  :item-text="item => `${item.initial} - ${item.name}`"
+                  :rules="rules.required"
                   label="Type"
                   item-value="id"
                   class="mt-0"
+                  required
                 ></v-autocomplete>
+              </v-col>
+            </v-row>
+
+            <v-row no-gutters>
+              <v-col cols="12" md="6" class="pr-md-3">
+                <v-currency-field
+                  v-model="data.maxLoadVolume"
+                  :decimal-length="0"
+                  class="mt-0"
+                  label="Max Load Volume"
+                ></v-currency-field>
+              </v-col>
+              <v-col cols="12" md="6" class="pl-md-3">
+                <v-currency-field
+                  v-model="data.maxLoadWeight"
+                  :decimal-length="0"
+                  class="mt-0"
+                  label="Max Load Volume"
+                ></v-currency-field>
+              </v-col>
+            </v-row>
+
+            <v-row no-gutters>
+              <v-col cols="12" md="6" class="pr-md-3">
+                <v-text-field
+                  v-model="data.driverId"
+                  label="Driver Id"
+                  class="mt-0"
+                ></v-text-field>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-text-field
-                  v-model="data.rate"
-                  label="Rate"
-                  suffix="%"
+                  v-model="data.helperId1"
+                  label="Helper Id 1"
                   class="mt-0"
                 ></v-text-field>
               </v-col>
             </v-row>
+
             <v-row no-gutters>
               <v-col cols="12" md="6" class="pr-md-3">
-                <v-autocomplete
-                  v-model="data.coaCode"
-                  :items="coas"
-                  :item-text="item => `${item.code} - ${item.name}`"
-                  label="COA"
-                  item-value="code"
+                <v-text-field
+                  v-model="data.helperId2"
+                  label="Helper Id 2"
                   class="mt-0"
-                ></v-autocomplete>
+                ></v-text-field>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-text-field
-                  v-model="data.seq"
-                  label="Seq"
+                  v-model="data.notes"
+                  :rules="rules.max256chars"
+                  :counter="256"
                   class="mt-0"
+                  label="Notes"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -275,28 +288,25 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Initial', value: 'initial', divider: true, width: '150' },
-        { text: 'Name', value: 'name', divider: true, width: '200' },
-        { text: 'Type', value: 'typeId', divider: true, width: '180' },
-        { text: 'COA', value: 'coaName', divider: true, width: '180' },
-        { text: 'Rate', value: 'rate', divider: true, width: '150' },
+        { text: 'Vehicle No.', value: 'vehicleNo', divider: true, width: '150' },
+        { text: 'Type', value: 'typeName', divider: true, width: '150' },
+        { text: 'Max Load Volume', value: 'maxLoadVolume', divider: true, width: '90' },
+        { text: 'Max Load Weight', value: 'maxLoadWeight', divider: true, width: '90' },
+        { text: 'Driver Id', value: 'driverId', divider: true, width: '90' },
+        { text: 'Helper Id 1', value: 'helperId1', divider: true, width: '90' },
+        { text: 'Helper Id 2', value: 'helperId2', divider: true, width: '90' },
         { text: 'Status', value: 'isActive', width: '90' }
       ],
       data: [],
       options: {
-        sortBy: ['initial'],
+        sortBy: ['vehicleNo'],
         sortDesc: [false]
       },
       total: 0,
       search: null
     },
     valid: false,
-    types: [
-      { id: 1, value:'Tax In' },
-      { id: 2, value:'Tax Out' },
-      { id: 3, value:'PPh' }
-    ],
-    coas: [],
+    types: [],
     data: {}
   }),
 
@@ -335,12 +345,14 @@ export default {
     reset(resetValidation = true) {
       this.data = {
         action: '',
-        initial: null,
-        name: null,
-        typeId: 0,
-        rate: 0,
-        coaCode: null,
-        seq: 0,
+        vehicleNo: null,
+        typeId: null,
+        maxLoadVolume: 0.00,
+        maxLoadWeight: 0.00,
+        driverId: 0,
+        helperId1: 0,
+        helperId2: 0,
+        notes: null,
         isActive: true,
         updatedInitial: null
       }
@@ -361,7 +373,7 @@ export default {
         })
       }
       
-      api.getAll(this.endpoint.general.tax, {
+      api.getAll(this.endpoint.general.vehicle.vehicle, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -379,24 +391,16 @@ export default {
         })
     },
     getTypesList() {
-      api.getAll(`${this.endpoint.accounting.coa}/lists`, {
-        filters: JSON.stringify([{
-          field: 'typeid',
-          operator: 'neq',
-          keyword: 2
-        },
-        {
-          field: 'lod',
-          operator: 'eq',
-          keyword: 5
-        }]),
-        sorts: JSON.stringify([{
-          field: 'code',
-          direction: 'asc'
-        }])
+      api.getAll(`${this.endpoint.general.vehicle.type}/lists`, {
+        params: {
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }])
+        }
       })
         .then(response => {
-          this.coas = response.data.tableData
+          this.types = response.data.tableData
         })
     },
     back() {
@@ -408,8 +412,8 @@ export default {
       this.data.action = 'add'
 
       setTimeout(() => {
-        // Set focus to initial field
-        this.$refs.initial.focus()
+        // Set focus to vehicleNo field
+        this.$refs.vehicleNo.focus()
 
         // Validate form first
         this.$refs.form.validate()
@@ -433,7 +437,7 @@ export default {
           'Inactive?',
           'Are you sure want to inactive this data?')
       ) {
-        api.delete(this.endpoint.general.tax, item.id)
+        api.delete(this.endpoint.general.vehicle.vehicle, item.id)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -454,7 +458,7 @@ export default {
           isActive: true
         }
 
-        api.update(this.endpoint.general.tax, this.data.id, this.data)
+        api.update(this.endpoint.general.vehicle.vehicle, this.data.id, this.data)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -471,10 +475,10 @@ export default {
 
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
-        const resp = await api.create(this.endpoint.general.tax, this.data)
+        const resp = await api.create(this.endpoint.general.vehicle.vehicle, this.data)
         result = resp.data
       } else if (this.data.action === 'edit') {
-        const resp = await api.update(this.endpoint.general.tax, this.data.id, this.data)
+        const resp = await api.update(this.endpoint.general.vehicle.vehicle, this.data.id, this.data)
         result = resp.data
       }
 
