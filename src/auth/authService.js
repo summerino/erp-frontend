@@ -13,6 +13,11 @@ export default {
   },
 
   isAuthenticated() {
-    return true
+    const accessToken = localStorage.getItem('accessToken')
+    if (accessToken) {
+      return true
+    } else {
+      return false
+    }
   }
 }
