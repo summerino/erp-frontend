@@ -40,18 +40,4 @@ export default [{
   meta: {
     authRequired: true
   }
-}, {
-  path: '/general/vehicle',
-  name: 'vehicle',
-  component: () => import(/* webpackChunkName: "general-vehicle" */ '@/views/general/Vehicle.vue'),
-  meta: {
-    authRequired: true
-  }
-}, {
-  path: '/general/vehicle-type',
-  name: 'vehicle-type',
-  component: () => import(/* webpackChunkName: "general-vehicle-type" */ '@/views/general/VehicleType.vue'),
-  meta: {
-    authRequired: true
-  }
 }]
