@@ -126,7 +126,7 @@
               v-if="data.action == 'edit'"
               class="text-caption mr-1"
             >
-              Last Updated: {{ data.updatedDate }} by {{ data.updatedBy }}
+              Last Updated: {{ data.updatedDate }} by {{ data.updatedInitial }}
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -347,13 +347,14 @@ export default {
         action: '',
         vehicleNo: null,
         typeId: null,
-        maxLoadVolume: 0,
-        maxLoadWeight: 0,
-        driverId: null,
-        helperId1: null,
-        helperId2: null,
+        maxLoadVolume: 0.00,
+        maxLoadWeight: 0.00,
+        driverId: 0,
+        helperId1: 0,
+        helperId2: 0,
         notes: null,
-        isActive: true
+        isActive: true,
+        updatedInitial: null
       }
 
       // Reset form validation

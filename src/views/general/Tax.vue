@@ -131,7 +131,7 @@
               v-if="data.action == 'edit'"
               class="text-caption mr-1"
             >
-              Last Updated: {{ data.updatedDate }} by {{ data.updatedBy }}
+              Last Updated: {{ data.updatedDate }} by {{ data.updatedInitial }}
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -341,7 +341,8 @@ export default {
         rate: 0,
         coaCode: null,
         seq: 0,
-        isActive: true
+        isActive: true,
+        updatedInitial: null
       }
 
       // Reset form validation
@@ -396,8 +397,6 @@ export default {
       })
         .then(response => {
           this.coas = response.data.tableData
-          console.log(this.coas)
-          console.log(this.types)
         })
     },
     back() {
