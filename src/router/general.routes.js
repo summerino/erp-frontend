@@ -40,4 +40,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/general/currency',
+  name: 'currency',
+  component: () => import(/* webpackChunkName: "general-currency" */ '@/views/general/Currency.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
