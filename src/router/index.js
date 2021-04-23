@@ -8,6 +8,7 @@ import InventoryRoutes from './inventory.routes'
 import PurchaseRoutes from './purchase.routes'
 import SalesRoutes from './sales.routes'
 import UsersRoutes from './users.routes'
+import AccountingRoutes from './accounting.routes'
 
 Vue.use(Router)
 
@@ -24,6 +25,7 @@ export const routes = [{
 ...PurchaseRoutes,
 ...SalesRoutes,
 ...UsersRoutes,
+...AccountingRoutes,
 {
   path: '/blank',
   name: 'blank',
