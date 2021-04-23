@@ -34,16 +34,30 @@ export default [{
     authRequired: true
   }
 }, {
-  path: '/general/tax',
-  name: 'tax',
-  component: () => import(/* webpackChunkName: "general-tax" */ '@/views/general/Tax.vue'),
+  path: '/general/currency',
+  name: 'currency',
+  component: () => import(/* webpackChunkName: "general-currency" */ '@/views/general/Currency.vue'),
   meta: {
     authRequired: true
   }
 }, {
-  path: '/general/currency',
-  name: 'currency',
-  component: () => import(/* webpackChunkName: "general-currency" */ '@/views/general/Currency.vue'),
+  path: '/general/vehicle',
+  name: 'vehicle',
+  component: () => import(/* webpackChunkName: "general-vehicle" */ '@/views/general/Vehicle.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/general/vehicle-type',
+  name: 'vehicle-type',
+  component: () => import(/* webpackChunkName: "general-vehicle-type" */ '@/views/general/VehicleType.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/general/tax',
+  name: 'tax',
+  component: () => import(/* webpackChunkName: "general-tax" */ '@/views/general/Tax.vue'),
   meta: {
     authRequired: true
   }

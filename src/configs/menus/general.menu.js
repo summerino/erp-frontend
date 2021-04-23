@@ -14,12 +14,14 @@ export default [
         ]
       },
       { text: 'Employee', link: 'employee' },
-      { text: 'Tax', link: 'tax' },
-      { text: 'Currency', regex: /^\/general\/currency/,
+      { text: 'Currency', link: 'currency' },
+      { text: 'Vehicle', regex: /^\/general\/vehicle/,
         items: [
-          { text: 'Currency', link: 'currency' }
+          { text: 'Vehicle', link: 'vehicle' },
+          { text: 'Vehicle Type', link: 'vehicle-type' }
         ]
-      }
+      },
+      { text: 'Tax', link: 'tax' }
     ]
   }
 ]
