@@ -13,7 +13,11 @@ export default {
       type: 'supplier-type'
     },
     tax: 'tax',
-    employee: 'employee'
+    employee: 'employee',
+    vehicle: {
+      vehicle: 'vehicle',
+      type: 'vehicle-type'
+    }
   },
 
   inventory: {
