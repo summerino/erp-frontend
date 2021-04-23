@@ -892,25 +892,22 @@ export default {
         })
     },
     getCOATypeId2() {
-      api.getAll(this.endpoint.master, {
+      api.getAll(`${this.endpoint.accounting.coa}/lists`, {
         params: {
-          param: 'coa',
-          fieldNames: 'id,code,name,lod',
           filters: JSON.stringify([{
             field: 'typeid',
-            operator: 'not_equal',
+            operator: 'neq',
             keyword: 2
           },
           {
             field: 'lod',
-            operator: 'equal',
+            operator: 'eq',
             keyword: 5
           }]),
           sorts: JSON.stringify([{
             field: 'code',
             direction: 'asc'
-          }]),
-          includeMetaData: false
+          }])
         }
       })
         .then(response => {

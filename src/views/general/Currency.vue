@@ -10,7 +10,7 @@
               label="Search..."
               class="font-weight-regular mt-0 pt-0"
               single-line
-              @keyup.enter="getList"
+              @keyup.enter="getList()"
             ></v-text-field>
           </v-col>
           <v-spacer></v-spacer>
@@ -107,7 +107,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="6">
-            <span>Supplier Type {{ data.action | capitalize }}</span>
+            <span>Currency {{ data.action | capitalize }}</span>
           </v-col>
           <v-col cols="12" md="6" class="text-right">
             <label
@@ -121,10 +121,10 @@
                 <v-btn
                   v-bind="attrs"
                   v-on="on"
-                  v-shortkey="['ctrl', 'enter']"
+                  v-shortkey="['ctrl', 's']"
                   color="blue darken-2"
                   class="font-weight-regular"
-                  :disabled="isActive"
+                  :disabled="!isActive"
                   dark
                   small
                   tile
@@ -137,7 +137,7 @@
                   Save
                 </v-btn>
               </template>
-              <span class="text-caption">(Ctrl + Enter)</span>
+              <span class="text-caption">(Ctrl + S)</span>
             </v-tooltip>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -172,11 +172,9 @@
             <v-row no-gutters>
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-text-field
-                  ref="initial"
-                  v-model="data.initial"
-                  :rules="[rules.required[0], rules.max20chars[0]]"
-                  :counter="20"
-                  label="Initial"
+                  ref="code"
+                  v-model="data.code"
+                  label="Code"
                   class="mt-0"
                   required
                 ></v-text-field>
@@ -184,7 +182,8 @@
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-text-field
                   v-model="data.name"
-                  :rules="rules.required"
+                  :rules="[rules.required[0], rules.max50chars[0]]"
+                  :counter="50"
                   label="Name"
                   class="mt-0"
                   required
@@ -192,6 +191,28 @@
               </v-col>
             </v-row>
 
+            <v-row no-gutters>
+              <v-col cols="12" md="3" class="pr-md-3">
+                <v-autocomplete
+                  v-model="data.sortValue"
+                  :items="sortRef"
+                  :item-text="item => `${item.text}`"
+                  label="Sort"
+                  item-value="value"
+                  class="mt-0"
+                ></v-autocomplete>
+              </v-col>
+              <v-col cols="12" md="9" class="pl-md-3">
+                <v-autocomplete
+                  v-model="data.sort"
+                  :items="sortedCurrency"
+                  :item-text="item => `${item.code} - ${item.name}`"
+                  label="Currency"
+                  item-value="sort"
+                  class="mt-0"
+                ></v-autocomplete>
+              </v-col>
+            </v-row>
           </v-container>
         </v-form>
       </v-card-text>
@@ -218,22 +239,22 @@ export default {
     main: true,
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Id', value: 'id', divider: true, width: '50' },
-        { text: 'Initial', value: 'initial', divider: true, width: '150' },
+        { value: 'action', sortable: false, divider: true, width: '50' },
+        { text: 'Code', value: 'code', divider: true, width: '70' },
         { text: 'Name', value: 'name', divider: true, width: '200' },
         { text: 'Status', value: 'isActive', width: '90' }
       ],
       data: [],
       options: {
-        sortBy: ['initial'],
+        sortBy: ['code'],
         sortDesc: [false]
       },
       total: 0,
       search: null
     },
     valid: false,
-    types: [],
+    sortRef: [{ text: 'Place currency after', value: 1 }, { text: 'Place currency before', value: 2 }],
+    sortedCurrency: [],
     data: {}
   }),
 
@@ -263,7 +284,7 @@ export default {
       endpoint: state => state.api.endpoint
     }),
     isActive() {
-      return (!this.data.isActive)
+      return (this.data.isActive)
     }  
   },
   
@@ -271,9 +292,11 @@ export default {
     reset(resetValidation = true) {
       this.data = {
         action: '',
-        initial: null,
+        code: null,
         name: null,
-        isActive: true
+        sort: 0,
+        sortValue: 1,
+        isActive: null
       }
 
       // Reset form validation
@@ -292,7 +315,7 @@ export default {
         })
       }
       
-      api.getAll(this.endpoint.general.supplier.type, {
+      api.getAll(this.endpoint.general.currency, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -304,9 +327,27 @@ export default {
           this.grid.data = response.data.tableData
           this.grid.total = response.data.rowCount
           if (bindToForm) {
-            const item = this.grid.data.find(h => h.id === this.data.id)
+            const item = this.grid.data.find(h => h.code === this.data.code)
             this.edit(item)
           }
+        })
+    },
+    getCurrencyBySort() {
+      api.getAll(`${this.endpoint.general.currency}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'neq',
+            keyword: this.data.code
+          }]),
+          sorts: JSON.stringify([{
+            field: 'sort',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.sortedCurrency = response.data.tableData
         })
     },
     back() {
@@ -316,10 +357,13 @@ export default {
       this.main = false
       this.reset(false)
       this.data.action = 'add'
+      this.data.isActive = true
+
+      this.getCurrencyBySort()
 
       setTimeout(() => {
-        // Set focus to initial field
-        this.$refs.initial.focus()
+        // Set focus to code field
+        this.$refs.code.focus()
 
         // Validate form first
         this.$refs.form.validate()
@@ -334,8 +378,11 @@ export default {
       this.data = {
         ...item,
         action: 'edit',
+        sortValue: 1,
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
+
+      this.getCurrencyBySort()
     },
     async remove(item) {
       if (
@@ -343,7 +390,7 @@ export default {
           'Inactive?',
           'Are you sure want to inactive this data?')
       ) {
-        api.delete(this.endpoint.general.supplier.type, item.id)
+        api.delete(this.endpoint.general.currency, item.code)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -364,7 +411,7 @@ export default {
           isActive: true
         }
 
-        api.update(this.endpoint.general.supplier.type, this.data.id, this.data)
+        api.update(this.endpoint.general.currency, this.data.code, this.data)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -381,10 +428,10 @@ export default {
 
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
-        const resp = await api.create(this.endpoint.general.supplier.type, this.data)
+        const resp = await api.create(this.endpoint.general.currency, this.data)
         result = resp.data
       } else if (this.data.action === 'edit') {
-        const resp = await api.update(this.endpoint.general.supplier.type, this.data.id, this.data)
+        const resp = await api.update(this.endpoint.general.currency, this.data.code, this.data)
         result = resp.data
       }
 
