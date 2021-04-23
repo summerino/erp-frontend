@@ -390,7 +390,7 @@
                       <v-row no-gutters>
                         <v-col cols="6">
                           <v-text-field
-                            v-model="data.updatedBy"
+                            v-model="data.updatedInitial"
                             label="Updated By"
                             class="mt-0"
                             readonly

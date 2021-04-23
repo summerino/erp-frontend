@@ -684,7 +684,7 @@
                       transition="false"
                     >
                       <v-text-field
-                        v-model="data.updatedBy"
+                        v-model="data.updatedInitial"
                         label="Updated By"
                         class="mt-0"
                         readonly

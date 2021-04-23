@@ -383,7 +383,6 @@ export default {
         .then(response => {
           this.grid.data = response.data.tableData
           this.grid.total = response.data.rowCount 
-          console.log(this.grid)         
         })
     },
     back() {
