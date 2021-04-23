@@ -2,6 +2,7 @@ import menuGeneral from './menus/general.menu'
 import menuInventories from './menus/inventory.menu'
 import menuPurchases from './menus/purchase.menu'
 import menuSales from './menus/sales.menu'
+import menuAccounting from './menus/accounting.menu'
 
 export default {
   // main navigation - side menu
@@ -32,6 +33,10 @@ export default {
     {
       text: 'Sales',
       items: menuSales
+    },
+    {
+      text: 'Accounting',
+      items: menuAccounting
     }
   ]
 }

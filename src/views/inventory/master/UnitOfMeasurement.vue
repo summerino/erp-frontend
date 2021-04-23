@@ -129,7 +129,7 @@
           <v-btn icon dark @click="close">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Unnit Of Measurement</v-toolbar-title>
+          <v-toolbar-title>Unit Of Measurement</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-tooltip bottom>
