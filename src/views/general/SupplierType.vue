@@ -271,7 +271,6 @@ export default {
     reset(resetValidation = true) {
       this.data = {
         action: '',
-        id: null,
         initial: null,
         name: null,
         isActive: true
