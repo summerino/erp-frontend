@@ -340,7 +340,7 @@ export default {
         typeId: 0,
         rate: 0,
         coaCode: null,
-        seq: null,
+        seq: 0,
         isActive: true
       }
 
