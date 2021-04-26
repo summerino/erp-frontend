@@ -227,14 +227,16 @@ export default {
       this.$emit('onSave')
     },
     getListCurrencies() {      
-      api.getAll(`${this.endpoint.accounting.currencyRate}/getlistcurrencies`, {})
+      api.getAll(`${this.endpoint.general.currency}/lists`, {})
         .then(response => {
-          this.bindListCurrencies(response.data)        
+          this.bindListCurrenciesWithIgnoreIDR(response.data.tableData)        
         })
     },
-    bindListCurrencies(data) {
+    bindListCurrenciesWithIgnoreIDR(data) {
       data.forEach((item)  => {
-        this.listCurrencies.push(item.code)
+        if (item.code.toLowerCase() !== 'idr') {
+          this.listCurrencies.push(item.code)
+        }
       })
     },
     isDateValid() {

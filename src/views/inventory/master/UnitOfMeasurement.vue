@@ -523,7 +523,10 @@ export default {
         this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
         return
       }
-
+      if (this.validateIsHasDuplicateItem()) {
+        this.$store.dispatch('app/showInfo', 'Cannot add duplicate item.')
+        return
+      }
       let result = { success: false, message: '' }
       if (data.action === 'add') {
         const resp = await api.create(this.endpoint.inventory.uom.uom, data)
@@ -578,8 +581,15 @@ export default {
         this.$store.dispatch('app/showInfo', 'Cannot add item, base unit is empty')
         return
       }
-      if (this.validateLastRecord()) this.addNewItem()
-      else this.$store.dispatch('app/showInfo', 'Conversion or Unit Equivalent in the last item cannot be zero or is empty.')
+      if (!this.validateLastRecord()) {
+        this.$store.dispatch('app/showInfo', 'Conversion or Unit Equivalent in the last item cannot be zero or is empty.')
+        return
+      }      
+      if (this.validateIsHasDuplicateItem()) {
+        this.$store.dispatch('app/showInfo', 'Cannot add duplicate item.')
+        return
+      }
+      this.addNewItem()
     },
     async removeItem(item) {
       if (
@@ -636,6 +646,15 @@ export default {
       const items = this.gridItem.data
       items.forEach(item => {
         if (item.conversion === 0 || !item.unitEquivalent) result = false
+      }) 
+      return result
+    },
+    validateIsHasDuplicateItem() {
+      let result = false
+      const items = this.gridItem.data
+      const lastItem = items[items.length - 1]
+      items.forEach(item => {
+        if (item.conversion === lastItem.conversion && item.unitEquivalent === lastItem.unitEquivalent) result = true
       }) 
       return result
     }
