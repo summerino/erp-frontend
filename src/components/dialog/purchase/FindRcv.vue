@@ -129,7 +129,8 @@ import api from '@/services/axios.service'
 
 export default {
   props: {
-    poCode: String
+    poCode: String,
+    markExclude: String
   },
 
   data() {
@@ -190,22 +191,27 @@ export default {
       this.dialog = false
     },
     search() {
+      const filters = [{
+        field: this.data.by,
+        operator: this.data.by === 'date' ? 'eq' : 'contains',
+        keyword: this.data.value
+      }, {
+        field: 'mark',
+        operator: 'doesnotcontain',
+        keyword: this.markExclude
+      }]
+
+      if (this.poCode) {
+        filters.push({
+          field: 'poCode',
+          operator: 'eq',
+          keyword: this.poCode
+        })
+      }
+
       api.getAll(this.endpoint.purchase.receive, {
         params: {
-          poCode: this.poCode,
-          filters: JSON.stringify([{
-            field: this.data.by,
-            operator: this.data.by === 'date' ? 'eq' : 'contains',
-            keyword: this.data.value
-          }, {
-            field: 'poCode',
-            operator: 'eq',
-            keyword: this.poCode
-          }, {
-            field: 'mark',
-            operator: 'doesnotcontain',
-            keyword: ['V', 'INV']
-          }]),
+          filters: JSON.stringify(filters),
           sorts: JSON.stringify([{
             field: this.data.by,
             direction: 'asc'
@@ -224,7 +230,9 @@ export default {
       this.$refs.search.focus()
     },
     dblclickRow(event, { item }) {
-      this.rowItem.rcvCode = item.code
+      if (this.rowItem) {
+        this.rowItem.rcvCode = item.code
+      }
       this.$emit('dblclick:row', this.rowItem, item)
       this.dialog = false
     }

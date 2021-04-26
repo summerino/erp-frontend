@@ -626,6 +626,7 @@
     <find-rcv
       ref="findRcv"
       :po-code="data.poCode"
+      :mark-exclude="['V', 'INV']"
       @dblclick:row="bindRcvData"
     ></find-rcv>
   </div>

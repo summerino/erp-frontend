@@ -483,7 +483,7 @@ export default {
 
       // Get item details
       api.getAll(`${this.endpoint.inventory.uom.uom}/item`, {
-        params: { id: item.id }
+        params: { uomId: item.id }
       })
         .then(response => {
           this.gridItem.data = response.data.tableData

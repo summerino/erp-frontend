@@ -914,7 +914,7 @@ export default {
     },
     addItem() {
       if (!this.data.poCode) {
-        this.$store.dispatch('app/showInfo', 'Please choose purchase order first.')
+        this.$store.dispatch('app/showInfo', 'Please input purchase order first.')
         return
       }
 
