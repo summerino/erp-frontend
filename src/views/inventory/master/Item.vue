@@ -207,6 +207,8 @@
                           v-model="data.initial"
                           label="Initial"
                           class="mt-0"
+                          :rules="[rules.required[0], rules.max20chars[0]]"
+                          required
                         ></v-text-field>
                       </v-col>
                     </v-row>
@@ -218,6 +220,8 @@
                           v-model="data.name"
                           label="Name"
                           class="mt-0"
+                          :rules="[rules.required[0], rules.max50chars[0]]"
+                          required
                         ></v-text-field>
                       </v-col>
                     </v-row>
@@ -231,6 +235,8 @@
                             label="Category"
                             item-value="id"
                             class="mt-0"
+                            :rules="rules.required"
+                            required
                           ></v-autocomplete>
                       </v-col>
                     </v-row>
@@ -798,7 +804,7 @@ export default {
           filters: JSON.stringify([{
             field: 'uomid',
             operator: 'equal',
-            keyword: this.data.uomId
+            keyword: (this.data.uomId === null) ? 0 : this.data.uomId
           }]),
           sorts: JSON.stringify([{
             field: 'unittoconvert',
@@ -965,7 +971,10 @@ export default {
       }
     },
     async save(closeDialog) {
-      if (!this.dialog.add) return
+      if (!this.$refs.form.validate()) {
+        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        return
+      }
 
       const data = this.data
       let result = { success: false, message: '' }
