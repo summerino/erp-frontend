@@ -226,11 +226,23 @@ export default {
     onSave() {
       this.$emit('onSave')
     },
-    getListCurrencies() {      
-      api.getAll(`${this.endpoint.accounting.currencyRate}/getlistcurrencies`, {})
+    getListCurrencies() { 
+      api.getAll(`${this.endpoint.general.currency}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'neq',
+            keyword: 'idr'
+          }]),
+          sorts: JSON.stringify([{
+            field: 'sort',
+            direction: 'asc'
+          }])
+        }
+      })
         .then(response => {
-          this.bindListCurrencies(response.data)        
-        })
+          this.bindListCurrencies(response.data.tableData)        
+        })     
     },
     bindListCurrencies(data) {
       data.forEach((item)  => {

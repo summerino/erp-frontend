@@ -523,7 +523,10 @@ export default {
         this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
         return
       }
-
+      if (this.validateIsHasDuplicateItem()) {
+        this.$store.dispatch('app/showInfo', 'Cannot add duplicate item.')
+        return
+      }
       let result = { success: false, message: '' }
       if (data.action === 'add') {
         const resp = await api.create(this.endpoint.inventory.uom.uom, data)
@@ -578,8 +581,11 @@ export default {
         this.$store.dispatch('app/showInfo', 'Cannot add item, base unit is empty')
         return
       }
-      if (this.validateLastRecord()) this.addNewItem()
-      else this.$store.dispatch('app/showInfo', 'Conversion or Unit Equivalent in the last item cannot be zero or is empty.')
+      // if (!this.validateLastRecord()) {
+      //   this.$store.dispatch('app/showInfo', 'Conversion or Unit Equivalent in the last item cannot be zero or is empty.')
+      //   return
+      // }      
+      this.addNewItem()
     },
     async removeItem(item) {
       if (
@@ -628,6 +634,9 @@ export default {
       const lastItem = this.gridItem.data[this.gridItem.data.length - 1]
       if (lastItem.conversion === 0 || !lastItem.conversion || !lastItem.unitEquivalent) {
         result = false
+      }
+      if (this.validateLastItemIfDuplicate(lastItem)) {
+        result = false
       } 
       return result
     },
@@ -638,6 +647,27 @@ export default {
         if (item.conversion === 0 || !item.unitEquivalent) result = false
       }) 
       return result
+    },
+    validateLastItemIfDuplicate(data) {
+      let result = false
+      const items = this.gridItem.data
+      items.forEach(item => {
+        if (item.conversion === data.conversion && item.unitEquivalent === data.unitEquivalent) result = true
+      }) 
+      return result
+    },
+    validateIsHasDuplicateItem() {
+      const items = this.gridItem.data
+      for (let i = 0; i < items.length; i++) {
+        const currentItem = items[i]
+        const listToCompare = items.filter((_, index) => index !== i)
+        listToCompare.forEach(data => {
+          if (data.conversion === currentItem.conversion && data.unitEquivalent === currentItem.unitEquivalent) {
+            return true
+          }
+        }) 
+      }
+      return false
     }
   }
 }

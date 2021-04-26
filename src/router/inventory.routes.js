@@ -33,4 +33,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/inventory/transaction/multiple-adjustment',
+  name: 'multiple-adjustment',
+  component: () => import(/* webpackChunkName: "inventory-transaction-multiple-adjustment" */ '@/views/inventory/transaction/MultipleAdjustment.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
