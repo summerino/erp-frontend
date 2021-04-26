@@ -226,17 +226,27 @@ export default {
     onSave() {
       this.$emit('onSave')
     },
-    getListCurrencies() {      
-      api.getAll(`${this.endpoint.general.currency}/lists`, {})
-        .then(response => {
-          this.bindListCurrenciesWithIgnoreIDR(response.data.tableData)        
-        })
-    },
-    bindListCurrenciesWithIgnoreIDR(data) {
-      data.forEach((item)  => {
-        if (item.code.toLowerCase() !== 'idr') {
-          this.listCurrencies.push(item.code)
+    getListCurrencies() { 
+      api.getAll(`${this.endpoint.general.currency}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'neq',
+            keyword: 'idr'
+          }]),
+          sorts: JSON.stringify([{
+            field: 'sort',
+            direction: 'asc'
+          }])
         }
+      })
+        .then(response => {
+          this.bindListCurrencies(response.data.tableData)        
+        })     
+    },
+    bindListCurrencies(data) {
+      data.forEach((item)  => {
+        this.listCurrencies.push(item.code)
       })
     },
     isDateValid() {
