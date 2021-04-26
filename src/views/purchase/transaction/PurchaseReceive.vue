@@ -1063,12 +1063,12 @@ export default {
         this.data.supName = item.supName
         this.data.currCode = item.currCode
         this.data.rate = item.rate
-        this.data.dpp = item.dpp
-        this.data.subTotal = item.subTotal
+        // this.data.dpp = item.dpp
+        // this.data.subTotal = item.subTotal
         this.data.finalDisc = item.finalDisc
         this.data.includeTax = item.includeTax
         this.data.taxAmount = item.taxAmount
-        this.data.total = item.total
+        // this.data.total = item.total
 
         // Get supplier details
         this.bindSupData(this.data)
@@ -1088,10 +1088,17 @@ export default {
               this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
               this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyRcv
               this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
+              this.gridItem.data[i].totDPP = this.gridItem.data[i].qty * this.gridItem.data[i].nettPrice
+              this.gridItem.data[i].total = this.gridItem.data[i].qty * this.gridItem.data[i].nettPrice
               this.gridItem.data[i].warehouseCode = item.warehouseCode
               this.gridItem.data[i].typeName = 'Normal'
             }
           })
+        for (let i = 0; i < this.gridItem.data.length; i++) {
+          this.data.dpp = this.data.dpp + this.gridItem.data[i].totDPP
+          this.data.subTotal = this.data.subTotal + this.gridItem.data[i].total
+          this.data.total = this.data.total + this.gridItem.data[i].total
+        }
       } else {
         this.data.supCode = null
         this.data.supName = null
