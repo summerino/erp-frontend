@@ -130,7 +130,10 @@ import api from '@/services/axios.service'
 export default {
   props: {
     poCode: String,
-    markExclude: String
+    MarkExclude: {
+      type: Array,
+      required: true
+    }
   },
 
   data() {
