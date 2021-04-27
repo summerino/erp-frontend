@@ -1100,21 +1100,8 @@ export default {
         })
     },
     getUnitItemLists(item) {
-      api.getAll(this.endpoint.master, {
-        params: {
-          param: 'uomConversion',
-          fieldNames: 'id,uomId,unitToConvert,unitEquivalent,conversion,isBaseUnit,seq',
-          filters: JSON.stringify([{
-            field: 'uomId',
-            operator: 'equal',
-            keyword: item.uomId
-          }]),
-          sorts: JSON.stringify([{
-            field: 'seq',
-            direction: 'asc'
-          }]),
-          includeMetaData: false
-        }
+      api.getAll(`${this.endpoint.inventory.uom.uom}/item`, {
+        params: { uomId: item.uomId }
       })
         .then(response => {
           item.units = response.data.tableData
@@ -1356,7 +1343,7 @@ export default {
           this.calcUomConversion(seqSmaller, item, data.unitToConvert)
         }
       } else {
-        const data = item.units.find(u => u.unitToConvert === unitCode && u.unitToConvert !== u.unitEquivalent)
+        const data = item.units.find(u => u.unitToConvert === unitCode && !u.isBaseUnit)
         item.uomConversion *= data.conversion
         
         if (data.unitEquivalent !== item.oldUnitName) {
