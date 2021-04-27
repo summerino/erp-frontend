@@ -49,5 +49,8 @@ export default {
   accounting: {
     coa: 'coa',
     currencyRate: 'currency-rate'
+  },
+  systemManagement:{
+    user: 'user'
   }
 }
