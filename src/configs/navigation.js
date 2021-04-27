@@ -3,6 +3,7 @@ import menuInventories from './menus/inventory.menu'
 import menuPurchases from './menus/purchase.menu'
 import menuSales from './menus/sales.menu'
 import menuAccounting from './menus/accounting.menu'
+import menuSystemManagement from './menus/systemmanagement.menu'
 
 export default {
   // main navigation - side menu
@@ -37,6 +38,10 @@ export default {
     {
       text: 'Accounting',
       items: menuAccounting
+    },
+    {
+      text: 'System Management',
+      items: menuSystemManagement
     }
   ]
 }
