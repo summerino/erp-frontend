@@ -657,17 +657,17 @@ export default {
       return result
     },
     validateIsHasDuplicateItem() {
+      let result = false
       const items = this.gridItem.data
       for (let i = 0; i < items.length; i++) {
         const currentItem = items[i]
         const listToCompare = items.filter((_, index) => index !== i)
-        listToCompare.forEach(data => {
-          if (data.conversion === currentItem.conversion && data.unitEquivalent === currentItem.unitEquivalent) {
-            return true
-          }
-        }) 
+        const isExist = listToCompare.filter((data) => {
+          return data.conversion === currentItem.conversion && data.unitEquivalent.toLowerCase() === currentItem.unitEquivalent.toLowerCase()
+        }).length > 0
+        if (isExist) result = true
       }
-      return false
+      return result
     }
   }
 }
