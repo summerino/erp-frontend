@@ -704,6 +704,7 @@ export default {
         rate: 1,
         dpp: 0,
         subTotal: 0,
+        finalDiscPercent: 0,
         finalDisc: 0,
         taxAmount: 0,
         total: 0
@@ -928,13 +929,20 @@ export default {
           outstandingQty: 0,
           qty: 1,
           uomId: null,
+          oldUnitId: null,
+          oldUnitName: null,
+          oldUnitPrice: 0,
           unitId: null,
           unitName: null,
           unitPrice: 0,
-          itemBuyPrice: 0,
           disc: 0,
+          taxId: null,
+          taxAmount: 0,
           nettPrice: 0,
           total: 0,
+          dpp: 0,
+          totTax: 0,
+          totDPP: 0,
           warehouseCode: null,
           type: 1,
           typeName: 'Bonus',
@@ -994,26 +1002,25 @@ export default {
         item.weightMeasurement = data_i.weightMeasurement
         item.uomId = data_i.uomId
         item.oldUnitId = data_i.uomBuyId
-        item.oldUnitName = data_i.uomBuyName
-        item.oldUnitPrice = data_i.buyPrice
+        // item.oldUnitName = data_i.uomBuyName
+        // item.oldUnitPrice = data_i.buyPrice
         item.unitId = data_i.uomBuyId
-        item.unitName = data_i.uomBuyName
-        item.unitPrice = data_i.buyPrice
-        item.itemBuyPrice = data_i.buyPrice
-        item.disc = 0
-        item.taxId = data_i.purchaseTaxId
-        item.taxAmount = 0
-        item.nettPrice = data_i.buyPrice
-        item.total = data_i.buyPrice
-        item.dpp = data_i.buyPrice
-        item.totTax = 0
-        item.totDPP = data_i.buyPrice
+        // item.unitName = data_i.uomBuyName
+        // item.unitPrice = data_i.buyPrice
+        // item.disc = 0
+        // item.taxId = data_i.purchaseTaxId
+        // item.taxAmount = 0
+        // item.nettPrice = data_i.buyPrice
+        // item.total = data_i.buyPrice
+        // item.dpp = data_i.buyPrice
+        // item.totTax = 0
+        // item.totDPP = data_i.buyPrice
         if (item.state !== 'A') {
           item.state = 'M'
         }
 
         // Calc unit item lists
-        this.calcItemPrice(item)
+        // this.calcItemPrice(item)
       }
     },
     calcItemTax(item) {
@@ -1105,6 +1112,7 @@ export default {
         this.data.supFax = null
         this.data.dpp = 0
         this.data.subTotal = 0
+        this.data.finalDiscPercent = 0
         this.data.finalDisc = 0
         this.data.taxAmount = 0
         this.data.total = 0
