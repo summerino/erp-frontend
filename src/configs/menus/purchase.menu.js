@@ -10,7 +10,8 @@ export default [
           { text: 'Order', link: 'purchase-order' },
           { text: 'Receive', link: 'purchase-receive' },
           { text: 'Invoice', link: 'purchase-invoice' },
-          { text: 'Return', link: 'purchase-return' }
+          { text: 'Return', link: 'purchase-return' },
+          { text: 'Return W/O Doc.', link: 'purchase-return-wo-doc' }
         ]
       }
     ]

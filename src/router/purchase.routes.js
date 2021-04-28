@@ -26,4 +26,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/purchase/transaction/purchase-return-wo-doc',
+  name: 'purchase-return-wo-doc',
+  component: () => import(/* webpackChunkName: "purchase-trans-return-wo-doc" */ '@/views/purchase/transaction/PurchaseReturnNoDoc.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
