@@ -4,7 +4,7 @@ import axiosJsonServer from '@/axios.jsonserver'
 
 import './category'
 
-mock.onGet(`/api/${endpoint.general.customer}`).reply(async (config) => {
+mock.onGet(`/api/${endpoint.general.customer.customer}`).reply(async (config) => {
   var searchBy = ''
   var searchOp = ''
   var search = ''
