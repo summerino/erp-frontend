@@ -7,9 +7,12 @@ Vue.filter('formatCurrency', formatCurrency)
  * Returns the currency formatted accordingly
  */
 export function formatCurrency(value, currency) {
-  currency = currency || store.state.app.currency
+  const options = {
+    ...store.state.app.currency,
+    ...currency
+  }
 
-  return formatPrice(value, currency)
+  return formatPrice(value, options)
 }
 
 /**
