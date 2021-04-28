@@ -476,6 +476,7 @@
                               item-text="initial"
                               item-value="id"
                               class="text-body-2 mt-0"
+                              dense
                               required
                               @change="itemIdChange(item)"
                             >
@@ -500,6 +501,7 @@
                               :decimal-length="0"
                               :readonly="hasRelatedTrans"
                               class="text-body-2 text-right mt-0"
+                              dense
                               @change="calcItemPrice(item)"
                             ></v-currency-field>
                           </template>
@@ -511,6 +513,7 @@
                               item-text="initial"
                               item-value="code"
                               class="text-body-2 text-right mt-0"
+                              dense
                               required
                             ></v-autocomplete>
                           </template>
@@ -800,12 +803,6 @@ export default {
     getWarehouseLists() {
       api.getAll(`${this.endpoint.inventory.warehouse}/lists`, {
         params: {
-          skip: 0, take: -1,
-          filters: JSON.stringify([{
-            field: 'isActive',
-            operator: 'eq',
-            keyword: true
-          }]),
           sorts: JSON.stringify([{
             field: 'initial',
             direction: 'asc'

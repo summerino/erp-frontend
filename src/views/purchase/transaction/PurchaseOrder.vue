@@ -927,10 +927,6 @@ export default {
             operator: 'equal',
             keyword: 'DEF_PURC_TAX_INC'
           }]),
-          sorts: JSON.stringify([{
-            field: 'code',
-            direction: 'asc'
-          }]),
           includeMetaData: false
         }
       })
@@ -993,12 +989,6 @@ export default {
     getWarehouseLists() {
       api.getAll(`${this.endpoint.inventory.warehouse}/lists`, {
         params: {
-          skip: 0, take: -1,
-          filters: JSON.stringify([{
-            field: 'isActive',
-            operator: 'eq',
-            keyword: true
-          }]),
           sorts: JSON.stringify([{
             field: 'initial',
             direction: 'asc'

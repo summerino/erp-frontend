@@ -386,7 +386,7 @@
                       <v-row no-gutters>
                         <v-col cols="6">
                           <v-text-field
-                            v-model.trim="data.updatedInitial"
+                            v-model.trim="data.approveInitial"
                             label="Approved By"
                             class="mt-0"
                             readonly
@@ -394,7 +394,7 @@
                         </v-col>
                         <v-col cols="6" class="pl-1">
                           <v-text-field
-                            v-model.trim="data.updatedInitial"
+                            v-model.trim="data.createdInitial"
                             label="Created By"
                             class="mt-0"
                             readonly
@@ -551,7 +551,6 @@
                               v-model="item.warehouseCodeIn"
                               :disabled="hasRelatedTrans"
                               :items="warehouses"
-                              :rules="data.type !== 1 ? rules.required : []"
                               item-text="initial"
                               item-value="code"
                               class="text-body-2 text-right mt-0"
@@ -566,7 +565,6 @@
                               :readonly="hasRelatedTrans"
                               class="text-body-2 text-right mt-0"
                               dense
-                              required
                               @change="calcItemPrice(item)"
                             ></v-currency-field>
                           </template>
@@ -585,9 +583,9 @@
                           <template v-slot:[`item.unitPrice`]="{ item }">
                             <v-currency-field
                               v-model="item.unitPrice"
+                              :readonly="hasRelatedTrans"
                               class="text-body-2 text-right mt-0"
                               dense
-                              required
                               @change="calcItemPrice(item)"
                             ></v-currency-field>
                           </template>
@@ -704,14 +702,13 @@ export default {
     valid: false,
     types: [{ id: 1, name: 'Exchange Memo' }, { id: 2, name: 'Exchange Same Item' }],
     employees: [],
-    currencies: [],
+    taxes: [],
     warehouses: [],
     data: {}
   }),
 
   created: function () {
     this.getList()
-    this.getSupplierLists()
     this.getEmployeeLists()
     this.getTaxLists()
     this.getWarehouseLists()
@@ -763,11 +760,7 @@ export default {
         subTotal: 0,
         finalDisc: 0,
         taxAmount: 0,
-        total: 0,
-        createdBy: null,
-        createdDate: null,
-        updatedBy: null,
-        updatedDate: null
+        total: 0
       }
       this.rcvDetails = []
       this.gridItem.data = []
@@ -799,6 +792,10 @@ export default {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
           take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
+          filters: JSON.stringify([{
+            field: 'rcvCode',
+            operator: 'isnotnullorempty'
+          }]),
           sorts: JSON.stringify(sorts)
         }
       })
@@ -809,12 +806,6 @@ export default {
             const item = this.grid.data.find(h => h.code === this.data.code)
             this.edit(item)
           }
-        })
-    },
-    getSupplierLists() {
-      api.getAll(this.endpoint.general.supplier.supplier)
-        .then(response => {
-          this.suppliers = response.data
         })
     },
     getEmployeeLists() {
@@ -894,12 +885,15 @@ export default {
     add() {
       if (this.dialog.add) return
       this.dialog.add = true
-      this.reset()
+      this.reset(false)
       this.data.action = 'add'
 
-      // Set focus to receive code field
       setTimeout(() => {
+        // Set focus to return code field
         this.$refs.code.focus()
+
+        // Validate form first
+        this.$refs.form.validate()
       }, 0)
     },
     edit(item) {
@@ -926,14 +920,14 @@ export default {
         })
 
       // Get related transaction details
-      api.getAll(`${this.endpoint.purchase.order}/related-trans`, {
+      api.getAll(`${this.endpoint.purchase.return}/related-trans`, {
         params: { code: item.code }
       })
         .then(response => {
           this.gridRelated.data = response.data.tableData
         })
 
-      // Set focus to receive code field
+      // Set focus to return code field
       setTimeout(() => {
         this.$refs.code.focus()
       }, 0)
@@ -955,6 +949,10 @@ export default {
     },
     async save(closeDialog) {
       if (!this.dialog.add) return
+      if (!this.$refs.form.validate()) {
+        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        return
+      }
 
       const data = this.data
       data.itemDetails = this.gridItem.data
@@ -964,7 +962,7 @@ export default {
         const resp = await api.create(this.endpoint.purchase.return, data)
         result = resp.data
       } else if (data.action === 'edit') {
-        const resp = await api.update(this.endpoint.purchase.return, data)
+        const resp = await api.update(this.endpoint.purchase.return, data.code, data)
         result = resp.data
       }
 
@@ -994,6 +992,12 @@ export default {
           warehouseCodeIn: null,
           qty: 1,
           qtyRcv: 0,
+          length: null,
+          width: null,
+          height: null,
+          weight: null,
+          dimensionMeasurement: null,
+          weightMeasurement: null,
           units: [],
           uomId: null,
           oldUnitId: null,
@@ -1074,13 +1078,6 @@ export default {
           this.bindRcvData(null, response.data.tableData[0] ?? null)
         })
     },
-    supCodeChange(resetrcvCode) {
-      if (resetrcvCode) {
-        this.data.rcvCode = null
-      }
-      const supplier = this.suppliers.find(s => s.code === this.data.supCode)
-      this.bindSupData(supplier)
-    },
     itemIdChange(item) {
       const rcvDetail = this.rcvDetails.find(i => i.itemId === item.itemId)
       if (rcvDetail) {
@@ -1088,6 +1085,12 @@ export default {
         item.itemName = rcvDetail.itemName
         item.warehouseCode = rcvDetail.warehouseCode
         item.qty = rcvDetail.qty ?? 1
+        item.length = rcvDetail.length
+        item.width = rcvDetail.width
+        item.height = rcvDetail.height
+        item.weight = rcvDetail.weight
+        item.dimensionMeasurement = rcvDetail.dimensionMeasurement
+        item.weightMeasurement = rcvDetail.weightMeasurement
         item.uomId = rcvDetail.uomId
         item.oldUnitId = rcvDetail.oldUnitId
         item.oldUnitName = rcvDetail.oldUnitName
@@ -1107,7 +1110,7 @@ export default {
         // Get unit item lists
         this.getUnitItemLists(item)
 
-        // Calc unit item lists
+        // Calc item price
         this.calcItemPrice(item)
       }
     },
@@ -1129,7 +1132,7 @@ export default {
         item.unitPrice = item.oldUnitPrice / item.uomConversion
       }
 
-      // Calc unit item lists
+      // Calc item price
       this.calcItemPrice(item)
     },
     calcUomConversion(seqSmaller, item, unitCode) {
