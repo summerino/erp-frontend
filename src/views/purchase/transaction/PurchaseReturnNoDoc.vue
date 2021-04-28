@@ -729,7 +729,6 @@ export default {
     this.getWarehouseLists()
     this.getTaxLists()
     this.getItemLists()
-    this.add()
   },
 
   mounted: function () {
