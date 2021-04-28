@@ -433,7 +433,7 @@ export default {
         })
       }
       
-      api.getAll(this.endpoint.inventory.uom.uom, {
+      api.getAll(this.endpoint.inventory.uom, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -482,7 +482,7 @@ export default {
       }
 
       // Get item details
-      api.getAll(`${this.endpoint.inventory.uom.uom}/item`, {
+      api.getAll(`${this.endpoint.inventory.uom}/item`, {
         params: { uomId: item.id }
       })
         .then(response => {
@@ -500,7 +500,7 @@ export default {
           'Void?',
           'Are you sure want to delete this data?')
       ) {
-        api.delete(this.endpoint.inventory.uom.uom, item.id)
+        api.delete(this.endpoint.inventory.uom, item.id)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -529,10 +529,10 @@ export default {
       }
       let result = { success: false, message: '' }
       if (data.action === 'add') {
-        const resp = await api.create(this.endpoint.inventory.uom.uom, data)
+        const resp = await api.create(this.endpoint.inventory.uom, data)
         result = resp.data
       } else if (data.action === 'edit') {
-        const resp = await api.update(this.endpoint.inventory.uom.uom, data.code, data)
+        const resp = await api.update(this.endpoint.inventory.uom, data.code, data)
         result = resp.data
       }
 

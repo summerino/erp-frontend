@@ -1052,7 +1052,7 @@ export default {
         })
     },
     getUnitItemLists(item) {
-      api.getAll(`${this.endpoint.inventory.uom.uom}/item`, {
+      api.getAll(`${this.endpoint.inventory.uom}/item`, {
         params: { uomId: item.uomId }
       })
         .then(response => {

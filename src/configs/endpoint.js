@@ -26,10 +26,7 @@ export default {
       group: 'item-group',
       item: 'item'
     },
-    uom: {
-      conversion: 'uom-conversion',
-      uom: 'uom'
-    },
+    uom: 'uom',
     warehouse: 'warehouse'
   },
 

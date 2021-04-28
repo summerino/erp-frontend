@@ -288,11 +288,11 @@ export default {
       this.getUnitLists(item.uomId)
     },
     getUnitLists(uomId) {
-      api.getAll(this.endpoint.inventory.uom.conversion, {
+      api.getAll(`${this.endpoint.inventory.uom}/item`, {
         params: { uomId: uomId }
       })
         .then(response => {
-          this.units = response.data
+          this.units = response.data.tableData
         })
     },
     doSearch() {
