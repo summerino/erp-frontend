@@ -751,7 +751,7 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Code', value: 'code', divider: true, width: '150' },
+        { text: 'Code', value: 'code', divider: true, width: '160' },
         { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
         { text: 'Request By', value: 'requestInitial', divider: true, width: '200' },
         { text: 'Supplier', value: 'supName', divider: true, width: '200' },
