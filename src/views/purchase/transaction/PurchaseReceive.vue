@@ -1019,7 +1019,7 @@ export default {
           item.state = 'M'
         }
 
-        // Calc unit item lists
+        // Calc item price
         // this.calcItemPrice(item)
       }
     },

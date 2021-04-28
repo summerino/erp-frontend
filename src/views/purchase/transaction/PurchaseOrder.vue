@@ -1260,7 +1260,7 @@ export default {
         // Get unit item lists
         this.getUnitItemLists(item)
 
-        // Calc unit item lists
+        // Calc item price
         this.calcItemPrice(item)
       }
     },

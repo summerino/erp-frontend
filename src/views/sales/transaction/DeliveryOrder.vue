@@ -973,12 +973,15 @@ export default {
         }
       }
     },
-    calcItemPrice(item) {
+    calcItemPrice(item, calcPrice = true) {
       this.calcItemTax(item)
       item.total = item.qty * item.nettPrice
       item.totTax = item.qty * item.taxAmount
       item.totDPP = item.qty * item.dpp
-      this.calcPrice()
+      
+      if (calcPrice) {
+        this.calcPrice()
+      }
     },
     calcPrice() {
       this.data.subTotal = _sumBy(this.gridItem.data, 'total')
@@ -1029,7 +1032,9 @@ export default {
               this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyDlv
               this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
               this.gridItem.data[i].typeName = 'Normal'
+              this.calcItemPrice(this.gridItem.data[i], false)
             }
+            this.calcPrice()
           })
       } else {
         this.data.custCode = null
