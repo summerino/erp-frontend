@@ -769,29 +769,17 @@ export default {
         })
     },
     getTaxLists() {
-      api.getAll(this.endpoint.master, {
+      api.getAll(this.endpoint.general.tax, {
         params: {
-          param: 'tax',
-          fieldNames: 'id,initial,name,rate',
           filters: JSON.stringify([{
             field: 'typeId',
-            operator: 'equal',
+            operator: 'eq',
             keyword: 1
-          }, {
-            field: 'isActive',
-            operator: 'EQUAL',
-            keyword: true
-          }]),
-          sorts: JSON.stringify([{
-            field: 'seq',
-            direction: 'asc'
-          }]),
-          includeMetaData: false
+          }])
         }
       })
         .then(response => {
           this.taxes = response.data.tableData
-          this.data.tax = response.data.tableData[0]
         })
     },
     getItemLists() {
@@ -885,6 +873,11 @@ export default {
       if (!this.dialog.add) return
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        return
+      }
+
+      if (_sumBy(this.gridItem.data, 'qty') <= 0) {
+        this.$store.dispatch('app/showInfo', 'Total receive qty can\'t be 0.')
         return
       }
 

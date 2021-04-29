@@ -1000,29 +1000,17 @@ export default {
         })
     },
     getTaxLists() {
-      api.getAll(this.endpoint.master, {
+      api.getAll(this.endpoint.general.tax, {
         params: {
-          param: 'tax',
-          fieldNames: 'id,initial,name,rate',
           filters: JSON.stringify([{
             field: 'typeId',
-            operator: 'equal',
+            operator: 'eq',
             keyword: 1
-          }, {
-            field: 'isActive',
-            operator: 'EQUAL',
-            keyword: true
-          }]),
-          sorts: JSON.stringify([{
-            field: 'seq',
-            direction: 'asc'
-          }]),
-          includeMetaData: false
+          }])
         }
       })
         .then(response => {
           this.taxes = response.data.tableData
-          this.data.tax = response.data.tableData[0]
         })
     },
     getItemLists() {
