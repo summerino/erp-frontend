@@ -82,7 +82,7 @@
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <span>Inactive</span>
+            <span>Delete</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">
@@ -497,7 +497,7 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Void?',
+          'Delete?',
           'Are you sure want to delete this data?')
       ) {
         api.delete(this.endpoint.inventory.uom, item.id)
