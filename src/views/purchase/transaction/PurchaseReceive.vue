@@ -199,6 +199,22 @@
 
                   <v-card-text>
                     <v-row no-gutters>
+                      <v-col cols="12">
+                        <v-autocomplete
+                          v-model="data.srcTrans"
+                          :items="sources"
+                          :rules="rules.required"
+                          label="Source Transaction"
+                          item-text="name"
+                          item-value="id"
+                          class="mt-0"
+                          required
+                          @change="srcTransChange"
+                        ></v-autocomplete>
+                      </v-col>
+                    </v-row>
+                    
+                    <v-row no-gutters>
                       <v-col cols="12" md="6">
                         <v-text-field
                           ref="code"
@@ -209,18 +225,6 @@
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12" md="6" class="pl-md-1">
-                        <v-text-field
-                          v-model="data.refNo"
-                          :rules="rules.max30chars"
-                          label="Ref. No."
-                          counter="30"
-                          class="mt-0"
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-
-                    <v-row no-gutters>
-                      <v-col cols="12">
                         <v-menu
                           v-model="menu.rcvDate"
                           :close-on-content-click="false"
@@ -251,15 +255,19 @@
                     </v-row>
 
                     <v-row no-gutters>
-                      <v-col cols="12">
+                      
+                    </v-row>
+
+                    <v-row no-gutters>
+                      <v-col cols="12" md="6">
                         <v-text-field
-                          v-model="data.poCode"
+                          v-model="data.transCode"
+                          :label="lblTransCode"
                           :readonly="hasRelatedTrans"
                           :rules="rules.required"
-                          label="PO Code"
                           class="mt-0"
                           required
-                          @change="poCodeChange"
+                          @change="transCodeChange"
                         >
                           <template v-slot:append>
                               <v-btn
@@ -267,7 +275,7 @@
                                 color="primary"
                                 icon
                                 small
-                                @click="showFindPODialog"
+                                @click="showFindTransDialog"
                               >
                                 <v-icon>
                                   mdi-shopping-search
@@ -275,6 +283,15 @@
                               </v-btn>
                             </template>
                         </v-text-field>
+                      </v-col>
+                      <v-col cols="12" md="6" class="pl-md-1">
+                        <v-text-field
+                          v-model="data.refNo"
+                          :rules="rules.max30chars"
+                          label="Ref. No."
+                          counter="30"
+                          class="mt-0"
+                        ></v-text-field>
                       </v-col>
                     </v-row>
                   </v-card-text>
@@ -366,15 +383,21 @@
                       </v-row>
 
                       <v-row no-gutters>
-                        <v-col cols="12">
-                          <v-autocomplete
-                            v-model="data.approveBy"
-                            :items="employees"
-                            :item-text="item => `${item.initial} - ${item.firstName}`"
+                        <v-col cols="6">
+                          <v-text-field
+                            v-model.trim="data.approveInitial"
                             label="Approved By"
-                            item-value="id"
                             class="mt-0"
-                          ></v-autocomplete>
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="6" class="pl-1">
+                          <v-text-field
+                            v-model.trim="data.createdInitial"
+                            label="Created By"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
                         </v-col>
                       </v-row>
 
@@ -557,8 +580,14 @@
     <find-po
       ref="findPO"
       :mark-exclude="['V', 'CLS', 'CMP']"
-      @dblclick:row="bindPOData"
+      @dblclick:row="bindTransData"
     ></find-po>
+    <find-return
+      ref="findReturn"
+      :type="2"
+      :mark-exclude="['V', 'CLS', 'CMP']"
+      @dblclick:row="bindTransData"
+    ></find-return>
     <find-item
       ref="findItem"
       @dblclick:row="bindItemData"
@@ -576,12 +605,14 @@ import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
 import FindPo from '@/components/dialog/purchase/FindPO'
+import FindReturn from '@/components/dialog/purchase/FindReturn'
 import FindItem from '@/components/dialog/inventory/FindItem'
 
 export default {
   components: {
     Confirm,
     FindPo,
+    FindReturn,
     FindItem
   },
 
@@ -602,7 +633,7 @@ export default {
         { text: 'Code', value: 'code', divider: true, width: '160' },
         { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
         { text: 'Supplier', value: 'supName', divider: true, width: '200' },
-        { text: 'PO Code', value: 'poCode', divider: true, width: '150' },
+        { text: 'Trans. Code', value: 'transCode', divider: true, width: '150' },
         { text: 'Received By', value: 'receiveInitial', divider: true, width: '200' },
         { text: 'Ref. No.', value: 'refNo', width: '150' },
         { text: 'Status', value: 'mark', width: '50' }
@@ -638,6 +669,8 @@ export default {
       data: []
     },
     valid: false,
+    lblTransCode: null,
+    sources: [{ id: 1, name: 'Purchase Order' }, { id: 2, name: 'Purchase Return' }],
     employees: [],
     taxes: [],
     items: [],
@@ -692,10 +725,11 @@ export default {
     reset(resetValidation = true) {
       this.data = {
         action: '',
+        srcTrans: 1,
         code: null,
-        refNo: null,
         date: format(new Date(), 'yyyy-MM-dd'),
-        poCode: null,
+        transCode: null,
+        refNo: null,
         supCode: null,
         supName: null,
         supAddr: null,
@@ -723,6 +757,9 @@ export default {
           this.$refs.form.resetValidation()
         }, 0)
       }
+
+      // Call srcTrans change event
+      this.srcTransChange()
     },
     getList(bindToForm = false) {
       const sorts = []
@@ -904,7 +941,7 @@ export default {
       }
     },
     addItem() {
-      if (!this.data.poCode) {
+      if (!this.data.transCode) {
         this.$store.dispatch('app/showInfo', 'Please input purchase order first.')
         return
       }
@@ -958,23 +995,55 @@ export default {
         this.calcPrice()
       }
     },
-    poCodeChange() {
-      api.getAll(this.endpoint.purchase.order, {
-        params: {
-          filters: JSON.stringify([{
-            field: 'code',
-            operator: 'eq',
-            keyword: this.data.poCode
-          }, {
-            field: 'mark',
-            operator: 'doesnotcontain',
-            keyword: ['V', 'CLS', 'CMP']
-          }])
-        }
-      })
-        .then(response => {
-          this.bindPOData(response.data.tableData[0] ?? null)
+    srcTransChange() {
+      if (this.data.srcTrans === 1) {
+        this.lblTransCode = 'PO Code'
+      } else {
+        this.lblTransCode = 'Return Code'
+      }
+    },
+    transCodeChange() {
+      if (this.data.srcTrans === 1) {
+        // Get purchase order details
+        api.getAll(this.endpoint.purchase.order, {
+          params: {
+            filters: JSON.stringify([{
+              field: 'code',
+              operator: 'eq',
+              keyword: this.data.transCode
+            }, {
+              field: 'mark',
+              operator: 'doesnotcontain',
+              keyword: ['V', 'CLS', 'CMP']
+            }])
+          }
         })
+          .then(response => {
+            this.bindTransData(response.data.tableData[0] ?? null)
+          })
+      } else {
+        // Get purchase return details
+        api.getAll(this.endpoint.purchase.return, {
+          params: {
+            filters: JSON.stringify([{
+              field: 'code',
+              operator: 'eq',
+              keyword: this.data.transCode
+            }, {
+              field: 'type',
+              operator: 'eq',
+              keyword: 2
+            }, {
+              field: 'mark',
+              operator: 'doesnotcontain',
+              keyword: ['V', 'CLS', 'CMP']
+            }])
+          }
+        })
+          .then(response => {
+            this.bindTransData(response.data.tableData[0] ?? null)
+          })
+      }
     },
     itemIdChange(item) {
       const data_i = this.items.find(i => i.id === item.itemId)
@@ -992,10 +1061,10 @@ export default {
         item.weightMeasurement = data_i.weightMeasurement
         item.uomId = data_i.uomId
         item.oldUnitId = data_i.uomBuyId
-        // item.oldUnitName = data_i.uomBuyName
+        item.oldUnitName = data_i.uomBuyName
         // item.oldUnitPrice = data_i.buyPrice
         item.unitId = data_i.uomBuyId
-        // item.unitName = data_i.uomBuyName
+        item.unitName = data_i.uomBuyName
         // item.unitPrice = data_i.buyPrice
         // item.disc = 0
         // item.taxId = data_i.purchaseTaxId
@@ -1050,15 +1119,19 @@ export default {
         this.data.total = this.data.subTotal - this.data.finalDisc + this.data.taxAmount
       }
     },
-    showFindPODialog() {
-      this.$refs.findPO.open()
+    showFindTransDialog() {
+      if (this.data.transCode === 1) {
+        this.$refs.findPO.open()
+      } else {
+        this.$refs.findReturn.open()
+      }
     },
     showFindItemDialog(item) {
       this.$refs.findItem.open(item)
     },
-    bindPOData(item) {
+    bindTransData(item) {
       if (item) {
-        this.data.poCode = item.code
+        this.data.transCode = item.code
         this.data.supCode = item.supCode
         this.data.supName = item.supName
         this.data.currCode = item.currCode
@@ -1073,27 +1146,51 @@ export default {
         // Get supplier details
         this.bindSupData(this.data)
 
-        // Get purchase order item details
-        api.getAll(`${this.endpoint.purchase.order}/item`, {
-          params: {
-            code: item.code,
-            fullReceived: false
-          }
-        })
-          .then(response => {
-            this.gridItem.data = [...response.data.tableData]
-            for (let i = 0; i < this.gridItem.data.length; i++) {
-              this.gridItem.data[i].poDetailId = this.gridItem.data[i].id
-              this.gridItem.data[i].id = randomNumber(-1, -1000)
-              this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
-              this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyRcv
-              this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
-              this.gridItem.data[i].warehouseCode = item.warehouseCode
-              this.gridItem.data[i].typeName = 'Normal'
-              this.calcItemPrice(this.gridItem.data[i], false)
+        if (this.data.srcTrans === 1) {
+          // Get purchase order item details
+          api.getAll(`${this.endpoint.purchase.order}/item`, {
+            params: {
+              code: item.code,
+              fullReceived: false
             }
-            this.calcPrice()
           })
+            .then(response => {
+              this.gridItem.data = [...response.data.tableData]
+              for (let i = 0; i < this.gridItem.data.length; i++) {
+                this.gridItem.data[i].transDetailId = this.gridItem.data[i].id
+                this.gridItem.data[i].id = randomNumber(-1, -1000)
+                this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
+                this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyRcv
+                this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
+                this.gridItem.data[i].warehouseCode = item.warehouseCode
+                this.gridItem.data[i].typeName = 'Normal'
+                this.calcItemPrice(this.gridItem.data[i], false)
+              }
+              this.calcPrice()
+            })
+        } else {
+          // Get purchase return item details
+          api.getAll(`${this.endpoint.purchase.return}/item`, {
+            params: {
+              code: item.code,
+              fullReceived: false
+            }
+          })
+            .then(response => {
+              this.gridItem.data = [...response.data.tableData]
+              for (let i = 0; i < this.gridItem.data.length; i++) {
+                this.gridItem.data[i].transDetailId = this.gridItem.data[i].id
+                this.gridItem.data[i].id = randomNumber(-1, -1000)
+                this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
+                this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyRcv
+                this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
+                this.gridItem.data[i].warehouseCode = item.warehouseCodeIn
+                this.gridItem.data[i].typeName = 'Normal'
+                this.calcItemPrice(this.gridItem.data[i], false)
+              }
+              this.calcPrice()
+            })
+        }
       } else {
         this.data.supCode = null
         this.data.supName = null

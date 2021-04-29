@@ -12,7 +12,7 @@
         dark
         dense
       >
-        <v-toolbar-title>Purchase Receive</v-toolbar-title>
+        <v-toolbar-title>Purchase Return</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn
           icon
@@ -129,7 +129,8 @@ import api from '@/services/axios.service'
 
 export default {
   props: {
-    poCode: String,
+    rcvCode: String,
+    type: Number,
     markExclude: {
       type: Array,
       required: true
@@ -146,18 +147,17 @@ export default {
         items: [
           { text: 'Code', value: 'code' },
           { text: 'Date', value: 'date' },
-          { text: 'PO Code', value: 'poCode' },
+          { text: 'Rcv. Code', value: 'rcvCode' },
           { text: 'Ref. No.', value: 'refNo' }
         ]
       },
-      rowItem: {},
       grid: {
         columns: [
           { text: 'Code', value: 'code', divider: true, width: '150' },
           { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
-          { text: 'PO Code', value: 'poCode', divider: true, width: '150' },
+          { text: 'Rcv. Code', value: 'rcvCode', divider: true, width: '150' },
           { text: 'Amount', value: 'total', align: 'right', width: '120' },
-          { text: 'Received By', value: 'receiveInitial', divider: true, width: '200' },
+          { text: 'Shipped By', value: 'shippedInitial', divider: true, width: '200' },
           { text: 'Ref. No.', value: 'refNo', divider: true, width: '150' }
         ],
         data: []
@@ -181,9 +181,8 @@ export default {
       this.data.value = ''
       this.grid.data = []
     },
-    open(rowItem, options) {
+    open(options) {
       this.dialog = true
-      this.rowItem = rowItem
       this.options = Object.assign(this.options, options)
       this.reset()
       setTimeout(() => {
@@ -204,15 +203,23 @@ export default {
         keyword: this.markExclude
       }]
 
-      if (this.poCode) {
+      if (this.rcvCode) {
         filters.push({
-          field: 'poCode',
+          field: 'rcvCode',
           operator: 'eq',
-          keyword: this.poCode
+          keyword: this.rcvCode
         })
       }
 
-      api.getAll(this.endpoint.purchase.receive, {
+      if (this.type) {
+        filters.push({
+          field: 'type',
+          operator: 'eq',
+          keyword: this.type
+        })
+      }
+
+      api.getAll(this.endpoint.purchase.return, {
         params: {
           filters: JSON.stringify(filters),
           sorts: JSON.stringify([{
@@ -233,10 +240,7 @@ export default {
       this.$refs.search.focus()
     },
     dblclickRow(event, { item }) {
-      if (this.rowItem) {
-        this.rowItem.rcvCode = item.code
-      }
-      this.$emit('dblclick:row', this.rowItem, item)
+      this.$emit('dblclick:row', item)
       this.dialog = false
     }
   }

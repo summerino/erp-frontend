@@ -628,6 +628,12 @@
                       transition="false"
                     >
                       <v-text-field
+                        v-model="data.createdInitial"
+                        label="Created By"
+                        class="mt-0"
+                        readonly
+                      ></v-text-field>
+                      <v-text-field
                         v-model="data.updatedInitial"
                         label="Updated By"
                         class="mt-0"

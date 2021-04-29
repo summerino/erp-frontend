@@ -677,6 +677,7 @@ export default {
         { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
         { text: 'Supplier', value: 'supName', divider: true, width: '200' },
         { text: 'Rcv. Code', value: 'rcvCode', divider: true, width: '100' },
+        { text: 'Shipped By', value: 'shippedInitial', divider: true, width: '200' },
         { text: 'Ref. No.', value: 'refNo', width: '150' }
       ],
       data: [],
