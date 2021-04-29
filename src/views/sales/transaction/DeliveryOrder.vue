@@ -870,6 +870,11 @@ export default {
         this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
         return
       }
+      
+      if (_sumBy(this.gridItem.data, 'qty') <= 0) {
+        this.$store.dispatch('app/showInfo', 'Total delivery qty can\'t be 0.')
+        return
+      }
   
       const data = this.data
       data.itemDetails = this.gridItem.data
