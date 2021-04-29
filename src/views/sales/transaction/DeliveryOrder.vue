@@ -754,12 +754,6 @@ export default {
     getWarehouseLists() {
       api.getAll(`${this.endpoint.inventory.warehouse}/lists`, {
         params: {
-          skip: 0, take: -1,
-          filters: JSON.stringify([{
-            field: 'isActive',
-            operator: 'eq',
-            keyword: true
-          }]),
           sorts: JSON.stringify([{
             field: 'initial',
             direction: 'asc'
@@ -771,29 +765,17 @@ export default {
         })
     },
     getTaxLists() {
-      api.getAll(this.endpoint.master, {
+      api.getAll(this.endpoint.general.tax, {
         params: {
-          param: 'tax',
-          fieldNames: 'id,initial,name,rate',
           filters: JSON.stringify([{
             field: 'typeId',
-            operator: 'equal',
+            operator: 'eq',
             keyword: 2
-          }, {
-            field: 'isActive',
-            operator: 'EQUAL',
-            keyword: true
-          }]),
-          sorts: JSON.stringify([{
-            field: 'seq',
-            direction: 'asc'
-          }]),
-          includeMetaData: false
+          }])
         }
       })
         .then(response => {
           this.taxes = response.data.tableData
-          this.data.tax = response.data.tableData[0]
         })
     },
     close() {

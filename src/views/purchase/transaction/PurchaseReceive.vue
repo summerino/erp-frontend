@@ -875,7 +875,7 @@ export default {
         this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
         return
       }
-      
+
       if (_sumBy(this.gridItem.data.filter(x => x.type === 0), 'qty') <= 0) {
         this.$store.dispatch('app/showInfo', 'Total receive qty can\'t be 0.')
         return
@@ -886,7 +886,7 @@ export default {
 
       let result = { success: false, message: '' }
       if (data.action === 'add') {
-        const resp = await api.create(this.endpoint.purchase.receive1, data)
+        const resp = await api.create(this.endpoint.purchase.receive, data)
         result = resp.data
       } else if (data.action === 'edit') {
         const resp = await api.update(this.endpoint.purchase.receive, data.code, data)
