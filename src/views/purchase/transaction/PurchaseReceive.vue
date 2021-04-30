@@ -1120,7 +1120,7 @@ export default {
       }
     },
     showFindTransDialog() {
-      if (this.data.transCode === 1) {
+      if (this.data.srcTrans === 1) {
         this.$refs.findPO.open()
       } else {
         this.$refs.findReturn.open()
