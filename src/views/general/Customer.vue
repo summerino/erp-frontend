@@ -115,7 +115,7 @@
       </v-data-table>
     </v-card>
 
-    <v-card v-else>
+    <v-card v-else :style="{ background: $vuetify.theme.themes[theme].surface }">
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="6">
@@ -180,164 +180,293 @@
           ref="form"
           v-model="valid"
         >
-          <v-container class="px-1 pt-0 pb-1">
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
-                <v-text-field
-                  v-model="data.code"
-                  label="Code"
-                  class="mt-0"
-                  readonly
-                  required
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-text-field
-                  ref="initial"
-                  v-model="data.initial"
-                  :rules="[rules.required[0], rules.max20chars[0]]"
-                  :counter="20"
-                  label="Initial"
-                  class="mt-0"
-                  required
-                ></v-text-field>
-              </v-col>
-            </v-row>
+          <v-card>
+            <v-container fluid grid-list-md>
+              <v-row no-gutters>
+                <v-col cols="12" md="6" class="pr-md-3">
+                  <v-text-field
+                    v-model="data.code"
+                    label="Code"
+                    class="mt-0"
+                    readonly
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" md="6" class="pl-md-3">
+                  <v-text-field
+                    ref="initial"
+                    v-model="data.initial"
+                    :rules="[rules.required[0], rules.max20chars[0]]"
+                    :counter="20"
+                    label="Initial"
+                    class="mt-0"
+                    required
+                  ></v-text-field>
+                </v-col>
+              </v-row>
 
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
-                <v-text-field
-                  v-model="data.name"
-                  :rules="[rules.required[0], rules.max50chars[0]]"
-                  :counter="50"
-                  label="Name"
-                  class="mt-0"
-                  required
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-autocomplete
-                  v-model="data.typeId"
-                  :items="types"
-                  :item-text="item => `${item.initial} - ${item.name}`"
-                  :rules="rules.required"
-                  label="Type"
-                  item-value="id"
-                  class="mt-0"
-                  required
-                ></v-autocomplete>
-              </v-col>
-            </v-row>
+              <v-row no-gutters>
+                <v-col cols="12" md="6" class="pr-md-3">
+                  <v-text-field
+                    v-model="data.name"
+                    :rules="[rules.required[0], rules.max50chars[0]]"
+                    :counter="50"
+                    label="Name"
+                    class="mt-0"
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" md="6" class="pl-md-3">
+                  <v-autocomplete
+                    v-model="data.typeId"
+                    :items="types"
+                    :item-text="item => `${item.initial} - ${item.name}`"
+                    :rules="rules.required"
+                    label="Type"
+                    item-value="id"
+                    class="mt-0"
+                    required
+                  ></v-autocomplete>
+                </v-col>
+              </v-row>
 
-            <v-row no-gutters>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="data.address1"
-                  :rules="[rules.required[0], rules.max100chars[0]]"
-                  :counter="100"
-                  label="Address 1"
-                  class="mt-0"
-                  required
-                ></v-text-field>
-              </v-col>
-            </v-row>
+              <v-row no-gutters>
+                <v-col cols="12" md="6" class="pr-md-3">
+                  <v-text-field
+                    v-model="data.email"
+                    :rules="[rules.required[0], rules.email[0], rules.max50chars[0]]"
+                    :counter="50"
+                    class="mt-0"
+                    label="Email"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" md="6" class="pl-md-3">
+                  <v-text-field
+                    v-model="data.website"
+                    :rules="rules.max50chars"
+                    :counter="50"
+                    label="Website"
+                    class="mt-0"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
 
-            <v-row no-gutters>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="data.address2"
-                  :rules="rules.max100chars"
-                  :counter="100"
-                  label="Address 2"
-                  class="mt-0"
-                ></v-text-field>
-              </v-col>
-            </v-row>
+              <v-row no-gutters>
+                <v-col cols="12" md="6" class="pr-md-3">
+                  <v-currency-field
+                    v-model="data.creditTerm"
+                    :decimal-length="0"
+                    class="mt-0"
+                    label="Credit Term"
+                    :max="32767"
+                  ></v-currency-field>
+                </v-col>
+                <v-col cols="12" md="6" class="pl-md-3">
+                  <v-currency-field
+                    v-model="data.creditLimit"
+                    :decimal-length="0"
+                    class="mt-0"
+                    label="Credit Limit"
+                  ></v-currency-field>
+                </v-col>
+              </v-row>
 
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
-                <v-text-field
-                  v-model="data.phone"
-                  :rules="[rules.required[0], rules.max30chars[0]]"
-                  :counter="30"
-                  label="Phone"
-                  class="mt-0"
-                  required
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-text-field
-                  v-model="data.fax"
-                  :rules="rules.max15chars"
-                  :counter="15"
-                  label="Fax"
-                  class="mt-0"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
-                <v-text-field
-                  v-model="data.email"
-                  :rules="[rules.required[0], rules.email[0], rules.max50chars[0]]"
-                  :counter="50"
-                  class="mt-0"
-                  label="Email"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-text-field
-                  v-model="data.website"
-                  :rules="rules.max50chars"
-                  :counter="50"
-                  label="Website"
-                  class="mt-0"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
-                <v-currency-field
-                  v-model="data.creditTerm"
-                  :decimal-length="0"
-                  class="mt-0"
-                  label="Credit Term"
-                  :max="32767"
-                ></v-currency-field>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-currency-field
-                  v-model="data.creditLimit"
-                  :decimal-length="0"
-                  class="mt-0"
-                  label="Credit Limit"
-                ></v-currency-field>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
-                <v-text-field
-                  v-model="data.refNo"
-                  :rules="rules.max30chars"
-                  :counter="30"
-                  class="mt-0"
-                  label="Ref. No."
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-text-field
-                  v-model="data.notes"
-                  :rules="rules.max256chars"
-                  :counter="256"
-                  class="mt-0"
-                  label="Notes"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </v-container>
+              <v-row no-gutters>
+                <v-col cols="12" md="6" class="pr-md-3">
+                  <v-text-field
+                    v-model="data.refNo"
+                    :rules="rules.max30chars"
+                    :counter="30"
+                    class="mt-0"
+                    label="Ref. No."
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" md="6" class="pl-md-3">
+                  <v-text-field
+                    v-model="data.notes"
+                    :rules="rules.max256chars"
+                    :counter="256"
+                    class="mt-0"
+                    label="Notes"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card>
+          <br/>
+          <v-card>
+            <v-tabs v-model="tab.advancedItem">
+              <v-tab key="default" @click="bindAddress">Default</v-tab>
+              <v-tab key="address">Address List</v-tab>
+              <v-tab-item
+                key="default"
+                transition="false"
+              >
+                <v-card>
+                  <v-container fluid grid-list-md>
+                    <v-row no-gutters>
+                      <v-col cols="12" md="6" class="pr-md-3">
+                        <v-autocomplete
+                          v-model="data.billingAddressId"
+                          :items="billingAddressRef"
+                          :item-text="item => `${item.text}`"
+                          item-value="id"
+                          label="Billing Address"
+                          class="mt-0"
+                        ></v-autocomplete>
+                      </v-col>
+                      <v-col cols="12" md="6" class="pl-md-3">
+                        <v-autocomplete
+                          v-model="data.shippingAddressId"
+                          :items="shippingAddressRef"
+                          :item-text="item => `${item.text}`"
+                          item-value="id"
+                          label="Shipping Address"
+                          class="mt-0"
+                        ></v-autocomplete>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card>
+              </v-tab-item>
+              <v-tab-item
+                key="address"
+                transition="false"
+              >
+                <v-card>
+                  <v-app-bar dense flat>
+                    <v-spacer></v-spacer>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          v-bind="attrs"
+                          v-on="on"
+                          v-shortkey="['ctrl', 'i']"
+                          :disabled="data.isActive === false"
+                          class="blue--text"
+                          small
+                          tile
+                          @click="addItem"
+                          @shortkey="addItem"
+                        >
+                          <v-icon left>mdi-plus</v-icon>
+                          Add
+                        </v-btn>
+                      </template>
+                      <span class="text-caption">(Ctrl + I)</span>
+                    </v-tooltip>
+                  </v-app-bar>
+                  <v-container fluid grid-list-md>
+                    <v-data-table
+                      :headers="gridItem.columns"
+                      :items="gridItem.data"
+                      :items-per-page="-1"
+                      height="300"
+                      class="elevation-1"
+                      dense
+                      disable-sort
+                      fixed-header
+                      hide-default-footer
+                    >
+                      <template v-slot:[`item.action`]="{ item }">
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                              v-bind="attrs"
+                              v-on="on"
+                              :disabled="data.isActive === false || item.isDefault === true"
+                              color="red"
+                              icon
+                              small
+                              @click="removeItem(item)"
+                            >
+                              <v-icon small>mdi-close-thick</v-icon>
+                            </v-btn>
+                          </template>
+                          <span class="text-caption">Delete</span>
+                        </v-tooltip>
+                      </template>
+                      <template v-slot:[`item.isDefault`]="{ item }">
+                        <v-checkbox 
+                          ref="IsDefault"
+                          v-model="item.isDefault"
+                          :disabled="data.isActive === false || item.isDefault === true"
+                          @change="setAsDefault(item)"
+                          dense
+                        ></v-checkbox>
+                      </template>
+                      <template v-slot:[`item.initial`]="{ item }">
+                        <v-text-field
+                          ref="InitialAddress"
+                          v-model="item.initial"
+                          :readonly="data.isActive === false"
+                          :rules="[rules.required[0], rules.max20chars[0]]"
+                          :counter="20"
+                          class="mt-0"
+                          required
+                          dense
+                        ></v-text-field>
+                      </template>
+                      <template v-slot:[`item.address1`]="{ item }">
+                        <v-text-field
+                          ref="Address1"
+                          v-model="item.address1"
+                          :readonly="data.isActive === false"
+                          :rules="[rules.required[0], rules.max100chars[0]]"
+                          :counter="100"
+                          class="mt-0"
+                          required
+                          dense
+                        ></v-text-field>
+                      </template>
+                      <template v-slot:[`item.address2`]="{ item }">
+                        <v-text-field
+                          ref="Address2"
+                          v-model="item.address2"
+                          :readonly="data.isActive === false"
+                          class="mt-0"
+                          dense
+                        ></v-text-field>
+                      </template>
+                      <template v-slot:[`item.contactPerson`]="{ item }">
+                        <v-text-field
+                          ref="ContactPerson"
+                          v-model="item.contactPerson"
+                          :readonly="data.isActive === false"
+                          :rules="[rules.required[0], rules.max50chars[0]]"
+                          :counter="50"
+                          class="mt-0"
+                          required
+                          dense
+                        ></v-text-field>
+                      </template>
+                      <template v-slot:[`item.phone`]="{ item }">
+                        <v-text-field
+                          ref="Phone"
+                          v-model="item.phone"
+                          :readonly="data.isActive === false"
+                          :rules="[rules.required[0], rules.max30chars[0]]"
+                          :counter="30"
+                          class="mt-0"
+                          required
+                          dense
+                        ></v-text-field>
+                      </template>
+                      <template v-slot:[`item.fax`]="{ item }">
+                        <v-text-field
+                          ref="Fax"
+                          v-model="item.fax"
+                          :readonly="data.isActive === false"
+                          class="mt-0"
+                          dense
+                        ></v-text-field>
+                      </template>
+                    </v-data-table>
+                  </v-container>
+                </v-card>
+              </v-tab-item>
+            </v-tabs>
+          </v-card>
         </v-form>
       </v-card-text>
     </v-card>
@@ -349,6 +478,7 @@
 <script>
 import { mapState } from 'vuex'
 import { format, parseISO }  from 'date-fns'
+import { randomNumber } from '@/helpers/math-helpers'
 
 import api from '@/services/axios.service'
 
@@ -361,6 +491,9 @@ export default {
 
   data: () => ({
     main: true,
+    tab: {
+      advancedItem: null
+    },
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
@@ -381,8 +514,23 @@ export default {
       total: 0,
       search: null
     },
+    gridItem: {
+      columns: [
+        { value: 'action', sortable: false, divider: true, width: '1%' },
+        { text: 'Default', value: 'isDefault', align: 'center', divider: true, width: '4%' },
+        { text: 'Initial', value: 'initial', divider: true, width: '120' },
+        { text: 'Address 1', value: 'address1', divider: true, width: '300' },
+        { text: 'Address 2', value: 'address2', divider: true, width: '300' },
+        { text: 'Contact Person', value: 'contactPerson', divider: true, width: '120' },
+        { text: 'Phone', value: 'phone', divider: true, width: '170' },
+        { text: 'Fax', value: 'fax', divider: true, width: '170' }
+      ],
+      data: []
+    },
     valid: false,
     types: [],
+    billingAddressRef: [],
+    shippingAddressRef: [],
     data: {}
   }),
 
@@ -412,6 +560,9 @@ export default {
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint
     }),
+    theme() {
+      return this.$vuetify.theme.isDark ? 'dark' : 'light'
+    },
     isActive() {
       return (!this.data.isActive)
     }  
@@ -425,8 +576,10 @@ export default {
         initial: null,
         name: null,
         typeId: null,
+        initialAddress: null,
         address1: null,
         address2: null,
+        contactPerson: null,
         phone: null,
         fax: null,
         email: null,
@@ -436,8 +589,14 @@ export default {
         refNo: null,
         notes: null,
         isActive: true,
-        updatedInitial: null
+        updatedInitial: null,
+        billingAddressId: null,
+        shippingAddressId: null
       }
+      this.gridItem.data = []
+      this.tab.advancedItem = 0
+      this.billingAddressRef = []
+      this.shippingAddressRef = []
 
       // Reset form validation
       if (resetValidation) {
@@ -507,6 +666,18 @@ export default {
       this.main = false
       this.reset()
 
+      // Get address details
+      api.getAll(`${this.endpoint.general.customer.customer}/addresses`, {
+        params: { code: item.code }
+      })
+        .then(response => {
+          this.gridItem.data = response.data.tableData
+          const defAddress = this.gridItem.data.find(h => h.isDefault)
+
+          this.setAsDefault(defAddress)
+          this.bindAddress()
+        })
+
       this.data = {
         ...item,
         action: 'edit',
@@ -555,19 +726,102 @@ export default {
         return
       }
 
+      const data = this.data
+      data.itemDetails = this.gridItem.data
+
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
-        const resp = await api.create(this.endpoint.general.customer.customer, this.data)
+        const resp = await api.create(this.endpoint.general.customer.customer, data)
         result = resp.data
       } else if (this.data.action === 'edit') {
-        const resp = await api.update(this.endpoint.general.customer.customer, this.data.code, this.data)
+        const resp = await api.update(this.endpoint.general.customer.customer, data.code, data)
         result = resp.data
       }
 
       if (result.success) {
         this.$store.dispatch('app/showSuccess', result.message)
+        this.data.code = result.data
         this.back()
         this.getList()
+      }
+    },
+    addItem() {
+      let defaultValue = false
+      if (this.gridItem.data.length > 0) {
+        if (!this.gridItem.data[this.gridItem.data.length - 1].initial) {
+          this.$store.dispatch('app/showInfo', 'Cannot add item, initial is empty')
+          return
+        }
+        defaultValue = false
+      } else if (this.gridItem.data.length === 0) {
+        defaultValue = true
+      }
+
+      const item = {
+        id: randomNumber(-1, -1000),
+        code: this.data.code,
+        initial: '',
+        address1: '',
+        address2: null,
+        contactPerson: '',
+        phone: '',
+        fax: null,
+        isDefault: defaultValue,
+        state: 'A'
+      }
+      this.gridItem.data.push(item)
+
+      setTimeout(() => {
+        // Set focus to initial address field
+        this.$refs.InitialAddress.focus()
+      }, 0)
+    },
+    async removeItem(item) {
+      if (
+        await this.$refs.confirm.open(
+          'Delete?',
+          'Are you sure want to delete this data?')
+      ) {
+        const idx = this.gridItem.data.findIndex(i => i.id === item.id)
+        if (idx !== -1) {
+          this.gridItem.data.splice(idx, 1)
+        }
+      }
+    },
+    setAsDefault(item) {
+      if (item.isDefault) {
+        for (let i = 0; i < this.gridItem.data.length; i++) {
+          if (item.initial !== this.gridItem.data[i].initial) {
+            this.gridItem.data[i].isDefault = false
+          }
+        }
+
+        this.data = {
+          ...this.data,
+          initialAddress: item.initial,
+          address1: item.address1,
+          address2: item.address2,
+          contactPerson: item.contactPerson,
+          phone: item.phone,
+          fax: item.fax
+        }
+      }
+    },
+    bindAddress() {
+      const arrAddress = []
+      const item = this.gridItem.data
+
+      for (let i = 0; i < item.length; i++) {
+        let initialText = item[i].initial
+        if (item[i].isDefault) {
+          initialText = `${initialText} (Default)`
+        }
+        arrAddress.push({ def: item[i].isDefault, text: initialText, id: item[i].id })
+      }
+
+      if (arrAddress.length > 0) {
+        this.billingAddressRef = arrAddress.sort(function (a, b) { return b.def - a.def })
+        this.shippingAddressRef = arrAddress.sort(function (a, b) { return b.def - a.def })
       }
     }
   }
