@@ -3,6 +3,7 @@ import menuInventories from './menus/inventory.menu'
 import menuPurchases from './menus/purchase.menu'
 import menuSales from './menus/sales.menu'
 import menuAccounting from './menus/accounting.menu'
+import menuParameter from './menus/parameter.menu'
 import menuSystemManagement from './menus/systemmanagement.menu'
 
 export default {
@@ -42,6 +43,10 @@ export default {
     {
       text: 'System Management',
       items: menuSystemManagement
+    },
+    {
+      text: 'Parameter',
+      items: menuParameter
     }
   ]
 }

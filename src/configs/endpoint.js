@@ -17,7 +17,8 @@ export default {
     vehicle: {
       vehicle: 'vehicle',
       type: 'vehicle-type'
-    }
+    },
+    master: 'master'
   },
 
   inventory: {

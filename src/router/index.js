@@ -10,6 +10,7 @@ import SalesRoutes from './sales.routes'
 import UsersRoutes from './users.routes'
 import AccountingRoutes from './accounting.routes'
 import SystemManagementRoutes from './systemmanagement.routes'
+import ParameterRoutes from './parameter.routes'
 
 Vue.use(Router)
 
@@ -28,6 +29,7 @@ export const routes = [{
 ...UsersRoutes,
 ...AccountingRoutes,
 ...SystemManagementRoutes,
+...ParameterRoutes,
 {
   path: '/blank',
   name: 'blank',
