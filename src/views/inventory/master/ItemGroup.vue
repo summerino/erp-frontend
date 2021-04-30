@@ -226,15 +226,17 @@
             <v-row dense>
               <v-col cols="12">
                 <v-card>
-                  <v-card-title>Sub Group</v-card-title>
-                  <v-app-bar dense flat>
-                    <v-spacer></v-spacer>
+                  <v-card-title>
+                    Sub Group &nbsp;
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on, attrs }">
                         <v-icon v-bind="attrs" v-on="on" small>mdi-help-circle</v-icon>
                       </template>
                       <span class="text-caption">Value of sub group must be separated using a punctuation mark (;). ex: "Value1; Value2; Value3" etc</span>
                     </v-tooltip>
+                  </v-card-title>
+                  <v-app-bar dense flat>
+                    <v-spacer></v-spacer>
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on, attrs }">
                         <v-btn
@@ -523,17 +525,19 @@ export default {
       }
     },
     addItem() {
-      const item = {
-        id: randomNumber(-1, -1000),
-        name: null,
-        value: null,
-        state: 'A'
+      if (this.gridItem.data.length < 10) {
+        const item = {
+          id: randomNumber(-1, -1000),
+          name: null,
+          value: null,
+          state: 'A'
+        }
+        this.gridItem.data.push(item)
+
+        setTimeout(() => {
+          this.$refs.itemName.focus()
+        }, 0)
       }
-      this.gridItem.data.push(item)
-      
-      setTimeout(() => {
-        this.$refs.itemName.focus()
-      }, 0)
     },
     async removeItem(item) {
       if (
