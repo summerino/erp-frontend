@@ -124,7 +124,7 @@
               v-if="data.action == 'edit'"
               class="text-caption mr-1"
             >
-              Last Updated: {{ data.updatedDate }} by {{ data.updatedBy }}
+              Last Updated: {{ data.updatedDate }} by {{ data.updatedInitial }}
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
