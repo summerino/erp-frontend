@@ -286,8 +286,8 @@ export default {
         { text: 'User Name', value: 'username', divider: true, width: '150' },
         { text: 'Initial', value: 'initial', divider: true, width: '150' },
         { text: 'Name', value: 'name', divider: true, width: '200' },
-        { text: 'Employee Name', value: 'employeeUsername', divider: true, width: '150' },
-        { text: 'Role Name', value: 'roleName', divider: true, width: '150' },
+        { text: 'Role', value: 'roleName', divider: true, width: '150' },
+        { text: 'Employee', value: 'employeeInitial', divider: true, width: '150' },
         { text: 'Status', value: 'isActive', width: '90' }
       ],
       data: [],
@@ -307,8 +307,8 @@ export default {
 
   created: function () {
     this.getList()
+    this.getEmployeeList()
     //this.getRolesList()
-    //this.getEmployeeList()
   },
 
   mounted: function () {
@@ -384,6 +384,19 @@ export default {
             const item = this.grid.data.find(h => h.username === this.data.username)
             this.edit(item)
           }
+        })
+    },
+    getEmployeeList() {
+      api.getAll(`${this.endpoint.general.employee}/lists`, {
+        params: {
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.employees = response.data.tableData
         })
     },
     // getRolesList() {
