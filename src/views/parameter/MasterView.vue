@@ -215,7 +215,7 @@
           </div>
         </template>
         
-        <template v-slot:item.sw_action="{ item }">
+        <template v-slot:[`item.sw_action`]="{ item }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -422,7 +422,6 @@ export default {
       })
     },
     getFilter() {
-      debugger
       const filters = []
       if (this.grid.search) {
         this.grid.columns.forEach(data => {

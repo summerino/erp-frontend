@@ -14,9 +14,7 @@ export default [
   },
   { icon: 'mdi-clipboard-edit-outline', text: 'Transaction', regex: /^\/inventory\/transaction/,
     items: [
-      { text: 'Multiple Adjustment', link: 'multiple-adjustment' },
-      { icon: 'mdi-file-outline', text: 'Not Found / 404', link: 'error' },
-      { icon: 'mdi-file-outline', text: 'Unexpected / 500', link: 'error-unexpected' }
+      { text: 'Multiple Adjustment', link: 'multiple-adjustment' }
     ]
   },
   { icon: 'mdi-chart-line', text: 'Report', regex: /^\/inventory\/report/,
