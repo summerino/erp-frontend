@@ -864,6 +864,11 @@ export default {
             field: 'typeid',
             operator: 'equal',
             keyword: 2
+          },
+          {
+            field: 'isActive',
+            operator: 'equal',
+            keyword: 1
           }]),
           sorts: JSON.stringify([{
             field: 'initial',
@@ -883,6 +888,11 @@ export default {
           fieldNames: 'id,initial,name,rate',
           filters: JSON.stringify([{
             field: 'typeid',
+            operator: 'equal',
+            keyword: 1
+          },
+          {
+            field: 'isActive',
             operator: 'equal',
             keyword: 1
           }]),
