@@ -35,7 +35,8 @@ export default {
     order: 'purchase-order',
     receive: 'purchase-receive',
     invoice: 'purchase-invoice',
-    return: 'purchase-return'
+    return: 'purchase-return',
+    debitMemo: 'debit-memo'
   },
 
   sales: {

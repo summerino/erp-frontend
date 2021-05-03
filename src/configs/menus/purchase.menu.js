@@ -13,7 +13,8 @@ export default [
           { text: 'Return', link: 'purchase-return' },
           { text: 'Return W/O Doc.', link: 'purchase-return-wo-doc' }
         ]
-      }
+      },
+      { text: 'Debit Memo', link: 'debit-memo' }
     ]
   },
   { icon: 'mdi-chart-line', text: 'Report', regex: /^\/purchase\/report/,
