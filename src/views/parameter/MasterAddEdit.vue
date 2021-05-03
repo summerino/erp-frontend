@@ -84,8 +84,8 @@
                           :placeholder="field.placeholder"
                           :rules="field.rules"
                           :counter="field.maxLength"
-                          outlined
-                          dense
+                          :ref="field.name"
+                          class="mt-0"
                         ></v-text-field>
                     </v-col>
                   </template>
@@ -93,12 +93,13 @@
                     <v-col cols="12" :md="field.length">
                       <v-textarea
                         v-model="paramdata[field.name]"
-                        outlined
                         :label="field.label"
                         :placeholder="field.placeholder"
                         :rules="field.rules"
                         :counter="field.maxLength"
                         :rows="field.rows"
+                        :ref="field.name"
+                        class="mt-0"
                       ></v-textarea>
                     </v-col>
                   </template>
@@ -119,6 +120,7 @@
                           class="text-body-2 text-right mt-0"
                           :rules="field.rules"
                           dense
+                          :ref="field.name"
                       ></v-currency-field>
                     </v-col>
                   </template>
@@ -270,6 +272,8 @@ export default {
       const selectedCategory = this.mapDataTypeToCategory.find(x => x.dataTypes.includes(dataType))
       if (selectedCategory.category === 'datetime') {
         this.paramdata[data.name] = format(new Date(), 'yyyy-MM-dd')
+      } else if (selectedCategory.category === 'bit') {
+        this.paramdata[data.name] = false
       }
     },
     defineRules(fields) {

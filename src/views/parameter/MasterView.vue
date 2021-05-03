@@ -1,163 +1,173 @@
 <template>
-  <div class="d-flex flex-column flex-grow-1">
+  <div class="w-full">
     <v-card>
-      <v-row dense class="pl-2 align-center">        
-        <v-col cols="6" >
-          <v-row dense>
-            <v-col cols="9">
-              <v-text-field
-                :readonly="isAdvancedSearch"
-                v-model="grid.search"
-                append-icon="mdi-magnify"
-                class="flex-grow-1 mr-md-2"
-                solo
-                hide-details
-                dense
-                clearable
-                @keyup.enter="search()"
-              ></v-text-field>
-            </v-col>
-            <v-col cols="3">
-              <v-btn
-                icon
-                small
-                @click="refresh()"
-                >
-                <v-icon>mdi-refresh</v-icon>
-              </v-btn>
-              <v-btn
-                icon
-                small
-                @click="advSearch()"
-              >
-                <v-icon v-if="!isAdvancedSearch">mdi-plus</v-icon>
-                <v-icon v-if="isAdvancedSearch">mdi-close</v-icon>
-              </v-btn>
-              <v-btn v-if="isAdvancedSearch"
-                icon
-                small
-                @click="addSearch()"
-              >
-                <v-icon>mdi-plus</v-icon>
-              </v-btn>
-              
-            </v-col>
-          </v-row>
-        </v-col>
-        <v-col cols="6" class="text-right">
-          <v-btn
-            v-bind="attrs"
-            v-on="on"
-            color="green darken-1"
-            class="font-weight-regular mr-3"
-            dark
-            small
-            tile
-            :to="`/parameter/item/${param}/add`"
-          >
-            <v-icon left>mdi-plus</v-icon>
-            New
-          </v-btn>
-        </v-col>
-        <!-- <v-col cols="6">
-          <v-menu class="text-right pull-right mt-0" right>
-            <template v-slot:activator="{ on }">
-              <transition name="slide-fade" mode="out-in">
-                <v-btn v-on="on">
-                  Actions
-                  <v-icon right>mdi-menu-down</v-icon>
-                </v-btn>
-              </transition>
-            </template>
-            <v-list dense>
-              <v-list-item>
-                <v-list-item-title>Delete</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </v-col> -->
-      </v-row>
-      <v-row dense class="pa-l align-center" v-if="isAdvancedSearch">
-        <v-col class="pt-0 mt-0" cols="6">
-          <div class="pt-0 mt-0" v-for="(item, index) in filter.searches" :key="index">
-            <v-row class="pl-2 mt-0 pt-0" dense>
-              <v-col cols="3">
-                <v-select
-                  v-model="item.field"
-                  :items="filter.fields"
-                  @change="onChangeField(index, item.field)"
-                  label="Field"
-                  class="mt-0"
-                ></v-select>
+      <v-card-title class="indigo--text text--lighten-2 pb-1">
+        <v-row dense>        
+          <v-col cols="6" >
+            <v-row dense>
+              <v-col cols="9">
+                <v-text-field
+                  :readonly="isAdvancedSearch"
+                  v-model="grid.search"
+                  append-icon="mdi-magnify"
+                  class="flex-grow-1 mr-md-2"
+                  solo
+                  hide-details
+                  dense
+                  clearable
+                  @keyup.enter="search()"
+                ></v-text-field>
               </v-col>
               <v-col cols="3">
-                <v-select
-                  v-model="item.operator"
-                  :items="item.operators"
-                  label="Operator"
-                  class="mt-0"
-                ></v-select>
-              </v-col>
-              <v-col cols="3">
-                <div v-if="getCategoryFromDataField(item.field) === 'number' || getCategoryFromDataField(item.field) === 'text' || getCategoryFromDataField(item.field) === ''">  
-                  <v-text-field class="mt-0" v-model="item.keyword" label="Keyword" @keyup.enter="advancedSearch()"></v-text-field>                
-                </div>
-                <div v-else-if="getCategoryFromDataField(item.field) === 'bit'"> bit </div>
-                <div v-else-if="getCategoryFromDataField(item.field) === 'datetime'"> 
-                  <v-menu
-                        v-model="item.show"
-                        :close-on-content-click="false"
-                        transition="scale-transition"
-                        min-width="290px"
-                        offset-y
-                    >
-                        <template v-slot:activator="{ on, attrs }">
-                        <v-text-field
-                            v-bind="attrs"
-                            v-on="on"
-                            v-model="item.keyword"
-                            label="Date"
-                            class="mt-0"
-                            readonly
-                        ></v-text-field>
-                        </template>
-                        <v-date-picker
-                            v-model="item.keyword"
-                            no-title
-                            scrollable
-                            @change="item.show = false"
-                        ></v-date-picker>
-                    </v-menu>
-                </div>
-
-              </v-col>
-              <v-col cols="3">
-                
                 <v-btn
                   icon
-                  @click="removeSearch(index)"
-                >
-                  <v-icon>mdi-close</v-icon>
+                  small
+                  @click="refresh()"
+                  >
+                  <v-icon>mdi-refresh</v-icon>
                 </v-btn>
+                <v-btn
+                  icon
+                  small
+                  @click="advSearch()"
+                >
+                  <v-icon v-if="!isAdvancedSearch">mdi-plus</v-icon>
+                  <v-icon v-if="isAdvancedSearch">mdi-close</v-icon>
+                </v-btn>
+                <v-btn v-if="isAdvancedSearch"
+                  icon
+                  small
+                  @click="addSearch()"
+                >
+                  <v-icon>mdi-plus</v-icon>
+                </v-btn>
+                
               </v-col>
             </v-row>
-          </div>
-          <div>
-            <v-row>
-              <v-col cols="6">
+          </v-col>
+          <v-col cols="6" class="text-right">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
                 <v-btn
-                  text
-                  @click="advancedSearch()"
-                >Advanced Search</v-btn>
-                <v-btn
-                  text
-                  @click="resetAdvancedFilter()"
-                >Reset</v-btn>
-              </v-col>
-            </v-row>
-          </div>
-        </v-col>
-      </v-row>
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'n']"
+                  color="green darken-1"
+                  class="font-weight-regular"
+                  dark
+                  small
+                  tile
+                  @click="add"
+                  @shortkey="add"
+                >
+                  <v-icon left>mdi-plus</v-icon>
+                  New
+                </v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Alt + N)</span>
+            </v-tooltip>
+          </v-col>
+          <!-- <v-col cols="6">
+            <v-menu class="text-right pull-right mt-0" right>
+              <template v-slot:activator="{ on }">
+                <transition name="slide-fade" mode="out-in">
+                  <v-btn v-on="on">
+                    Actions
+                    <v-icon right>mdi-menu-down</v-icon>
+                  </v-btn>
+                </transition>
+              </template>
+              <v-list dense>
+                <v-list-item>
+                  <v-list-item-title>Delete</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+          </v-col> -->
+        </v-row>
+        <v-row dense v-if="isAdvancedSearch">
+          <v-col class="pt-0 mt-0" cols="6">
+            <div class="pt-0 mt-0" v-for="(item, index) in filter.searches" :key="index">
+              <v-row class="pl-2 mt-0 pt-0" dense>
+                <v-col cols="3">
+                  <v-select
+                    v-model="item.field"
+                    :items="filter.fields"
+                    @change="onChangeField(index, item.field)"
+                    label="Field"
+                    class="mt-0"
+                  ></v-select>
+                </v-col>
+                <v-col cols="3">
+                  <v-select
+                    v-model="item.operator"
+                    :items="item.operators"
+                    label="Operator"
+                    class="mt-0"
+                  ></v-select>
+                </v-col>
+                <v-col cols="3">
+                  <div v-if="getCategoryFromDataField(item.field) === 'number' || getCategoryFromDataField(item.field) === 'text' || getCategoryFromDataField(item.field) === ''">  
+                    <v-text-field class="mt-0" v-model="item.keyword" label="Keyword" @keyup.enter="advancedSearch()"></v-text-field>                
+                  </div>
+                  <div v-else-if="getCategoryFromDataField(item.field) === 'bit'"> bit </div>
+                  <div v-else-if="getCategoryFromDataField(item.field) === 'datetime'"> 
+                    <v-menu
+                          v-model="item.show"
+                          :close-on-content-click="false"
+                          transition="scale-transition"
+                          min-width="290px"
+                          offset-y
+                      >
+                          <template v-slot:activator="{ on, attrs }">
+                          <v-text-field
+                              v-bind="attrs"
+                              v-on="on"
+                              v-model="item.keyword"
+                              label="Date"
+                              class="mt-0"
+                              readonly
+                          ></v-text-field>
+                          </template>
+                          <v-date-picker
+                              v-model="item.keyword"
+                              no-title
+                              scrollable
+                              @change="item.show = false"
+                          ></v-date-picker>
+                      </v-menu>
+                  </div>
+
+                </v-col>
+                <v-col cols="3">
+                  
+                  <v-btn
+                    icon
+                    @click="removeSearch(index)"
+                  >
+                    <v-icon>mdi-close</v-icon>
+                  </v-btn>
+                </v-col>
+              </v-row>
+            </div>
+            <div>
+              <v-row>
+                <v-col cols="6">
+                  <v-btn
+                    text
+                    @click="advancedSearch()"
+                  >Advanced Search</v-btn>
+                  <v-btn
+                    text
+                    @click="resetAdvancedFilter()"
+                  >Reset</v-btn>
+                </v-col>
+              </v-row>
+            </div>
+          </v-col>
+        </v-row>
+      </v-card-title>
+      
       <v-data-table
         :headers="grid.columns"
         :items="grid.data"
@@ -506,6 +516,9 @@ export default {
       dataType = dataType.toLowerCase()
       const temp = this.mapDataTypeToCategory.find(x => x.dataTypes.includes(dataType))
       return temp.category
+    },
+    add() {
+      this.$router.push({ name: 'parameter-master-add', params: { param: this.param} })
     }
   },
   mounted: function () {
