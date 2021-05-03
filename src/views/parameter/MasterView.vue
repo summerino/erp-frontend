@@ -200,7 +200,7 @@
           </div>
           <div v-else-if="header.numberFormat" :key="header.value">
             <!-- {{ item[header.value] | numberFormatWithString(header.numberFormat) }} -->
-            {{ item[header.value] }}
+            {{ item[header.value] | formatCurrency }}
           </div>
           <v-chip
             v-else-if="header.displayAs=='hightlights' && header.hightlightValue " 
