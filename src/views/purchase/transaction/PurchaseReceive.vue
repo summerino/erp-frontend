@@ -746,6 +746,7 @@ export default {
         taxAmount: 0,
         total: 0
       }
+      this.lblTransCode = 'PO Code'
       this.gridItem.data = []
       this.gridRelated.data = []
       this.tab.sup = 0
@@ -757,9 +758,6 @@ export default {
           this.$refs.form.resetValidation()
         }, 0)
       }
-
-      // Call srcTrans change event
-      this.srcTransChange()
     },
     getList(bindToForm = false) {
       const sorts = []
@@ -865,6 +863,13 @@ export default {
         ...item,
         action: 'edit',
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
+      }
+
+      // Define label trans code
+      if (this.data.srcTrans === 1) {
+        this.lblTransCode = 'PO Code'
+      } else {
+        this.lblTransCode = 'Return Code'
       }
 
       // Get supplier details
@@ -1001,6 +1006,19 @@ export default {
       } else {
         this.lblTransCode = 'Return Code'
       }
+      this.data.transCode = null
+      this.data.supCode = null
+      this.data.supName = null
+      this.data.supAddr = null
+      this.data.supPhone = null
+      this.data.dpp = 0
+      this.data.subTotal = 0
+      this.data.finalDiscPercent = 0
+      this.data.finalDisc = 0
+      this.data.taxAmount = 0
+      this.data.total = 0
+      this.gridItem.data = []
+      this.gridRelated.data = []
     },
     transCodeChange() {
       if (this.data.srcTrans === 1) {
@@ -1143,53 +1161,55 @@ export default {
         this.data.taxAmount = item.taxAmount
         this.data.total = item.total
 
-        // Get supplier details
-        this.bindSupData(this.data)
+        if (!item.called) {
+          // Get supplier details
+          this.bindSupData(this.data)
 
-        if (this.data.srcTrans === 1) {
-          // Get purchase order item details
-          api.getAll(`${this.endpoint.purchase.order}/item`, {
-            params: {
-              code: item.code,
-              fullReceived: false
-            }
-          })
-            .then(response => {
-              this.gridItem.data = [...response.data.tableData]
-              for (let i = 0; i < this.gridItem.data.length; i++) {
-                this.gridItem.data[i].transDetailId = this.gridItem.data[i].id
-                this.gridItem.data[i].id = randomNumber(-1, -1000)
-                this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
-                this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyRcv
-                this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
-                this.gridItem.data[i].warehouseCode = item.warehouseCode
-                this.gridItem.data[i].typeName = 'Normal'
-                this.calcItemPrice(this.gridItem.data[i], false)
+          if (this.data.srcTrans === 1) {
+            // Get purchase order item details
+            api.getAll(`${this.endpoint.purchase.order}/item`, {
+              params: {
+                code: item.code,
+                fullReceived: false
               }
-              this.calcPrice()
             })
-        } else {
-          // Get purchase return item details
-          api.getAll(`${this.endpoint.purchase.return}/item`, {
-            params: {
-              code: item.code,
-              fullReceived: false
-            }
-          })
-            .then(response => {
-              this.gridItem.data = [...response.data.tableData]
-              for (let i = 0; i < this.gridItem.data.length; i++) {
-                this.gridItem.data[i].transDetailId = this.gridItem.data[i].id
-                this.gridItem.data[i].id = randomNumber(-1, -1000)
-                this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
-                this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyRcv
-                this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
-                this.gridItem.data[i].warehouseCode = item.warehouseCodeIn
-                this.gridItem.data[i].typeName = 'Normal'
-                this.calcItemPrice(this.gridItem.data[i], false)
+              .then(response => {
+                this.gridItem.data = [...response.data.tableData]
+                for (let i = 0; i < this.gridItem.data.length; i++) {
+                  this.gridItem.data[i].transDetailId = this.gridItem.data[i].id
+                  this.gridItem.data[i].id = randomNumber(-1, -1000)
+                  this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
+                  this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyRcv
+                  this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
+                  this.gridItem.data[i].warehouseCode = item.warehouseCode
+                  this.gridItem.data[i].typeName = 'Normal'
+                  this.calcItemPrice(this.gridItem.data[i], false)
+                }
+                this.calcPrice()
+              })
+          } else {
+            // Get purchase return item details
+            api.getAll(`${this.endpoint.purchase.return}/item`, {
+              params: {
+                code: item.code,
+                fullReceived: false
               }
-              this.calcPrice()
             })
+              .then(response => {
+                this.gridItem.data = [...response.data.tableData]
+                for (let i = 0; i < this.gridItem.data.length; i++) {
+                  this.gridItem.data[i].transDetailId = this.gridItem.data[i].id
+                  this.gridItem.data[i].id = randomNumber(-1, -1000)
+                  this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
+                  this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyRcv
+                  this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
+                  this.gridItem.data[i].warehouseCode = item.warehouseCodeIn
+                  this.gridItem.data[i].typeName = 'Normal'
+                  this.calcItemPrice(this.gridItem.data[i], false)
+                }
+                this.calcPrice()
+              })
+          }
         }
       } else {
         this.data.supCode = null

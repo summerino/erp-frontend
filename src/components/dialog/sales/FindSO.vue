@@ -151,7 +151,7 @@ export default {
       grid: {
         data: [],
         columns: [
-          { text: 'Code', value: 'code', divider: true, width: '150' },
+          { text: 'Code', value: 'code', divider: true, width: '160' },
           { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
           { text: 'Curr.', value: 'curr', width: '90' },
           { text: 'Amount', value: 'total', align: 'right', divider: true, width: '120' },

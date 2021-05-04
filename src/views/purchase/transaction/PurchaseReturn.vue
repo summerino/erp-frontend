@@ -1201,11 +1201,13 @@ export default {
         this.data.includeTax = item.includeTax
         this.data.total = 0
 
-        // Get supplier details
-        this.bindSupData(this.data)
+        if (!item.called) {
+          // Get supplier details
+          this.bindSupData(this.data)
 
-        // Get purchase receive item lists
-        this.getRcvItemLists()
+          // Get purchase receive item lists
+          this.getRcvItemLists()
+        }
       } else {
         this.data.supCode = null
         this.data.supName = null

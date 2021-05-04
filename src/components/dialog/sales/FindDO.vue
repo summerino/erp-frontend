@@ -148,9 +148,9 @@ export default {
       rowItem: {},
       grid: {
         columns: [
-          { text: 'Code', value: 'code', divider: true, width: '150' },
+          { text: 'Code', value: 'code', divider: true, width: '160' },
           { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
-          { text: 'SO Code', value: 'soCode', divider: true, width: '150' },
+          { text: 'SO Code', value: 'soCode', divider: true, width: '160' },
           { text: 'Amount', value: 'total', align: 'right', width: '120' },
           { text: 'Shipped By', value: 'shippedInitial', divider: true, width: '200' }
         ],

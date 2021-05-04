@@ -153,12 +153,12 @@ export default {
       rowItem: {},
       grid: {
         columns: [
-          { text: 'Code', value: 'code', divider: true, width: '150' },
+          { text: 'Code', value: 'code', divider: true, width: '160' },
           { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
-          { text: 'Trans. Code', value: 'transCode', divider: true, width: '150' },
+          { text: 'Trans. Code', value: 'transCode', divider: true, width: '160' },
           { text: 'Amount', value: 'total', align: 'right', width: '120' },
           { text: 'Received By', value: 'receiveInitial', divider: true, width: '200' },
-          { text: 'Ref. No.', value: 'refNo', divider: true, width: '150' }
+          { text: 'Ref. No.', value: 'refNo', divider: true, width: '160' }
         ],
         data: []
       },
@@ -235,7 +235,9 @@ export default {
     dblclickRow(event, { item }) {
       if (this.rowItem) {
         this.rowItem.rcvCode = item.code
+        this.rowItem.called = 'dialog'
       }
+      item.called = 'dialog'
       this.$emit('dblclick:row', this.rowItem, item)
       this.dialog = false
     }
