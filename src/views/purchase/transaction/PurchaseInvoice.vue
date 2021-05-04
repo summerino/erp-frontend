@@ -625,7 +625,7 @@
     ></find-po>
     <find-rcv
       ref="findRcv"
-      :po-code="data.poCode"
+      :trans-code="data.poCode"
       :mark-exclude="['V', 'INV']"
       @dblclick:row="bindRcvData"
     ></find-rcv>

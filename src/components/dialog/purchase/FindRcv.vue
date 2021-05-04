@@ -129,7 +129,7 @@ import api from '@/services/axios.service'
 
 export default {
   props: {
-    poCode: String,
+    transCode: String,
     markExclude: {
       type: Array,
       required: true
@@ -146,7 +146,7 @@ export default {
         items: [
           { text: 'Code', value: 'code' },
           { text: 'Date', value: 'date' },
-          { text: 'PO Code', value: 'poCode' },
+          { text: 'Trans. Code', value: 'transCode' },
           { text: 'Ref. No.', value: 'refNo' }
         ]
       },
@@ -155,7 +155,7 @@ export default {
         columns: [
           { text: 'Code', value: 'code', divider: true, width: '150' },
           { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
-          { text: 'PO Code', value: 'poCode', divider: true, width: '150' },
+          { text: 'Trans. Code', value: 'transCode', divider: true, width: '150' },
           { text: 'Amount', value: 'total', align: 'right', width: '120' },
           { text: 'Received By', value: 'receiveInitial', divider: true, width: '200' },
           { text: 'Ref. No.', value: 'refNo', divider: true, width: '150' }
@@ -204,11 +204,11 @@ export default {
         keyword: this.markExclude
       }]
 
-      if (this.poCode) {
+      if (this.transCode) {
         filters.push({
-          field: 'poCode',
+          field: 'transCode',
           operator: 'eq',
-          keyword: this.poCode
+          keyword: this.transCode
         })
       }
 
