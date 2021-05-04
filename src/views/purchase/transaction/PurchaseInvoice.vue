@@ -818,7 +818,7 @@ export default {
           this.employees = response.data.tableData
         })
     },
-    getReceiveLists() {
+    getReceiveLists(bindToGridDet = false) {
       api.getAll(`${this.endpoint.purchase.receive}/un-invoice`, {
         params: {
           poCode: this.data.poCode,
@@ -826,7 +826,17 @@ export default {
         }
       })
         .then(response => {
-          this.receives = response.data.tableData
+          this.receives = JSON.parse(JSON.stringify(response.data.tableData))
+          if (bindToGridDet) {
+            this.gridDet.data = response.data.tableData
+            for (let i = 0; i < this.gridDet.data.length; i++) {
+              this.gridDet.data[i].id = randomNumber(-1, -1000)
+              this.gridDet.data[i].rcvCode = this.gridDet.data[i].code
+              this.gridDet.data[i].code = this.data.code
+              this.gridDet.data[i].state = 'A'
+            }
+            this.calcPrice()
+          }
         })
     },
     close() {
@@ -1014,11 +1024,13 @@ export default {
         this.data.currCode = item.currCode
         this.data.total = 0
 
-        // Get supplier details
-        this.bindSupData(this.data)
+        if (!item.called) {
+          // Get supplier details
+          this.bindSupData(this.data)
 
-        // Get purchase receive details
-        this.getReceiveLists()
+          // Get purchase receive details
+          this.getReceiveLists(true)
+        }
       } else {
         this.data.supCode = null
         this.data.supName = null
