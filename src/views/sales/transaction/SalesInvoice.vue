@@ -788,7 +788,7 @@ export default {
           this.employees = response.data.tableData
         })
     },
-    getDOLists() {
+    getDOLists(bindToGridDet = false) {
       api.getAll(`${this.endpoint.sales.delivery}/un-invoice`, {
         params: {
           soCode: this.data.soCode,
@@ -796,7 +796,17 @@ export default {
         }
       })
         .then(response => {
-          this.dlvOrders = response.data.tableData
+          this.dlvOrders = JSON.parse(JSON.stringify(response.data.tableData))
+          if (bindToGridDet) {
+            this.gridDet.data = response.data.tableData
+            for (let i = 0; i < this.gridDet.data.length; i++) {
+              this.gridDet.data[i].id = randomNumber(-1, -1000)
+              this.gridDet.data[i].doCode = this.gridDet.data[i].code
+              this.gridDet.data[i].code = this.data.code
+              this.gridDet.data[i].state = 'A'
+            }
+            this.calcPrice()
+          }
         })
     },
     close() {
@@ -984,11 +994,13 @@ export default {
         this.data.currCode = item.currCode
         this.data.total = 0
 
-        // Get customer details
-        this.bindCustData(this.data)
+        if (!item.called) {
+          // Get customer details
+          this.bindCustData(this.data)
 
-        // Get sales delivery details
-        this.getDOLists()
+          // Get sales delivery details
+          this.getDOLists(true)
+        }
       } else {
         this.data.custCode = null
         this.data.custName = null

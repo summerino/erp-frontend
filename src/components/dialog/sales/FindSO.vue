@@ -219,6 +219,7 @@ export default {
       this.$refs.search.focus()
     },
     dblclickRow(event, { item }) {
+      item.called = 'dialog'
       this.$emit('dblclick:row', item)
       this.dialog = false
     }
