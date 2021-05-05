@@ -728,7 +728,6 @@ export default {
         notes: ''
       }
       this.gridItem.data = []
-      console.log('after reset', this.gridItem.data)
       // Reset form validation
       if (resetValidation) {
         setTimeout(() => {
@@ -950,7 +949,7 @@ export default {
             name: null,
             unitName: null,
             units: [],
-            qtyOnHand: null,
+            qtyOnHand: 0,
             qtyOnTransit: 0,
             netOnHand: 0,
             qtyOpname: 0,
@@ -1019,9 +1018,6 @@ export default {
       this.$refs.findItem.open(item, this.data.warehouseCode)
     },
     bindItemData(rowItem) {
-      // this.gridItem.data[0].itemId = item.id
-      // this.gridItem.data[0].itemName = item.name
-      // this.itemIdChange(rowItem, item)
       this.itemIdChange(rowItem)
     },
     getWarehouseLists() {
@@ -1038,8 +1034,6 @@ export default {
         })
     },
     isButtonShowItemDisabled() {
-      console.log('this.gridItem.data', this.gridItem.data)
-      console.log('this.data.type', this.data.type)
       this.showItemDisabled =  this.gridItem.data.length > 0 && this.data.type === 2
     }
   }
