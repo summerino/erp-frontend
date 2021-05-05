@@ -28,7 +28,8 @@ export default {
       item: 'item'
     },
     uom: 'uom',
-    warehouse: 'warehouse'
+    warehouse: 'warehouse',
+    adjustment: 'adjustment'
   },
 
   purchase: {
