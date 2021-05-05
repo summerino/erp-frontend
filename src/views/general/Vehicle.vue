@@ -221,7 +221,7 @@
                   v-model="data.maxLoadWeight"
                   :decimal-length="0"
                   class="mt-0"
-                  label="Max Load Volume"
+                  label="Max Load Weight"
                 ></v-currency-field>
               </v-col>
             </v-row>

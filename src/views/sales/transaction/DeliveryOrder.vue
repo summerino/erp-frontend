@@ -1000,29 +1000,31 @@ export default {
         this.data.taxAmount = item.taxAmount
         this.data.total = item.total
 
-        // Get customer details
-        this.bindCustData(this.data)
+        if (!item.called) {
+          // Get customer details
+          this.bindCustData(this.data)
 
-        // Get sales order item details
-        api.getAll(`${this.endpoint.sales.order}/item`, {
-          params: {
-            code: item.code,
-            fullDelivered: false
-          }
-        })
-          .then(response => {
-            this.gridItem.data = [...response.data.tableData]
-            for (let i = 0; i < this.gridItem.data.length; i++) {
-              this.gridItem.data[i].soDetailId = this.gridItem.data[i].id
-              this.gridItem.data[i].id = randomNumber(-1, -1000)
-              this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
-              this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyDlv
-              this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
-              this.gridItem.data[i].typeName = 'Normal'
-              this.calcItemPrice(this.gridItem.data[i], false)
+          // Get sales order item details
+          api.getAll(`${this.endpoint.sales.order}/item`, {
+            params: {
+              code: item.code,
+              fullDelivered: false
             }
-            this.calcPrice()
           })
+            .then(response => {
+              this.gridItem.data = [...response.data.tableData]
+              for (let i = 0; i < this.gridItem.data.length; i++) {
+                this.gridItem.data[i].soDetailId = this.gridItem.data[i].id
+                this.gridItem.data[i].id = randomNumber(-1, -1000)
+                this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
+                this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyDlv
+                this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
+                this.gridItem.data[i].typeName = 'Normal'
+                this.calcItemPrice(this.gridItem.data[i], false)
+              }
+              this.calcPrice()
+            })
+        }
       } else {
         this.data.custCode = null
         this.data.custName = null

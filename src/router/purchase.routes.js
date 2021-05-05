@@ -26,12 +26,18 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/purchase/transaction/purchase-return-wo-doc',
+  name: 'purchase-return-wo-doc',
+  component: () => import(/* webpackChunkName: "purchase-trans-return-wo-doc" */ '@/views/purchase/transaction/PurchaseReturnNoDoc.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/purchase/transaction/debit-memo',
+  name: 'debit-memo',
+  component: () => import(/* webpackChunkName: "debit-memo" */ '@/views/purchase/transaction/DebitMemo.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
-// , {
-//   path: '/purchase/transaction/purchase-return-wo-doc',
-//   name: 'purchase-return-wo-doc',
-//   component: () => import(/* webpackChunkName: "purchase-trans-return-wo-doc" */ '@/views/purchase/transaction/PurchaseReturnNoDoc.vue'),
-//   meta: {
-//     authRequired: true
-//   }
-// }]

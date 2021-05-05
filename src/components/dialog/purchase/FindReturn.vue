@@ -153,12 +153,12 @@ export default {
       },
       grid: {
         columns: [
-          { text: 'Code', value: 'code', divider: true, width: '150' },
+          { text: 'Code', value: 'code', divider: true, width: '160' },
           { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
-          { text: 'Rcv. Code', value: 'rcvCode', divider: true, width: '150' },
+          { text: 'Rcv. Code', value: 'rcvCode', divider: true, width: '160' },
           { text: 'Amount', value: 'total', align: 'right', width: '120' },
           { text: 'Shipped By', value: 'shippedInitial', divider: true, width: '200' },
-          { text: 'Ref. No.', value: 'refNo', divider: true, width: '150' }
+          { text: 'Ref. No.', value: 'refNo', divider: true, width: '160' }
         ],
         data: []
       },
@@ -240,6 +240,7 @@ export default {
       this.$refs.search.focus()
     },
     dblclickRow(event, { item }) {
+      item.called = 'dialog'
       this.$emit('dblclick:row', item)
       this.dialog = false
     }

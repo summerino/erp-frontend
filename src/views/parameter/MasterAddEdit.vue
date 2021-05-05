@@ -289,9 +289,6 @@ export default {
       return result
     }, 
     async save() {
-      debugger
-      const form = this.$refs.form.validate()
-      console.log(form)
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
         return
@@ -331,7 +328,6 @@ export default {
         }).then(response => {
           this.fields = this.defineRules(response.data.metaData)         
           this.bindData(response.data.tableData)
-          console.log(this.fields)
         })
       }
     },
