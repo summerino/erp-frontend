@@ -328,7 +328,7 @@ export default {
       }
     },
     getList() {
-      api.getAll(`${this.endpoint.inventory.item.category}/list-hierarchy`, {
+      api.getAll(`${this.endpoint.inventory.item.category}/hierarchy`, {
         params: { search: this.hierarchy.search }
       })
         .then(response => {
@@ -417,7 +417,7 @@ export default {
       }
     },
     getParent() {
-      api.getAll(`${this.endpoint.inventory.item.category}/parent`, {})
+      api.getAll(`${this.endpoint.inventory.item.category}/lists`, {})
         .then(response => {
           this.parentRef = response.data.tableData
           const itemRef = [{ id: null, initial: null, name: 'All Category', parentId: null, seq: 0, deep: 0, lineage: ''}, ...this.parentRef]
@@ -425,7 +425,7 @@ export default {
         })
     },
     getGroup() {
-      api.getAll(`${this.endpoint.inventory.item.group}/groups`, {})
+      api.getAll(`${this.endpoint.inventory.item.group}/lists`, {})
         .then(response => {
           this.groupRef = response.data.tableData
         })
