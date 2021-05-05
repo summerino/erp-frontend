@@ -237,6 +237,7 @@
                             class="mt-0"
                             :rules="rules.required"
                             required
+                            @change="loadSubGroup"
                           ></v-autocomplete>
                       </v-col>
                     </v-row>
@@ -249,19 +250,6 @@
                           label="Description"
                           class="mt-0"
                         ></v-text-field>
-                      </v-col>
-                    </v-row>
-
-                    <v-row no-gutters>
-                      <v-col cols="12">
-                        <v-autocomplete
-                            v-model="data.valuationMethod"
-                            :items="valuationMethodRef"
-                            :item-text="item => `${item.text}`"
-                            label="Valuation Method"
-                            item-value="value"
-                            class="mt-0"
-                          ></v-autocomplete>
                       </v-col>
                     </v-row>
                   </v-card-text>
@@ -330,7 +318,7 @@
                     </v-row>
 
                     <v-row no-gutters>
-                      <v-col cols="12">
+                      <v-col cols="12" md="6">
                         <v-autocomplete
                             v-model="data.salesTaxId"
                             :items="slsTaxes"
@@ -340,10 +328,7 @@
                             class="mt-0"
                           ></v-autocomplete>
                       </v-col>
-                    </v-row>
-
-                    <v-row no-gutters>
-                      <v-col cols="12">
+                      <v-col cols="12" md="6" class="pl-md-3">
                         <v-autocomplete
                             v-model="data.purchaseTaxId"
                             :items="purcTaxes"
@@ -365,6 +350,7 @@
                   <v-tabs v-model="tab.advancedItem">
                     <v-tab key="dimension">Dimension</v-tab>
                     <v-tab key="account">Account</v-tab>
+                    <v-tab key="group">Group</v-tab>
 
                     <v-tab-item
                       key="dimension"
@@ -556,6 +542,30 @@
                         </v-card-text>
                       </v-card>
                     </v-tab-item>
+
+                    <v-tab-item
+                      key="group"
+                      transition="false"
+                    >
+                      <v-card>
+                        <v-card-text>
+                          <template v-for="(items, index) in subGroupRef">
+                            <v-row :key="index" no-gutters>
+                              <v-col cols="12">
+                                <v-autocomplete
+                                  v-model="data[`subGroup${index + 1}`]"
+                                  :items="items.value.split(';')"
+                                  :item-text="item => `${item.value}`"
+                                  :label="items.name"
+                                  :item-value="item => `${item.value}`"
+                                  class="mt-0"
+                                ></v-autocomplete>
+                              </v-col>
+                            </v-row>
+                          </template>
+                        </v-card-text>
+                      </v-card>
+                    </v-tab-item>
                   </v-tabs>
                 </v-card>
               </v-col>
@@ -621,56 +631,9 @@ export default {
     purcTaxes: [],
     dimensionOfMeasurement: [{text: 'mm'}, {text: 'cm'}, {text: 'm'}],
     weightOfMeasurement: [{text: 'g'}, {text: 'ons'}, {text: 'kg'}],
-    valuationMethodRef: [{text: 'Average', value: '1'}, {text: 'FIFO', value: '2'}, {text: 'LIFO', value: '3'}],
     coa: [],
-    data: {
-      initial: '',
-      name: '',
-      description: '',
-      categoryId: 0,
-      typeId: 0,
-      costOfGoodSold: '',
-      valuationMethod: 0,
-      stockType: 0,
-      uomId: 0,
-      uomSellId: 0,
-      sellPrice: '',
-      uomBuyId: 0,
-      buyPrice: '',
-      salesTaxId: 0,
-      purchaseTaxId: 0,
-      category1: '',
-      category2: '',
-      category3: '',
-      category4: '',
-      category5: '',
-      subGroup1: '',
-      subGroup2: '',
-      subGroup3: '',
-      subGroup4: '',
-      subGroup5: '',
-      coaInventory: '',
-      coaCogs: '',
-      coaPurc: '',
-      coaPurcDisc: '',
-      coaPurcReturn: '',
-      coaSls: '',
-      coaSlsReturn: '',
-      coaSlsDisc: '',
-      coaOffSet: '',
-      coaCost: '',
-      coaExpense: '',
-      length: 0,
-      width: 0,
-      height: 0,
-      dimensionMeasurement: '',
-      weight: 0,
-      weightMeasurement: '',
-      categoryName: '',
-      uomInitial: '',
-      uomSellName: '',
-      uomBuyName: ''
-    }
+    subGroupRef: [],
+    data: {}
   }),
 
   created: function () {
@@ -762,6 +725,7 @@ export default {
         uomBuyName: ''
       }
       this.tab.advancedItem = 0
+      this.subGroupRef = []
 
       // Reset form validation
       if (resetValidation) {
@@ -819,17 +783,7 @@ export default {
         })
     },
     getCategory() {
-      api.getAll(this.endpoint.master, {
-        params: {
-          param: 'itemcategory',
-          fieldNames: 'id,initial,name',
-          sorts: JSON.stringify([{
-            field: 'initial',
-            direction: 'asc'
-          }]),
-          includeMetaData: false
-        }
-      })
+      api.getAll(`${this.endpoint.inventory.item.category}/lists`, {})
         .then(response => {
           this.itemCtg = response.data.tableData
         })
@@ -959,6 +913,7 @@ export default {
       }
 
       this.getUnitSellingOrBuying()
+      this.loadSubGroup()
 
       // Set focus to receive code field
       setTimeout(() => {
@@ -1008,6 +963,17 @@ export default {
     },
     categoryChanged() {
       this.getUnitSellingOrBuying()
+    },
+    loadSubGroup() {
+      const item = this.itemCtg.find(x => x.id === this.data.categoryId)
+
+      // Get Sub Group
+      api.getAll(`${this.endpoint.inventory.item.group}/item-by-initial`, {
+        params: { initial: item.groupId }
+      })
+        .then(response => {
+          this.subGroupRef = response.data.tableData
+        })
     }
   }
 }
