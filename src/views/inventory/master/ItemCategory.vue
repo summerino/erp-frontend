@@ -413,7 +413,6 @@ export default {
         } else {
           this.data.initial = result.data
         }
-        this.getList(!closeDialog)
       }
     },
     getParent() {
