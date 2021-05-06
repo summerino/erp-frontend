@@ -90,7 +90,7 @@
                 v-bind="attrs"
                 v-on="on"
                 :disabled="item.mark.toUpperCase() !== 'PR' && item.mark.toUpperCase() !== 'A'"
-                color="#1c6c94"
+                color="blue darken-2"
                 icon
                 small
                 @click="closeOrder(item)"
@@ -772,7 +772,7 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
+        { value: 'action', sortable: false, divider: true, width: '120' },
         { text: 'Code', value: 'code', divider: true, width: '160' },
         { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
         { text: 'Request By', value: 'requestInitial', divider: true, width: '200' },
