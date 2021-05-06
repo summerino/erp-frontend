@@ -213,18 +213,6 @@
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12" md="6" class="pl-md-1">
-                        <v-text-field
-                          v-model.trim="data.refNo"
-                          :rules="rules.max30chars"
-                          label="Ref. No."
-                          counter="30"
-                          class="mt-0"
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-
-                    <v-row no-gutters>
-                      <v-col cols="12">
                         <v-menu
                           v-model="menu.returnDate"
                           :close-on-content-click="false"
@@ -255,23 +243,37 @@
                     </v-row>
 
                     <v-row no-gutters>
-                      <v-autocomplete
-                        v-model="data.type"
-                        :items="types"
-                        :rules="rules.required"
-                        label="Type"
-                        item-text="name"
-                        item-value="id"
-                        class="mt-0"
-                        required
-                        @change="typeChange"
-                      ></v-autocomplete>
-                      <v-checkbox
-                        v-model="data.includeTax"
-                        label="Tax Included"
-                        class="shrink ml-1"
-                        @change="calcTax"
-                      ></v-checkbox>
+                      <v-col cols="12">
+                        <v-autocomplete
+                          v-model="data.type"
+                          :items="types"
+                          :rules="rules.required"
+                          label="Type"
+                          item-text="name"
+                          item-value="id"
+                          class="mt-0"
+                          required
+                          @change="typeChange"
+                        ></v-autocomplete>
+                      </v-col>
+                    </v-row>
+                    <v-row no-gutters>
+                      <v-col cols="6" >
+                        <v-checkbox
+                          v-model="data.nonTax"
+                          label="Non Tax"
+                          class="shrink ml-1"
+                          :disabled="data.type !== 1"
+                        ></v-checkbox>
+                      </v-col>
+                      <v-col cols="6">
+                        <v-checkbox
+                          v-model="data.taxIncluded"
+                          label="Tax Included"
+                          class="shrink ml-1"
+                          :disabled="data.type !== 1"
+                        ></v-checkbox>
+                      </v-col>
                     </v-row>
                   </v-card-text>
                 </v-card>
@@ -279,61 +281,47 @@
 
               <v-col cols="12" md="8">
                 <v-card>
-                  <v-tabs v-model="tab.sup">
-                    <v-tab key="sup">Supplier</v-tab>
-                    <v-tab key="user">User</v-tab>
+                  <v-tabs v-model="tab.cust">
+                    <v-tab key="cust">Customer</v-tab>
+                    <v-tab key="location">Location</v-tab>
                     <v-tab key="notes">Notes</v-tab>
+                    <v-tab key="user">User</v-tab>
                   </v-tabs>
 
-                  <v-tabs-items v-model="tab.sup" class="pa-2">
+                  <v-tabs-items v-model="tab.cust" class="pa-2">
                     <v-tab-item
-                      key="sup"
+                      key="cust"
                       transition="false"
                     >
                       <v-row no-gutters>
-                        <v-col cols="4">
+                        <v-col cols="3">
                           <v-autocomplete
-                            v-model="data.supCode"
-                            :items="suppliers"
+                            v-model="data.custCode"
+                            :items="customers"
                             :item-text="item => `${item.code} - ${item.initial}`"
-                            :readonly="hasRelatedTrans"
                             :rules="rules.required"
                             label="Code"
                             item-value="code"
                             class="mt-0"
+                            @change="custCodeChange"
                             required
-                            @change="supCodeChange"
                           ></v-autocomplete>
                         </v-col>
-                        <v-col cols="8" class="pl-1">
+                        <v-col cols="9" class="pl-1">
                           <v-text-field
-                            v-model="data.supName"
-                            :rules="rules.required"
+                            v-model="data.custName"
                             label="Name"
                             class="mt-0"
                             readonly
                             required
-                          >
-                            <template v-slot:append-outer>
-                              <v-btn
-                                :disabled="hasRelatedTrans"
-                                color="primary"
-                                icon
-                                @click="showFindSupDialog"
-                              >
-                                <v-icon>
-                                  mdi-account-search
-                                </v-icon>
-                              </v-btn>
-                            </template>
-                          </v-text-field>
+                          ></v-text-field>
                         </v-col>
                       </v-row>
-                      
+
                       <v-row no-gutters>
                         <v-col cols="12">
                           <v-text-field
-                            v-model.trim="data.supAddr"
+                            v-model="data.custAddr"
                             label="Address"
                             class="mt-0"
                             readonly
@@ -344,7 +332,7 @@
                       <v-row no-gutters>
                         <v-col cols="6">
                           <v-text-field
-                            v-model="data.supPhone"
+                            v-model="data.custPhone"
                             label="Phone"
                             class="mt-0"
                             readonly
@@ -352,7 +340,7 @@
                         </v-col>
                         <v-col cols="6" class="pl-1">
                           <v-text-field
-                            v-model="data.supFax"
+                            v-model="data.custFax"
                             label="Fax"
                             class="mt-0"
                             readonly
@@ -362,60 +350,21 @@
                     </v-tab-item>
 
                     <v-tab-item
-                      key="user"
+                      key="location"
                       transition="false"
                       eager
                     >
                       <v-row no-gutters>
                         <v-col cols="12">
                           <v-autocomplete
-                            v-model="data.shippedBy"
-                            :items="employees"
-                            :item-text="item => `${item.initial} - ${item.firstName}`"
+                            v-model="data.warehouseCode"
+                            :items="warehouses"
+                            :item-text="item => `${item.initial} - ${item.name}`"
                             :rules="rules.required"
-                            label="Shipped By"
-                            item-value="id"
+                            item-value="code"
+                            label="Location"
                             class="mt-0"
-                            required
                           ></v-autocomplete>
-                        </v-col>
-                      </v-row>
-
-                      <v-row no-gutters>
-                        <v-col cols="6">
-                          <v-text-field
-                            v-model.trim="data.approveInitial"
-                            label="Approved By"
-                            class="mt-0"
-                            readonly
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="6" class="pl-1">
-                          <v-text-field
-                            v-model.trim="data.createdInitial"
-                            label="Created By"
-                            class="mt-0"
-                            readonly
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-
-                      <v-row no-gutters>
-                        <v-col cols="6">
-                          <v-text-field
-                            v-model.trim="data.updatedInitial"
-                            label="Updated By"
-                            class="mt-0"
-                            readonly
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="6" class="pl-1">
-                          <v-text-field
-                            v-model.trim="data.updatedDate"
-                            label="Updated Date"
-                            class="mt-0"
-                            readonly
-                          ></v-text-field>
                         </v-col>
                       </v-row>
                     </v-tab-item>
@@ -424,14 +373,70 @@
                       key="notes"
                       transition="false"
                     >
-                      <v-textarea
-                        v-model="data.notes"
-                        :rules="rules.max256chars"
-                        label="Notes"
-                        counter="256"
-                        class="mt-0"
-                        rows="4"
-                      ></v-textarea>
+                      <v-row no-gutters>
+                        <v-textarea
+                          v-model="data.notes"
+                          :rules="[rules.max256chars, rules.required[0]]"
+                          label="Notes"
+                          counter="256"
+                          class="mt-0"
+                          rows="4"
+                          required
+                        ></v-textarea>
+                      </v-row>
+                    </v-tab-item>
+                    
+                    <v-tab-item
+                      key="user"
+                      transition="false"
+                      eager
+                    >
+                      <v-row no-gutters>
+                        <v-col cols="12">
+                          <v-autocomplete
+                            v-model="data.salesBy"
+                            :items="employees"
+                            :item-text="item => `${item.initial} - ${item.firstName}`"
+                            :rules="rules.required"
+                            label="Sales By"
+                            item-value="id"
+                            class="mt-0"
+                            required
+                          ></v-autocomplete>
+                        </v-col>
+                      </v-row>
+                      
+                      <v-row no-gutters>
+                        <v-col cols="12">
+                          <v-autocomplete
+                            v-model="data.approveBy"
+                            :items="employees"
+                            :item-text="item => `${item.initial} - ${item.firstName}`"
+                            label="Approved By"
+                            item-value="id"
+                            class="mt-0"
+                          ></v-autocomplete>
+                        </v-col>
+                      </v-row>
+
+                      <v-row no-gutters>
+                        <v-col cols="6">
+                          <v-text-field
+                            v-model="data.updatedInitial"
+                            label="Updated By"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="6" class="pl-1">
+                          <v-text-field
+                            v-model="data.updatedDate"
+                            label="Updated Date"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
                     </v-tab-item>
                   </v-tabs-items>
                 </v-card>
@@ -444,6 +449,7 @@
                   <v-tabs v-model="tab.item">
                     <v-tab key="item">Item</v-tab>
                     <v-tab key="related-trans">Related Transaction(s)</v-tab>
+                    <v-tab key="tax">Tax</v-tab>
 
                     <v-tab-item
                       key="item"
@@ -507,7 +513,6 @@
                               ref="itemId"
                               v-model="item.itemId"
                               :items="items"
-                              :readonly="hasRelatedTrans"
                               :rules="rules.required"
                               item-text="initial"
                               item-value="id"
@@ -531,29 +536,27 @@
                               </template>
                             </v-autocomplete>
                           </template>
-                          <template v-slot:[`item.warehouseInitial`]="{ item }">
-                            <v-autocomplete
-                              v-model="item.warehouseCode"
-                              :disabled="hasRelatedTrans"
-                              :items="warehouses"
-                              :rules="rules.required"
-                              item-text="initial"
-                              item-value="code"
-                              class="text-body-2 text-right mt-0"
+                          <template v-slot:[`item.itemIdReplacement`]="{ item }">
+                            <v-text-field
+                              v-model="item.itemIdReplacement"
+                              class="text-body-2 mt-0"
+                              readonly
                               dense
-                              required
-                            ></v-autocomplete>
-                          </template>
-                          <template v-slot:[`item.warehouseInitialIn`]="{ item }">
-                            <v-autocomplete
-                              v-model="item.warehouseCodeIn"
-                              :disabled="hasRelatedTrans"
-                              :items="warehouses"
-                              item-text="initial"
-                              item-value="code"
-                              class="text-body-2 text-right mt-0"
-                              dense
-                            ></v-autocomplete>
+                            >
+                              <template v-slot:append>
+                                  <v-btn
+                                    color="primary"
+                                    icon
+                                    x-small
+                                    @click="showAddItemReplacement(item)"
+                                  >
+                                    <v-icon>
+                                      mdi-settings-helper
+                                    </v-icon>
+                                  </v-btn>
+                                </template>
+                            </v-text-field>
+                              
                           </template>
                           <template v-slot:[`item.qty`]="{ item }">
                             <v-currency-field
@@ -629,6 +632,72 @@
                         </template>
                       </v-data-table>
                     </v-tab-item>
+
+                    <v-tab-item
+                      key="tax"
+                      transition="false"
+                    >
+                      <v-card>
+                        <v-card-text>
+                          <v-row no-gutters>
+                            <v-col cols="12" md="6">
+                              <v-text-field
+                                v-model="data.taxInvoidNo"
+                                label="Tax Invoice No"
+                                class="mt-0"
+                                required
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="12" md="6" class="pl-md-1">
+                              <v-menu
+                                v-model="menu.invoiceDate"
+                                :close-on-content-click="false"
+                                transition="scale-transition"
+                                min-width="290px"
+                                offset-y
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    :rules="rules.required"
+                                    :value="formatInvoiceDate"
+                                    label="Invoice Date"
+                                    class="mt-0"
+                                    readonly
+                                    required
+                                  ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                  v-model="data.invoiceDate"
+                                  no-title
+                                  scrollable
+                                  @change="menu.invoiceDate = false"
+                                ></v-date-picker>
+                              </v-menu>
+                            </v-col>
+                          </v-row>
+                          <v-row dense>
+                            <v-col cols="12" md="6">
+                              <v-currency-field
+                                label="Before Tax"
+                                v-model="data.beforeTax"
+                                readonly
+                                class="text-body-2 text-right mt-0"
+                              ></v-currency-field>
+                            </v-col>
+                            <v-col cols="12" md="6" class="pl-md-1">
+                              <v-currency-field
+                                label="Tax"
+                                v-model="data.taxAmount"
+                                readonly
+                                class="text-body-2 text-right mt-0"
+                              ></v-currency-field>
+                            </v-col>
+                          </v-row>
+                        </v-card-text>
+                      </v-card>
+                    </v-tab-item>
                   </v-tabs>
                 </v-card>
               </v-col>
@@ -639,14 +708,15 @@
     </v-dialog>
 
     <confirm ref="confirm"></confirm>
-    <find-supplier
-      ref="findSup"
-      @dblclick:row="bindSupData"
-    ></find-supplier>
     <find-item
       ref="findItem"
       @dblclick:row="bindItemData"
     ></find-item>
+    <add-item-replacement 
+      ref="addItemReplacement" 
+      :items="items"
+      @save="saveItemReplacement" 
+    ></add-item-replacement>
   </div>
 </template>
 
@@ -659,14 +729,14 @@ import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
-import FindSupplier from '@/components/dialog/general/FindSupplier'
 import FindItem from '@/components/dialog/inventory/FindItem'
+import AddItemReplacement from '../../../components/dialog/sales/AddItemReplacement.vue'
 
 export default {
   components: {
     Confirm,
-    FindSupplier,
-    FindItem
+    FindItem,
+    AddItemReplacement
   },
 
   data: () => ({
@@ -674,11 +744,14 @@ export default {
       add: false
     },
     menu: {
-      returnDate: false
+      returnDate: false,
+      invoiceDate: false
     },
     tab: {
-      sup: null,
-      item: null
+      cust: null,
+      location: null,
+      notes: null,
+      user: null
     },
     grid: {
       columns: [
@@ -713,20 +786,20 @@ export default {
     valid: false,
     defTaxInc: false,
     defWarehouseCode: '',
-    types: [{ id: 1, name: 'Exchange Memo' }, { id: 2, name: 'Exchange Same Item' }],
+    types: [{ id: 1, name: 'Exchange Memo' }, { id: 2, name: 'Exchange Same Item' }, { id: 3, name: 'Exchange Diff Item' }],
     employees: [],
-    suppliers: [],
     warehouses: [],
     taxes: [],
     items: [],
-    data: {}
+    data: {},
+    customers: []
   }),
 
   created: function () {
     this.getList()
-    this.getDefTaxIncSetting()
-    this.getSupplierLists()
+    //this.getDefTaxIncSetting()
     this.getEmployeeLists()
+    this.getCustomerLists()
     this.getWarehouseLists()
     this.getTaxLists()
     this.getItemLists()
@@ -750,6 +823,9 @@ export default {
     formatReturnDate() {
       return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
     },
+    formatInvoiceDate() {
+      return this.data.invoiceDate ? format(parseISO(this.data.invoiceDate), 'dd-MMM-yyyy') : ''
+    },
     hasRelatedTrans() {
       return (this.gridRelated?.data?.length > 0)
     },
@@ -763,27 +839,26 @@ export default {
       this.data = {
         action: '',
         code: null,
-        refNo: null,
         date: format(new Date(), 'yyyy-MM-dd'),
         type: 1,
-        supCode: null,
-        supName: null,
-        supAddr: null,
-        supPhone: null,
-        supFax: null,
-        shippedBy: null,
-        approveBy: null,
-        dpp: 0,
-        subTotal: 0,
-        finalDisc: 0,
-        includeTax: this.defTaxInc,
-        taxAmount: 0,
-        total: 0
+        nonTax: false,
+        taxIncluded: false,
+        custCode: null,
+        custName: null,
+        custAddr: null,
+        custPhone: null,
+        custFax: null,
+        warehouseCode: null,
+        notes: null,
+        salesBy: null,
+        approveBy: null
       }
       this.gridItem.data = []
       this.gridRelated.data = []
-      this.tab.sup = 0
-      this.tab.item = 0
+      this.tab.cust = 0
+      this.tab.location = 0
+      this.tab.notes = 0
+      this.tab.user = 0
 
       // Reset form validation
       if (resetValidation) {
@@ -842,19 +917,6 @@ export default {
           this.defTaxInc = (response.data.tableData[0].value === '1')
         })
     },
-    getSupplierLists() {
-      api.getAll(`${this.endpoint.general.supplier.supplier}/lists`, {
-        params: {
-          sorts: JSON.stringify([{
-            field: 'initial',
-            direction: 'asc'
-          }])
-        }
-      })
-        .then(response => {
-          this.suppliers = response.data.tableData
-        })
-    },
     getEmployeeLists() {
       api.getAll(`${this.endpoint.general.employee}/lists`, {
         params: {
@@ -871,6 +933,19 @@ export default {
       })
         .then(response => {
           this.employees = response.data.tableData
+        })
+    },
+    getCustomerLists() {
+      api.getAll(`${this.endpoint.general.customer.customer}/lists`, {
+        params: {
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.customers = response.data.tableData
         })
     },
     getWarehouseLists() {
@@ -1015,16 +1090,16 @@ export default {
       }
     },
     addItem() {
+      
       if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemId ?? null)) {
         const item = {
           id: randomNumber(-1, -1000),
           code: this.data.code,
           itemId: null,
           itemName: null,
-          warehouseCode: this.defWarehouseCode,
-          warehouseCodeIn: null,
+          itemIdReplacement: null,
           qty: 1,
-          qtyRcv: 0,
+          qtyDlv: 0,
           length: null,
           width: null,
           height: null,
@@ -1069,40 +1144,43 @@ export default {
       }
     },
     typeChange() {
+      this.data.taxIncluded = false
+      this.data.nonTax = false
+      this.gridItem.data = []
       if (this.data.type === 1) {
         this.gridItem.columns = [
           { value: 'action', sortable: false, divider: true, width: '90' },
           { text: 'Item', value: 'itemId', divider: true, width: '100' },
           { text: 'Name', value: 'itemName', divider: true, width: '280' },
-          { text: 'Location', value: 'warehouseInitial', divider: true, width: '180' },
           { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
           { text: 'Unit', value: 'unitName', divider: true, width: '90' },
           { text: 'Unit Price', value: 'unitPrice', align: 'right', divider: true, width: '120' },
-          { text: 'Disc', value: 'disc', align: 'right', divider: true, width: '120' },
           { text: 'Tax', value: 'taxAmount', align: 'right', divider: true, width: '120' },
           { text: 'Nett Price', value: 'nettPrice', align: 'right', divider: true, width: '120' },
           { text: 'Total Price', value: 'total', align: 'right', divider: true, width: '120' }
+        ]
+      } else if (this.data.type === 2) {
+        this.gridItem.columns = [
+          { value: 'action', sortable: false, divider: true, width: '90' },
+          { text: 'Item', value: 'itemId', divider: true, width: '100' },
+          { text: 'Name', value: 'itemName', divider: true, width: '280' },
+          { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
+          { text: 'Qty Dlv.', value: 'qtyDlv', align: 'right', divider: true, width: '90' },
+          { text: 'Unit', value: 'unitName', divider: true, width: '90' }
         ]
       } else {
         this.gridItem.columns = [
           { value: 'action', sortable: false, divider: true, width: '90' },
           { text: 'Item', value: 'itemId', divider: true, width: '100' },
+          { text: 'Item Id Replacements', value: 'itemIdReplacement', divider: true, width: '100' },
           { text: 'Name', value: 'itemName', divider: true, width: '280' },
-          { text: 'Location Out', value: 'warehouseInitial', divider: true, width: '180' },
-          { text: 'Location In', value: 'warehouseInitialIn', divider: true, width: '180' },
           { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
-          { text: 'Qty Rcv.', value: 'qtyRcv', align: 'right', divider: true, width: '90' },
-          { text: 'Unit', value: 'unitName', divider: true, width: '90' }
+          { text: 'Unit', value: 'unitName', divider: true, width: '90' },
+          { text: 'Unit Price', value: 'unitPrice', align: 'right', divider: true, width: '120' },
+          { text: 'Tax', value: 'taxAmount', align: 'right', divider: true, width: '120' },
+          { text: 'Nett Price', value: 'nettPrice', align: 'right', divider: true, width: '120' },
+          { text: 'Total Price', value: 'total', align: 'right', divider: true, width: '120' }
         ]
-      }
-    },
-    supCodeChange() {
-      const supplier = this.suppliers.find(s => s.code === this.data.supCode)
-      if (supplier) {
-        this.data.supName = supplier.name
-        this.data.supAddr = supplier.address1
-        this.data.supPhone = supplier.phone
-        this.data.supFax = supplier.fax
       }
     },
     itemIdChange(item) {
@@ -1117,17 +1195,17 @@ export default {
         item.dimensionMeasurement = data_i.dimensionMeasurement
         item.weightMeasurement = data_i.weightMeasurement
         item.uomId = data_i.uomId
-        item.oldUnitId = data_i.uomBuyId
-        item.oldUnitName = data_i.uomBuyName
-        item.oldUnitPrice = data_i.buyPrice
-        item.unitId = data_i.uomBuyId
-        item.unitName = data_i.uomBuyName
-        item.unitPrice = data_i.buyPrice
+        item.oldUnitId = data_i.uomSellId
+        item.oldUnitName = data_i.uomSellName
+        item.oldUnitPrice = data_i.sellPrice
+        item.unitId = data_i.uomSellId
+        item.unitName = data_i.uomSellName
+        item.unitPrice = data_i.sellPrice
         item.disc = 0
         item.taxId = data_i.purchaseTaxId
         item.taxAmount = 0
-        item.nettPrice = data_i.buyPrice
-        item.dpp = data_i.buyPrice
+        item.nettPrice = data_i.sellPrice
+        item.dpp = data_i.sellPrice
         if (item.state !== 'A') {
           item.state = 'M'
         }
@@ -1137,6 +1215,34 @@ export default {
 
         // Calc item price
         this.calcItemPrice(item)
+      }
+    },
+    itemIdReplacementChange(item) {
+      const data_i = this.items.find(i => i.id === item.itemId)
+      if (data_i) {
+        item.itemName = data_i.name
+        item.qty = 1
+        item.length = data_i.length
+        item.width = data_i.width
+        item.height = data_i.height
+        item.weight = data_i.weight
+        item.dimensionMeasurement = data_i.dimensionMeasurement
+        item.weightMeasurement = data_i.weightMeasurement
+        item.uomId = data_i.uomId
+        item.oldUnitId = data_i.uomSellId
+        item.oldUnitName = data_i.uomSellName
+        item.oldUnitPrice = data_i.sellPrice
+        item.unitId = data_i.uomSellId
+        item.unitName = data_i.uomSellName
+        item.unitPrice = data_i.sellPrice
+        item.disc = 0
+        item.taxId = data_i.purchaseTaxId
+        item.taxAmount = 0
+        item.nettPrice = data_i.sellPrice
+        item.dpp = data_i.sellPrice
+        if (item.state !== 'A') {
+          item.state = 'M'
+        }
       }
     },
     unitItemChange(item) {
@@ -1213,21 +1319,30 @@ export default {
       this.data.dpp = _sumBy(this.gridItem.data, 'totDPP')
       this.data.total = this.data.subTotal + this.data.taxAmount
     },
-    showFindSupDialog() {
-      this.$refs.findSup.open()
-    },
     showFindItemDialog(item) {
       this.$refs.findItem.open(item)
     },
-    bindSupData(item) {
-      this.data.supCode = item.code
-      this.data.supName = item.name
-      this.data.supAddr = item.address1
-      this.data.supPhone = item.phone
-      this.data.supFax = item.fax
+    showAddItemReplacement(item) {
+      this.$refs.addItemReplacement.open(item)
     },
     bindItemData(rowItem) {
       this.itemIdChange(rowItem)
+    },
+    saveItemReplacement(rowItem, itemIdReplacements) {
+      const item = this.gridItem.data.find(x => x.id === rowItem.id)
+      if (item) {
+        item.itemIdReplacements = itemIdReplacements
+        item.itemIdReplacement = itemIdReplacements.length > 1 ? 'Multi Item' : itemIdReplacements[0].itemName
+      }
+    },
+    custCodeChange() {
+      const customer = this.customers.find(s => s.code === this.data.custCode)
+      if (customer) {
+        this.data.custName = customer.name
+        this.data.custAddr = customer.address1
+        this.data.custPhone = customer.phone
+        this.data.custFax = customer.fax
+      }
     }
   }
 }
