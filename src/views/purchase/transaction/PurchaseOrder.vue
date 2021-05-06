@@ -84,6 +84,22 @@
             </template>
             <span class="text-caption">Void</span>
           </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                :disabled="item.mark.toUpperCase() !== 'PR' && item.mark.toUpperCase() !== 'A'"
+                color="#1c6c94"
+                icon
+                small
+                @click="closeOrder(item)"
+              >
+                <v-icon small>mdi-lock</v-icon>
+              </v-btn>
+            </template>
+            <span class="text-caption">Close</span>
+          </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
@@ -97,7 +113,7 @@
               <v-chip
                 v-bind="attrs"
                 v-on="on"
-                :color="item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
+                :color="item.mark.toUpperCase() === 'CLS' || item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
                 class="px-1"
                 dark
                 small
@@ -1103,6 +1119,21 @@ export default {
           'Are you sure want to void this data?')
       ) {
         api.delete(this.endpoint.purchase.order, item.code)
+          .then(response => {
+            if (response.data.success) {
+              this.$store.dispatch('app/showSuccess', response.data.message)
+              this.getList()
+            }
+          })
+      }
+    },
+    async closeOrder(item) {
+      if (
+        await this.$refs.confirm.open(
+          'Void?',
+          'Are you sure want to close this data?')
+      ) {
+        api.delete(`${this.endpoint.purchase.order}/close`, item.code)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
