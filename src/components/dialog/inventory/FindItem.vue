@@ -110,6 +110,9 @@ import { remove as _remove } from 'lodash'
 import api from '@/services/axios.service'
 
 export default {
+  props: {
+    warehouseCode: String
+  },
   data() {
     return {
       dialog: false,
@@ -158,7 +161,7 @@ export default {
       this.data.category = [0]
       this.data.by = 'name'
       this.data.value = ''
-      this.grid.data = []
+      this.grid.data = []      
     },
     open(rowItem) {
       this.dialog = true
@@ -178,6 +181,22 @@ export default {
         })
     },
     search() {
+      const filters = [{
+        field: this.data.by,
+        operator: 'contains',
+        keyword: this.data.value
+      }, {
+        field: 'isActive',
+        operator: 'eq',
+        keyword: true
+      }]
+      if (this.warehouseCode) {
+        filters.push({
+          field: 'warehouseCode',
+          operator: 'eq',
+          keyword: this.warehouseCode
+        })
+      }
       api.getAll(this.endpoint.inventory.item.item, {
         params: {
           category: JSON.stringify(
@@ -185,15 +204,7 @@ export default {
               return val > 0
             })
           ),
-          filters: JSON.stringify([{
-            field: this.data.by,
-            operator: 'contains',
-            keyword: this.data.value
-          }, {
-            field: 'isActive',
-            operator: 'eq',
-            keyword: true
-          }]),
+          filters: JSON.stringify(filters),
           sorts: JSON.stringify([{
             field: this.data.by,
             direction: 'asc'
