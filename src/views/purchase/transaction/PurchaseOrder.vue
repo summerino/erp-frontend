@@ -1133,7 +1133,7 @@ export default {
           'Void?',
           'Are you sure want to close this data?')
       ) {
-        api.delete(`${this.endpoint.purchase.order}/close`, item.code)
+        api.put(`${this.endpoint.purchase.order}/close`, item.code)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
