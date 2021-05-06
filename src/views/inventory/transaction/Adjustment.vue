@@ -495,6 +495,7 @@
     <confirm ref="confirm"></confirm>
     <find-item
       ref="findItem"
+      :warehouseCode="data.warehouseCode"
       @dblclick:row="bindItemData"
       
     ></find-item>
@@ -598,7 +599,6 @@ export default {
         return
       }
       this.bindGridItems()
-      // ganti pake for biasa
       for (let i = 0; i < this.items.length; i++) {
         const item = this.items[i]
         const units = this.uoms.filter(x => x.uomId === item.uomId)
@@ -623,29 +623,6 @@ export default {
         }
         this.gridItem.data.push(temp)
       }
-      // this.items.forEach(item => {
-      //   const units = this.uoms.filter(x => x.uomId === item.uomId)
-      //   const defaultUnitId = units[0].id
-      //   const temp = {
-      //     id: randomNumber(-1, -1000),
-      //     itemId: item.id,
-      //     itemName: item.name,
-      //     unitName: null,
-      //     units: units,
-      //     uomId: item.uomId,
-      //     unitId: defaultUnitId,
-      //     oldUnitId: defaultUnitId,
-      //     qtyOnHand: item.qtyOnHand,
-      //     baseQtyOnHand: item.qtyOnHand,
-      //     qtyOnTransit: 0,
-      //     qtyOpname: 0,
-      //     different: 0,
-      //     cogs: 0,
-      //     totalCogs: 0,
-      //     notes: ''
-      //   }
-      //   this.gridItem.data.push(temp)
-      // })
       this.isButtonShowItemDisabled()
     },
     unitItemChange(item) {
@@ -692,34 +669,9 @@ export default {
       const selectedUnit = units.find(x => x.seq === 1)
       item.unitId = selectedUnit.id
       item.oldUnitId = item.unitId
-
-      // api.getAll(`${this.endpoint.inventory.uom}/item`, {
-      //   params: { uomId: item.uomId }
-      // })
-      //   .then(response => {
-      //     item.units = response.data.tableData
-      //     const selectedUnit = item.units.find(x => x.seq === 1)
-      //     item.unitId = selectedUnit.id
-      //     item.oldUnitId = item.unitId
-      //     item.uomConversion = selectedUnit.uomConversion
-      //     const data_i = this.items.find(i => i.id === item.itemId)
-      //     if (data_i) {
-      //       item.itemId = data_i.id
-      //       item.itemName = data_i.name
-      //       item.qty = 1
-      //       item.oldUomId = item.uomId
-      //       item.oldUnitName = data_i.uomBuyName
-      //       item.unitName = data_i.uomBuyName
-      //       item.qtyOnHand = data_i.qtyOnHand            
-      //       item.baseQtyOnHand = item.qtyOnHand
-      //       item.uomId = data_i.uomId
-      //       item.notes = null
-      //     }
-      //   })
     },
     reset(resetValidation = true) {
       this.data = {
-        // action: '',
         mark: 'A',
         code: null,
         type: 1,
@@ -788,10 +740,6 @@ export default {
       this.data.action = 'add'
       this.data.type = 1
       this.bindGridItems()
-      
-    //   setTimeout(() => {
-    //     this.$refs.initial.focus()
-    //   }, 0)
     },
     edit(item) {
       if (!item) return
@@ -825,27 +773,6 @@ export default {
           'Are you sure want to void this data?')
       ) {
         api.delete(this.endpoint.inventory.adjustment, item.code)
-          .then(response => {
-            if (response.data.success) {
-              this.$store.dispatch('app/showSuccess', response.data.message)
-              this.getList()
-            }
-          })
-      }
-    },
-    async reactivate(item) {
-      if (
-        await this.$refs.confirm.open(
-          'Reactivate?',
-          'Are you sure want to reactivate this data?')
-      ) {
-        this.data = {
-          ...item,
-          action: 'edit',
-          isActive: true
-        }
-
-        api.update(this.endpoint.inventory.warehouse, this.data.code, this.data)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -891,12 +818,8 @@ export default {
       this.dialog.add = false
     },
     async changeType() {
-      if (this.gridItem.data.length > 0) {
-        this.gridItem.data = []
-        this.bindGridItems()
-      } else {
-        this.bindGridItems()
-      }
+      if (this.gridItem.data.length > 0) this.gridItem.data = []
+      this.bindGridItems()
       this.isButtonShowItemDisabled()
     },
     changeLocation() {
@@ -954,7 +877,6 @@ export default {
             netOnHand: 0,
             qtyOpname: 0,
             different: 0,
-            // account: '9',
             cogs: 0,
             totalCogs: 0,
             notes: ''
@@ -978,10 +900,6 @@ export default {
           }
         } 
         this.gridItem.data.push(item)
-
-        // setTimeout(() => {
-        //   this.$refs.itemId.focus()
-        // }, 0)
       }
     },
     async removeItem(item) {

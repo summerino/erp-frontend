@@ -110,9 +110,11 @@ import { remove as _remove } from 'lodash'
 import api from '@/services/axios.service'
 
 export default {
+  props: {
+    warehouseCode: String
+  },
   data() {
     return {
-      warehouseCode: null,
       dialog: false,
       valid: false,
       categories: [],
@@ -161,11 +163,10 @@ export default {
       this.data.value = ''
       this.grid.data = []      
     },
-    open(rowItem, warehouseCode = null) {
+    open(rowItem) {
       this.dialog = true
       this.rowItem = rowItem
       this.reset()
-      if (warehouseCode) this.warehouseCode = warehouseCode 
       setTimeout(() => {
         this.grid.height = this.$refs.dialog.$refs.content.clientHeight - 178
         this.$refs.search.focus()
