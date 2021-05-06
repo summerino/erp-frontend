@@ -28,7 +28,8 @@ export default {
       item: 'item'
     },
     uom: 'uom',
-    warehouse: 'warehouse'
+    warehouse: 'warehouse',
+    adjustment: 'adjustment'
   },
 
   purchase: {
@@ -42,7 +43,8 @@ export default {
   sales: {
     order: 'sales-order',
     delivery: 'sales-delivery',
-    invoice: 'sales-invoice'
+    invoice: 'sales-invoice',
+    return: 'sales-return'
   },
 
   accounting: {

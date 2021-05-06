@@ -19,4 +19,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/sales/transaction/sales-return-wo-doc',
+  name: 'sales-return-wo-doc',
+  component: () => import(/* webpackChunkName: "sales-trans-return-wo-doc" */ '@/views/sales/transaction/SalesReturnNoDoc.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
