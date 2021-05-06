@@ -89,8 +89,8 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="item.mark.toUpperCase() == 'PR' || item.mark.toUpperCase() == 'V'"
-                color="red"
+                :disabled="item.mark.toUpperCase() !== 'PR' && item.mark.toUpperCase() !== 'A'"
+                color="#1c6c94"
                 icon
                 small
                 @click="closeOrder(item)"
