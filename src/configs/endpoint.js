@@ -42,7 +42,8 @@ export default {
   sales: {
     order: 'sales-order',
     delivery: 'sales-delivery',
-    invoice: 'sales-invoice'
+    invoice: 'sales-invoice',
+    return: 'sales-return'
   },
 
   accounting: {
