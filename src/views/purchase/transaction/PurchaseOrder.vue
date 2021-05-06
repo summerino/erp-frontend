@@ -89,7 +89,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="item.mark.toUpperCase() !== 'A'"
+                :disabled="item.mark.toUpperCase() == 'PR' || item.mark.toUpperCase() == 'V'"
                 color="red"
                 icon
                 small
