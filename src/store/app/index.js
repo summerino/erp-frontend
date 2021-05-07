@@ -57,6 +57,9 @@ const state = {
     max256chars: [
       (v) => (v || '').length <= 256 || 'Max 256 characters'
     ],
+    max1000chars: [
+      (v) => (v || '').length <= 1000 || 'Max 1000 characters'
+    ],
     email: [
       (v) => !v || /.+@.+\..+/.test(v) || 'Invalid email format'
     ]
