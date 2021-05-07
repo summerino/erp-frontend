@@ -555,6 +555,28 @@
                               dense
                             ></v-autocomplete>
                           </template>
+                          <template v-slot:[`item.itemIdReplacement`]="{ item }">
+                            <v-text-field
+                              v-model="item.itemIdReplacement"
+                              class="text-body-2 mt-0"
+                              readonly
+                              dense
+                            >
+                              <template v-slot:append>
+                                  <v-btn
+                                    color="primary"
+                                    icon
+                                    x-small
+                                    @click="showAddItemReplacement(item)"
+                                  >
+                                    <v-icon>
+                                      mdi-settings-helper
+                                    </v-icon>
+                                  </v-btn>
+                                </template>
+                            </v-text-field>
+                              
+                          </template>
                           <template v-slot:[`item.qty`]="{ item }">
                             <v-currency-field
                               v-model="item.qty"
@@ -647,6 +669,11 @@
       ref="findItem"
       @dblclick:row="bindItemData"
     ></find-item>
+    <add-item-replacement 
+      ref="addItemReplacement" 
+      :items="items"
+      @save="saveItemReplacement" 
+    ></add-item-replacement>
   </div>
 </template>
 
@@ -661,12 +688,14 @@ import api from '@/services/axios.service'
 import Confirm from '@/components/dialog/Confirm'
 import FindSupplier from '@/components/dialog/general/FindSupplier'
 import FindItem from '@/components/dialog/inventory/FindItem'
+import AddItemReplacement from '../../../components/dialog/purchase/AddItemReplacement.vue'
 
 export default {
   components: {
     Confirm,
     FindSupplier,
-    FindItem
+    FindItem,
+    AddItemReplacement
   },
 
   data: () => ({
@@ -713,7 +742,7 @@ export default {
     valid: false,
     defTaxInc: false,
     defWarehouseCode: '',
-    types: [{ id: 1, name: 'Exchange Memo' }, { id: 2, name: 'Exchange Same Item' }],
+    types: [{ id: 1, name: 'Exchange Memo' }, { id: 2, name: 'Exchange Same Item' }, { id: 3, name: 'Exchange Diff Item' }],
     employees: [],
     suppliers: [],
     warehouses: [],
@@ -1046,6 +1075,8 @@ export default {
           dpp: 0,
           totTax: 0,
           totDPP: 0,
+          itemIdReplacement: null,
+          itemIdReplacements: [],
           state: 'A'
         }
         this.gridItem.data.push(item)
@@ -1083,7 +1114,7 @@ export default {
           { text: 'Nett Price', value: 'nettPrice', align: 'right', divider: true, width: '120' },
           { text: 'Total Price', value: 'total', align: 'right', divider: true, width: '120' }
         ]
-      } else {
+      } else if (this.data.type === 2) {
         this.gridItem.columns = [
           { value: 'action', sortable: false, divider: true, width: '90' },
           { text: 'Item', value: 'itemId', divider: true, width: '100' },
@@ -1094,7 +1125,21 @@ export default {
           { text: 'Qty Rcv.', value: 'qtyRcv', align: 'right', divider: true, width: '90' },
           { text: 'Unit', value: 'unitName', divider: true, width: '90' }
         ]
+      } else {
+        this.gridItem.columns = [
+          { value: 'action', sortable: false, divider: true, width: '90' },
+          { text: 'Item', value: 'itemId', divider: true, width: '100' },
+          { text: 'Item Id Replacements', value: 'itemIdReplacement', divider: true, width: '100' },
+          { text: 'Name', value: 'itemName', divider: true, width: '280' },
+          { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
+          { text: 'Unit', value: 'unitName', divider: true, width: '90' },
+          { text: 'Unit Price', value: 'unitPrice', align: 'right', divider: true, width: '120' },
+          { text: 'Tax', value: 'taxAmount', align: 'right', divider: true, width: '120' },
+          { text: 'Nett Price', value: 'nettPrice', align: 'right', divider: true, width: '120' },
+          { text: 'Total Price', value: 'total', align: 'right', divider: true, width: '120' }
+        ]
       }
+      this.gridItem.data = []
     },
     supCodeChange() {
       const supplier = this.suppliers.find(s => s.code === this.data.supCode)
@@ -1219,6 +1264,9 @@ export default {
     showFindItemDialog(item) {
       this.$refs.findItem.open(item)
     },
+    showAddItemReplacement(item) {
+      this.$refs.addItemReplacement.open(item)
+    },
     bindSupData(item) {
       this.data.supCode = item.code
       this.data.supName = item.name
@@ -1228,6 +1276,13 @@ export default {
     },
     bindItemData(rowItem) {
       this.itemIdChange(rowItem)
+    },
+    saveItemReplacement(rowItem, itemIdReplacements) {
+      const item = this.gridItem.data.find(x => x.id === rowItem.id)
+      if (item) {
+        item.itemIdReplacements = itemIdReplacements
+        item.itemIdReplacement = itemIdReplacements.length > 1 ? 'Multi Item' : itemIdReplacements[0].itemName
+      }
     }
   }
 }
