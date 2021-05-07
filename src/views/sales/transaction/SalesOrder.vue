@@ -184,6 +184,28 @@
                   </v-list-item-title>
                 </v-list-item>
               </v-list>
+               <v-list class="cursor-pointer">
+                <v-list-item
+                  v-shortkey="['ctrl', 'alt', 'r']"
+                  :disabled="isSaveNDeliveryAble"
+                  @click="saveDlv()"
+                  @shortkey="saveDlv()"
+                >
+                  <v-list-item-title>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <span
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          Save & Delivery
+                        </span>
+                      </template>
+                      <span class="text-caption">(Ctrl + Alt + R)</span>
+                    </v-tooltip>
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
             </v-menu>
             <v-divider vertical></v-divider>
           </v-toolbar-items>
@@ -776,6 +798,10 @@
       ref="findItem"
       @dblclick:row="bindItemData"
     ></find-item>
+    <so-save-delivery
+      ref="soSd"
+     @closeParent="closeDlv"
+    ></so-save-delivery>
   </div>
 </template>
 
@@ -790,12 +816,14 @@ import api from '@/services/axios.service'
 import Confirm from '@/components/dialog/Confirm'
 import FindCustomer from '@/components/dialog/general/FindCustomer'
 import FindItem from '@/components/dialog/inventory/FindItem'
+import SoSaveDelivery from '@/components/dialog/sales/SOSaveDelivery'
 
 export default {
   components: {
     Confirm,
     FindCustomer,
-    FindItem
+    FindItem,
+    SoSaveDelivery
   },
 
   data: () => ({
@@ -911,6 +939,14 @@ export default {
     },
     isVoid() {
       return (this.data?.mark?.toUpperCase() === 'V')
+    },
+    isSaveNDeliveryAble() {
+      if (this.data.action === 'add') {
+        return false
+      } if (this.data.mark === 'A' && this.data.action === 'edit') {
+        return false
+      }
+      return true
     }
   },
 
@@ -935,7 +971,9 @@ export default {
         finalDisc: 0,
         includeTax: this.defTaxInc,
         taxAmount: 0,
-        total: 0
+        total: 0,
+        dlvDate : format(new Date(), 'yyyy-MM-dd'),
+        isSoDlv : false
       }
       this.gridItem.data = []
       this.tab.cust = 0
@@ -1191,6 +1229,19 @@ export default {
         }
         this.getList(!closeDialog)
       }
+    },
+    saveDlv() {
+      if (!this.$refs.form.validate()) {
+        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        return
+      }
+      const data = this.data
+      data.itemDetails = this.gridItem.data
+      this.$refs.poSr.open(data)
+    },
+    closeDlv() {
+      this.dialog.add = false
+      this.getList()
     },
     addItem() {
       if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0].itemId ?? null)) {
