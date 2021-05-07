@@ -96,7 +96,7 @@
           <v-btn icon dark @click="dialog.add = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Debit Memo</v-toolbar-title>
+          <v-toolbar-title>Credit Memo</v-toolbar-title>
         </v-toolbar>
 
         <v-card-text class="px-2">
@@ -191,20 +191,20 @@
 
               <v-col cols="12" md="8">
                 <v-card>
-                  <v-tabs v-model="tab.sup">
-                    <v-tab key="sup">Supplier</v-tab>
+                  <v-tabs v-model="tab.cust">
+                    <v-tab key="cust">Customer</v-tab>
                     <v-tab key="notes">Notes</v-tab>
                   </v-tabs>
 
-                  <v-tabs-items v-model="tab.sup" class="pa-2">
+                  <v-tabs-items v-model="tab.cust" class="pa-2">
                     <v-tab-item
-                      key="sup"
+                      key="cust"
                       transition="false"
                     >
                       <v-row no-gutters>
                         <v-col cols="3">
                           <v-text-field
-                            v-model="data.supCode"
+                            v-model="data.custCode"
                             :rules="rules.required"
                             label="Code"
                             class="mt-0"
@@ -214,7 +214,7 @@
                         </v-col>
                         <v-col cols="9" class="pl-1">
                           <v-text-field
-                            v-model="data.supName"
+                            v-model="data.custName"
                             label="Name"
                             class="mt-0"
                             readonly
@@ -225,7 +225,7 @@
                       <v-row no-gutters>
                         <v-col cols="12">
                           <v-text-field
-                            v-model.trim="data.supAddr"
+                            v-model.trim="data.custAddr"
                             label="Address"
                             class="mt-0"
                             readonly
@@ -236,7 +236,7 @@
                       <v-row no-gutters>
                         <v-col cols="6">
                           <v-text-field
-                            v-model="data.supPhone"
+                            v-model="data.custPhone"
                             label="Phone"
                             class="mt-0"
                             readonly
@@ -244,7 +244,7 @@
                         </v-col>
                         <v-col cols="6" class="pl-1">
                           <v-text-field
-                            v-model="data.supFax"
+                            v-model="data.custFax"
                             label="Fax"
                             class="mt-0"
                             readonly
@@ -324,7 +324,7 @@ export default {
       date: false
     },
     tab: {
-      sup: null,
+      cust: null,
       related: null
     },
     grid: {
@@ -332,7 +332,7 @@ export default {
         { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'Code', value: 'code', divider: true, width: '160' },
         { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
-        { text: 'Supplier', value: 'supName', divider: true, width: '200' },
+        { text: 'Customer', value: 'custName', divider: true, width: '200' },
         { text: 'Src. Trans.', value: 'srcTransName', divider: true, width: '100' },
         { text: 'Trans. Code', value: 'transCode', divider: true, width: '100' },
         { text: 'Amount', value: 'amount', align: 'right', divider: true, width: '120' },
@@ -393,17 +393,17 @@ export default {
         date: format(new Date(), 'yyyy-MM-dd'),
         srcTrans: 1,
         transCode: null,
-        supCode: null,
-        supName: null,
-        supAddr: null,
-        supPhone: null,
-        supFax: null,
+        custCode: null,
+        custName: null,
+        custAddr: null,
+        custPhone: null,
+        custFax: null,
         amount: 0,
         used: 0,
         outstanding: 0
       }
       this.gridRelated.data = []
-      this.tab.sup = 0
+      this.tab.cust = 0
       this.tab.related = 0
 
       // Reset form validation
@@ -422,7 +422,7 @@ export default {
         })
       }
 
-      api.getAll(this.endpoint.purchase.debitMemo, {
+      api.getAll(this.endpoint.sales.creditMemo, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -450,11 +450,11 @@ export default {
         action: 'edit'
       }
 
-      // Get supplier details
-      this.bindSupData(this.data)
+      // Get customer details
+      this.bindCustData(this.data)
       
       // Get related transaction details
-      api.getAll(`${this.endpoint.purchase.debitMemo}/related-trans`, {
+      api.getAll(`${this.endpoint.sales.creditMemo}/related-trans`, {
         params: { code: item.code }
       })
         .then(response => {
@@ -466,13 +466,13 @@ export default {
         this.$refs.code.focus()
       }, 0)
     },
-    bindSupData(item) {
-      api.getOne(this.endpoint.general.supplier.supplier, item.supCode)
+    bindCustData(item) {
+      api.getOne(this.endpoint.general.customer.customer, item.custCode)
         .then(response => {
           if (response.data) {
-            item.supAddr = response.data.address1
-            item.supPhone = response.data.phone
-            item.supFax = response.data.fax
+            item.custAddr = response.data.address1
+            item.custPhone = response.data.phone
+            item.custFax = response.data.fax
           }
         })
     }
