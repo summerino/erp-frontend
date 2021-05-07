@@ -236,7 +236,6 @@ export default {
       this.dialog = false
     },
     getUnitItemLists(item) {
-      debugger
       api.getAll(`${this.endpoint.inventory.uom}/item`, {
         params: { uomId: item.uomId }
       })
