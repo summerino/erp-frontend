@@ -70,7 +70,6 @@
                     v-if="item.id !== 0"
                     v-bind="attrs"
                     v-on="on"
-                    :disabled="!item.isLowestLevel"
                     color="red"
                     icon
                     small
@@ -310,11 +309,10 @@ export default {
         initial: '',
         name: '',
         parentId: null,
-        isLowestLevel: 0,
         groupId: null,
         deep: null,
         seq: null,
-        lineage: null,
+        lineage: '',
         isActive: null
       }
       this.parentRef = []
