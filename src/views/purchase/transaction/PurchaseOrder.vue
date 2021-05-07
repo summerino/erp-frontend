@@ -84,6 +84,22 @@
             </template>
             <span class="text-caption">Void</span>
           </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                :disabled="item.mark.toUpperCase() !== 'PR' && item.mark.toUpperCase() !== 'A'"
+                color="blue darken-2"
+                icon
+                small
+                @click="closeOrder(item)"
+              >
+                <v-icon small>mdi-lock</v-icon>
+              </v-btn>
+            </template>
+            <span class="text-caption">Close</span>
+          </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
@@ -97,7 +113,7 @@
               <v-chip
                 v-bind="attrs"
                 v-on="on"
-                :color="item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
+                :color="item.mark.toUpperCase() === 'CLS' || item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
                 class="px-1"
                 dark
                 small
@@ -182,6 +198,28 @@
                         </span>
                       </template>
                       <span class="text-caption">(Ctrl + S)</span>
+                    </v-tooltip>
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+              <v-list class="cursor-pointer">
+                <v-list-item
+                  v-shortkey="['ctrl', 'alt', 'r']"
+                  :disabled="isSaveNReceiveAble"
+                  @click="saveRcv()"
+                  @shortkey="saveRcv()"
+                >
+                  <v-list-item-title>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <span
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          Save & Receive
+                        </span>
+                      </template>
+                      <span class="text-caption">(Ctrl + Alt + R)</span>
                     </v-tooltip>
                   </v-list-item-title>
                 </v-list-item>
@@ -720,6 +758,10 @@
       ref="findItem"
       @dblclick:row="bindItemData"
     ></find-item>
+    <po-save-receive
+     ref="poSr"
+     @closeParent="closeRcv"
+     ></po-save-receive>    
   </div>
 </template>
 
@@ -734,12 +776,14 @@ import api from '@/services/axios.service'
 import Confirm from '@/components/dialog/Confirm'
 import FindSupplier from '@/components/dialog/general/FindSupplier'
 import FindItem from '@/components/dialog/inventory/FindItem'
+import PoSaveReceive from '@/components/dialog/purchase/POSaveReceive'
 
 export default {
   components: {
     Confirm,
     FindSupplier,
-    FindItem
+    FindItem,
+    PoSaveReceive
   },
 
   data: () => ({
@@ -756,7 +800,7 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
+        { value: 'action', sortable: false, divider: true, width: '120' },
         { text: 'Code', value: 'code', divider: true, width: '160' },
         { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
         { text: 'Request By', value: 'requestInitial', divider: true, width: '200' },
@@ -851,6 +895,14 @@ export default {
     },
     isVoid() {
       return (this.data?.mark?.toUpperCase() === 'V')
+    },
+    isSaveNReceiveAble() {
+      if (this.data.action === 'add') {
+        return false
+      } if (this.data.mark === 'A' && this.data.action === 'edit') {
+        return false
+      }
+      return true
     }
   },
 
@@ -876,7 +928,10 @@ export default {
         finalDisc: 0,
         includeTax: this.defTaxInc,
         taxAmount: 0,
-        total: 0
+        total: 0,
+        rcvRefNo : null,
+        rcvDate: format(new Date(), 'yyyy-MM-dd'),
+        isPoRcv: false
       }
       this.gridItem.data = []
       this.gridRelated.data = []
@@ -1111,6 +1166,21 @@ export default {
           })
       }
     },
+    async closeOrder(item) {
+      if (
+        await this.$refs.confirm.open(
+          'Void?',
+          'Are you sure want to close this data?')
+      ) {
+        api.put(`${this.endpoint.purchase.order}/close`, item.code)
+          .then(response => {
+            if (response.data.success) {
+              this.$store.dispatch('app/showSuccess', response.data.message)
+              this.getList()
+            }
+          })
+      }
+    },
     async save(closeDialog) {
       if (!this.dialog.add) return
       if (!this.$refs.form.validate()) {
@@ -1139,6 +1209,19 @@ export default {
         }
         this.getList(!closeDialog)
       }
+    },
+    saveRcv() {
+      if (!this.$refs.form.validate()) {
+        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        return
+      }
+      const data = this.data
+      data.itemDetails = this.gridItem.data
+      this.$refs.poSr.open(data)
+    },
+    closeRcv() {
+      this.dialog.add = false
+      this.getList()
     },
     addItem() {
       if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemId ?? null)) {

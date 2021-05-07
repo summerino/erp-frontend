@@ -528,7 +528,7 @@ export default {
         { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'Date', value: 'date', divider: true, width: '150' },
         { text: 'Code', value: 'code', divider: true, width: '150' },
-        { text: 'Location', value: 'warehouse', divider: true, width: '150' },
+        { text: 'Location', value: 'warehouseInitial', divider: true, width: '150' },
         { text: 'Notes', value: 'notes', divider: true, width: '200' },
         { text: 'Status', value: 'mark', divider: true, width: '200' }
       ],
