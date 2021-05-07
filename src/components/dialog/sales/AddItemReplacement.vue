@@ -24,7 +24,9 @@
 
       <v-card-text class="px-2 pt-1">
         <v-card>
-          <v-app-bar dense flat>
+          <v-form ref="form"
+            v-model="valid">
+            <v-app-bar dense flat>
             <v-spacer></v-spacer>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -114,6 +116,7 @@
               <v-autocomplete
                 v-model="item.unitId"
                 :items="item.units"
+                :rules="rules.required"
                 item-text="unitEquivalent"
                 item-value="id"
                 class="text-body-2 mt-0"
@@ -131,6 +134,7 @@
               ></v-currency-field>
             </template>
           </v-data-table>
+          </v-form>
         </v-card>
       </v-card-text>
       <v-card-actions class="justify-end pb-2 pr-2">
@@ -207,7 +211,8 @@ export default {
       },
       options: {
         width: 800
-      }
+      },
+      valid: false
     }
   },
   computed: {
@@ -244,6 +249,10 @@ export default {
         })
     },
     save() {      
+      if (!this.$refs.form.validate()) {
+        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        return
+      }
       this.$emit('save', this.rowItem, this.grid.data)
       this.dialog = false
     },
