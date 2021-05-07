@@ -113,7 +113,7 @@
               <v-chip
                 v-bind="attrs"
                 v-on="on"
-                :color="item.mark.toUpperCase() === 'CLS' || item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
+                :color="item.mark.toUpperCase() === 'CLS' ? 'grey darken-1' : item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
                 class="px-1"
                 dark
                 small
