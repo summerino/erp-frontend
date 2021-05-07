@@ -1,6 +1,7 @@
 export default [
   { icon: 'mdi-alpha-m-circle-outline', text: 'Master Data', regex: /^\/sales\/master/,
     items: [
+      { text: 'Area', link: 'area' }
     ]
   },
   { icon: 'mdi-clipboard-edit-outline', text: 'Transaction', regex: /^\/sales\/transaction/,
