@@ -732,6 +732,7 @@ export default {
         notes: ''
       }
       this.gridItem.data = []
+      this.tab.adj = 0
 
       // Set default warehouse
       const defWarehouse = this.warehouses.find(w => w.isDefault)
