@@ -158,11 +158,13 @@
         </v-btn>
       </v-card-actions>
     </v-card>
+    <confirm ref="confirm"></confirm>
   </v-dialog>
 </template>
 
 <script>
-  
+
+import Confirm from '@/components/dialog/Confirm'
 import { mapState } from 'vuex'
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
@@ -171,6 +173,10 @@ export default {
   props: {
     items: Array
   },
+  components: {
+    Confirm
+  },
+
   created: function () {
     this.rules = this.$store.state.app.rules
   },
@@ -273,8 +279,6 @@ export default {
         state: 'A'
       }
       this.grid.data.push(item)
-      // Get unit item lists
-      this.getUnitItemLists(item)
     },
     itemIdChange(item) {
       const data_i = this.items.find(i => i.id === item.itemId)
@@ -302,8 +306,46 @@ export default {
         if (item.state !== 'A') {
           item.state = 'M'
         }
-        // Get unit item lists
-        //this.getUnitItemLists(item)
+        //Get unit item lists
+        this.getUnitItemLists(item)
+      }
+    },
+    unitItemChange(item) {
+      const oldUnit = item.units.find(u => u.id === item.oldUnitId)
+      const unit = item.units.find(u => u.id === item.unitId)
+
+      if (oldUnit.seq < unit.seq) {
+        item.uomConversion = unit.conversion
+        if (unit.unitToConvert !== item.oldUnitName) {
+          this.calcUomConversion(true, item, unit.unitToConvert)
+        }
+        item.unitPrice = item.oldUnitPrice * item.uomConversion
+      } else {
+        item.uomConversion = 1
+        if (unit.unitEquivalent !== item.oldUnitName) {
+          this.calcUomConversion(false, item, unit.unitEquivalent)
+        }
+        item.unitPrice = item.oldUnitPrice / item.uomConversion
+      }
+
+      // Calc item price
+      this.calcItemPrice(item)
+    },
+    calcUomConversion(seqSmaller, item, unitCode) {
+      if (seqSmaller) {
+        const data = item.units.find(u => u.unitEquivalent === unitCode)
+        item.uomConversion *= data.conversion
+
+        if (data.unitToConvert !== item.oldUnitName) {
+          this.calcUomConversion(seqSmaller, item, data.unitToConvert)
+        }
+      } else {
+        const data = item.units.find(u => u.unitToConvert === unitCode && !u.isBaseUnit)
+        item.uomConversion *= data.conversion
+
+        if (data.unitEquivalent !== item.oldUnitName) {
+          this.calcUomConversion(seqSmaller, item, data.unitEquivalent)
+        }
       }
     },
     async removeItem(item) {
