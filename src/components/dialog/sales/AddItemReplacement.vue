@@ -162,7 +162,10 @@
 </template>
 
 <script>
+  
+import { mapState } from 'vuex'
 import { randomNumber } from '@/helpers/math-helpers'
+import api from '@/services/axios.service'
 
 export default {
   props: {
@@ -201,6 +204,11 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState({
+      endpoint: state => state.api.endpoint
+    })
+  },
   methods: {
     reset() {
       this.data.by = 'code'
@@ -220,6 +228,14 @@ export default {
     },
     close() {      
       this.dialog = false
+    },
+    getUnitItemLists(item) {
+      api.getAll(`${this.endpoint.inventory.uom}/item`, {
+        params: { uomId: item.uomId }
+      })
+        .then(response => {
+          item.units = response.data.tableData
+        })
     },
     save() {      
       this.$emit('save', this.rowItem, this.grid.data)
@@ -257,6 +273,8 @@ export default {
         state: 'A'
       }
       this.grid.data.push(item)
+      // Get unit item lists
+      this.getUnitItemLists(item)
     },
     itemIdChange(item) {
       const data_i = this.items.find(i => i.id === item.itemId)
