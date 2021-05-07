@@ -12,7 +12,8 @@ export default [
           { text: 'Invoice', link: 'sales-invoice' },
           { text: 'Return W/O Doc.', link: 'sales-return-wo-doc' }
         ]
-      }
+      },
+      { text: 'Credit Memo', link: 'credit-memo' }
     ]
   },
   { icon: 'mdi-chart-line', text: 'Report', regex: /^\/sales\/report/,

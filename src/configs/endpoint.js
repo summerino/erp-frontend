@@ -44,7 +44,8 @@ export default {
     order: 'sales-order',
     delivery: 'sales-delivery',
     invoice: 'sales-invoice',
-    return: 'sales-return'
+    return: 'sales-return',
+    creditMemo: 'credit-memo'
   },
 
   accounting: {
