@@ -449,7 +449,7 @@
                   <v-tabs v-model="tab.item">
                     <v-tab key="item">Item</v-tab>
                     <v-tab key="related-trans">Related Transaction(s)</v-tab>
-                    <v-tab key="tax">Tax</v-tab>
+                    <v-tab key="tax">Tax Invoice</v-tab>
 
                     <v-tab-item
                       key="item"
@@ -536,9 +536,9 @@
                               </template>
                             </v-autocomplete>
                           </template>
-                          <template v-slot:[`item.itemIdReplacement`]="{ item }">
+                          <template v-slot:[`item.itemReplacement`]="{ item }">
                             <v-text-field
-                              v-model="item.itemIdReplacement"
+                              v-model="item.itemReplacement"
                               class="text-body-2 mt-0"
                               readonly
                               dense
@@ -662,7 +662,7 @@
                                     v-on="on"
                                     :rules="rules.required"
                                     :value="formatInvoiceDate"
-                                    label="Invoice Date"
+                                    label="Tax Invoice Date"
                                     class="mt-0"
                                     readonly
                                     required
@@ -1097,7 +1097,8 @@ export default {
           code: this.data.code,
           itemId: null,
           itemName: null,
-          itemIdReplacement: null,
+          itemReplacement: null,
+          itemReplacements: [],
           qty: 1,
           qtyDlv: 0,
           length: null,
@@ -1172,7 +1173,7 @@ export default {
         this.gridItem.columns = [
           { value: 'action', sortable: false, divider: true, width: '90' },
           { text: 'Item', value: 'itemId', divider: true, width: '100' },
-          { text: 'Item Id Replacements', value: 'itemIdReplacement', divider: true, width: '100' },
+          { text: 'Item Replacements', value: 'itemReplacement', divider: true, width: '100' },
           { text: 'Name', value: 'itemName', divider: true, width: '280' },
           { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
           { text: 'Unit', value: 'unitName', divider: true, width: '90' },
@@ -1217,7 +1218,7 @@ export default {
         this.calcItemPrice(item)
       }
     },
-    itemIdReplacementChange(item) {
+    itemReplacementChange(item) {
       const data_i = this.items.find(i => i.id === item.itemId)
       if (data_i) {
         item.itemName = data_i.name
@@ -1328,11 +1329,11 @@ export default {
     bindItemData(rowItem) {
       this.itemIdChange(rowItem)
     },
-    saveItemReplacement(rowItem, itemIdReplacements) {
+    saveItemReplacement(rowItem, itemReplacements) {
       const item = this.gridItem.data.find(x => x.id === rowItem.id)
       if (item) {
-        item.itemIdReplacements = itemIdReplacements
-        item.itemIdReplacement = itemIdReplacements.length > 1 ? 'Multi Item' : itemIdReplacements[0].itemName
+        item.itemReplacements = itemReplacements
+        item.itemReplacement = itemReplacements.length > 1 ? 'Multi Item' : itemReplacements[0].itemName
       }
     },
     custCodeChange() {
