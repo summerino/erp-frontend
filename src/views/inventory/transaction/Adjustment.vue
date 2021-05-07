@@ -193,7 +193,7 @@
             v-model="valid"
           >
             <v-row dense>
-              <v-col cols="12">
+              <v-col cols="12" md="4">
                 <v-card>
                   <v-card-title>General</v-card-title>
 
@@ -267,11 +267,79 @@
                   </v-card-text>
                 </v-card>
               </v-col>
+              <v-col cols="12" md="8">
+                <v-card>
+                  <v-tabs v-model="tab.adj">
+                    <v-tab key="notes">Notes</v-tab>
+                    <v-tab key="user">User</v-tab>
+                  </v-tabs>
+                  <v-tabs-items v-model="tab.adj" class="pa-2">
+                    
+                    <v-tab-item
+                      key="notes"
+                      transition="false"
+                    >
+                      <v-textarea
+                      v-model="data.notes"
+                      :rules="rules.max256chars"
+                      label="Notes"
+                      counter="256"
+                      class="mt-0"
+                      rows="4"
+                    ></v-textarea>
+                    </v-tab-item>
+                    <v-tab-item
+                      key="user"
+                      transition="false"
+                      eager
+                    >
+                      <v-row no-gutters>
+                        <v-col cols="6">
+                          <v-text-field
+                            v-model.trim="data.approveInitial"
+                            label="Approved By"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="6" class="pl-1">
+                          <v-text-field
+                            v-model.trim="data.createdInitial"
+                            label="Created By"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+
+                      <v-row no-gutters>
+                        <v-col cols="6">
+                          <v-text-field
+                            v-model.trim="data.updatedInitial"
+                            label="Updated By"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="6" class="pl-1">
+                          <v-text-field
+                            v-model.trim="data.updatedDate"
+                            label="Updated Date"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-tab-item>
+                  </v-tabs-items>
+                </v-card>
+              </v-col>
             </v-row>
 
             <v-row dense>
               <v-col cols="12">
                 <v-card>
+                  
                   <v-app-bar dense flat>
                     <v-spacer></v-spacer>
                     <v-tooltip bottom v-if="data.type === 1" >
@@ -468,25 +536,6 @@
                 </v-card>
               </v-col>
             </v-row>
-            <v-row dense>
-              <v-col cols="12">
-                <v-card>
-                  <v-card-title>
-                    Notes
-                  </v-card-title>
-                  <v-card-text>
-                    <v-textarea
-                      v-model="data.notes"
-                      :rules="rules.max256chars"
-                      label="Notes"
-                      counter="256"
-                      class="mt-0"
-                      rows="2"
-                    ></v-textarea>
-                  </v-card-text>
-                </v-card>
-              </v-col>
-            </v-row>
           </v-form>
         </v-card-text>
       </v-card>
@@ -522,6 +571,9 @@ export default {
     },
     menu: {
       date: false
+    },
+    tab: {
+      adj: null
     },
     grid: {
       columns: [
@@ -680,6 +732,13 @@ export default {
         notes: ''
       }
       this.gridItem.data = []
+
+      // Set default warehouse
+      const defWarehouse = this.warehouses.find(w => w.isDefault)
+      if (defWarehouse) {
+        this.data.warehouseCode = defWarehouse.code
+      }
+
       // Reset form validation
       if (resetValidation) {
         setTimeout(() => {
