@@ -297,7 +297,8 @@
           <v-card>
             <v-tabs v-model="tab.advancedItem">
               <v-tab key="default" @click="bindAddress">Default</v-tab>
-              <v-tab key="address">Address List</v-tab>
+              <v-tab key="address">Address</v-tab>
+              <v-tab key="area">Area</v-tab>
               <v-tab-item
                 key="default"
                 transition="false"
@@ -465,6 +466,76 @@
                   </v-container>
                 </v-card>
               </v-tab-item>
+              <v-tab-item
+                key="area"
+                transition="false"
+              >
+                <v-card>
+                  <v-container fluid grid-list-md>
+                    <v-row no-gutters>
+                      <v-col cols="12" md="6" class="pr-md-3">
+                        <v-autocomplete
+                          v-model="data.areaId1"
+                          :items="areaRef"
+                          :item-text="item => `${item.name}`"
+                          item-value="id"
+                          label="Area 1"
+                          class="mt-0"
+                        ></v-autocomplete>
+                      </v-col>
+                      <v-col cols="12" md="6" class="pl-md-3">
+                        <v-autocomplete
+                          v-model="data.areaId2"
+                          :items="areaRef"
+                          :item-text="item => `${item.name}`"
+                          item-value="id"
+                          label="Area 2"
+                          class="mt-0"
+                        ></v-autocomplete>
+                      </v-col>
+                    </v-row>
+
+                    <v-row no-gutters>
+                      <v-col cols="12" md="6" class="pr-md-3">
+                        <v-autocomplete
+                          v-model="data.areaId3"
+                          :items="areaRef"
+                          :item-text="item => `${item.name}`"
+                          item-value="id"
+                          label="Area 3"
+                          class="mt-0"
+                        ></v-autocomplete>
+                      </v-col>
+                      <v-col cols="12" md="6" class="pl-md-3">
+                        <v-autocomplete
+                          v-model="data.areaId4"
+                          :items="areaRef"
+                          :item-text="item => `${item.name}`"
+                          item-value="id"
+                          label="Area 4"
+                          class="mt-0"
+                        ></v-autocomplete>
+                      </v-col>
+                    </v-row>
+
+                    <v-row no-gutters>
+                      <v-col cols="12" md="6" class="pr-md-3">
+                        <v-autocomplete
+                          v-model="data.areaId5"
+                          :items="areaRef"
+                          :item-text="item => `${item.name}`"
+                          item-value="id"
+                          label="Area 5"
+                          class="mt-0"
+                        ></v-autocomplete>
+                      </v-col>
+                      <v-col cols="12" md="6" class="pl-md-3">
+                        &nbsp;
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card>
+              </v-tab-item>
             </v-tabs>
           </v-card>
         </v-form>
@@ -531,12 +602,14 @@ export default {
     types: [],
     billingAddressRef: [],
     shippingAddressRef: [],
+    areaRef: [],
     data: {}
   }),
 
   created: function () {
     this.getList()
     this.getTypesList()
+    this.getAreaList()
   },
 
   mounted: function () {
@@ -591,7 +664,12 @@ export default {
         isActive: true,
         updatedInitial: null,
         billingAddressId: null,
-        shippingAddressId: null
+        shippingAddressId: null,
+        areaId1: null,
+        areaId2: null,
+        areaId3: null,
+        areaId4: null,
+        areaId5: null
       }
       this.gridItem.data = []
       this.tab.advancedItem = 0
@@ -642,6 +720,12 @@ export default {
       })
         .then(response => {
           this.types = response.data.tableData
+        })
+    },
+    getAreaList() {
+      api.getAll(`${this.endpoint.sales.area}/lists`, {})
+        .then(response => {
+          this.areaRef = response.data.tableData
         })
     },
     back() {
@@ -789,6 +873,7 @@ export default {
       }
     },
     setAsDefault(item) {
+      if (!item) return
       if (item.isDefault) {
         for (let i = 0; i < this.gridItem.data.length; i++) {
           if (item.initial !== this.gridItem.data[i].initial) {
