@@ -393,15 +393,15 @@
                   <v-data-table
                     :headers="gridItem.columns"
                     :items="gridItem.data"
-                    :items-per-page="5"
-                    :footer-props="{ itemsPerPageOptions: [ 5, 10, 15]}"
+                    :items-per-page="gridDefOpts.pageSize"
+                    :footer-props="{ itemsPerPageOptions: gridDefOpts.pageSizes}"
                     height="300"
                     class="elevation-1"
                     dense
                     fixed-header
                   >
                     <template v-slot:[`item.action`]="{ item }">
-                      <v-tooltip bottom>
+                      <v-tooltip v-if="data.type === 1" bottom>
                         <template v-slot:activator="{ on, attrs }">
                           <v-btn
                               v-bind="attrs"
@@ -507,6 +507,7 @@
                           :max="Number.MAX_SAFE_INTEGER"
                           :allow-negative="true"
                           v-model="item.qtyAdjust"
+                          :rules="rules.cannot0"
                           class="text-body-2 text-right mt-0"
                           dense
                         ></v-currency-field>
@@ -737,6 +738,7 @@ export default {
       const defWarehouse = this.warehouses.find(w => w.isDefault)
       if (defWarehouse) {
         this.data.warehouseCode = defWarehouse.code
+        this.getItemLists()
       }
 
       // Reset form validation
@@ -959,6 +961,9 @@ export default {
           }
         } 
         this.gridItem.data.push(item)
+        setTimeout(() => {
+          this.$refs.itemId.focus()
+        }, 0)
       }
     },
     async removeItem(item) {
