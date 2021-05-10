@@ -70,6 +70,7 @@
                     v-if="item.id !== 0"
                     v-bind="attrs"
                     v-on="on"
+                    :disabled="item.isParent"
                     color="red"
                     icon
                     small
@@ -301,6 +302,7 @@ export default {
         parentId: null,
         deep: null,
         lineage: '',
+        isParent: null,
         isActive: null
       }
       this.parentRef = []
