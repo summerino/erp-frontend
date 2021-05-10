@@ -224,7 +224,7 @@ export default {
       this.data.value = ''
       this.grid.data = []
       setTimeout(() => {
-        this.$refs.add.focus()
+        this.$refs.add.$el.focus()
       }, 0)
     },
     open(rowItem, options) {
@@ -259,7 +259,7 @@ export default {
       this.dialog = false
     },
     add() {
-      if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemId ?? null)) {
+      if (this.grid.data.length === 0 || (this.grid.data.slice(-1)[0]?.itemId ?? null)) {
         const item = {
           id: randomNumber(-1, -1000),
           code: this.data.code,
