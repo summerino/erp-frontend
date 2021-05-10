@@ -31,6 +31,7 @@
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
+                  ref="add"
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'i']"
@@ -138,28 +139,24 @@
         </v-card>
       </v-card-text>
       <v-card-actions class="justify-end pb-2 pr-2">
-        <v-btn
-          color="blue darken-2"
-          class="font-weight-regular"
-          dark
-          small
-          tile
-          @click="save"
-        >
-          <v-icon left>mdi-content-save</v-icon>
-          Save
-        </v-btn>
-        <v-btn
-          color="red darken-2"
-          class="font-weight-regular"
-          dark
-          small
-          tile
-          @click="close"
-        >
-          <v-icon left>mdi-close-circle-outline</v-icon>
-          Cancel
-        </v-btn>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              v-bind="attrs"
+              v-on="on"
+              class="primary mr-1"
+              small
+              tile
+              v-shortkey="['ctrl', 's']"
+              @click="save"
+              @shortkey="save"
+            >
+              <v-icon left>mdi-content-save</v-icon>
+              Save
+            </v-btn>
+          </template>
+          <span class="text-caption">(Ctrl + S)</span>
+        </v-tooltip>
       </v-card-actions>
     </v-card>
     <confirm ref="confirm"></confirm>
@@ -200,7 +197,7 @@ export default {
       rowItem: {},
       grid: {
         columns: [
-          { value: 'action', sortable: false, divider: true, width: '90' },
+          { value: 'action', sortable: false, divider: true, width: '35' },
           { text: 'Item', value: 'itemId', divider: true, width: '100' },
           { text: 'Name', value: 'itemName', divider: true, width: '280' },
           { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
@@ -222,20 +219,25 @@ export default {
   },
   methods: {
     reset() {
+      debugger
       this.data.by = 'code'
       this.data.value = ''
       this.grid.data = []
+      setTimeout(() => {
+        this.$refs.add.focus()
+      }, 0)
     },
     open(rowItem, options) {
       this.dialog = true
       this.reset()
       this.rowItem = rowItem
-      if (this.rowItem.itemIdReplacements) {
-        this.rowItem.itemIdReplacements.forEach(element => {
+      if (this.rowItem.itemReplacements) {
+        this.rowItem.itemReplacements.forEach(element => {
           this.grid.data.push(element)          
         })
       }
       this.options = Object.assign(this.options, options)
+      
     },
     close() {      
       this.dialog = false
@@ -257,37 +259,43 @@ export default {
       this.dialog = false
     },
     add() {
-      const item = {
-        id: randomNumber(-1, -1000),
-        code: this.data.code,
-        itemId: null,
-        itemName: null,
-        qty: 1,
-        qtyDlv: 0,
-        length: null,
-        width: null,
-        height: null,
-        weight: null,
-        dimensionMeasurement: null,
-        weightMeasurement: null,
-        units: [],
-        uomId: null,
-        oldUnitId: null,
-        oldUnitName: null,
-        oldUnitPrice: 0,
-        unitId: null,
-        unitName: null,
-        unitPrice: 0,
-        disc: 0,
-        taxAmount: 0,
-        nettPrice: 0,
-        total: 0,
-        dpp: 0,
-        totTax: 0,
-        totDPP: 0,
-        state: 'A'
+      if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemId ?? null)) {
+        const item = {
+          id: randomNumber(-1, -1000),
+          code: this.data.code,
+          itemId: null,
+          itemName: null,
+          qty: 1,
+          qtyDlv: 0,
+          length: null,
+          width: null,
+          height: null,
+          weight: null,
+          dimensionMeasurement: null,
+          weightMeasurement: null,
+          units: [],
+          uomId: null,
+          oldUnitId: null,
+          oldUnitName: null,
+          oldUnitPrice: 0,
+          unitId: null,
+          unitName: null,
+          unitPrice: 0,
+          disc: 0,
+          taxAmount: 0,
+          nettPrice: 0,
+          total: 0,
+          dpp: 0,
+          totTax: 0,
+          totDPP: 0,
+          state: 'A'
+        }
+        this.grid.data.push(item)
+        setTimeout(() => {
+          // Set focus to return code field
+          this.$refs.itemId.focus()
+        }, 0)
       }
-      this.grid.data.push(item)
     },
     itemIdChange(item) {
       const data_i = this.items.find(i => i.id === item.itemId)
