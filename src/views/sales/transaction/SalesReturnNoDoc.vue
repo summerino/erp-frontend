@@ -372,6 +372,7 @@
                     <v-tab-item
                       key="notes"
                       transition="false"
+                      eager
                     >
                       <v-row no-gutters>
                         <v-textarea
@@ -540,6 +541,8 @@
                             <v-text-field
                               v-model="item.itemReplacement"
                               class="text-body-2 mt-0"
+                              :rules="rules.required"
+                              required
                               readonly
                               dense
                             >
@@ -645,7 +648,6 @@
                                 v-model="data.taxInvoidNo"
                                 label="Tax Invoice No"
                                 class="mt-0"
-                                required
                               ></v-text-field>
                             </v-col>
                             <v-col cols="12" md="6" class="pl-md-1">
@@ -660,12 +662,10 @@
                                   <v-text-field
                                     v-bind="attrs"
                                     v-on="on"
-                                    :rules="rules.required"
                                     :value="formatInvoiceDate"
                                     label="Tax Invoice Date"
                                     class="mt-0"
                                     readonly
-                                    required
                                   ></v-text-field>
                                 </template>
                                 <v-date-picker
@@ -995,6 +995,9 @@ export default {
           item.units = response.data.tableData
         })
     },
+    close() {
+      this.dialog.add = false
+    },
     add() {
       if (this.dialog.add) return
       this.dialog.add = true
@@ -1069,6 +1072,11 @@ export default {
 
       const data = this.data
       data.itemDetails = this.gridItem.data
+
+      if (data.itemDetails) {
+        this.$store.dispatch('app/showInfo', 'Detail item cannot be empty.')
+        return
+      }
 
       let result = { success: false, message: '' }
       if (data.action === 'add') {
