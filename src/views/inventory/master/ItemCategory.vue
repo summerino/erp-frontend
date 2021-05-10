@@ -70,6 +70,7 @@
                     v-if="item.id !== 0"
                     v-bind="attrs"
                     v-on="on"
+                    :disabled="item.isParent"
                     color="red"
                     icon
                     small
@@ -199,7 +200,7 @@
                           :items="groupRef"
                           :item-text="item => `${item.name}`"
                           label="Item Group"
-                          item-value="initial"
+                          item-value="id"
                           class="mt-0"
                           required
                         ></v-autocomplete>
@@ -309,10 +310,11 @@ export default {
         initial: '',
         name: '',
         parentId: null,
-        groupId: null,
+        groupId: 0,
         deep: null,
         seq: null,
         lineage: '',
+        isParent: null,
         isActive: null
       }
       this.parentRef = []
@@ -411,13 +413,14 @@ export default {
         } else {
           this.data.initial = result.data
         }
+        this.getList()
       }
     },
     getParent() {
       api.getAll(`${this.endpoint.inventory.item.category}/lists`, {})
         .then(response => {
           this.parentRef = response.data.tableData
-          const itemRef = [{ id: null, initial: null, name: 'All Category', parentId: null, seq: 0, deep: 0, lineage: ''}, ...this.parentRef]
+          const itemRef = [{ id: null, initial: null, name: 'All Category', parentId: null, groupId: 0, seq: 0, deep: 0, lineage: '', isParent: true}, ...this.parentRef]
           this.parentRef = itemRef
         })
     },
