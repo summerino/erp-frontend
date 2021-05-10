@@ -199,6 +199,21 @@
                   <v-card-text>
                     <v-row no-gutters>
                       <v-col cols="12">
+                        <v-autocomplete
+                          v-model="data.srcTrans"
+                          :items="sources"
+                          :rules="rules.required"
+                          label="Source Transaction"
+                          item-text="name"
+                          item-value="id"
+                          class="mt-0"
+                          required
+                          @change="srcTransChange"
+                        ></v-autocomplete>
+                      </v-col>
+                    </v-row>
+                    <v-row no-gutters>
+                      <v-col cols="12" md="6">
                         <v-text-field
                           ref="code"
                           v-model="data.code"
@@ -207,10 +222,7 @@
                           readonly
                         ></v-text-field>
                       </v-col>
-                    </v-row>
-
-                    <v-row no-gutters>
-                      <v-col cols="12">
+                      <v-col cols="12" md="6" class="pl-md-1">
                         <v-menu
                           v-model="menu.dlvDate"
                           :close-on-content-click="false"
@@ -246,7 +258,7 @@
                           v-model="data.soCode"
                           :readonly="hasRelatedTrans"
                           :rules="rules.required"
-                          label="SO Code"
+                          :label="lblTransCode"
                           class="mt-0"
                           required
                           @change="soCodeChange"
@@ -257,7 +269,7 @@
                                 color="primary"
                                 icon
                                 small
-                                @click="showFindSODialog"
+                                @click="showFindTransDialog"
                               >
                                 <v-icon>
                                   mdi-shopping-search
@@ -552,8 +564,14 @@
     <find-so
       ref="findSO"
       :mark-exclude="['V', 'CLS', 'CMP']"
-      @dblclick:row="bindSOData"
+      @dblclick:row="bindTransData"
     ></find-so>
+    <find-return
+      ref="findReturn"
+      :type="2"
+      :mark-exclude="['V', 'CLS', 'CMP']"
+      @dblclick:row="bindTransData"
+    ></find-return>
   </div>
 </template>
 
@@ -567,11 +585,13 @@ import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
 import FindSo from '@/components/dialog/sales/FindSO'
+import FindReturn from '@/components/dialog/sales/FindReturn'
 
 export default {
   components: {
     Confirm,
-    FindSo
+    FindSo,
+    FindReturn
   },
 
   data: () => ({
@@ -628,7 +648,9 @@ export default {
     employees: [],
     warehouses: [],
     taxes: [],
-    data: {}
+    data: {},
+    lblTransCode: null,
+    sources: [{ id: 1, name: 'Sales Order' }, { id: 2, name: 'Sales Return' }]
   }),
 
   created: function () {
@@ -677,6 +699,7 @@ export default {
     reset(resetValidation = true) {
       this.data = {
         action: '',
+        srcTrans: 1,
         code: null,
         date: format(new Date(), 'yyyy-MM-dd'),
         soCode: null,
@@ -928,6 +951,26 @@ export default {
         this.calcPrice()
       }
     },
+    srcTransChange() {
+      if (this.data.srcTrans === 1) {
+        this.lblTransCode = 'SO Code'
+      } else {
+        this.lblTransCode = 'Return Code'
+      }
+      this.data.soCode = null
+      this.data.custCode = null
+      this.data.custName = null
+      this.data.currCode = null
+      this.data.rate = 0
+      this.data.dpp = 0
+      this.data.subTotal = 0
+      this.data.finalDisc = 0
+      this.data.includeTax = 0
+      this.data.taxAmount = 0
+      this.data.total = 0
+      this.gridItem.data = []
+      this.gridRelated.data = []
+    },
     soCodeChange() {
       api.getAll(this.endpoint.sales.order, {
         params: {
@@ -943,7 +986,7 @@ export default {
         }
       })
         .then(response => {
-          this.bindSOData(response.data.tableData[0] ?? null)
+          this.bindTransData(response.data.tableData[0] ?? null)
         })
     },
     calcItemTax(item) {
@@ -983,11 +1026,16 @@ export default {
         this.data.total = this.data.subTotal - this.data.finalDisc + this.data.taxAmount
       }
     },
-    showFindSODialog() {
-      this.$refs.findSO.open()
+    showFindTransDialog() {
+      if (this.data.srcTrans === 1) {
+        this.$refs.findSO.open()
+      } else {
+        this.$refs.findReturn.open()
+      }
     },
-    bindSOData(item) {
+    bindTransData(item) {
       if (item) {
+        debugger
         this.data.soCode = item.code
         this.data.custCode = item.custCode
         this.data.custName = item.custName
@@ -999,31 +1047,55 @@ export default {
         this.data.includeTax = item.includeTax
         this.data.taxAmount = item.taxAmount
         this.data.total = item.total
-
-        if (!item.called) {
+        const test = true
+        if (!item.called || test) {
           // Get customer details
           this.bindCustData(this.data)
 
-          // Get sales order item details
-          api.getAll(`${this.endpoint.sales.order}/item`, {
-            params: {
-              code: item.code,
-              fullDelivered: false
-            }
-          })
-            .then(response => {
-              this.gridItem.data = [...response.data.tableData]
-              for (let i = 0; i < this.gridItem.data.length; i++) {
-                this.gridItem.data[i].soDetailId = this.gridItem.data[i].id
-                this.gridItem.data[i].id = randomNumber(-1, -1000)
-                this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
-                this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyDlv
-                this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
-                this.gridItem.data[i].typeName = 'Normal'
-                this.calcItemPrice(this.gridItem.data[i], false)
+          if (this.data.srcTrans === 1) {
+            // Get sales order item details
+            api.getAll(`${this.endpoint.sales.order}/item`, {
+              params: {
+                code: item.code,
+                fullDelivered: false
               }
-              this.calcPrice()
             })
+              .then(response => {
+                this.gridItem.data = [...response.data.tableData]
+                for (let i = 0; i < this.gridItem.data.length; i++) {
+                  this.gridItem.data[i].soDetailId = this.gridItem.data[i].id
+                  this.gridItem.data[i].id = randomNumber(-1, -1000)
+                  this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
+                  this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyDlv
+                  this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
+                  this.gridItem.data[i].typeName = 'Normal'
+                  this.calcItemPrice(this.gridItem.data[i], false)
+                }
+                this.calcPrice()
+              })
+          } else {
+            // Get sales return item details
+            api.getAll(`${this.endpoint.sales.return}/item`, {
+              params: {
+                code: item.code,
+                fullDelivered: false
+              }
+            })
+              .then(response => {
+                debugger
+                this.gridItem.data = [...response.data.tableData]
+                for (let i = 0; i < this.gridItem.data.length; i++) {
+                  this.gridItem.data[i].soDetailId = this.gridItem.data[i].id
+                  this.gridItem.data[i].id = randomNumber(-1, -1000)
+                  this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
+                  this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyDlv
+                  this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
+                  this.gridItem.data[i].typeName = 'Normal'
+                  this.calcItemPrice(this.gridItem.data[i], false)
+                }
+                this.calcPrice()
+              })
+          }
         }
       } else {
         this.data.custCode = null
@@ -1049,7 +1121,7 @@ export default {
             item.custFax = response.data.fax
           }
         })
-    }
+    }    
   }
 }
 </script>
