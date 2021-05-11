@@ -294,6 +294,9 @@
                           v-model="item.name"
                           :readonly="data.isActive === false"
                           class="mt-0"
+                          :rules="[rules.required[0], rules.max50chars[0]]"
+                          counter="50"
+                          required
                           dense
                         ></v-text-field>
                       </template>
@@ -303,6 +306,9 @@
                           v-model="item.value"
                           :readonly="data.isActive === false"
                           class="mt-0"
+                          :rules="[rules.required[0], rules.max1000chars[0]]"
+                          counter="1000"
+                          required
                           dense
                         ></v-text-field>
                       </template>
@@ -525,7 +531,7 @@ export default {
       }
     },
     addItem() {
-      if (this.gridItem.data.length < 10) {
+      if (this.gridItem.data.length < 5) {
         const item = {
           id: randomNumber(-1, -1000),
           name: null,

@@ -33,4 +33,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/sales/master/area',
+  name: 'area',
+  component: () => import(/* webpackChunkName: "master-area" */ '@/views/sales/transaction/Area.vue'),
+  meta: {
+    authRequired: true
+  }
 }]

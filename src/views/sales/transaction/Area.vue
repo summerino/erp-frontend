@@ -105,7 +105,7 @@
           <v-btn icon dark @click="close">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Item Category</v-toolbar-title>
+          <v-toolbar-title>Area</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-tooltip bottom>
@@ -194,16 +194,7 @@
                         ></v-autocomplete>
                       </v-col>
                       <v-col cols="12" md="6" class="pl-md-1">
-                        <v-autocomplete
-                          ref="GroupId"
-                          v-model="data.groupId"
-                          :items="groupRef"
-                          :item-text="item => `${item.name}`"
-                          label="Item Group"
-                          item-value="id"
-                          class="mt-0"
-                          required
-                        ></v-autocomplete>
+                        &nbsp;
                       </v-col>
                     </v-row>
 
@@ -270,7 +261,6 @@ export default {
     valid: false,
     open: [],
     parentRef: [],
-    groupRef: [],
     data: {}
   }),
 
@@ -310,15 +300,12 @@ export default {
         initial: '',
         name: '',
         parentId: null,
-        groupId: 0,
         deep: null,
-        seq: null,
         lineage: '',
         isParent: null,
         isActive: null
       }
       this.parentRef = []
-      this.groupRef = []
 
       // Reset form validation
       if (resetValidation) {
@@ -328,9 +315,7 @@ export default {
       }
     },
     getList() {
-      api.getAll(`${this.endpoint.inventory.item.category}/hierarchy`, {
-        params: { search: this.hierarchy.search }
-      })
+      api.getAll(`${this.endpoint.sales.area}/hierarchy`, {})
         .then(response => {
           this.hierarchy.data = [response.data]
           this.open = [0]
@@ -346,7 +331,6 @@ export default {
       this.data.action = 'add'
       this.data.isActive = true 
       this.getParent()   
-      this.getGroup()
 
       setTimeout(() => {
         // Set focus to receive initial field
@@ -363,7 +347,6 @@ export default {
       this.reset()
 
       this.getParent()
-      this.getGroup()
 
       this.data = {
         ...item,
@@ -381,7 +364,7 @@ export default {
           'Inactive?',
           'Are you sure want to inactive this data?')
       ) {
-        api.delete(this.endpoint.inventory.item.category, item.id)
+        api.delete(this.endpoint.sales.area, item.id)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -399,10 +382,10 @@ export default {
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
         this.setOthers()
-        const resp = await api.create(this.endpoint.inventory.item.category, this.data)
+        const resp = await api.create(this.endpoint.sales.area, this.data)
         result = resp.data
       } else if (this.data.action === 'edit') {
-        const resp = await api.update(this.endpoint.inventory.item.category, this.data.id, this.data)
+        const resp = await api.update(this.endpoint.sales.area, this.data.id, this.data)
         result = resp.data
       }
 
@@ -410,24 +393,18 @@ export default {
         this.$store.dispatch('app/showSuccess', result.message)
         if (closeDialog) {
           this.dialog.add = false
+          this.getList()
         } else {
           this.data.initial = result.data
         }
-        this.getList()
       }
     },
     getParent() {
-      api.getAll(`${this.endpoint.inventory.item.category}/lists`, {})
+      api.getAll(`${this.endpoint.sales.area}/lists`, {})
         .then(response => {
           this.parentRef = response.data.tableData
-          const itemRef = [{ id: null, initial: null, name: 'All Category', parentId: null, groupId: 0, seq: 0, deep: 0, lineage: '', isParent: true}, ...this.parentRef]
+          const itemRef = [{ id: null, initial: null, name: 'Office', parentId: null, deep: 0, lineage: ''}, ...this.parentRef]
           this.parentRef = itemRef
-        })
-    },
-    getGroup() {
-      api.getAll(`${this.endpoint.inventory.item.group}/lists`, {})
-        .then(response => {
-          this.groupRef = response.data.tableData
         })
     },
     setPrefix() {
@@ -444,9 +421,8 @@ export default {
       }
     },
     setOthers() {
-      // Set Deep, Seq & Lineage. set Seq always 0
+      // Set Deep & Lineage
       this.data.deep += 1
-      this.data.seq = 0
 
       const initialResult = this.data.initial
       this.data.lineage = `${this.data.lineage}${initialResult}\\`

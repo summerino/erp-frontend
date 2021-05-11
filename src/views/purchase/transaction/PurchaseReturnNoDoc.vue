@@ -555,9 +555,9 @@
                               dense
                             ></v-autocomplete>
                           </template>
-                          <template v-slot:[`item.itemIdReplacement`]="{ item }">
+                          <template v-slot:[`item.itemReplacement`]="{ item }">
                             <v-text-field
-                              v-model="item.itemIdReplacement"
+                              v-model="item.itemReplacement"
                               class="text-body-2 mt-0"
                               readonly
                               dense
@@ -1075,8 +1075,8 @@ export default {
           dpp: 0,
           totTax: 0,
           totDPP: 0,
-          itemIdReplacement: null,
-          itemIdReplacements: [],
+          itemReplacement: null,
+          itemReplacements: [],
           state: 'A'
         }
         this.gridItem.data.push(item)
@@ -1129,7 +1129,7 @@ export default {
         this.gridItem.columns = [
           { value: 'action', sortable: false, divider: true, width: '90' },
           { text: 'Item', value: 'itemId', divider: true, width: '100' },
-          { text: 'Item Id Replacements', value: 'itemIdReplacement', divider: true, width: '100' },
+          { text: 'Item Replacements', value: 'itemReplacement', divider: true, width: '100' },
           { text: 'Name', value: 'itemName', divider: true, width: '280' },
           { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
           { text: 'Unit', value: 'unitName', divider: true, width: '90' },
@@ -1277,11 +1277,11 @@ export default {
     bindItemData(rowItem) {
       this.itemIdChange(rowItem)
     },
-    saveItemReplacement(rowItem, itemIdReplacements) {
+    saveItemReplacement(rowItem, itemReplacements) {
       const item = this.gridItem.data.find(x => x.id === rowItem.id)
       if (item) {
-        item.itemIdReplacements = itemIdReplacements
-        item.itemIdReplacement = itemIdReplacements.length > 1 ? 'Multi Item' : itemIdReplacements[0].itemName
+        item.itemReplacements = itemReplacements
+        item.itemReplacement = itemReplacements.length > 1 ? 'Multi Item' : itemReplacements[0].itemName
       }
     }
   }

@@ -92,6 +92,9 @@
                         @keyup.enter="dblclickRow(null, { item })"
                       ></v-text-field>
                     </template>
+                    <template v-slot:[`item.qtyOnHand`]="{ item }">
+                      {{ item.qtyOnHand | formatCurrency }}
+                    </template>
                   </v-data-table>
                 </v-card>
               </v-card-text>
@@ -135,7 +138,7 @@ export default {
           { text: 'Initial', value: 'initial', divider: true, width: '120' },
           { text: 'Name', value: 'name', divider: true, width: '300' },
           { text: 'Type', value: 'typeName', divider: true, width: '150' },
-          { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '100' },
+          { text: 'Qty', value: 'qtyOnHand', align: 'right', divider: true, width: '100' },
           { text: 'Unit', value: 'uomBuyName', divider: true, width: '150' },
           { text: 'Category', value: 'categoryName', width: '150' }
         ],

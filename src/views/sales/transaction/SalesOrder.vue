@@ -84,6 +84,22 @@
             </template>
             <span class="text-caption">Void</span>
           </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                :disabled="item.mark.toUpperCase() !== 'PR' && item.mark.toUpperCase() !== 'A'"
+                color="blue darken-2"
+                icon
+                small
+                @click="closeOrder(item)"
+              >
+                <v-icon small>mdi-lock</v-icon>
+              </v-btn>
+            </template>
+            <span class="text-caption">Close</span>
+          </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
@@ -97,7 +113,7 @@
               <v-chip
                 v-bind="attrs"
                 v-on="on"
-                :color="item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
+                :color="item.mark.toUpperCase() === 'CLS' ? 'grey darken-1' : item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
                 class="px-1"
                 dark
                 small
@@ -841,7 +857,7 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
+        { value: 'action', sortable: false, divider: true, width: '120' },
         { text: 'Code', value: 'code', divider: true, width: '160' },
         { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
         { text: 'Sales By', value: 'salesInitial', divider: true, width: '200' },

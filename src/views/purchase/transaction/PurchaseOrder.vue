@@ -113,7 +113,7 @@
               <v-chip
                 v-bind="attrs"
                 v-on="on"
-                :color="item.mark.toUpperCase() === 'CLS' || item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
+                :color="item.mark.toUpperCase() === 'CLS' ? 'grey darken-1' : item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
                 class="px-1"
                 dark
                 small
@@ -1172,7 +1172,7 @@ export default {
           'Void?',
           'Are you sure want to close this data?')
       ) {
-        api.put(`${this.endpoint.purchase.order}/close`, item.code)
+        api.update(`${this.endpoint.purchase.order}/close`, item.code)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)

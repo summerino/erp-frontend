@@ -24,11 +24,14 @@
 
       <v-card-text class="px-2 pt-1">
         <v-card>
-          <v-app-bar dense flat>
+          <v-form ref="form"
+            v-model="valid">
+            <v-app-bar dense flat>
             <v-spacer></v-spacer>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
+                  ref="add"
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'i']"
@@ -114,6 +117,7 @@
               <v-autocomplete
                 v-model="item.unitId"
                 :items="item.units"
+                :rules="rules.required"
                 item-text="unitEquivalent"
                 item-value="id"
                 class="text-body-2 mt-0"
@@ -131,43 +135,49 @@
               ></v-currency-field>
             </template>
           </v-data-table>
+          </v-form>
         </v-card>
       </v-card-text>
       <v-card-actions class="justify-end pb-2 pr-2">
-        <v-btn
-          color="blue darken-2"
-          class="font-weight-regular"
-          dark
-          small
-          tile
-          @click="save"
-        >
-          <v-icon left>mdi-content-save</v-icon>
-          Save
-        </v-btn>
-        <v-btn
-          color="red darken-2"
-          class="font-weight-regular"
-          dark
-          small
-          tile
-          @click="close"
-        >
-          <v-icon left>mdi-close-circle-outline</v-icon>
-          Cancel
-        </v-btn>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              v-bind="attrs"
+              v-on="on"
+              class="primary mr-1"
+              small
+              tile
+              v-shortkey="['ctrl', 's']"
+              @click="save"
+              @shortkey="save"
+            >
+              <v-icon left>mdi-content-save</v-icon>
+              Save
+            </v-btn>
+          </template>
+          <span class="text-caption">(Ctrl + S)</span>
+        </v-tooltip>
       </v-card-actions>
     </v-card>
+    <confirm ref="confirm"></confirm>
   </v-dialog>
 </template>
 
 <script>
+
+import Confirm from '@/components/dialog/Confirm'
+import { mapState } from 'vuex'
 import { randomNumber } from '@/helpers/math-helpers'
+import api from '@/services/axios.service'
 
 export default {
   props: {
     items: Array
   },
+  components: {
+    Confirm
+  },
+
   created: function () {
     this.rules = this.$store.state.app.rules
   },
@@ -187,7 +197,7 @@ export default {
       rowItem: {},
       grid: {
         columns: [
-          { value: 'action', sortable: false, divider: true, width: '90' },
+          { value: 'action', sortable: false, divider: true, width: '35' },
           { text: 'Item', value: 'itemId', divider: true, width: '100' },
           { text: 'Name', value: 'itemName', divider: true, width: '280' },
           { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
@@ -198,65 +208,94 @@ export default {
       },
       options: {
         width: 800
-      }
+      },
+      valid: false
     }
+  },
+  computed: {
+    ...mapState({
+      endpoint: state => state.api.endpoint
+    })
   },
   methods: {
     reset() {
+      debugger
       this.data.by = 'code'
       this.data.value = ''
       this.grid.data = []
+      setTimeout(() => {
+        this.$refs.add.$el.focus()
+      }, 0)
     },
     open(rowItem, options) {
       this.dialog = true
       this.reset()
       this.rowItem = rowItem
-      if (this.rowItem.itemIdReplacements) {
-        this.rowItem.itemIdReplacements.forEach(element => {
+      if (this.rowItem.itemReplacements) {
+        this.rowItem.itemReplacements.forEach(element => {
           this.grid.data.push(element)          
         })
       }
       this.options = Object.assign(this.options, options)
+      
     },
     close() {      
       this.dialog = false
     },
+    getUnitItemLists(item) {
+      api.getAll(`${this.endpoint.inventory.uom}/item`, {
+        params: { uomId: item.uomId }
+      })
+        .then(response => {
+          item.units = response.data.tableData
+        })
+    },
     save() {      
+      if (!this.$refs.form.validate()) {
+        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        return
+      }
       this.$emit('save', this.rowItem, this.grid.data)
       this.dialog = false
     },
     add() {
-      const item = {
-        id: randomNumber(-1, -1000),
-        code: this.data.code,
-        itemId: null,
-        itemName: null,
-        qty: 1,
-        qtyDlv: 0,
-        length: null,
-        width: null,
-        height: null,
-        weight: null,
-        dimensionMeasurement: null,
-        weightMeasurement: null,
-        units: [],
-        uomId: null,
-        oldUnitId: null,
-        oldUnitName: null,
-        oldUnitPrice: 0,
-        unitId: null,
-        unitName: null,
-        unitPrice: 0,
-        disc: 0,
-        taxAmount: 0,
-        nettPrice: 0,
-        total: 0,
-        dpp: 0,
-        totTax: 0,
-        totDPP: 0,
-        state: 'A'
+      if (this.grid.data.length === 0 || (this.grid.data.slice(-1)[0]?.itemId ?? null)) {
+        const item = {
+          id: randomNumber(-1, -1000),
+          code: this.data.code,
+          itemId: null,
+          itemName: null,
+          qty: 1,
+          qtyDlv: 0,
+          length: null,
+          width: null,
+          height: null,
+          weight: null,
+          dimensionMeasurement: null,
+          weightMeasurement: null,
+          units: [],
+          uomId: null,
+          oldUnitId: null,
+          oldUnitName: null,
+          oldUnitPrice: 0,
+          unitId: null,
+          unitName: null,
+          unitPrice: 0,
+          disc: 0,
+          taxAmount: 0,
+          nettPrice: 0,
+          total: 0,
+          dpp: 0,
+          totTax: 0,
+          totDPP: 0,
+          state: 'A'
+        }
+        this.grid.data.push(item)
+        setTimeout(() => {
+          // Set focus to return code field
+          this.$refs.itemId.focus()
+        }, 0)
       }
-      this.grid.data.push(item)
     },
     itemIdChange(item) {
       const data_i = this.items.find(i => i.id === item.itemId)
@@ -284,8 +323,46 @@ export default {
         if (item.state !== 'A') {
           item.state = 'M'
         }
-        // Get unit item lists
-        //this.getUnitItemLists(item)
+        //Get unit item lists
+        this.getUnitItemLists(item)
+      }
+    },
+    unitItemChange(item) {
+      const oldUnit = item.units.find(u => u.id === item.oldUnitId)
+      const unit = item.units.find(u => u.id === item.unitId)
+
+      if (oldUnit.seq < unit.seq) {
+        item.uomConversion = unit.conversion
+        if (unit.unitToConvert !== item.oldUnitName) {
+          this.calcUomConversion(true, item, unit.unitToConvert)
+        }
+        item.unitPrice = item.oldUnitPrice * item.uomConversion
+      } else {
+        item.uomConversion = 1
+        if (unit.unitEquivalent !== item.oldUnitName) {
+          this.calcUomConversion(false, item, unit.unitEquivalent)
+        }
+        item.unitPrice = item.oldUnitPrice / item.uomConversion
+      }
+
+      // Calc item price
+      this.calcItemPrice(item)
+    },
+    calcUomConversion(seqSmaller, item, unitCode) {
+      if (seqSmaller) {
+        const data = item.units.find(u => u.unitEquivalent === unitCode)
+        item.uomConversion *= data.conversion
+
+        if (data.unitToConvert !== item.oldUnitName) {
+          this.calcUomConversion(seqSmaller, item, data.unitToConvert)
+        }
+      } else {
+        const data = item.units.find(u => u.unitToConvert === unitCode && !u.isBaseUnit)
+        item.uomConversion *= data.conversion
+
+        if (data.unitEquivalent !== item.oldUnitName) {
+          this.calcUomConversion(seqSmaller, item, data.unitEquivalent)
+        }
       }
     },
     async removeItem(item) {

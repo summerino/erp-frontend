@@ -24,7 +24,9 @@
 
       <v-card-text class="px-2 pt-1">
         <v-card>
-          <v-app-bar dense flat>
+          <v-form ref="form"
+            v-model="valid">
+            <v-app-bar dense flat>
             <v-spacer></v-spacer>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -114,6 +116,7 @@
               <v-autocomplete
                 v-model="item.unitId"
                 :items="item.units"
+                :rules="rules.required"
                 item-text="unitEquivalent"
                 item-value="id"
                 class="text-body-2 mt-0"
@@ -131,6 +134,7 @@
               ></v-currency-field>
             </template>
           </v-data-table>
+          </v-form>
         </v-card>
       </v-card-text>
       <v-card-actions class="justify-end pb-2 pr-2">
@@ -158,16 +162,25 @@
         </v-btn>
       </v-card-actions>
     </v-card>
+    <confirm ref="confirm"></confirm>
   </v-dialog>
 </template>
 
 <script>
+
+import Confirm from '@/components/dialog/Confirm'
+import { mapState } from 'vuex'
 import { randomNumber } from '@/helpers/math-helpers'
+import api from '@/services/axios.service'
 
 export default {
   props: {
     items: Array
   },
+  components: {
+    Confirm
+  },
+
   created: function () {
     this.rules = this.$store.state.app.rules
   },
@@ -198,8 +211,14 @@ export default {
       },
       options: {
         width: 800
-      }
+      },
+      valid: false
     }
+  },
+  computed: {
+    ...mapState({
+      endpoint: state => state.api.endpoint
+    })
   },
   methods: {
     reset() {
@@ -221,7 +240,19 @@ export default {
     close() {      
       this.dialog = false
     },
+    getUnitItemLists(item) {
+      api.getAll(`${this.endpoint.inventory.uom}/item`, {
+        params: { uomId: item.uomId }
+      })
+        .then(response => {
+          item.units = response.data.tableData
+        })
+    },
     save() {      
+      if (!this.$refs.form.validate()) {
+        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        return
+      }
       this.$emit('save', this.rowItem, this.grid.data)
       this.dialog = false
     },
@@ -284,8 +315,46 @@ export default {
         if (item.state !== 'A') {
           item.state = 'M'
         }
-        // Get unit item lists
-        //this.getUnitItemLists(item)
+        //Get unit item lists
+        this.getUnitItemLists(item)
+      }
+    },
+    unitItemChange(item) {
+      const oldUnit = item.units.find(u => u.id === item.oldUnitId)
+      const unit = item.units.find(u => u.id === item.unitId)
+
+      if (oldUnit.seq < unit.seq) {
+        item.uomConversion = unit.conversion
+        if (unit.unitToConvert !== item.oldUnitName) {
+          this.calcUomConversion(true, item, unit.unitToConvert)
+        }
+        item.unitPrice = item.oldUnitPrice * item.uomConversion
+      } else {
+        item.uomConversion = 1
+        if (unit.unitEquivalent !== item.oldUnitName) {
+          this.calcUomConversion(false, item, unit.unitEquivalent)
+        }
+        item.unitPrice = item.oldUnitPrice / item.uomConversion
+      }
+
+      // Calc item price
+      this.calcItemPrice(item)
+    },
+    calcUomConversion(seqSmaller, item, unitCode) {
+      if (seqSmaller) {
+        const data = item.units.find(u => u.unitEquivalent === unitCode)
+        item.uomConversion *= data.conversion
+
+        if (data.unitToConvert !== item.oldUnitName) {
+          this.calcUomConversion(seqSmaller, item, data.unitToConvert)
+        }
+      } else {
+        const data = item.units.find(u => u.unitToConvert === unitCode && !u.isBaseUnit)
+        item.uomConversion *= data.conversion
+
+        if (data.unitEquivalent !== item.oldUnitName) {
+          this.calcUomConversion(seqSmaller, item, data.unitEquivalent)
+        }
       }
     },
     async removeItem(item) {
