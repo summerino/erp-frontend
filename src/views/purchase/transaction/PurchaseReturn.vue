@@ -429,11 +429,12 @@
                     >
                       <v-textarea
                         v-model="data.notes"
-                        :rules="[rules.max256chars, rules.required[0]]"
+                        :rules="[rules.required[0], rules.max256chars[0]]"
                         label="Notes"
                         counter="256"
                         class="mt-0"
                         rows="4"
+                        required
                       ></v-textarea>
                     </v-tab-item>
                   </v-tabs-items>
@@ -918,7 +919,7 @@ export default {
         params: { code: item.code }
       })
         .then(response => {
-          this.gridItem.data = response.data
+          this.gridItem.data = response.data.tableData
         })
 
       // Get related transaction details
@@ -928,6 +929,8 @@ export default {
         .then(response => {
           this.gridRelated.data = response.data.tableData
         })
+
+      this.getRcvItemLists()
 
       // Set focus to return code field
       setTimeout(() => {

@@ -29,7 +29,7 @@ export default {
     },
     uom: 'uom',
     warehouse: 'warehouse',
-    adjustment: 'adjustment'
+    adjustment: 'adjustment' 
   },
 
   purchase: {

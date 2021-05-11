@@ -12,7 +12,7 @@
         dark
         dense
       >
-        <v-toolbar-title>Purchase Return</v-toolbar-title>
+        <v-toolbar-title>Sales Return</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn
           icon
@@ -130,7 +130,7 @@ import api from '@/services/axios.service'
 export default {
   props: {
     rcvCode: String,
-    type: Array,
+    type: Number,
     markExclude: {
       type: Array,
       required: true
@@ -146,19 +146,15 @@ export default {
         value: '',
         items: [
           { text: 'Code', value: 'code' },
-          { text: 'Date', value: 'date' },
-          { text: 'Rcv. Code', value: 'rcvCode' },
-          { text: 'Ref. No.', value: 'refNo' }
+          { text: 'Date', value: 'date' }
         ]
       },
       grid: {
         columns: [
           { text: 'Code', value: 'code', divider: true, width: '160' },
           { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
-          { text: 'Rcv. Code', value: 'rcvCode', divider: true, width: '160' },
           { text: 'Amount', value: 'total', align: 'right', width: '120' },
-          { text: 'Shipped By', value: 'shippedInitial', divider: true, width: '200' },
-          { text: 'Ref. No.', value: 'refNo', divider: true, width: '160' }
+          { text: 'Sales By', value: 'salesInitial', divider: true, width: '200' }
         ],
         data: []
       },
@@ -203,23 +199,15 @@ export default {
         keyword: this.markExclude
       }]
 
-      if (this.rcvCode) {
-        filters.push({
-          field: 'rcvCode',
-          operator: 'eq',
-          keyword: this.rcvCode
-        })
-      }
-
       if (this.type) {
         filters.push({
           field: 'type',
-          operator: 'contains',
+          operator: 'eq',
           keyword: this.type
         })
       }
 
-      api.getAll(this.endpoint.purchase.return, {
+      api.getAll(this.endpoint.sales.return, {
         params: {
           filters: JSON.stringify(filters),
           sorts: JSON.stringify([{

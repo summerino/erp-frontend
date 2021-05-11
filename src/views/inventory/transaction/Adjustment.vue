@@ -7,7 +7,7 @@
             <v-text-field
               v-model="grid.search"
               append-icon="mdi-magnify"
-              label="Search..."
+              label="Cari..."
               class="font-weight-regular mt-0 pt-0"
               single-line
               @keyup.enter="getList()"
@@ -30,7 +30,7 @@
                   @shortkey="add"
                 >
                   <v-icon left>mdi-plus</v-icon>
-                  New
+                  Data Baru
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + Alt + N)</span>
@@ -127,7 +127,7 @@
           <v-btn icon dark @click="close">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Adjustment</v-toolbar-title>
+          <v-toolbar-title>Penyesuaian</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-tooltip bottom>
@@ -140,7 +140,7 @@
                   text
                   @click="save(true)"
                   @shortkey="save(true)"
-                >Save & Close</v-btn>
+                >Simpan & Tutup</v-btn>
               </template>
               <span class="text-caption">(Ctrl + Enter)</span>
             </v-tooltip>
@@ -174,7 +174,7 @@
                           v-bind="attrs"
                           v-on="on"
                         >
-                          Save
+                          Simpan
                         </span>
                       </template>
                       <span class="text-caption">(Ctrl + S)</span>
@@ -195,7 +195,7 @@
             <v-row dense>
               <v-col cols="12" md="4">
                 <v-card>
-                  <v-card-title>General</v-card-title>
+                  <v-card-title>Umum</v-card-title>
 
                   <v-card-text>
                     <v-row no-gutters>
@@ -203,7 +203,7 @@
                         <v-text-field
                           ref="code"
                           v-model="data.code"
-                          label="Code"
+                          label="Kode Transaksi"
                           class="mt-0"
                           readonly
                         ></v-text-field>
@@ -222,7 +222,7 @@
                               v-on="on"
                               :rules="rules.required"
                               :value="formatDate"
-                              label="Date"
+                              label="Tanggal Transaksi"
                               class="mt-0"
                               readonly
                               required
@@ -246,7 +246,7 @@
                           item-value="code"
                           :rules="rules.required"
                           @change="changeType"
-                          label="Type"
+                          label="Tipe Transaksi"
                           class="mt-0"
                           required
                         ></v-autocomplete>
@@ -258,7 +258,7 @@
                             :item-text="item => `${item.initial} - ${item.name}`"
                             :rules="rules.required"
                             @change="changeLocation"
-                            label="Location"
+                            label="Lokasi"
                             item-value="code"
                             class="mt-0"
                           ></v-autocomplete>
@@ -270,8 +270,8 @@
               <v-col cols="12" md="8">
                 <v-card>
                   <v-tabs v-model="tab.adj">
-                    <v-tab key="notes">Notes</v-tab>
-                    <v-tab key="user">User</v-tab>
+                    <v-tab key="notes">Catatan</v-tab>
+                    <v-tab key="user">Pengguna</v-tab>
                   </v-tabs>
                   <v-tabs-items v-model="tab.adj" class="pa-2">
                     
@@ -282,7 +282,7 @@
                       <v-textarea
                       v-model="data.notes"
                       :rules="rules.max256chars"
-                      label="Notes"
+                      label="Catatan"
                       counter="256"
                       class="mt-0"
                       rows="4"
@@ -297,7 +297,7 @@
                         <v-col cols="6">
                           <v-text-field
                             v-model.trim="data.approveInitial"
-                            label="Approved By"
+                            label="Disetujui Oleh"
                             class="mt-0"
                             readonly
                           ></v-text-field>
@@ -305,7 +305,7 @@
                         <v-col cols="6" class="pl-1">
                           <v-text-field
                             v-model.trim="data.createdInitial"
-                            label="Created By"
+                            label="Dibuat Oleh"
                             class="mt-0"
                             readonly
                           ></v-text-field>
@@ -316,7 +316,7 @@
                         <v-col cols="6">
                           <v-text-field
                             v-model.trim="data.updatedInitial"
-                            label="Updated By"
+                            label="Diperbarui Oleh"
                             class="mt-0"
                             readonly
                           ></v-text-field>
@@ -324,7 +324,7 @@
                         <v-col cols="6" class="pl-1">
                           <v-text-field
                             v-model.trim="data.updatedDate"
-                            label="Updated Date"
+                            label="Tangggal Pembaruan"
                             class="mt-0"
                             readonly
                           ></v-text-field>
@@ -373,7 +373,7 @@
                           @click="showAll"
                           @shortkey="showAll"
                           >
-                          Show Items
+                          Tampilkan Barang
                         </v-btn>
                       </template>
                       <span class="text-caption">(Ctrl + A)</span>
@@ -414,7 +414,7 @@
                               <v-icon small>mdi-close-thick</v-icon>
                           </v-btn>
                         </template>
-                        <span class="text-caption">Delete</span>
+                        <span class="text-caption">Hapus</span>
                       </v-tooltip>
                     </template>
                     <template v-slot:[`item.itemId`]="{ item }">
@@ -543,12 +543,13 @@
       
     </v-dialog>
     <confirm ref="confirm"></confirm>
-    <find-item
+    <find-item-adjustment
       ref="findItem"
       :warehouseCode="data.warehouseCode"
+      :fromAdjustment="true"
       @dblclick:row="bindItemData"
       
-    ></find-item>
+    ></find-item-adjustment>
   </div>
 </template>
 
@@ -558,12 +559,12 @@ import { format, parseISO }  from 'date-fns'
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 import Confirm from '@/components/dialog/Confirm'
-import FindItem from '@/components/dialog/inventory/FindItem'
+import FindItemAdjustment from '@/components/dialog/inventory/FindItemAdjustment'
 
 export default {
   components:{
     Confirm,
-    FindItem
+    FindItemAdjustment
   },
 
   data: () => ({
@@ -579,10 +580,10 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Date', value: 'date', divider: true, width: '150' },
-        { text: 'Code', value: 'code', divider: true, width: '150' },
-        { text: 'Location', value: 'warehouseInitial', divider: true, width: '150' },
-        { text: 'Notes', value: 'notes', divider: true, width: '200' },
+        { text: 'Tanggal Transaksi', value: 'date', divider: true, width: '150' },
+        { text: 'Kode Transaksi', value: 'code', divider: true, width: '150' },
+        { text: 'Lokasi', value: 'warehouseInitial', divider: true, width: '150' },
+        { text: 'Catatan', value: 'notes', divider: true, width: '200' },
         { text: 'Status', value: 'mark', divider: true, width: '200' }
       ],
       data: [],
@@ -653,9 +654,11 @@ export default {
       }
       this.bindGridItems()
       for (let i = 0; i < this.items.length; i++) {
+        debugger
         const item = this.items[i]
         const units = this.uoms.filter(x => x.uomId === item.uomId)
         const defaultUnitId = units[0].id
+        const buyUnit = item.uomBuyId
         const temp = {
           id: randomNumber(-1, -1000),
           itemId: item.id,
@@ -663,7 +666,7 @@ export default {
           unitName: null,
           units: units,
           uomId: item.uomId,
-          unitId: defaultUnitId,
+          unitId: buyUnit,
           oldUnitId: defaultUnitId,
           qtyOnHand: item.qtyOnHand,
           baseQtyOnHand: item.qtyOnHand,
@@ -674,6 +677,7 @@ export default {
           totalCogs: 0,
           notes: ''
         }
+        this.unitItemChange(temp)
         this.gridItem.data.push(temp)
       }
       this.isButtonShowItemDisabled()
@@ -681,11 +685,13 @@ export default {
     unitItemChange(item) {
       const oldUnit = item.units.find(u => u.id === item.oldUnitId)
       const unit = item.units.find(u => u.id === item.unitId)
-      item.oldUnitId = item.unitId
-      item.qtyAdjust = 0
-      item.qtyOpname = 0
-      item.different = 0
-      this.convertUOM(item, oldUnit.seq, unit.seq)
+      if (oldUnit && unit) {
+        item.oldUnitId = item.unitId
+        item.qtyAdjust = 0
+        item.qtyOpname = 0
+        item.different = 0
+        this.convertUOM(item, oldUnit.seq, unit.seq)
+      }
     },
     calculateDifferent(item) {
       item.different = item.qtyOpname - item.qtyOnHand 
@@ -719,9 +725,9 @@ export default {
     getUnitItemLists(item) {
       const units = this.uoms.filter(x => x.uomId === item.uomId)
       item.units = units
-      const selectedUnit = units.find(x => x.seq === 1)
-      item.unitId = selectedUnit.id
-      item.oldUnitId = item.unitId
+      const baseUnit = units.find(x => x.seq === 1)
+      item.oldUnitId = baseUnit.id
+      this.unitItemChange(item)
     },
     reset(resetValidation = true) {
       this.data = {
@@ -777,7 +783,7 @@ export default {
         operator: 'eq',
         keyword: this.data.warehouseCode
       }]
-      api.getAll(this.endpoint.inventory.item.item, {
+      api.getAll(`${this.endpoint.inventory.adjustment}/item-list`, {
         params: {
           filters: JSON.stringify(filters)         
         }
@@ -896,28 +902,28 @@ export default {
     bindStockOpnameTable() {
       this.gridItem.columns = [
         { value: 'action', sortable: false, divider: true, width: '90'},
-        { text: 'Item', value: 'itemId', divider: true, width: '120' },
-        { text: 'Name', value: 'itemName', divider: true, width: '300' },
-        { text: 'Unit', value: 'unitName', sortable: false, divider: true, width: '100'},
-        { text: 'Qty On Hand', value: 'qtyOnHand', sortable: false, divider: true, width: '75'},
-        { text: 'Qty Opname', value: 'qtyOpname', sortable: false, divider: true, width: '75'},
-        { text: 'Different', value: 'different', sortable: false, divider: true, width: '75'},
+        { text: 'ID Barang', value: 'itemId', divider: true, width: '120' },
+        { text: 'Nama', value: 'itemName', divider: true, width: '300' },
+        { text: 'Satuan', value: 'unitName', sortable: false, divider: true, width: '100'},
+        { text: 'Qty Sistem', value: 'qtyOnHand', sortable: false, divider: true, width: '75'},
+        { text: 'Qty Aktual', value: 'qtyOpname', sortable: false, divider: true, width: '75'},
+        { text: 'Selisih', value: 'different', sortable: false, divider: true, width: '75'},
         // { text: 'COGS (smalles unit)', value: 'cogs', sortable: false, divider: true, width: '175'},
         // { text: 'Total COGS', value: 'totalCogs', sortable: false, divider: true, width: '175'},
-        { text: 'Notes', value: 'notes', sortable: false, divider: true, width: '250'}
+        { text: 'Catatan', value: 'notes', sortable: false, divider: true, width: '250'}
       ]
     }, 
     bindAdjustmentTable() {
       this.gridItem.columns = [
         { value: 'action', sortable: false, divider: true, width: '90'},
-        { text: 'Item', value: 'itemId', divider: true, width: '120' },
-        { text: 'Name', value: 'itemName', divider: true, width: '300' },
-        { text: 'Unit', value: 'unitName', sortable: false, divider: true, width: '100'},
-        { text: 'Qty On Hand', value: 'qtyOnHand', sortable: false, divider: true, width: '75'},
-        { text: 'Qty To Adjust', value: 'qtyAdjust', sortable: false, divider: true, width: '75'},
+        { text: 'ID Barang', value: 'itemId', divider: true, width: '120' },
+        { text: 'Nama', value: 'itemName', divider: true, width: '300' },
+        { text: 'Satuan', value: 'unitName', sortable: false, divider: true, width: '100'},
+        { text: 'Qty Sistem', value: 'qtyOnHand', sortable: false, divider: true, width: '75'},
+        { text: 'Qty Penyesuaian', value: 'qtyAdjust', sortable: false, divider: true, width: '75'},
         // { text: 'COGS (smalles unit)', value: 'cogs', sortable: false, divider: true},
         // { text: 'Total COGS', value: 'totalCogs', sortable: false, divider: true},
-        { text: 'Notes', value: 'notes', sortable: false, divider: true, width: '250'}
+        { text: 'Catatan', value: 'notes', sortable: false, divider: true, width: '250'}
       ]
     },
     addItem() {
@@ -978,12 +984,14 @@ export default {
       }
     },
     itemIdChange(item) {
+
       const data_i = this.items.find(i => i.id === item.itemId)
       if (data_i) {
         item.itemId = data_i.id
         item.uomId = data_i.uomId
         item.itemName = data_i.name
         item.oldUomId = item.uomId
+        item.unitId = data_i.uomBuyId
         item.unitName = data_i.uomBuyName
         item.qtyOnHand = data_i.qtyOnHand            
         item.baseQtyOnHand = item.qtyOnHand

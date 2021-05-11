@@ -7,7 +7,7 @@
             <v-text-field
               v-model="grid.search"
               append-icon="mdi-magnify"
-              label="Search..."
+              label="Pencarian..."
               class="font-weight-regular mt-0 pt-0"
               single-line
               @keyup.enter="getList()"
@@ -30,7 +30,7 @@
                   @shortkey="add"
                 >
                   <v-icon left>mdi-plus</v-icon>
-                  New
+                  Tambah Baru
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + Alt + N)</span>
@@ -65,7 +65,7 @@
                 <v-icon small>mdi-pencil</v-icon>
               </v-btn>
             </template>
-            <span>Edit</span>
+            <span>Ubah</span>
           </v-tooltip>
           <v-tooltip bottom>
             <template v-if="item.isActive" v-slot:activator="{ on, attrs }">
@@ -92,8 +92,8 @@
                 <v-icon small>mdi-check</v-icon>
               </v-btn>
             </template>
-            <span v-if="item.isActive">Inactive</span>
-            <span v-else>Reactivate</span>
+            <span v-if="item.isActive">Nonaktifkan</span>
+            <span v-else>Aktifkan Kembali</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.isActive`]="{ item }">
@@ -108,7 +108,7 @@
               </v-icon>
             </template>
             <span class="text-caption">
-                {{ item.isActive === true ? 'Active' : 'Inactive' }}
+                {{ item.isActive === true ? 'Aktif' : 'Nonaktif' }}
             </span>
           </v-tooltip>
         </template>
@@ -119,14 +119,14 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="6">
-            <span>Customer {{ data.action | capitalize }}</span>
+            <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' }} Pelanggan</span>
           </v-col>
           <v-col cols="12" md="6" class="text-right">
             <label
               v-if="data.action == 'edit'"
               class="text-caption mr-1"
             >
-              Last Updated: {{ data.updatedDate }} by {{ data.updatedInitial }}
+              Terakhir Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -146,7 +146,7 @@
                   <v-icon left>
                     mdi-content-save
                   </v-icon>
-                  Save
+                  Simpan
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + S)</span>
@@ -166,7 +166,7 @@
                   <v-icon left>
                     mdi-undo-variant
                   </v-icon>
-                  Back
+                  Kembali
                 </v-btn>
               </template>
               <span class="text-caption">(Esc)</span>
@@ -186,7 +186,7 @@
                 <v-col cols="12" md="6" class="pr-md-3">
                   <v-text-field
                     v-model="data.code"
-                    label="Code"
+                    label="Kode"
                     class="mt-0"
                     readonly
                     required
@@ -198,7 +198,7 @@
                     v-model="data.initial"
                     :rules="[rules.required[0], rules.max20chars[0]]"
                     :counter="20"
-                    label="Initial"
+                    label="Inisial"
                     class="mt-0"
                     required
                   ></v-text-field>
@@ -211,7 +211,7 @@
                     v-model="data.name"
                     :rules="[rules.required[0], rules.max50chars[0]]"
                     :counter="50"
-                    label="Name"
+                    label="Nama"
                     class="mt-0"
                     required
                   ></v-text-field>
@@ -222,7 +222,7 @@
                     :items="types"
                     :item-text="item => `${item.initial} - ${item.name}`"
                     :rules="rules.required"
-                    label="Type"
+                    label="Tipe"
                     item-value="id"
                     class="mt-0"
                     required
@@ -257,7 +257,7 @@
                     v-model="data.creditTerm"
                     :decimal-length="0"
                     class="mt-0"
-                    label="Credit Term"
+                    label="Jangka Waktu Kredit"
                     :max="32767"
                   ></v-currency-field>
                 </v-col>
@@ -266,7 +266,7 @@
                     v-model="data.creditLimit"
                     :decimal-length="0"
                     class="mt-0"
-                    label="Credit Limit"
+                    label="Batas Kredit"
                   ></v-currency-field>
                 </v-col>
               </v-row>
@@ -287,7 +287,7 @@
                     :rules="rules.max256chars"
                     :counter="256"
                     class="mt-0"
-                    label="Notes"
+                    label="Catatan"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -297,8 +297,8 @@
           <v-card>
             <v-tabs v-model="tab.advancedItem">
               <v-tab key="default" @click="bindAddress">Default</v-tab>
-              <v-tab key="address">Address</v-tab>
-              <v-tab key="area">Area</v-tab>
+              <v-tab key="address">Alamat</v-tab>
+              <v-tab key="area">Wilayah</v-tab>
               <v-tab-item
                 key="default"
                 transition="false"
@@ -312,7 +312,7 @@
                           :items="billingAddressRef"
                           :item-text="item => `${item.text}`"
                           item-value="id"
-                          label="Billing Address"
+                          label="Alamat Tagihan"
                           class="mt-0"
                         ></v-autocomplete>
                       </v-col>
@@ -322,7 +322,7 @@
                           :items="shippingAddressRef"
                           :item-text="item => `${item.text}`"
                           item-value="id"
-                          label="Shipping Address"
+                          label="Alamat Pengiriman"
                           class="mt-0"
                         ></v-autocomplete>
                       </v-col>
@@ -351,7 +351,7 @@
                           @shortkey="addItem"
                         >
                           <v-icon left>mdi-plus</v-icon>
-                          Add
+                          Tambah
                         </v-btn>
                       </template>
                       <span class="text-caption">(Ctrl + I)</span>
@@ -384,7 +384,7 @@
                               <v-icon small>mdi-close-thick</v-icon>
                             </v-btn>
                           </template>
-                          <span class="text-caption">Delete</span>
+                          <span class="text-caption">Hapus</span>
                         </v-tooltip>
                       </template>
                       <template v-slot:[`item.isDefault`]="{ item }">
@@ -479,7 +479,7 @@
                           :items="areaRef"
                           :item-text="item => `${item.name}`"
                           item-value="id"
-                          label="Area 1"
+                          label="Wilayah 1"
                           class="mt-0"
                         ></v-autocomplete>
                       </v-col>
@@ -489,7 +489,7 @@
                           :items="areaRef"
                           :item-text="item => `${item.name}`"
                           item-value="id"
-                          label="Area 2"
+                          label="Wilayah 2"
                           class="mt-0"
                         ></v-autocomplete>
                       </v-col>
@@ -502,7 +502,7 @@
                           :items="areaRef"
                           :item-text="item => `${item.name}`"
                           item-value="id"
-                          label="Area 3"
+                          label="Wilayah 3"
                           class="mt-0"
                         ></v-autocomplete>
                       </v-col>
@@ -512,7 +512,7 @@
                           :items="areaRef"
                           :item-text="item => `${item.name}`"
                           item-value="id"
-                          label="Area 4"
+                          label="Wilayah 4"
                           class="mt-0"
                         ></v-autocomplete>
                       </v-col>
@@ -525,7 +525,7 @@
                           :items="areaRef"
                           :item-text="item => `${item.name}`"
                           item-value="id"
-                          label="Area 5"
+                          label="Wilayah 5"
                           class="mt-0"
                         ></v-autocomplete>
                       </v-col>
@@ -568,13 +568,13 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Code', value: 'code', divider: true, width: '150' },
-        { text: 'Initial', value: 'initial', divider: true, width: '150' },
-        { text: 'Name', value: 'name', divider: true, width: '200' },
-        { text: 'Type', value: 'typeName', divider: true, width: '180' },
-        { text: 'Address', value: 'address1', divider: true, width: '200' },
-        { text: 'Phone', value: 'phone', divider: true, width: '120' },
-        { text: 'Credit Term', value: 'creditTerm', divider: true, width: '90' },
+        { text: 'Kode', value: 'code', divider: true, width: '150' },
+        { text: 'Inisial', value: 'initial', divider: true, width: '150' },
+        { text: 'Nama', value: 'name', divider: true, width: '200' },
+        { text: 'Tipe', value: 'typeName', divider: true, width: '180' },
+        { text: 'Alamat', value: 'address1', divider: true, width: '200' },
+        { text: 'Telepon', value: 'phone', divider: true, width: '120' },
+        { text: 'Jangka Waktu Kredit', value: 'creditTerm', divider: true, width: '90' },
         { text: 'Status', value: 'isActive', width: '90' }
       ],
       data: [],
@@ -589,11 +589,11 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '1%' },
         { text: 'Default', value: 'isDefault', align: 'center', divider: true, width: '4%' },
-        { text: 'Initial', value: 'initial', divider: true, width: '120' },
-        { text: 'Address 1', value: 'address1', divider: true, width: '300' },
-        { text: 'Address 2', value: 'address2', divider: true, width: '300' },
-        { text: 'Contact Person', value: 'contactPerson', divider: true, width: '120' },
-        { text: 'Phone', value: 'phone', divider: true, width: '170' },
+        { text: 'Inisial', value: 'initial', divider: true, width: '120' },
+        { text: 'Alamat 1', value: 'address1', divider: true, width: '300' },
+        { text: 'Alamat 2', value: 'address2', divider: true, width: '300' },
+        { text: 'Kontak Person', value: 'contactPerson', divider: true, width: '120' },
+        { text: 'Telepon', value: 'phone', divider: true, width: '170' },
         { text: 'Fax', value: 'fax', divider: true, width: '170' }
       ],
       data: []
@@ -771,8 +771,8 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Inactive?',
-          'Are you sure want to inactive this data?')
+          'Nontaktifkan?',
+          'Apakah anda yakin untuk menonaktifkan data ini?')
       ) {
         api.delete(this.endpoint.general.customer.customer, item.code)
           .then(response => {
@@ -786,8 +786,8 @@ export default {
     async reactivate(item) {
       if (
         await this.$refs.confirm.open(
-          'Reactivate?',
-          'Are you sure want to reactivate this data?')
+          'Aktifkan Kembali?',
+          'Apakah anda yakin untuk mengaktifkan kembali data ini?')
       ) {
         this.data = {
           ...item,
@@ -806,7 +806,7 @@ export default {
     },
     async save() {
       if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        this.$store.dispatch('app/showInfo', 'Tolong cek kembali bagian formulir yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
 
@@ -833,7 +833,7 @@ export default {
       let defaultValue = false
       if (this.gridItem.data.length > 0) {
         if (!this.gridItem.data[this.gridItem.data.length - 1].initial) {
-          this.$store.dispatch('app/showInfo', 'Cannot add item, initial is empty')
+          this.$store.dispatch('app/showInfo', 'Tidak bisa tambah barang karena inisial kosong')
           return
         }
         defaultValue = false
@@ -863,8 +863,8 @@ export default {
     async removeItem(item) {
       if (
         await this.$refs.confirm.open(
-          'Delete?',
-          'Are you sure want to delete this data?')
+          'Hapus?',
+          'Apakah anda yakin untuk menghapus data ini?')
       ) {
         const idx = this.gridItem.data.findIndex(i => i.id === item.id)
         if (idx !== -1) {

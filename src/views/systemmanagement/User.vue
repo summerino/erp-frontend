@@ -7,7 +7,7 @@
             <v-text-field
               v-model="grid.search"
               append-icon="mdi-magnify"
-              label="Search..."
+              label="Pencarian..."
               class="font-weight-regular mt-0 pt-0"
               single-line
               @keyup.enter="getList()"
@@ -30,7 +30,7 @@
                   @shortkey="add"
                 >
                   <v-icon left>mdi-plus</v-icon>
-                  New
+                  Tambah Baru
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + Alt + N)</span>
@@ -65,7 +65,7 @@
                 <v-icon small>mdi-pencil</v-icon>
               </v-btn>
             </template>
-            <span>Edit</span>
+            <span>Ubah</span>
           </v-tooltip>
           <v-tooltip bottom>
             <template v-if="item.isActive" v-slot:activator="{ on, attrs }">
@@ -92,8 +92,8 @@
                 <v-icon small>mdi-check</v-icon>
               </v-btn>
             </template>
-            <span v-if="item.isActive">Inactive</span>
-            <span v-else>Reactivate</span>
+            <span v-if="item.isActive">Nonaktifkan</span>
+            <span v-else>Aktifkan Kembali</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.isActive`]="{ item }">
@@ -108,7 +108,7 @@
               </v-icon>
             </template>
             <span class="text-caption">
-                {{ item.isActive === true ? 'Active' : 'Inactive' }}
+                {{ item.isActive === true ? 'Aktif' : 'Nonaktif' }}
             </span>
           </v-tooltip>
         </template>
@@ -119,14 +119,14 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="6">
-            <span>User {{ data.action | capitalize }}</span>
+            <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' }} Pengguna</span>
           </v-col>
           <v-col cols="12" md="6" class="text-right">
             <label
               v-if="data.action == 'edit'"
               class="text-caption mr-1"
             >
-              Last Updated: {{ data.updatedDate }} by {{ data.updatedInitial }}
+              Terakhir Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -146,7 +146,7 @@
                   <v-icon left>
                     mdi-content-save
                   </v-icon>
-                  Save
+                  Simpan
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + S)</span>
@@ -166,7 +166,7 @@
                   <v-icon left>
                     mdi-undo-variant
                   </v-icon>
-                  Back
+                  Kembali
                 </v-btn>
               </template>
               <span class="text-caption">(Esc)</span>
@@ -188,7 +188,7 @@
                   v-model="data.username"
                   :rules="[rules.required[0], rules.max50chars[0]]"
                   :counter="50"
-                  label="Username"
+                  label="Nama Pengguna"
                   class="mt-0"
                   required
                 ></v-text-field>
@@ -199,7 +199,7 @@
                   :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
                   
                   :type="show ? 'text' : 'password'"
-                  label="Password"
+                  label="Kata Sandi"
                   class="mt-0"
                   
                   @click:append="show = !show"
@@ -213,7 +213,7 @@
                   v-model="data.initial"
                   :rules="[rules.required[0], rules.max20chars[0]]"
                   :counter="20"
-                  label="Initial"
+                  label="Inisial"
                   class="mt-0"
                   required
                 ></v-text-field>
@@ -223,7 +223,7 @@
                   v-model="data.name"
                   :rules="[rules.required[0], rules.max50chars[0]]"
                   :counter="50"
-                  label="Name"
+                  label="Nama"
                   class="mt-0"
                   required
                 ></v-text-field>
@@ -237,7 +237,7 @@
                   :items="roles"
                   :item-text="item => `${item.initial} - ${item.name}`"
                   
-                  label="Role"
+                  label="Peran"
                   item-value="id"
                   class="mt-0"
                   
@@ -249,7 +249,7 @@
                   :items="employees"
                   :item-text="item => `${item.initial} - ${item.firstName}`"
                   
-                  label="Employee"
+                  label="Karyawan"
                   item-value="id"
                   class="mt-0"
                   
@@ -283,11 +283,11 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'User Name', value: 'username', divider: true, width: '150' },
-        { text: 'Initial', value: 'initial', divider: true, width: '150' },
-        { text: 'Name', value: 'name', divider: true, width: '200' },
-        { text: 'Role', value: 'roleName', divider: true, width: '150' },
-        { text: 'Employee', value: 'employeeInitial', divider: true, width: '150' },
+        { text: 'Nama Pengguna', value: 'username', divider: true, width: '150' },
+        { text: 'Inisial', value: 'initial', divider: true, width: '150' },
+        { text: 'Nama', value: 'name', divider: true, width: '200' },
+        { text: 'Peran', value: 'roleName', divider: true, width: '150' },
+        { text: 'Karyawan', value: 'employeeInitial', divider: true, width: '150' },
         { text: 'Status', value: 'isActive', width: '90' }
       ],
       data: [],
@@ -443,8 +443,8 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Inactive?',
-          'Are you sure want to inactive this data?')
+          'Nontaktifkan?',
+          'Apakah anda yakin untuk menonaktifkan data ini?')
       ) {
         api.delete(this.endpoint.systemManagement.user, item.id)
           .then(response => {
@@ -458,8 +458,8 @@ export default {
     async reactivate(item) {
       if (
         await this.$refs.confirm.open(
-          'Reactivate?',
-          'Are you sure want to reactivate this data?')
+          'Aktifkan Kembali?',
+          'Apakah anda yakin untuk mengaktifkan kembali data ini?')
       ) {
         this.data = {
           ...item,
@@ -478,7 +478,7 @@ export default {
     },
     async save() {
       if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        this.$store.dispatch('app/showInfo', 'Tolong cek kembali bagian formulir yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
 
