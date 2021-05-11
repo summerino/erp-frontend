@@ -219,7 +219,6 @@ export default {
   },
   methods: {
     reset() {
-      debugger
       this.data.by = 'code'
       this.data.value = ''
       this.grid.data = []

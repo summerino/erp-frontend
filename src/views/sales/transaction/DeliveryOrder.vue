@@ -1035,7 +1035,6 @@ export default {
     },
     bindTransData(item) {
       if (item) {
-        debugger
         this.data.soCode = item.code
         this.data.custCode = item.custCode
         this.data.custName = item.custName
@@ -1082,7 +1081,6 @@ export default {
               }
             })
               .then(response => {
-                debugger
                 this.gridItem.data = [...response.data.tableData]
                 for (let i = 0; i < this.gridItem.data.length; i++) {
                   this.gridItem.data[i].soDetailId = this.gridItem.data[i].id

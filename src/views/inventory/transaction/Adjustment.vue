@@ -654,7 +654,6 @@ export default {
       }
       this.bindGridItems()
       for (let i = 0; i < this.items.length; i++) {
-        debugger
         const item = this.items[i]
         const units = this.uoms.filter(x => x.uomId === item.uomId)
         const defaultUnitId = units[0].id
