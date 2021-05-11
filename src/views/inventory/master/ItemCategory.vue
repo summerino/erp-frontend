@@ -7,7 +7,7 @@
             <v-text-field
               v-model="hierarchy.search"
               append-icon="mdi-magnify"
-              label="Search..."
+              label="Cari..."
               class="font-weight-regular mt-0 pt-0"
               single-line
             ></v-text-field>
@@ -29,7 +29,7 @@
                   @shortkey="add"
                 >
                   <v-icon left>mdi-plus</v-icon>
-                  New
+                  Data Baru
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + Alt + N)</span>
@@ -62,7 +62,7 @@
                     <v-icon small>mdi-pencil</v-icon>
                   </v-btn>
                 </template>
-                <span class="text-caption">Edit</span>
+                <span class="text-caption">Ubah</span>
               </v-tooltip>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on, attrs }">
@@ -79,7 +79,7 @@
                     <v-icon small>mdi-close-thick</v-icon>
                   </v-btn>
                 </template>
-                <span class="text-caption">Delete</span>
+                <span class="text-caption">Hapus</span>
               </v-tooltip>
             </template>
           </v-treeview>
@@ -105,7 +105,7 @@
           <v-btn icon dark @click="close">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Item Category</v-toolbar-title>
+          <v-toolbar-title>Kategori Barang</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-tooltip bottom>
@@ -119,7 +119,7 @@
                   text
                   @click="save(true)"
                   @shortkey="save(true)"
-                >Save & Close</v-btn>
+                >Simpan & Tutup</v-btn>
               </template>
               <span class="text-caption">(Ctrl + Enter)</span>
             </v-tooltip>
@@ -154,7 +154,7 @@
                           v-bind="attrs"
                           v-on="on"
                         >
-                          Save
+                          Simpan
                         </span>
                       </template>
                       <span class="text-caption">(Ctrl + S)</span>
@@ -175,7 +175,7 @@
             <v-row dense>
               <v-col cols="12">
                 <v-card>
-                  <v-card-title>General</v-card-title>
+                  <v-card-title>Umum</v-card-title>
 
                   <v-card-text>
                     <v-row no-gutters>
@@ -186,7 +186,7 @@
                           :items="parentRef"
                           :item-text="item => `${item.name}`"
                           :readonly="data.action === 'edit'"
-                          label="Parent"
+                          label="Induk Kategori"
                           item-value="id"
                           class="mt-0"
                           required
@@ -199,7 +199,7 @@
                           v-model="data.groupId"
                           :items="groupRef"
                           :item-text="item => `${item.name}`"
-                          label="Item Group"
+                          label="Grup Barang"
                           item-value="id"
                           class="mt-0"
                           required
@@ -212,7 +212,7 @@
                         <v-text-field
                           ref="Initial"
                           v-model="data.initial"
-                          label="Initial"
+                          label="ID Kategori"
                           class="mt-0"
                           counter="20"
                           :rules="[rules.required[0], rules.max20chars[0]]"
@@ -223,7 +223,7 @@
                         <v-text-field
                           ref="Name"
                           v-model="data.name"
-                          label="Name"
+                          label="Nama Kategori"
                           class="mt-0"
                           counter="50"
                           :rules="[rules.required[0], rules.max50chars[0]]"
@@ -246,6 +246,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import { format, parseISO }  from 'date-fns'
 
 import api from '@/services/axios.service'
 
@@ -367,7 +368,8 @@ export default {
 
       this.data = {
         ...item,
-        action: 'edit'
+        action: 'edit',
+        updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
 
       // Set focus to receive code field
@@ -378,8 +380,8 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Inactive?',
-          'Are you sure want to inactive this data?')
+          'Non-Aktif?',
+          'Apakah anda yakin ingin me-non-aktifkan data ini?')
       ) {
         api.delete(this.endpoint.inventory.item.category, item.id)
           .then(response => {
@@ -392,7 +394,7 @@ export default {
     },
     async save(closeDialog) {
       if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        this.$store.dispatch('app/showInfo', 'Silahkan periksa kembali data yang wajib diisi.')
         return
       }
 
@@ -420,7 +422,7 @@ export default {
       api.getAll(`${this.endpoint.inventory.item.category}/lists`, {})
         .then(response => {
           this.parentRef = response.data.tableData
-          const itemRef = [{ id: null, initial: null, name: 'All Category', parentId: null, groupId: 0, seq: 0, deep: 0, lineage: '', isParent: true}, ...this.parentRef]
+          const itemRef = [{ id: null, initial: null, name: 'Semua Kategori', parentId: null, groupId: 0, seq: 0, deep: 0, lineage: '', isParent: true}, ...this.parentRef]
           this.parentRef = itemRef
         })
     },

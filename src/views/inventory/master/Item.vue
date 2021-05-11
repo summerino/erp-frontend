@@ -7,7 +7,7 @@
             <v-text-field
               v-model="grid.search"
               append-icon="mdi-magnify"
-              label="Search..."
+              label="Cari..."
               class="font-weight-regular mt-0 pt-0"
               single-line
               @keyup.enter="getList()"
@@ -30,7 +30,7 @@
                   @shortkey="add"
                 >
                   <v-icon left>mdi-plus</v-icon>
-                  New
+                  Data Baru
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + Alt + N)</span>
@@ -65,7 +65,7 @@
                 <v-icon small>mdi-pencil</v-icon>
               </v-btn>
             </template>
-            <span class="text-caption">Edit</span>
+            <span class="text-caption">Ubah</span>
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -81,7 +81,7 @@
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <span class="text-caption">Delete</span>
+            <span class="text-caption">Hapus</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.sellPrice`]="{ item }">
@@ -102,7 +102,7 @@
               </v-icon>
             </template>
             <span class="text-caption">
-                {{ item.isActive === true ? 'Active' : 'Inactive' }}
+                {{ item.isActive === true ? 'Aktif' : 'Tidak Aktif' }}
             </span>
           </v-tooltip>
         </template>
@@ -127,7 +127,7 @@
           <v-btn icon dark @click="close">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Inventory</v-toolbar-title>
+          <v-toolbar-title>Barang</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-tooltip bottom>
@@ -141,7 +141,7 @@
                   text
                   @click="save(true)"
                   @shortkey="save(true)"
-                >Save & Close</v-btn>
+                >Simpan & Tutup</v-btn>
               </template>
               <span class="text-caption">(Ctrl + Enter)</span>
             </v-tooltip>
@@ -176,7 +176,7 @@
                           v-bind="attrs"
                           v-on="on"
                         >
-                          Save
+                          Simpan
                         </span>
                       </template>
                       <span class="text-caption">(Ctrl + S)</span>
@@ -197,7 +197,7 @@
             <v-row dense>
               <v-col cols="12" md="6">
                 <v-card>
-                  <v-card-title>General</v-card-title>
+                  <v-card-title>Umum</v-card-title>
 
                   <v-card-text>
                     <v-row no-gutters>
@@ -205,7 +205,7 @@
                         <v-text-field
                           ref="Initial"
                           v-model="data.initial"
-                          label="Initial"
+                          label="ID Barang"
                           class="mt-0"
                           :rules="[rules.required[0], rules.max20chars[0]]"
                           required
@@ -218,7 +218,7 @@
                         <v-text-field
                           ref="Name"
                           v-model="data.name"
-                          label="Name"
+                          label="Nama"
                           class="mt-0"
                           :rules="[rules.required[0], rules.max50chars[0]]"
                           required
@@ -232,7 +232,7 @@
                             v-model="data.categoryId"
                             :items="itemCtg"
                             :item-text="item => `${item.initial} - ${item.name}`"
-                            label="Category"
+                            label="Kategori"
                             item-value="id"
                             class="mt-0"
                             :rules="rules.required"
@@ -247,7 +247,7 @@
                         <v-text-field
                           ref="Description"
                           v-model="data.description"
-                          label="Description"
+                          label="Deskripsi"
                           class="mt-0"
                         ></v-text-field>
                       </v-col>
@@ -258,7 +258,7 @@
 
               <v-col cols="12" md="6">
                 <v-card>
-                  <v-card-title>Others</v-card-title>
+                  <v-card-title>Lainnya</v-card-title>
 
                   <v-card-text>
                     <v-row no-gutters>
@@ -267,7 +267,7 @@
                             v-model="data.uomId"
                             :items="uom"
                             :item-text="item => `${item.initial}`"
-                            label="Unit of Measurement"
+                            label="Satuan Ukuran"
                             item-value="id"
                             class="mt-0"
                             @change="categoryChanged"
@@ -281,7 +281,7 @@
                             v-model="data.uomSellId"
                             :items="unitUomSell"
                             :item-text="item => `${item.unitequivalent}`"
-                            label="Unit"
+                            label="Satuan Jual"
                             item-value="id"
                             class="mt-0"
                           ></v-autocomplete>
@@ -290,7 +290,7 @@
                         <v-currency-field
                           ref="SellPrice"
                           v-model="data.sellPrice"
-                          label="Selling Price"
+                          label="Harga Jual"
                           class="mt-0"
                         ></v-currency-field>
                       </v-col>
@@ -302,7 +302,7 @@
                             v-model="data.uomBuyId"
                             :items="unitUomBuy"
                             :item-text="item => `${item.unitequivalent}`"
-                            label="Unit"
+                            label="Satuan Beli"
                             item-value="id"
                             class="mt-0"
                           ></v-autocomplete>
@@ -311,7 +311,7 @@
                         <v-currency-field
                           ref="BuyPrice"
                           v-model="data.buyPrice"
-                          label="Buying Price"
+                          label="Harga Beli"
                           class="mt-0"
                         ></v-currency-field>
                       </v-col>
@@ -323,7 +323,7 @@
                             v-model="data.salesTaxId"
                             :items="slsTaxes"
                             :item-text="item => `${item.initial} - ${item.name}`"
-                            label="Selling Tax"
+                            label="Pajak Penjualan"
                             item-value="id"
                             class="mt-0"
                           ></v-autocomplete>
@@ -333,7 +333,7 @@
                             v-model="data.purchaseTaxId"
                             :items="purcTaxes"
                             :item-text="item => `${item.initial} - ${item.name}`"
-                            label="Buying Tax"
+                            label="Pajak Pembelian"
                             item-value="id"
                             class="mt-0"
                           ></v-autocomplete>
@@ -348,9 +348,9 @@
               <v-col cols="12">
                 <v-card>
                   <v-tabs v-model="tab.advancedItem">
-                    <v-tab key="dimension">Dimension</v-tab>
-                    <v-tab key="account">Account</v-tab>
-                    <v-tab key="group">Group</v-tab>
+                    <v-tab key="dimension">Dimensi</v-tab>
+                    <v-tab key="account">Akun</v-tab>
+                    <v-tab key="group">Grup</v-tab>
 
                     <v-tab-item
                       key="dimension"
@@ -363,7 +363,7 @@
                               <v-text-field
                                 ref="Length"
                                 v-model="data.length"
-                                label="Length"
+                                label="Panjang"
                                 class="mt-0"
                               ></v-text-field>
                             </v-col>
@@ -371,7 +371,7 @@
                               <v-text-field
                                 ref="Width"
                                 v-model="data.width"
-                                label="Width"
+                                label="Lebar"
                                 class="mt-0"
                               ></v-text-field>
                             </v-col>
@@ -379,7 +379,7 @@
                               <v-text-field
                                 ref="Height"
                                 v-model="data.height"
-                                label="Height"
+                                label="Tinggi"
                                 class="mt-0"
                               ></v-text-field>
                             </v-col>
@@ -388,7 +388,7 @@
                                 v-model="data.dimensionMeasurement"
                                 :items="dimensionOfMeasurement"
                                 :item-text="item => `${item.text}`"
-                                label="Dimension of Measurement"
+                                label="Satuan Dimensi"
                                 item-value="text"
                                 class="mt-0"
                               ></v-autocomplete>
@@ -400,7 +400,7 @@
                               <v-text-field
                                 ref="Weight"
                                 v-model="data.weight"
-                                label="Weight"
+                                label="Berat"
                                 class="mt-0"
                               ></v-text-field>
                             </v-col>
@@ -409,7 +409,7 @@
                                 v-model="data.weightMeasurement"
                                 :items="weightOfMeasurement"
                                 :item-text="item => `${item.text}`"
-                                label="Weight of Measurement"
+                                label="Satuan Berat"
                                 item-value="text"
                                 class="mt-0"
                               ></v-autocomplete>
@@ -431,7 +431,7 @@
                                 v-model="data.coaPurc"
                                 :items="coa"
                                 :item-text="item => `${item.code} - ${item.name}`"
-                                label="COA Purchase"
+                                label="Kode akun pembelian"
                                 item-value="code"
                                 class="mt-0"
                               ></v-autocomplete>
@@ -441,7 +441,7 @@
                                 v-model="data.coaSls"
                                 :items="coa"
                                 :item-text="item => `${item.code} - ${item.name}`"
-                                label="COA Sales"
+                                label="Kode akun penjualan"
                                 item-value="code"
                                 class="mt-0"
                               ></v-autocomplete>
@@ -454,7 +454,7 @@
                                 v-model="data.coaPurcDisc"
                                 :items="coa"
                                 :item-text="item => `${item.code} - ${item.name}`"
-                                label="COA Purchase Disc."
+                                label="Kode akun diskon pembelian"
                                 item-value="code"
                                 class="mt-0"
                               ></v-autocomplete>
@@ -464,7 +464,7 @@
                                 v-model="data.coaSlsDisc"
                                 :items="coa"
                                 :item-text="item => `${item.code} - ${item.name}`"
-                                label="COA Sales Disc."
+                                label="Kode akun diskon penjualan"
                                 item-value="code"
                                 class="mt-0"
                               ></v-autocomplete>
@@ -477,7 +477,7 @@
                                 v-model="data.coaPurcReturn"
                                 :items="coa"
                                 :item-text="item => `${item.code} - ${item.name}`"
-                                label="COA Purchase Return"
+                                label="Kode akun pengembalian pembelian"
                                 item-value="code"
                                 class="mt-0"
                               ></v-autocomplete>
@@ -487,7 +487,7 @@
                                 v-model="data.coaSlsReturn"
                                 :items="coa"
                                 :item-text="item => `${item.code} - ${item.name}`"
-                                label="COA Sales Return"
+                                label="Kode akun pengembalian penjualan"
                                 item-value="code"
                                 class="mt-0"
                               ></v-autocomplete>
@@ -500,7 +500,7 @@
                                 v-model="data.coaInventory"
                                 :items="coa"
                                 :item-text="item => `${item.code} - ${item.name}`"
-                                label="COA Inventory"
+                                label="Kode akun barang"
                                 item-value="code"
                                 class="mt-0"
                               ></v-autocomplete>
@@ -510,7 +510,7 @@
                                 v-model="data.coaCogs"
                                 :items="coa"
                                 :item-text="item => `${item.code} - ${item.name}`"
-                                label="COA COGS"
+                                label="Kode akun harga pokok penjualan"
                                 item-value="code"
                                 class="mt-0"
                               ></v-autocomplete>
@@ -523,7 +523,7 @@
                                 v-model="data.coaCost"
                                 :items="coa"
                                 :item-text="item => `${item.code} - ${item.name}`"
-                                label="COA Cost"
+                                label="Kode akun biaya"
                                 item-value="code"
                                 class="mt-0"
                               ></v-autocomplete>
@@ -533,7 +533,7 @@
                                 v-model="data.coaExpense"
                                 :items="coa"
                                 :item-text="item => `${item.code} - ${item.name}`"
-                                label="COA Expense"
+                                label="Kode akun pengeluaran"
                                 item-value="code"
                                 class="mt-0"
                               ></v-autocomplete>
@@ -581,6 +581,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import { format, parseISO }  from 'date-fns'
 
 import api from '@/services/axios.service'
 
@@ -604,14 +605,14 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Initial', value: 'initial', divider: true, width: '110' },
-        { text: 'Name', value: 'name', divider: true, width: '270' },
-        { text: 'Category', value: 'categoryName', divider: true, width: '270' },
-        { text: 'Unit of Measurement', value: 'uomInitial', divider: true, width: '270' },
-        { text: 'Unit Sell', value: 'uomSellName', divider: true, width: '60' },
-        { text: 'Sell Price', value: 'sellPrice', align: 'right', divider: true, width: '150' },
-        { text: 'Unit Buy', value: 'uomBuyName', divider: true, width: '60' },
-        { text: 'Buy Price', value: 'buyPrice', align: 'right', divider: true, width: '150' },
+        { text: 'ID Barang', value: 'initial', divider: true, width: '110' },
+        { text: 'Nama', value: 'name', divider: true, width: '270' },
+        { text: 'Kategori', value: 'categoryName', divider: true, width: '270' },
+        { text: 'Satuan Ukuran', value: 'uomInitial', divider: true, width: '270' },
+        { text: 'Satuan Jual', value: 'uomSellName', divider: true, width: '60' },
+        { text: 'Harga Jual', value: 'sellPrice', align: 'right', divider: true, width: '150' },
+        { text: 'Satuan Beli', value: 'uomBuyName', divider: true, width: '60' },
+        { text: 'Harga Beli', value: 'buyPrice', align: 'right', divider: true, width: '150' },
         { text: 'Status', value: 'isActive', align: 'center', width: '50' }
       ],
       data: [],
@@ -909,7 +910,8 @@ export default {
 
       this.data = {
         ...item,
-        action: 'edit'
+        action: 'edit',
+        updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
 
       this.getUnitSellingOrBuying()
@@ -923,8 +925,8 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Delete?',
-          'Are you sure want to delete this data?')
+          'Hapus?',
+          'Apakah anda yakin ingin menghapus data ini?')
       ) {
         api.delete(this.endpoint.inventory.item.item, item.id)
           .then(response => {
@@ -937,7 +939,7 @@ export default {
     },
     async save(closeDialog) {
       if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        this.$store.dispatch('app/showInfo', 'Silahkan periksa kembali data yang wajib diisi.')
         return
       }
 
@@ -968,8 +970,8 @@ export default {
       const item = this.itemCtg.find(x => x.id === this.data.categoryId)
 
       // Get Sub Group
-      api.getAll(`${this.endpoint.inventory.item.group}/item-by-initial`, {
-        params: { initial: item.groupId }
+      api.getAll(`${this.endpoint.inventory.item.group}/item-by-id`, {
+        params: { id: item.groupId }
       })
         .then(response => {
           this.subGroupRef = response.data.tableData
