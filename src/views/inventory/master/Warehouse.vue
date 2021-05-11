@@ -7,7 +7,7 @@
             <v-text-field
               v-model="grid.search"
               append-icon="mdi-magnify"
-              label="Search..."
+              label="Cari..."
               class="font-weight-regular mt-0 pt-0"
               single-line
               @keyup.enter="getList()"
@@ -30,7 +30,7 @@
                   @shortkey="add"
                 >
                   <v-icon left>mdi-plus</v-icon>
-                  New
+                  Data Baru
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + Alt + N)</span>
@@ -66,7 +66,7 @@
                 <v-icon small>mdi-pencil</v-icon>
               </v-btn>
             </template>
-            <span>Edit</span>
+            <span>Ubah</span>
           </v-tooltip>
           <v-tooltip bottom>
             <template v-if="item.isActive" v-slot:activator="{ on, attrs }">
@@ -93,8 +93,8 @@
                 <v-icon small>mdi-check</v-icon>
               </v-btn>
             </template>
-            <span v-if="item.isActive">Inactive</span>
-            <span v-else>Reactivate</span>
+            <span v-if="item.isActive">Non Aktifkan</span>
+            <span v-else>Aktifkan Kembali</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.isActive`]="{ item }">
@@ -128,8 +128,8 @@
                 v-bind="attrs" 
                 v-on="on">mdi-checkbox-blank-outline</v-icon>
             </template>
-            <span v-if="item.isDefault === true" class="text-caption">Yes</span>
-            <span v-else class="text-caption">No</span>
+            <span v-if="item.isDefault === true" class="text-caption">Ya</span>
+            <span v-else class="text-caption">Tidak</span>
           </v-tooltip>
         </template>
       </v-data-table>
@@ -139,14 +139,14 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="6">
-            <span>Warehouse {{ data.action | capitalize }}</span>
+            <span>Lokasi {{ data.action | capitalize }}</span>
           </v-col>
           <v-col cols="12" md="6" class="text-right">
             <label
               v-if="data.action == 'edit'"
               class="text-caption mr-1"
             >
-              Last Updated: {{ data.updatedDate }} by {{ data.updatedInitial }}
+              Terakhir diperbarui : {{ data.updatedDate }} by {{ data.updatedInitial }}
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -165,7 +165,7 @@
                   <v-icon left>
                     mdi-content-save
                   </v-icon>
-                  Save
+                  Simpan
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + S)</span>
@@ -185,7 +185,7 @@
                   <v-icon left>
                     mdi-undo-variant
                   </v-icon>
-                  Back
+                  Kembali
                 </v-btn>
               </template>
               <span class="text-caption">(Esc)</span>
@@ -204,7 +204,7 @@
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-text-field
                   v-model="data.code"
-                  label="Code"
+                  label="Kode"
                   class="mt-0"
                   readonly
                   required
@@ -229,7 +229,7 @@
                   v-model="data.name"
                   :rules="[rules.required[0], rules.max50chars[0]]"
                   :counter="50"
-                  label="Name"
+                  label="Nama"
                   class="mt-0"
                   required
                 ></v-text-field>
@@ -242,7 +242,7 @@
                   v-model="data.address"
                   :rules="[rules.required[0], rules.max100chars[0]]"
                   :counter="100"
-                  label="Address"
+                  label="Alamat"
                   class="mt-0"
                   required
                 ></v-text-field>
@@ -254,7 +254,7 @@
                   v-model="data.phone"
                   :rules="[rules.required[0], rules.max30chars[0]]"
                   :counter="30"
-                  label="Phone"
+                  label="Telepon"
                   class="mt-0"
                   type="number"
                   required
@@ -296,11 +296,11 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Code', value: 'code', divider: true, width: '150' },
+        { text: 'Kode', value: 'code', divider: true, width: '150' },
         { text: 'Initial', value: 'initial', divider: true, width: '150' },
-        { text: 'Name', value: 'name', divider: true, width: '200' },
-        { text: 'Address', value: 'address', divider: true, width: '200' },
-        { text: 'Phone', value: 'phone', divider: true, width: '120' },
+        { text: 'Nama', value: 'name', divider: true, width: '200' },
+        { text: 'Alamat', value: 'address', divider: true, width: '200' },
+        { text: 'Telepon', value: 'phone', divider: true, width: '120' },
         { text: 'Default', value: 'isDefault', divider: true, width: '120' },
         { text: 'Status', value: 'isActive', width: '90' }
       ],
@@ -415,8 +415,8 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Inactive?',
-          'Are you sure want to inactive this data?')
+          'Non Aktifkan?',
+          'Apakah anda yakin ingin menonaktifkan data ini?')
       ) {
         api.delete(this.endpoint.inventory.warehouse, item.code)
           .then(response => {
@@ -430,8 +430,8 @@ export default {
     async reactivate(item) {
       if (
         await this.$refs.confirm.open(
-          'Reactivate?',
-          'Are you sure want to reactivate this data?')
+          'Aktifkan kembali?',
+          'Apakah anda yakin ingin mengaktifkan kembali data ini?')
       ) {
         this.data = {
           ...item,

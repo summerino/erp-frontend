@@ -425,6 +425,7 @@
                     <v-tab-item
                       key="notes"
                       transition="false"
+                      eager
                     >
                       <v-textarea
                         v-model="data.notes"
