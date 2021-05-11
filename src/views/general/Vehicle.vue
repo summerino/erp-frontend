@@ -7,7 +7,7 @@
             <v-text-field
               v-model="grid.search"
               append-icon="mdi-magnify"
-              label="Search..."
+              label="Pencarian..."
               class="font-weight-regular mt-0 pt-0"
               single-line
               @keyup.enter="getList()"
@@ -30,7 +30,7 @@
                   @shortkey="add"
                 >
                   <v-icon left>mdi-plus</v-icon>
-                  New
+                  Tambah Baru
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + Alt + N)</span>
@@ -65,7 +65,7 @@
                 <v-icon small>mdi-pencil</v-icon>
               </v-btn>
             </template>
-            <span>Edit</span>
+            <span>Ubah</span>
           </v-tooltip>
           <v-tooltip bottom>
             <template v-if="item.isActive" v-slot:activator="{ on, attrs }">
@@ -92,8 +92,8 @@
                 <v-icon small>mdi-check</v-icon>
               </v-btn>
             </template>
-            <span v-if="item.isActive">Inactive</span>
-            <span v-else>Reactivate</span>
+            <span v-if="item.isActive">Nonaktifkan</span>
+            <span v-else>Aktifkan Kembali</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.isActive`]="{ item }">
@@ -108,7 +108,7 @@
               </v-icon>
             </template>
             <span class="text-caption">
-                {{ item.isActive === true ? 'Active' : 'Inactive' }}
+                {{ item.isActive === true ? 'Aktif' : 'Nonaktif' }}
             </span>
           </v-tooltip>
         </template>
@@ -119,14 +119,14 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="6">
-            <span>Vehicle {{ data.action | capitalize }}</span>
+            <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' }} Kendaraan</span>
           </v-col>
           <v-col cols="12" md="6" class="text-right">
             <label
               v-if="data.action == 'edit'"
               class="text-caption mr-1"
             >
-              Last Updated: {{ data.updatedDate }} by {{ data.updatedInitial }}
+              Terakhir Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -146,7 +146,7 @@
                   <v-icon left>
                     mdi-content-save
                   </v-icon>
-                  Save
+                  Simpan
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + S)</span>
@@ -166,7 +166,7 @@
                   <v-icon left>
                     mdi-undo-variant
                   </v-icon>
-                  Back
+                  Kembali
                 </v-btn>
               </template>
               <span class="text-caption">(Esc)</span>
@@ -188,7 +188,7 @@
                   v-model="data.vehicleNo"
                   :rules="[rules.required[0], rules.max20chars[0]]"
                   :counter="20"
-                  label="Vehicle No."
+                  label="No. Kendaraan"
                   class="mt-0"
                   required
                 ></v-text-field>
@@ -199,7 +199,7 @@
                   :items="types"
                   :item-text="item => `${item.initial} - ${item.name}`"
                   :rules="rules.required"
-                  label="Type"
+                  label="Tipe"
                   item-value="id"
                   class="mt-0"
                   required
@@ -213,7 +213,7 @@
                   v-model="data.maxLoadVolume"
                   :decimal-length="0"
                   class="mt-0"
-                  label="Max Load Volume"
+                  label="Volume Beban Maksimal"
                 ></v-currency-field>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
@@ -221,7 +221,7 @@
                   v-model="data.maxLoadWeight"
                   :decimal-length="0"
                   class="mt-0"
-                  label="Max Load Weight"
+                  label="Bobot Beban Maksimal"
                 ></v-currency-field>
               </v-col>
             </v-row>
@@ -230,14 +230,14 @@
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-text-field
                   v-model="data.driverId"
-                  label="Driver Id"
+                  label="Id Sopir"
                   class="mt-0"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-text-field
                   v-model="data.helperId1"
-                  label="Helper Id 1"
+                  label="Id Pembantu 1"
                   class="mt-0"
                 ></v-text-field>
               </v-col>
@@ -247,7 +247,7 @@
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-text-field
                   v-model="data.helperId2"
-                  label="Helper Id 2"
+                  label="Id Pembantu 2"
                   class="mt-0"
                 ></v-text-field>
               </v-col>
@@ -257,7 +257,7 @@
                   :rules="rules.max256chars"
                   :counter="256"
                   class="mt-0"
-                  label="Notes"
+                  label="Catatan"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -288,13 +288,13 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Vehicle No.', value: 'vehicleNo', divider: true, width: '150' },
-        { text: 'Type', value: 'typeName', divider: true, width: '150' },
-        { text: 'Max Load Volume', value: 'maxLoadVolume', divider: true, width: '90' },
-        { text: 'Max Load Weight', value: 'maxLoadWeight', divider: true, width: '90' },
-        { text: 'Driver Id', value: 'driverId', divider: true, width: '90' },
-        { text: 'Helper Id 1', value: 'helperId1', divider: true, width: '90' },
-        { text: 'Helper Id 2', value: 'helperId2', divider: true, width: '90' },
+        { text: 'No. Kendaraan', value: 'vehicleNo', divider: true, width: '150' },
+        { text: 'Tipe', value: 'typeName', divider: true, width: '150' },
+        { text: 'Volume Beban Maksimal', value: 'maxLoadVolume', divider: true, width: '90' },
+        { text: 'Bobot Beban Maksimal', value: 'maxLoadWeight', divider: true, width: '90' },
+        { text: 'Id Sopir', value: 'driverId', divider: true, width: '90' },
+        { text: 'Id Pembantu 1', value: 'helperId1', divider: true, width: '90' },
+        { text: 'Id Pembantu 2', value: 'helperId2', divider: true, width: '90' },
         { text: 'Status', value: 'isActive', width: '90' }
       ],
       data: [],
@@ -434,8 +434,8 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Inactive?',
-          'Are you sure want to inactive this data?')
+          'Nontaktifkan?',
+          'Apakah anda yakin untuk menonaktifkan data ini?')
       ) {
         api.delete(this.endpoint.general.vehicle.vehicle, item.id)
           .then(response => {
@@ -449,8 +449,8 @@ export default {
     async reactivate(item) {
       if (
         await this.$refs.confirm.open(
-          'Reactivate?',
-          'Are you sure want to reactivate this data?')
+          'Aktifkan Kembali?',
+          'Apakah anda yakin untuk mengaktifkan kembali data ini?')
       ) {
         this.data = {
           ...item,
@@ -469,7 +469,7 @@ export default {
     },
     async save() {
       if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        this.$store.dispatch('app/showInfo', 'Tolong cek kembali bagian formulir yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
 
