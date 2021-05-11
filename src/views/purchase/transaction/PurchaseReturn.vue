@@ -917,7 +917,7 @@ export default {
         params: { code: item.code }
       })
         .then(response => {
-          this.gridItem.data = response.data
+          this.gridItem.data = response.data.tableData
         })
 
       // Get related transaction details
@@ -927,6 +927,8 @@ export default {
         .then(response => {
           this.gridRelated.data = response.data.tableData
         })
+
+      this.getRcvItemLists()
 
       // Set focus to return code field
       setTimeout(() => {
