@@ -7,7 +7,7 @@
             <v-text-field
               v-model="grid.search"
               append-icon="mdi-magnify"
-              label="Search..."
+              label="Cari..."
               class="font-weight-regular mt-0 pt-0"
               single-line
               @keyup.enter="getList()"
@@ -30,7 +30,7 @@
                   @shortkey="add"
                 >
                   <v-icon left>mdi-plus</v-icon>
-                  New
+                  Data Baru
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + Alt + N)</span>
@@ -67,7 +67,7 @@
                 <v-icon small>mdi-pencil</v-icon>
               </v-btn>
             </template>
-            <span class="text-caption">Edit</span>
+            <span class="text-caption">Ubah</span>
           </v-tooltip>
           <v-tooltip bottom>
             <template v-if="item.isActive" v-slot:activator="{ on, attrs }">
@@ -82,7 +82,7 @@
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <span>Delete</span>
+            <span>Hapus</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">
@@ -129,7 +129,7 @@
           <v-btn icon dark @click="close">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Unit Of Measurement</v-toolbar-title>
+          <v-toolbar-title>Satuan Ukuran</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-tooltip bottom>
@@ -142,7 +142,7 @@
                   text
                   @click="save(true)"
                   @shortkey="save(true)"
-                >Save & Close</v-btn>
+                >Simpan & Tutup</v-btn>
               </template>
               <span class="text-caption">(Ctrl + Enter)</span>
             </v-tooltip>
@@ -176,7 +176,7 @@
                           v-bind="attrs"
                           v-on="on"
                         >
-                          Save
+                          Simpan
                         </span>
                       </template>
                       <span class="text-caption">(Ctrl + S)</span>
@@ -197,7 +197,7 @@
             <v-row>
               <v-col cols="12">
                 <v-card>
-                  <v-card-title>Unit Of Measurement</v-card-title>
+                  <v-card-title>Satuan Ukuran</v-card-title>
                   <v-card-text>
                     <v-row no-gutters>
                       <v-col cols="12">
@@ -218,7 +218,7 @@
                             :rules="[rules.max100chars[0], rules.required[0]]"
                             :counter="100"
                             class="text-body-2 mt-0"
-                            label="Name"
+                            label="Nama"
                         ></v-text-field>
                       </v-col>
                     </v-row>
@@ -230,7 +230,7 @@
                             :counter="20"
                             @blur="resetItems"
                             class="text-body-2 mt-0"
-                            label="Base Unit"
+                            label="Satuan Terkecil"
                         ></v-text-field>
                       </v-col>
                     </v-row>
@@ -257,7 +257,7 @@
                             @shortkey="addItem"
                             >
                             <v-icon left>mdi-plus</v-icon>
-                            Add
+                            Tambah
                             </v-btn>
                         </template>
                         <span class="text-caption">(Ctrl + I)</span>
@@ -289,7 +289,7 @@
                                 <v-icon small>mdi-close-thick</v-icon>
                             </v-btn>
                             </template>
-                            <span class="text-caption">Delete</span>
+                            <span class="text-caption">Hapus</span>
                         </v-tooltip>
                         </template>
                         <template v-slot:[`item.conversion`]="{ item }">
@@ -351,8 +351,8 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'Initial', value: 'initial', divider: true },
-        { text: 'Name', value: 'description', divider: true },
-        { text: 'Base Unit', value: 'baseUnit', divider: true }
+        { text: 'Nama', value: 'description', divider: true },
+        { text: 'Satuan Terkecil', value: 'baseUnit', divider: true }
       ],
       data: [],
       options: {
@@ -365,10 +365,10 @@ export default {
     gridItem: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '1%' },
-        { text: 'Conversion', value: 'conversion', divider: true },
-        { text: 'Unit To Convert', value: 'unitToConvert', divider: true },
+        { text: 'Konversi', value: 'conversion', divider: true },
+        { text: 'Satuan Yang Dikonversi', value: 'unitToConvert', divider: true },
         { text: '= 1', value: 'unitToConvertLabel', divider: true },
-        { text: 'Unit Equivalent', value: 'unitEquivalent', divider: true }
+        { text: 'Satuan Setara', value: 'unitEquivalent', divider: true }
       ],
       data: []
     },
@@ -497,8 +497,8 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Delete?',
-          'Are you sure want to delete this data?')
+          'Hapus?',
+          'Apakah anda yakin ingin menghapus data ini?')
       ) {
         api.delete(this.endpoint.inventory.uom, item.id)
           .then(response => {
@@ -524,7 +524,7 @@ export default {
         return
       }
       if (this.validateIsHasDuplicateItem()) {
-        this.$store.dispatch('app/showInfo', 'Cannot add duplicate item.')
+        this.$store.dispatch('app/showInfo', 'Tidak bisa menambahkan satuan yang sama.')
         return
       }
       let result = { success: false, message: '' }
@@ -578,7 +578,7 @@ export default {
     },
     addItem() {
       if (!this.data.baseUnit) {
-        this.$store.dispatch('app/showInfo', 'Cannot add item, base unit is empty')
+        this.$store.dispatch('app/showInfo', 'Tidak bisa menambahkan satuan, satuan terkecil tidak boleh kosong')
         return
       }
       // if (!this.validateLastRecord()) {
@@ -590,8 +590,8 @@ export default {
     async removeItem(item) {
       if (
         await this.$refs.confirm.open(
-          'Delete?',
-          'Are you sure want to delete this data?')
+          'Hapus?',
+          'Apakah anda yakin ingin menghapus data ini?')
       ) {
         const idx = this.gridItem.data.findIndex(i => i.id === item.id)
         this.gridItem.data.splice(idx, 1)
