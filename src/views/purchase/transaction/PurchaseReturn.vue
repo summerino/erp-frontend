@@ -425,10 +425,11 @@
                     <v-tab-item
                       key="notes"
                       transition="false"
+                      eager
                     >
                       <v-textarea
                         v-model="data.notes"
-                        :rules="rules.max256chars"
+                        :rules="[rules.max256chars, rules.required[0]]"
                         label="Notes"
                         counter="256"
                         class="mt-0"
