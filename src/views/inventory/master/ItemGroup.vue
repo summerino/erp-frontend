@@ -7,7 +7,7 @@
             <v-text-field
               v-model="grid.search"
               append-icon="mdi-magnify"
-              label="Search..."
+              label="Cari..."
               class="font-weight-regular mt-0 pt-0"
               single-line
               @keyup.enter="getList()"
@@ -30,7 +30,7 @@
                   @shortkey="add"
                 >
                   <v-icon left>mdi-plus</v-icon>
-                  New
+                  Data Baru
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + Alt + N)</span>
@@ -65,7 +65,7 @@
                 <v-icon small>mdi-pencil</v-icon>
               </v-btn>
             </template>
-            <span class="text-caption">Edit</span>
+            <span class="text-caption">Ubah</span>
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -81,7 +81,7 @@
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <span class="text-caption">Delete</span>
+            <span class="text-caption">Hapus</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.isActive`]="{ item }">
@@ -96,7 +96,7 @@
               </v-icon>
             </template>
             <span class="text-caption">
-                {{ item.isActive === true ? 'Active' : 'Inactive' }}
+                {{ item.isActive === true ? 'Aktif' : 'Tidak Aktif' }}
             </span>
           </v-tooltip>
         </template>
@@ -121,7 +121,7 @@
           <v-btn icon dark @click="close">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Item Group</v-toolbar-title>
+          <v-toolbar-title>Grup Barang</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-tooltip bottom>
@@ -135,7 +135,7 @@
                   text
                   @click="save(true)"
                   @shortkey="save(true)"
-                >Save & Close</v-btn>
+                >Simpan & Tutup</v-btn>
               </template>
               <span class="text-caption">(Ctrl + Enter)</span>
             </v-tooltip>
@@ -170,7 +170,7 @@
                           v-bind="attrs"
                           v-on="on"
                         >
-                          Save
+                          Simpan
                         </span>
                       </template>
                       <span class="text-caption">(Ctrl + S)</span>
@@ -191,7 +191,7 @@
             <v-row dense>
               <v-col cols="12">
                 <v-card>
-                  <v-card-title>General</v-card-title>
+                  <v-card-title>Umum</v-card-title>
 
                   <v-card-text>
                     <v-row no-gutters>
@@ -199,7 +199,7 @@
                         <v-text-field
                           ref="Initial"
                           v-model="data.initial"
-                          label="Initial"
+                          label="ID Grup"
                           :readonly="data.isActive === false"
                           class="mt-0"
                           :rules="[rules.required[0], rules.max20chars[0]]"
@@ -210,7 +210,7 @@
                         <v-text-field
                           ref="Name"
                           v-model="data.name"
-                          label="Name"
+                          label="Nama Grup"
                           :readonly="data.isActive === false"
                           class="mt-0"
                           :rules="[rules.required[0], rules.max50chars[0]]"
@@ -227,12 +227,12 @@
               <v-col cols="12">
                 <v-card>
                   <v-card-title>
-                    Sub Group &nbsp;
+                    Sub Grup &nbsp;
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on, attrs }">
                         <v-icon v-bind="attrs" v-on="on" small>mdi-help-circle</v-icon>
                       </template>
-                      <span class="text-caption">Value of sub group must be separated using a punctuation mark (;). ex: "Value1; Value2; Value3" etc</span>
+                      <span class="text-caption">Nilai dari sub grup harus dipisahkan dengan tanda titik koma (;). contoh: "Value1;Value2;Value3" dan seterusnya</span>
                     </v-tooltip>
                   </v-card-title>
                   <v-app-bar dense flat>
@@ -251,7 +251,7 @@
                           @shortkey="addItem"
                         >
                           <v-icon left>mdi-plus</v-icon>
-                          Add
+                          Tambah
                         </v-btn>
                       </template>
                       <span class="text-caption">(Ctrl + I)</span>
@@ -285,7 +285,7 @@
                               <v-icon small>mdi-close-thick</v-icon>
                             </v-btn>
                           </template>
-                          <span class="text-caption">Delete</span>
+                          <span class="text-caption">Hapus</span>
                         </v-tooltip>
                       </template>
                       <template v-slot:[`item.name`]="{ item }">
@@ -328,6 +328,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import { format, parseISO }  from 'date-fns'
 import { randomNumber } from '@/helpers/math-helpers'
 
 import api from '@/services/axios.service'
@@ -349,8 +350,8 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Initial', value: 'initial', divider: true, width: '110' },
-        { text: 'Name', value: 'name', divider: true, width: '270' },
+        { text: 'ID Grup', value: 'initial', divider: true, width: '110' },
+        { text: 'Nama Grup', value: 'name', divider: true, width: '270' },
         { text: 'Status', value: 'isActive', align: 'center', width: '50' }
       ],
       data: [],
@@ -364,8 +365,8 @@ export default {
     gridItem: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '1%' },
-        { text: 'Name', value: 'name', divider: true, width: '120' },
-        { text: 'Value', value: 'value', divider: true, width: '300' }
+        { text: 'Sub Grup', value: 'name', divider: true, width: '120' },
+        { text: 'Nilai Sub Grup', value: 'value', divider: true, width: '300' }
       ],
       data: []
     },
@@ -471,7 +472,8 @@ export default {
 
       this.data = {
         ...item,
-        action: 'edit'
+        action: 'edit',
+        updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
 
       // Get item details
@@ -490,8 +492,8 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Inactive?',
-          'Are you sure want to inactive this data?')
+          'Non-Aktif?',
+          'Apakah anda yakin ingin me-non-aktifkan data ini?')
       ) {
         api.delete(this.endpoint.inventory.item.group, item.id)
           .then(response => {
@@ -504,7 +506,7 @@ export default {
     },
     async save(closeDialog) {
       if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        this.$store.dispatch('app/showInfo', 'Silahkan periksa kembali data yang wajib diisi.')
         return
       }
 
@@ -548,8 +550,8 @@ export default {
     async removeItem(item) {
       if (
         await this.$refs.confirm.open(
-          'Delete?',
-          'Are you sure want to delete this data?')
+          'Hapus?',
+          'Apakah anda yakin ingin menghapus data ini?')
       ) {
         const idx = this.gridItem.data.findIndex(i => i.id === item.id)
         if (idx !== -1) {
