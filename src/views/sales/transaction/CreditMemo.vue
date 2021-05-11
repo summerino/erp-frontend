@@ -96,7 +96,7 @@
           <v-btn icon dark @click="dialog.add = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Note Kredit</v-toolbar-title>
+          <v-toolbar-title>Nota Kredit</v-toolbar-title>
         </v-toolbar>
 
         <v-card-text class="px-2">
