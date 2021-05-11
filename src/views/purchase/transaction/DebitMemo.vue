@@ -7,7 +7,7 @@
             <v-text-field
               v-model.trim="grid.search"
               append-icon="mdi-magnify"
-              label="Search..."
+              label="Cari..."
               class="font-weight-regular mt-0 pt-0"
               single-line
               @keyup.enter="getList()"
@@ -43,7 +43,7 @@
                 <v-icon small>mdi-pencil</v-icon>
               </v-btn>
             </template>
-            <span class="text-caption">Edit</span>
+            <span class="text-caption">Ubah</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">
@@ -96,7 +96,7 @@
           <v-btn icon dark @click="dialog.add = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Debit Memo</v-toolbar-title>
+          <v-toolbar-title>Note Debit</v-toolbar-title>
         </v-toolbar>
 
         <v-card-text class="px-2">
@@ -107,7 +107,7 @@
             <v-row dense>
               <v-col cols="12" md="4">
                 <v-card>
-                  <v-card-title>General</v-card-title>
+                  <v-card-title>Umum</v-card-title>
 
                   <v-card-text>
                     <v-row no-gutters>
@@ -115,7 +115,7 @@
                         <v-text-field
                           ref="code"
                           v-model.trim="data.code"
-                          label="Code"
+                          label="Kode Transaksi"
                           class="mt-0"
                           readonly
                         ></v-text-field>
@@ -124,7 +124,7 @@
                         <v-text-field
                           :rules="rules.required"
                           :value="formatDate"
-                          label="Date"
+                          label="Tanggal Transaksi"
                           class="mt-0"
                           readonly
                           required
@@ -138,7 +138,7 @@
                           v-model="data.srcTrans"
                           :items="sources"
                           :rules="rules.required"
-                          label="Source Transaction"
+                          label="Sumber Transaksi"
                           item-text="name"
                           item-value="id"
                           class="mt-0"
@@ -149,7 +149,7 @@
                       <v-col cols="12" md="6" class="pl-md-1">
                         <v-text-field
                           v-model.trim="data.transCode"
-                          label="Trans. Code"
+                          label="Kode Transaksi Sumber"
                           class="mt-0"
                           readonly
                         ></v-text-field>
@@ -160,7 +160,7 @@
                       <v-col cols="12" md="6">
                         <v-currency-field
                           v-model="data.amount"
-                          label="Amount"
+                          label="Nilai"
                           class="text-right mt-0"
                           readonly
                         ></v-currency-field>
@@ -168,7 +168,7 @@
                       <v-col cols="12" md="6" class="pl-md-1">
                         <v-currency-field
                           v-model="data.used"
-                          label="Used"
+                          label="Digunakan"
                           class="text-right mt-0"
                           readonly
                         ></v-currency-field>
@@ -179,7 +179,7 @@
                       <v-col cols="12">
                         <v-currency-field
                           v-model="data.outstanding"
-                          label="Outstanding"
+                          label="Saldo"
                           class="text-right mt-0"
                           readonly
                         ></v-currency-field>
@@ -192,8 +192,8 @@
               <v-col cols="12" md="8">
                 <v-card>
                   <v-tabs v-model="tab.sup">
-                    <v-tab key="sup">Supplier</v-tab>
-                    <v-tab key="notes">Notes</v-tab>
+                    <v-tab key="sup">Pemasok</v-tab>
+                    <v-tab key="notes">Catatan</v-tab>
                   </v-tabs>
 
                   <v-tabs-items v-model="tab.sup" class="pa-2">
@@ -206,7 +206,7 @@
                           <v-text-field
                             v-model="data.supCode"
                             :rules="rules.required"
-                            label="Code"
+                            label="Kode Pemasok"
                             class="mt-0"
                             readonly
                             required
@@ -215,7 +215,7 @@
                         <v-col cols="9" class="pl-1">
                           <v-text-field
                             v-model="data.supName"
-                            label="Name"
+                            label="Nama"
                             class="mt-0"
                             readonly
                           ></v-text-field>
@@ -226,7 +226,7 @@
                         <v-col cols="12">
                           <v-text-field
                             v-model.trim="data.supAddr"
-                            label="Address"
+                            label="Alamat"
                             class="mt-0"
                             readonly
                           ></v-text-field>
@@ -237,7 +237,7 @@
                         <v-col cols="6">
                           <v-text-field
                             v-model="data.supPhone"
-                            label="Phone"
+                            label="Telepon"
                             class="mt-0"
                             readonly
                           ></v-text-field>
@@ -260,7 +260,7 @@
                       <v-textarea
                         v-model="data.notes"
                         :rules="rules.max256chars"
-                        label="Notes"
+                        label="Catatan"
                         counter="256"
                         class="mt-0"
                         rows="4"
@@ -276,7 +276,7 @@
               <v-col cols="12">
                 <v-card>
                   <v-tabs v-model="tab.related">
-                    <v-tab key="related-trans">Related Transaction(s)</v-tab>
+                    <v-tab key="related-trans">Transaksi Terkait</v-tab>
 
                     <v-tab-item
                       key="related-trans"
@@ -330,14 +330,14 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Code', value: 'code', divider: true, width: '160' },
-        { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
-        { text: 'Supplier', value: 'supName', divider: true, width: '200' },
-        { text: 'Src. Trans.', value: 'srcTransName', divider: true, width: '100' },
-        { text: 'Trans. Code', value: 'transCode', divider: true, width: '100' },
-        { text: 'Amount', value: 'amount', align: 'right', divider: true, width: '120' },
-        { text: 'Used', value: 'used', align: 'right', divider: true, width: '120' },
-        { text: 'Outstanding', value: 'outstanding', align: 'right', divider: true, width: '120' },
+        { text: 'Kode Transaksi', value: 'code', divider: true, width: '160' },
+        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120' },
+        { text: 'Pemasok', value: 'supName', divider: true, width: '200' },
+        { text: 'Sumber Transksi.', value: 'srcTransName', divider: true, width: '100' },
+        { text: 'Kode Transaksi Sumber', value: 'transCode', divider: true, width: '100' },
+        { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120' },
+        { text: 'Digunakan', value: 'used', align: 'right', divider: true, width: '120' },
+        { text: 'Saldo', value: 'outstanding', align: 'right', divider: true, width: '120' },
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
@@ -350,14 +350,14 @@ export default {
     },
     gridRelated: {
       columns: [
-        { text: 'Code', value: 'code', divider: true },
-        { text: 'Date', value: 'date', align: 'right', divider: true },
+        { text: 'Kode Transaksi', value: 'code', divider: true },
+        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true },
         { text: 'Status', value: 'mark' }
       ],
       data: []
     },
     valid: false,
-    sources: [{ id: 1, name: 'Deposit' }, { id: 2, name: 'Return' }, { id: 2, name: 'Return (Same Item)' }],
+    sources: [{ id: 1, name: 'Deposit' }, { id: 2, name: 'Retur' }, { id: 2, name: 'Return (Same Item)' }],
     data: {}
   }),
 
