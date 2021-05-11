@@ -7,7 +7,7 @@
             <v-text-field
               v-model="grid.search"
               append-icon="mdi-magnify"
-              label="Search..."
+              label="Pencarian..."
               class="font-weight-regular mt-0 pt-0"
               single-line
               @keyup.enter="getList()"
@@ -30,7 +30,7 @@
                   @shortkey="add"
                 >
                   <v-icon left>mdi-plus</v-icon>
-                  New
+                  Tambah Baru
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + Alt + N)</span>
@@ -65,7 +65,7 @@
                 <v-icon small>mdi-pencil</v-icon>
               </v-btn>
             </template>
-            <span>Edit</span>
+            <span>Ubah</span>
           </v-tooltip>
           <v-tooltip bottom>
             <template v-if="item.isActive" v-slot:activator="{ on, attrs }">
@@ -92,19 +92,19 @@
                 <v-icon small>mdi-check</v-icon>
               </v-btn>
             </template>
-            <span v-if="item.isActive">Inactive</span>
-            <span v-else>Reactivate</span>
+            <span v-if="item.isActive">Nonaktifkan</span>
+            <span v-else>Aktifkan Kembali</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.sex`]="{ item }">
-          <span v-if="item.sex">Male</span>
-          <span v-else>Female</span>
+          <span v-if="item.sex">Laki-laki</span>
+          <span v-else>Perempuan</span>
         </template>
         <template v-slot:[`item.type`]="{ item }">
-          <span v-if="item.type === 1">Employee</span>
-          <span v-else-if="item.type === 2">Salesman</span>
-          <span v-else-if="item.type === 3">Driver</span>
-          <span v-else>Unknown</span>
+          <span v-if="item.type === 1">Karyawaan</span>
+          <span v-else-if="item.type === 2">Penjual</span>
+          <span v-else-if="item.type === 3">Sopir</span>
+          <span v-else>Tidak diketahui</span>
         </template>
         <template v-slot:[`item.isActive`]="{ item }">
           <v-icon v-if="item.isActive" color="green">mdi-toggle-switch-outline</v-icon>
@@ -117,14 +117,14 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="6">
-            <span>Employee {{ data.action | capitalize }}</span>
+            <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' }} Karyawaan</span>
           </v-col>
           <v-col cols="12" md="6" class="text-right">
             <label
               v-if="data.action == 'edit'"
               class="text-caption mr-1"
             >
-              Last Updated: {{ data.updatedDate }} by {{ data.updatedInitial }}
+              Terakhir Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -143,7 +143,7 @@
                   <v-icon left>
                     mdi-content-save
                   </v-icon>
-                  Save
+                  Simpan
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + S)</span>
@@ -163,7 +163,7 @@
                   <v-icon left>
                     mdi-undo-variant
                   </v-icon>
-                  Back
+                  Kembali
                 </v-btn>
               </template>
               <span class="text-caption">(Esc)</span>
@@ -185,7 +185,7 @@
                   v-model="data.initial"
                   :rules="[rules.required[0], rules.max20chars[0]]"
                   :counter="20"
-                  label="Initial"
+                  label="Inisial"
                   class="mt-0"
                   required
                 ></v-text-field>
@@ -193,7 +193,7 @@
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-row no-gutters>
                   <v-col cols="12">
-                    <span>Gender</span>
+                    <span>Jenis Kelamin</span>
                   </v-col>
                 </v-row>
                 <v-row no-gutters>
@@ -203,7 +203,7 @@
                      id="male" 
                      value="true" 
                      v-model="data.sex">
-                    <label for="male">&nbsp;Male</label>
+                    <label for="male">&nbsp;Laki-laki</label>
                   </v-col>
                   <v-col cols="9">
                     <input 
@@ -211,7 +211,7 @@
                      id="female" 
                      value="false" 
                      v-model="data.sex">
-                    <label for="female">&nbsp;Female</label>
+                    <label for="female">&nbsp;Perempuan</label>
                   </v-col>
                 </v-row>
               </v-col>
@@ -222,7 +222,7 @@
                 <v-text-field
                   v-model="data.firstName"
                   :rules="rules.required"
-                  label="First Name"
+                  label="Nama Depan"
                   class="mt-0"
                   required
                 ></v-text-field>
@@ -230,7 +230,7 @@
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-text-field
                   v-model="data.lastName"
-                  label="Last Name"
+                  label="Nama Belakang"
                   class="mt-0"
                 ></v-text-field>
               </v-col>
@@ -251,7 +251,7 @@
                       v-on="on"
                       :rules="rules.required"
                       :value="formatBirthDate"
-                      label="Birth Date"
+                      label="Tanggal Lahir"
                       class="mt-0"
                       readonly
                       required
@@ -268,7 +268,7 @@
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-text-field
                   v-model="data.birthPlace"
-                  label="Birth Place"
+                  label="Tempat Lahir"
                   class="mt-0"
                 ></v-text-field>
               </v-col>
@@ -279,7 +279,7 @@
                 <v-text-field
                   v-model="data.address1"
                   :rules="rules.required"
-                  label="Address 1"
+                  label="Alamat 1"
                   class="mt-0"
                   required
                 ></v-text-field>
@@ -290,7 +290,7 @@
               <v-col cols="12">
                 <v-text-field
                   v-model="data.address2"
-                  label="Address 2"
+                  label="Alamat 2"
                   class="mt-0"
                 ></v-text-field>
               </v-col>
@@ -300,14 +300,14 @@
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-text-field
                   v-model="data.phone"
-                  label="Phone"
+                  label="Telepon"
                   class="mt-0"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-text-field
                   v-model="data.identityCardNo"
-                  label="Identity No."
+                  label="Nomor Identitas"
                   class="mt-0"
                 ></v-text-field>
               </v-col>
@@ -320,7 +320,7 @@
                   :items="maritalStatusRef"
                   :item-text="item => `${item.text}`"
                   :rules="rules.required"
-                  label="Marital Status"
+                  label="Status Pernikahan"
                   item-value="value"
                   class="mt-0"
                   required
@@ -332,7 +332,7 @@
                   :items="religionRef"
                   :item-text="item => `${item.text}`"
                   :rules="rules.required"
-                  label="Religion"
+                  label="Agama"
                   item-value="value"
                   class="mt-0"
                   required
@@ -347,7 +347,7 @@
                   :items="employeeTypeRef"
                   :item-text="item => `${item.text}`"
                   :rules="rules.required"
-                  label="Employee Type"
+                  label="Tipe Karyawan"
                   item-value="value"
                   class="mt-0"
                   required
@@ -388,13 +388,13 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Initial', value: 'initial', divider: true, width: '150' },
-        { text: 'First Name', value: 'firstName', divider: true, width: '200' },
-        { text: 'Last Name', value: 'lastName', divider: true, width: '200' },
-        { text: 'Gender', value: 'sex', divider: true, width: '60' },
-        { text: 'Address', value: 'address1', divider: true, width: '250' },
-        { text: 'Phone', value: 'phone', divider: true, width: '120' },
-        { text: 'Employee Type', value: 'type', divider: true, width: '60' },
+        { text: 'Inisial', value: 'initial', divider: true, width: '150' },
+        { text: 'Nama Depan', value: 'firstName', divider: true, width: '200' },
+        { text: 'Nama Belakang', value: 'lastName', divider: true, width: '200' },
+        { text: 'Jenis Kelamin', value: 'sex', divider: true, width: '60' },
+        { text: 'Alamat', value: 'address1', divider: true, width: '250' },
+        { text: 'Telepon', value: 'phone', divider: true, width: '120' },
+        { text: 'Tipe Karyawan', value: 'type', divider: true, width: '60' },
         { text: 'Status', value: 'isActive', width: '90' }
       ],
       data: [],
@@ -406,9 +406,9 @@ export default {
       search: null
     },
     valid: false,
-    employeeTypeRef: [{text: 'Employee', value: 1}, {text: 'Salesman', value: 2}, {text: 'Driver', value: 3}],
-    maritalStatusRef: [{text: 'Single', value: 1}, {text: 'Married', value: 2}, {text: 'Divorced', value: 3}],
-    religionRef: [{text: 'Islam', value: 1}, {text: 'Protestant', value: 2}, {text: 'Catholic', value: 3}, {text: 'Buddha', value: 4}, {text: 'Hindu', value: 5}, {text: 'Konghucu', value: 6}, {text: 'Others', value: 7}],
+    employeeTypeRef: [{text: 'Karyawan', value: 1}, {text: 'Penjual', value: 2}, {text: 'Sopir', value: 3}],
+    maritalStatusRef: [{text: 'Lajang', value: 1}, {text: 'Menikah', value: 2}, {text: 'Bercerai', value: 3}],
+    religionRef: [{text: 'Islam', value: 1}, {text: 'Protestant', value: 2}, {text: 'Catholic', value: 3}, {text: 'Buddha', value: 4}, {text: 'Hindu', value: 5}, {text: 'Konghucu', value: 6}, {text: 'Lainnya', value: 7}],
     data: {}
   }),
 
@@ -526,8 +526,8 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Inactive?',
-          'Are you sure want to inactive this data?')
+          'Nontaktifkan?',
+          'Apakah anda yakin untuk menonaktifkan data ini?')
       ) {
         api.delete(this.endpoint.general.employee, item.id)
           .then(response => {
@@ -541,8 +541,8 @@ export default {
     async reactivate(item) {
       if (
         await this.$refs.confirm.open(
-          'Reactivate?',
-          'Are you sure want to reactivate this data?')
+          'Aktifkan Kembali?',
+          'Apakah anda yakin untuk mengaktifkan kembali data ini?')
       ) {
         this.data = {
           ...item,
@@ -561,7 +561,7 @@ export default {
     },
     async save() {
       if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        this.$store.dispatch('app/showInfo', 'Tolong cek kembali bagian formulir yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
 
