@@ -428,11 +428,12 @@
                     >
                       <v-textarea
                         v-model="data.notes"
-                        :rules="rules.max256chars"
+                        :rules="[rules.required[0], rules.max256chars[0]]"
                         label="Notes"
                         counter="256"
                         class="mt-0"
                         rows="4"
+                        required
                       ></v-textarea>
                     </v-tab-item>
                   </v-tabs-items>
