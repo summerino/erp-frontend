@@ -584,7 +584,7 @@
     ></find-po>
     <find-return
       ref="findReturn"
-      :type="2"
+      :type="[2,3]"
       :mark-exclude="['V', 'CLS', 'CMP']"
       @dblclick:row="bindTransData"
     ></find-return>
