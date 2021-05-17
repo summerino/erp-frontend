@@ -699,7 +699,7 @@
                         <v-col cols="6" class="pl-md-1">
                           <v-text-field
                             v-model="data.createdDate"
-                            label="Dibuat Tanggal"
+                            label="Tanggal Dibuat"
                             class="mt-0"
                             readonly
                           ></v-text-field>
@@ -718,7 +718,7 @@
                         <v-col cols="6" class="pl-md-1">
                           <v-text-field
                             v-model="data.updatedDate"
-                            label="Diperbarui Tanggal"
+                            label="Tanggal Diperbarui"
                             class="mt-0"
                             readonly
                           ></v-text-field>
@@ -737,7 +737,7 @@
                         <v-col cols="6" class="pl-md-1">
                           <v-text-field
                             v-model="data.approvedDate"
-                            label="Disetujui Tanggal"
+                            label="Tanggal Disetujui"
                             class="mt-0"
                             readonly
                           ></v-text-field>
@@ -885,7 +885,7 @@ export default {
     gridItem: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '1%' },
-        { text: 'Inisial Barang', value: 'itemId', divider: true, width: '120' },
+        { text: 'Inisial', value: 'itemId', divider: true, width: '120' },
         { text: 'Nama', value: 'itemName', divider: true, width: '300' },
         { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
         { text: 'Satuan', value: 'unitName', divider: true, width: '90' },

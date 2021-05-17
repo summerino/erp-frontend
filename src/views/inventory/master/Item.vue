@@ -586,7 +586,7 @@
                             <v-col cols="6" class="pl-md-1">
                               <v-text-field
                                 v-model="data.createdDate"
-                                label="Dibuat Tanggal"
+                                label="Tanggal Dibuat"
                                 class="mt-0"
                                 readonly
                               ></v-text-field>
@@ -605,7 +605,7 @@
                             <v-col cols="6" class="pl-md-1">
                               <v-text-field
                                 v-model="data.updatedDate"
-                                label="Diperbarui Tanggal"
+                                label="Tanggal Diperbarui"
                                 class="mt-0"
                                 readonly
                               ></v-text-field>

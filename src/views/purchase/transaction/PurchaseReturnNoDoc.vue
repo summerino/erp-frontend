@@ -416,7 +416,7 @@
                         <v-col cols="6" class="pl-1">
                           <v-text-field
                             v-model.trim="data.updatedDate"
-                            label="Tanggal Diperbaharui"
+                            label="Tanggal Diperbarui"
                             class="mt-0"
                             readonly
                           ></v-text-field>

@@ -172,7 +172,7 @@
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-autocomplete
-                  v-model="data.driverId"
+                  v-model="data.typeId"
                   :items="types"
                   :item-text="item => `${item.initial} - ${item.name}`"
                   :rules="rules.required"
@@ -208,7 +208,7 @@
             <v-row no-gutters>
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-autocomplete
-                  v-model="data.typeId"
+                  v-model="data.driverId"
                   :items="drivers"
                   :item-text="item => `${item.initial} - ${item.firstName} ${item.lastName}`"
                   :rules="rules.required"
@@ -259,7 +259,7 @@ export default {
         { text: 'Tipe', value: 'typeName', divider: true, width: '150' },
         { text: 'Volume Beban Maksimal', value: 'maxLoadVolume', divider: true, width: '90' },
         { text: 'Bobot Beban Maksimal', value: 'maxLoadWeight', divider: true, width: '90' },
-        { text: 'Supir', value: 'driverId', divider: true, width: '90' }
+        { text: 'Supir', value: 'driverInitial', divider: true, width: '90' }
       ],
       data: [],
       options: {

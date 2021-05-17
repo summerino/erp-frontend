@@ -217,7 +217,7 @@
                       <v-col cols="12" md="6" class="pl-md-1">
                         <v-text-field
                           v-model="data.refNo"
-                          label="No. Referensi"
+                          label="No. Ref."
                           class="mt-0"
                         ></v-text-field>
                       </v-col>
@@ -408,7 +408,7 @@
                         <v-col cols="6" class="pl-1">
                           <v-text-field
                             v-model="data.createdDate"
-                            label="Dibuat Tanggal"
+                            label="Tanggal Dibuat"
                             class="mt-0"
                             readonly
                           ></v-text-field>
@@ -427,7 +427,7 @@
                         <v-col cols="6" class="pl-1">
                           <v-text-field
                             v-model="data.updatedDate"
-                            label="Diperbarui Tanggal"
+                            label="Tanggal Diperbarui"
                             class="mt-0"
                             readonly
                           ></v-text-field>
@@ -446,7 +446,7 @@
                         <v-col cols="6" class="pl-1">
                           <v-text-field
                             v-model="data.approvedDate"
-                            label="Disetujui Tanggal"
+                            label="Tanggal Disetujui"
                             class="mt-0"
                             readonly
                           ></v-text-field>
@@ -705,13 +705,13 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'No. Faktur', value: 'code', divider: true, width: '160' },
-        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120' },
+        { text: 'Tgl. Trans.', value: 'date', align: 'right', divider: true, width: '120' },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200' },
         { text: 'No. Ord. Pembelian', value: 'poCode', divider: true, width: '150' },
         { text: 'Total', value: 'total', align: 'right', divider: true, width: '120' },
         { text: 'Dikeluarkan Oleh', value: 'issuedInitial', divider: true, width: '200' },
-        { text: 'Tanggal Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120' },
-        { text: 'No. Referensi', value: 'refNo', width: '120' },
+        { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120' },
+        { text: 'No. Ref.', value: 'refNo', width: '120' },
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],

@@ -347,7 +347,7 @@
                   :items="employeeTypeRef"
                   :item-text="item => `${item.text}`"
                   :rules="rules.required"
-                  label="Tipe Karyawan"
+                  label="Tipe"
                   item-value="value"
                   class="mt-0"
                   required
@@ -394,7 +394,7 @@ export default {
         { text: 'Jenis Kelamin', value: 'sex', divider: true, width: '60' },
         { text: 'Alamat', value: 'address1', divider: true, width: '250' },
         { text: 'Telepon', value: 'phone', divider: true, width: '120' },
-        { text: 'Tipe Karyawan', value: 'type', divider: true, width: '60' },
+        { text: 'Tipe', value: 'type', divider: true, width: '60' },
         { text: 'Status', value: 'isActive', width: '90' }
       ],
       data: [],
