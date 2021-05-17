@@ -34,37 +34,37 @@ const state = {
   // App.vue rule
   rules: {
     required: [
-      (v) => !!v || 'required'
+      (v) => !!v || 'wajib diisi'
     ],
     above0: [
-      (v) => parseFloat((v || '0').toString().replace(/,/g, '')) > 0 || 'Value should above 0'
+      (v) => parseFloat((v || '0').toString().replace(/,/g, '')) > 0 || 'Nilai harus lebih dari 0 (nol)'
     ],
     cannot0: [
-      (v) => parseFloat((v || '0').toString().replace(/,/g, '')) !== 0 || 'Nilai tidak boleh 0'
+      (v) => parseFloat((v || '0').toString().replace(/,/g, '')) !== 0 || 'Nilai tidak boleh 0 (nol)'
     ],
     max15chars: [
-      (v) => (v || '').length <= 15 || 'Max 15 characters'
+      (v) => (v || '').length <= 15 || 'Maksimal 15 karakter'
     ],
     max20chars: [
-      (v) => (v || '').length <= 20 || 'Max 20 characters'
+      (v) => (v || '').length <= 20 || 'Maksimal 20 karakter'
     ],
     max30chars: [
-      (v) => (v || '').length <= 30 || 'Max 30 characters'
+      (v) => (v || '').length <= 30 || 'Maksimal 30 karakter'
     ],
     max50chars: [
-      (v) => (v || '').length <= 50 || 'Max 50 characters'
+      (v) => (v || '').length <= 50 || 'Maksimal 50 karakter'
     ],
     max100chars: [
-      (v) => (v || '').length <= 100 || 'Max 100 characters'
+      (v) => (v || '').length <= 100 || 'Maksimal 100 karakter'
     ],
     max256chars: [
-      (v) => (v || '').length <= 256 || 'Max 256 characters'
+      (v) => (v || '').length <= 256 || 'Maksimal 256 karakter'
     ],
     max1000chars: [
-      (v) => (v || '').length <= 1000 || 'Max 1000 characters'
+      (v) => (v || '').length <= 1000 || 'Maksimal 1000 karakter'
     ],
     email: [
-      (v) => !v || /.+@.+\..+/.test(v) || 'Invalid email format'
+      (v) => !v || /.+@.+\..+/.test(v) || 'Format email tidak valid'
     ]
   },
 
