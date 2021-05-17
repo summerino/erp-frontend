@@ -81,7 +81,7 @@
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <span class="text-caption">Hapus</span>
+            <span class="text-caption">Void</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">
@@ -217,7 +217,7 @@
                       <v-col cols="12" md="6" class="pl-md-1">
                         <v-text-field
                           v-model="data.refNo"
-                          label="No. Faktur Pemasok"
+                          label="No. Referensi"
                           class="mt-0"
                         ></v-text-field>
                       </v-col>
@@ -329,7 +329,7 @@
                           <v-text-field
                             v-model="data.supCode"
                             :rules="rules.required"
-                            label="ID Pemasok"
+                            label="Kode"
                             class="mt-0"
                             readonly
                             required
@@ -399,6 +399,25 @@
                       <v-row no-gutters>
                         <v-col cols="6">
                           <v-text-field
+                            v-model="data.createdInitial"
+                            label="Dibuat Oleh"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="6" class="pl-1">
+                          <v-text-field
+                            v-model="data.createdDate"
+                            label="Dibuat Tanggal"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+
+                      <v-row no-gutters>
+                        <v-col cols="6">
+                          <v-text-field
                             v-model="data.updatedInitial"
                             label="Diperbarui Oleh"
                             class="mt-0"
@@ -408,7 +427,26 @@
                         <v-col cols="6" class="pl-1">
                           <v-text-field
                             v-model="data.updatedDate"
-                            label="Tanggal Pembaruan"
+                            label="Diperbarui Tanggal"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+
+                      <v-row no-gutters>
+                        <v-col cols="6">
+                          <v-text-field
+                            v-model="data.approvedInitial"
+                            label="Disetujui Oleh"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="6" class="pl-1">
+                          <v-text-field
+                            v-model="data.approvedDate"
+                            label="Disetujui Tanggal"
                             class="mt-0"
                             readonly
                           ></v-text-field>
@@ -438,7 +476,7 @@
               <v-col cols="12">
                 <v-card>
                   <v-tabs v-model="tab.det">
-                    <v-tab key="detail-trans">Detail</v-tab>
+                    <v-tab key="detail-trans">Detil</v-tab>
                     <v-tab key="related-trans">Transaksi Terkait</v-tab>
 
                     <v-tab-item
@@ -669,12 +707,11 @@ export default {
         { text: 'No. Faktur', value: 'code', divider: true, width: '160' },
         { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120' },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200' },
-        { text: 'No. Order Pembelian', value: 'poCode', divider: true, width: '150' },
-        { text: 'Mata Uang', value: 'currCode', divider: true, width: '90' },
+        { text: 'No. Ord. Pembelian', value: 'poCode', divider: true, width: '150' },
         { text: 'Total', value: 'total', align: 'right', divider: true, width: '120' },
         { text: 'Dikeluarkan Oleh', value: 'issuedInitial', divider: true, width: '200' },
         { text: 'Tanggal Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120' },
-        { text: 'No. Faktur Pemasok', value: 'refNo', width: '120' },
+        { text: 'No. Referensi', value: 'refNo', width: '120' },
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
@@ -688,7 +725,7 @@ export default {
     gridDet: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '1%' },
-        { text: 'No. Penerimaan Barang', value: 'rcvCode', divider: true, width: '200' },
+        { text: 'Kode Penerimaan', value: 'rcvCode', divider: true, width: '200' },
         { text: 'Total Sebelum Pajak', value: 'dpp', align: 'right', divider: true, width: '120' },
         { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '120' },
         { text: 'Biaya Pengiriman', value: 'shipmentFee', align: 'right', divider: true, width: '120' },
@@ -865,7 +902,9 @@ export default {
       this.data = {
         ...item,
         action: 'edit',
-        updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
+        createdDate: (item.createdDate === null) ? null : format(parseISO(item.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
+        updatedDate: (item.updatedDate === null) ? null : format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss'),
+        approvedDate: (item.approvedDate === null) ? null : format(parseISO(item.approvedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
 
       // Get supplier details
@@ -890,8 +929,8 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Hapus?',
-          'Apakah anda yakin ingin menghapus data ini?')
+          'Void?',
+          'Apakah anda yakin ingin membuat void data ini?')
       ) {
         api.delete(this.endpoint.purchase.invoice, item.code)
           .then(response => {

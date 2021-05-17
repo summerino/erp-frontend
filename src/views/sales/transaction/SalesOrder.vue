@@ -82,7 +82,7 @@
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <span class="text-caption">Kosong</span>
+            <span class="text-caption">Void</span>
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -262,7 +262,7 @@
                               v-on="on"
                               :rules="rules.required"
                               :value="formatOrderDate"
-                              label="Tanggal Transaksi"
+                              label="Tanggal"
                               class="mt-0"
                               readonly
                               required
@@ -344,7 +344,7 @@
                             :item-text="item => `${item.code} - ${item.initial}`"
                             :readonly="hasRelatedTrans"
                             :rules="rules.required"
-                            label="ID Pelanggan"
+                            label="Kode"
                             item-value="code"
                             class="mt-0"
                             required
@@ -504,7 +504,7 @@
               <v-col cols="12">
                 <v-card>
                   <v-tabs v-model="tab.item">
-                    <v-tab key="item">Item</v-tab>
+                    <v-tab key="item">Barang</v-tab>
                     <v-tab key="related-trans">Transaksi Terkait</v-tab>
 
                     <v-tab-item
@@ -686,7 +686,7 @@
                 <v-card>
                   <v-tabs v-model="tab.foot">
                     <v-tab key="notes">Catatan</v-tab>
-                    <v-tab key="detail">Detail</v-tab>
+                    <v-tab key="detail">Detil</v-tab>
                     <v-tab key="user">Pengguna</v-tab>
                   </v-tabs>
 
@@ -721,24 +721,62 @@
                       key="user"
                       transition="false"
                     >
-                      <v-text-field
-                        v-model="data.createdInitial"
-                        label="Dibuat Oleh"
-                        class="mt-0"
-                        readonly
-                      ></v-text-field>
-                      <v-text-field
-                        v-model="data.updatedInitial"
-                        label="Diperbarui Oleh"
-                        class="mt-0"
-                        readonly
-                      ></v-text-field>
-                      <v-text-field
-                        v-model="data.updatedDate"
-                        label="Tanggal Pembaruan"
-                        class="mt-0"
-                        readonly
-                      ></v-text-field>
+                      <v-row no-gutters>
+                        <v-col cols="6">
+                          <v-text-field
+                            v-model="data.createdInitial"
+                            label="Dibuat Oleh"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="6" class="pl-md-1">
+                          <v-text-field
+                            v-model="data.createdDate"
+                            label="Dibuat Tanggal"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                      
+                      <v-row no-gutters>
+                        <v-col cols="6">
+                          <v-text-field
+                            v-model="data.updatedInitial"
+                            label="Diperbarui Oleh"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="6" class="pl-md-1">
+                          <v-text-field
+                            v-model="data.updatedDate"
+                            label="Diperbarui Tanggal"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+
+                      <v-row no-gutters>
+                        <v-col cols="6">
+                          <v-text-field
+                            v-model="data.approvedInitial"
+                            label="Disetujui Oleh"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="6" class="pl-md-1">
+                          <v-text-field
+                            v-model="data.approvedDate"
+                            label="Disetujui Tanggal"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
                     </v-tab-item>
                   </v-tabs-items>
                 </v-card>
@@ -858,11 +896,10 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '120' },
-        { text: 'No. Order Penjualan', value: 'code', divider: true, width: '160' },
-        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120' },
+        { text: 'No. Ord. Penjualan', value: 'code', divider: true, width: '160' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
         { text: 'Penjualan Oleh', value: 'salesInitial', divider: true, width: '200' },
         { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
-        { text: 'Mata Uang.', value: 'currCode', divider: true, width: '90' },
         { text: 'Total', value: 'total', align: 'right', divider: true, width: '120' },
         { text: 'Status', value: 'mark', width: '50' }
       ],
@@ -878,22 +915,22 @@ export default {
       data: [],
       columns: [
         { value: 'action', sortable: false, divider: true, width: '1%' },
-        { text: 'ID Barang', value: 'itemId', divider: true, width: '120' },
+        { text: 'Inisial Barang', value: 'itemId', divider: true, width: '120' },
         { text: 'Nama', value: 'itemName', divider: true, width: '300' },
-        { text: 'Kuantitas', value: 'qty', align: 'right', divider: true, width: '90' },
+        { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
         { text: 'Satuan', value: 'unitName', divider: true, width: '90' },
         { text: 'Harga Satuan', value: 'unitPrice', align: 'right', divider: true, width: '120' },
         { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '120' },
         { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '120' },
         { text: 'Harga Nett', value: 'nettPrice', align: 'right', divider: true, width: '120' },
         { text: 'Harga Total', value: 'total', align: 'right', divider: true, width: '120' },
-        { text: 'Description', value: 'notes', width: '200' }
+        { text: 'Deskripsi', value: 'notes', width: '200' }
       ]
     },
     gridRelated: {
       columns: [
         { text: 'No. Dokumen', value: 'code', divider: true },
-        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true },
         { text: 'Status', value: 'mark' }
       ],
       data: []
@@ -1175,7 +1212,9 @@ export default {
       this.data = {
         ...item,
         action: 'edit',
-        updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
+        createdDate: (item.createdDate === null) ? null : format(parseISO(item.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
+        updatedDate: (item.updatedDate === null) ? null : format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss'),
+        approvedDate: (item.approvedDate === null) ? null : format(parseISO(item.approvedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
 
       // Get customer details
@@ -1205,8 +1244,8 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Kosong?',
-          'Apakah anda yakin ingin membuat kosong data ini?')
+          'Void?',
+          'Apakah anda yakin ingin membuat void data ini?')
       ) {
         api.delete(this.endpoint.sales.order, item.code)
           .then(response => {
