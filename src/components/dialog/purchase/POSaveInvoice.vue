@@ -11,7 +11,7 @@
         dark
         dense
       >
-        <v-toolbar-title>Save & Invoice</v-toolbar-title>
+        <v-toolbar-title>Simpan & Faktur</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn
           icon
@@ -27,7 +27,7 @@
             <v-text-field
               ref="refNo"
               v-model="data.rcvRefNo"
-              label="Receive Ref. No"
+              label="No. Ref. Terima"
               class="mt-0"
             ></v-text-field>
           </v-col>
@@ -45,7 +45,7 @@
                 v-on="on"
                 :rules="rules.required"
                 :value="formatRcvDate"
-                label="Receive Date"
+                label="Tanggal Terima"
                 class="mt-0"
                 readonly
                 required
@@ -65,7 +65,7 @@
           <v-col cols="12" md="6">
             <v-text-field
               v-model="data.invRefNo"
-              label="Invoice Ref. No"
+              label="No. Ref. Faktur"
               class="mt-0"
             ></v-text-field>
           </v-col>
@@ -83,7 +83,7 @@
                 v-on="on"
                 :rules="rules.required"
                 :value="formatInvDate"
-                label="Invoice Date"
+                label="Tanggal Faktur"
                 class="mt-0"
                 readonly
                 required
@@ -114,7 +114,7 @@
                 v-on="on"
                 :rules="rules.required"
                 :value="formatInvDueDate"
-                label="Invoice Due Date"
+                label="Tanggal Jatuh Tempo"
                 class="mt-0"
                 readonly
                 required
@@ -141,7 +141,7 @@
           @click="save"
         >
           <v-icon left>mdi-content-save</v-icon>
-          Save
+          Simpan
         </v-btn>
         <v-btn
           color="red darken-2"
@@ -152,7 +152,7 @@
           @click="close"
         >
           <v-icon left>mdi-close-circle-outline</v-icon>
-          Cancel
+          Batal
         </v-btn>
       </v-card-actions>
     </v-card>

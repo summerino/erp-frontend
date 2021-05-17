@@ -11,7 +11,7 @@
         dark
         dense
       >
-        <v-toolbar-title>Save & Receive</v-toolbar-title>
+        <v-toolbar-title>Simpan & Terima</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn
           icon
@@ -27,7 +27,7 @@
             <v-text-field
               ref="refNo"
               v-model="data.rcvRefNo"
-              label="Ref. No"
+              label="No. Ref. Terima"
               class="mt-0"
             ></v-text-field>
           </v-col>
@@ -45,7 +45,7 @@
                 v-on="on"
                 :rules="rules.required"
                 :value="formatRcvDate"
-                label="Receive Date"
+                label="Tanggal Terima"
                 class="mt-0"
                 readonly
                 required
@@ -72,7 +72,7 @@
           @click="save"
         >
           <v-icon left>mdi-content-save</v-icon>
-          Save
+          Simpan
         </v-btn>
         <v-btn
           color="red darken-2"
@@ -83,7 +83,7 @@
           @click="close"
         >
           <v-icon left>mdi-close-circle-outline</v-icon>
-          Cancel
+          Batal
         </v-btn>
       </v-card-actions>
     </v-card>

@@ -227,7 +227,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 'alt', 'i']"
-                  :disabled="isSaveNReceiveAble"
+                  :disabled="isSaveNInvoiceAble"
                   @click="saveInv()"
                   @shortkey="saveInv()"
                 >
@@ -928,6 +928,14 @@ export default {
       if (this.data.action === 'add') {
         return false
       } if (this.data.mark === 'A' && this.data.action === 'edit') {
+        return false
+      }
+      return true
+    },
+    isSaveNInvoiceAble() {
+      if (this.data.action === 'add') {
+        return false
+      } if (this.data.mark === 'CMP' && this.data.action === 'edit') {
         return false
       }
       return true
