@@ -129,7 +129,7 @@
           <v-btn icon dark @click="dialog.add = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Retur Pembelian Tanpa Dokumen.</v-toolbar-title>
+          <v-toolbar-title>Retur Pembelian Tanpa Dokumen</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-tooltip bottom>
@@ -178,7 +178,7 @@
                           v-bind="attrs"
                           v-on="on"
                         >
-                          Save
+                          Simpan
                         </span>
                       </template>
                       <span class="text-caption">(Ctrl + S)</span>
@@ -207,24 +207,12 @@
                         <v-text-field
                           ref="code"
                           v-model.trim="data.code"
-                          label="Kode Retur"
+                          label="Kode"
                           class="mt-0"
                           readonly
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12" md="6" class="pl-md-1">
-                        <v-text-field
-                          v-model.trim="data.refNo"
-                          :rules="rules.max30chars"
-                          label="Ref. No."
-                          counter="30"
-                          class="mt-0"
-                        ></v-text-field>
-                      </v-col>
-                    </v-row>
-
-                    <v-row no-gutters>
-                      <v-col cols="12">
                         <v-menu
                           v-model="menu.returnDate"
                           :close-on-content-click="false"
@@ -238,7 +226,7 @@
                               v-on="on"
                               :rules="rules.required"
                               :value="formatReturnDate"
-                              label="Tanggal Transaksi"
+                              label="Tanggal"
                               class="mt-0"
                               readonly
                               required
@@ -255,23 +243,39 @@
                     </v-row>
 
                     <v-row no-gutters>
-                      <v-autocomplete
-                        v-model="data.type"
-                        :items="types"
-                        :rules="rules.required"
-                        label="Tipe Retur"
-                        item-text="name"
-                        item-value="id"
-                        class="mt-0"
-                        required
-                        @change="typeChange"
-                      ></v-autocomplete>
-                      <v-checkbox
-                        v-model="data.includeTax"
-                        label="Termasuk Pajak"
-                        class="shrink ml-1"
-                        @change="calcTax"
-                      ></v-checkbox>
+                      <v-col cols="12">
+                        <v-autocomplete
+                          v-model="data.type"
+                          :items="types"
+                          :rules="rules.required"
+                          :readonly="hasRelatedTrans"
+                          label="Tipe"
+                          item-text="name"
+                          item-value="id"
+                          class="mt-0"
+                          required
+                          @change="typeChange"
+                        ></v-autocomplete>
+                      </v-col>
+                    </v-row>
+                    <v-row no-gutters>
+                      <v-col cols="6" >
+                        <v-checkbox
+                          v-model="data.nonTax"
+                          label="Tidak Ada Pajak"
+                          class="shrink ml-1"
+                          @change="nonTaxChange"
+                          :disabled="data.type !== 1"
+                        ></v-checkbox>
+                      </v-col>
+                      <v-col cols="6">
+                        <v-checkbox
+                          v-model="data.taxIncluded"
+                          label="Termasuk Pajak"
+                          class="shrink ml-1"
+                          :disabled="data.type !== 1 || data.nonTax"
+                        ></v-checkbox>
+                      </v-col>
                     </v-row>
                   </v-card-text>
                 </v-card>
@@ -298,7 +302,7 @@
                             :item-text="item => `${item.code} - ${item.initial}`"
                             :readonly="hasRelatedTrans"
                             :rules="rules.required"
-                            label="Kode Retur"
+                            label="Kode"
                             item-value="code"
                             class="mt-0"
                             required
@@ -334,7 +338,7 @@
                         <v-col cols="12">
                           <v-text-field
                             v-model.trim="data.supAddr"
-                            label="Tempat"
+                            label="Alamat"
                             class="mt-0"
                             readonly
                           ></v-text-field>
@@ -412,7 +416,7 @@
                         <v-col cols="6" class="pl-1">
                           <v-text-field
                             v-model.trim="data.updatedDate"
-                            label="Tanggal Pembaruan"
+                            label="Tanggal Diperbaharui"
                             class="mt-0"
                             readonly
                           ></v-text-field>
@@ -445,190 +449,279 @@
                   <v-tabs v-model="tab.item">
                     <v-tab key="item">Barang</v-tab>
                     <v-tab key="related-trans">Transaksi Terkait</v-tab>
+                    <v-tab key="tax">Faktur Pajak</v-tab>
 
                     <v-tab-item
                       key="item"
                       transition="false"
                     >
                       <v-card>
-                        <v-app-bar dense flat>
-                          <v-spacer></v-spacer>
-                          <v-tooltip bottom>
-                            <template v-slot:activator="{ on, attrs }">
-                              <v-btn
-                                v-bind="attrs"
-                                v-on="on"
-                                v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid || hasRelatedTrans"
-                                class="blue--text"
-                                small
-                                tile
-                                @click="addItem"
-                                @shortkey="addItem"
-                              >
-                                <v-icon left>mdi-plus</v-icon>
-                                Tambah
-                              </v-btn>
-                            </template>
-                            <span class="text-caption">(Ctrl + I)</span>
-                          </v-tooltip>
-                        </v-app-bar>
-
-                        <v-data-table
-                          :headers="gridItem.columns"
-                          :items="gridItem.data"
-                          :items-per-page="-1"
-                          height="300"
-                          class="elevation-1"
-                          dense
-                          disable-sort
-                          fixed-header
-                          hide-default-footer
-                        >
-                          <template v-slot:[`item.action`]="{ item }">
-                            <v-tooltip bottom>
-                              <template v-slot:activator="{ on, attrs }">
-                                <v-btn
-                                  v-bind="attrs"
-                                  v-on="on"
-                                  :disabled="isVoid || hasRelatedTrans"
-                                  color="red"
-                                  icon
-                                  small
-                                  @click="removeItem(item)"
-                                >
-                                  <v-icon small>mdi-close-thick</v-icon>
-                                </v-btn>
-                              </template>
-                              <span class="text-caption">Delete</span>
-                            </v-tooltip>
-                          </template>
-                          <template v-slot:[`item.itemId`]="{ item }">
-                            <v-autocomplete
-                              ref="itemId"
-                              v-model="item.itemId"
-                              :items="items"
-                              :readonly="hasRelatedTrans"
-                              :rules="rules.required"
-                              item-text="initial"
-                              item-value="id"
-                              class="text-body-2 mt-0"
-                              dense
-                              required
-                              @change="itemIdChange(item)"
-                            >
-                              <template v-slot:append>
-                                <v-btn
-                                  :disabled="hasRelatedTrans"
-                                  color="primary"
-                                  icon
-                                  x-small
-                                  @click="showFindItemDialog(item)"
-                                >
-                                  <v-icon>
-                                    mdi-settings-helper
-                                  </v-icon>
-                                </v-btn>
-                              </template>
-                            </v-autocomplete>
-                          </template>
-                          <template v-slot:[`item.warehouseInitial`]="{ item }">
-                            <v-autocomplete
-                              v-model="item.warehouseCode"
-                              :disabled="hasRelatedTrans"
-                              :items="warehouses"
-                              :rules="rules.required"
-                              item-text="initial"
-                              item-value="code"
-                              class="text-body-2 text-right mt-0"
-                              dense
-                              required
-                            ></v-autocomplete>
-                          </template>
-                          <template v-slot:[`item.warehouseInitialIn`]="{ item }">
-                            <v-autocomplete
-                              v-model="item.warehouseCodeIn"
-                              :disabled="hasRelatedTrans"
-                              :items="warehouses"
-                              item-text="initial"
-                              item-value="code"
-                              class="text-body-2 text-right mt-0"
-                              dense
-                            ></v-autocomplete>
-                          </template>
-                          <template v-slot:[`item.itemReplacement`]="{ item }">
-                            <v-text-field
-                              v-model="item.itemReplacement"
-                              class="text-body-2 mt-0"
-                              readonly
-                              dense
-                            >
-                              <template v-slot:append>
+                        
+                        <v-row dense>
+                          <v-col cols="12">
+                            <v-app-bar dense flat>
+                              <v-spacer></v-spacer>
+                              <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
                                   <v-btn
-                                    color="primary"
-                                    icon
-                                    x-small
-                                    @click="showAddItemReplacement(item)"
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    v-shortkey="['ctrl', 'i']"
+                                    :disabled="isVoid || hasRelatedTrans"
+                                    class="blue--text"
+                                    small
+                                    tile
+                                    @click="addItem"
+                                    @shortkey="addItem"
                                   >
-                                    <v-icon>
-                                      mdi-settings-helper
-                                    </v-icon>
+                                    <v-icon left>mdi-plus</v-icon>
+                                    Tambah
                                   </v-btn>
                                 </template>
-                            </v-text-field>
-                              
-                          </template>
-                          <template v-slot:[`item.qty`]="{ item }">
-                            <v-currency-field
-                              v-model="item.qty"
-                              :decimal-length="0"
-                              :min="1"
-                              :readonly="hasRelatedTrans"
-                              class="text-body-2 text-right mt-0"
+                                <span class="text-caption">(Ctrl + I)</span>
+                              </v-tooltip>
+                            </v-app-bar>
+                            <v-data-table
+                              :headers="gridItem.columns"
+                              :items="gridItem.data"
+                              :items-per-page="-1"
+                              height="300"
+                              class="elevation-1"
                               dense
-                              @change="calcItemPrice(item)"
-                            ></v-currency-field>
-                          </template>
-                          <template v-slot:[`item.unitName`]="{ item }">
-                            <v-autocomplete
-                              v-model="item.unitId"
-                              :items="item.units"
-                              item-text="unitEquivalent"
-                              item-value="id"
-                              class="text-body-2 mt-0"
+                              disable-sort
+                              fixed-header
+                              hide-default-footer
+                            >
+                              <template v-slot:[`item.action`]="{ item }">
+                                <v-tooltip bottom>
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-btn
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      :disabled="isVoid || hasRelatedTrans"
+                                      color="red"
+                                      icon
+                                      small
+                                      @click="removeItem(item)"
+                                    >
+                                      <v-icon small>mdi-close-thick</v-icon>
+                                    </v-btn>
+                                  </template>
+                                  <span class="text-caption">Delete</span>
+                                </v-tooltip>
+                              </template>
+                              <template v-slot:[`item.itemId`]="{ item }">
+                                <v-autocomplete
+                                  ref="itemId"
+                                  v-model="item.itemId"
+                                  :items="items"
+                                  :readonly="hasRelatedTrans"
+                                  :rules="rules.required"
+                                  item-text="initial"
+                                  item-value="id"
+                                  class="text-body-2 mt-0"
+                                  dense
+                                  required
+                                  @change="itemIdChange(item)"
+                                >
+                                  <template v-slot:append>
+                                    <v-btn
+                                      :disabled="hasRelatedTrans"
+                                      color="primary"
+                                      icon
+                                      x-small
+                                      @click="showFindItemDialog(item)"
+                                    >
+                                      <v-icon>
+                                        mdi-settings-helper
+                                      </v-icon>
+                                    </v-btn>
+                                  </template>
+                                </v-autocomplete>
+                              </template>
+                              <template v-slot:[`item.warehouseInitial`]="{ item }">
+                                <v-autocomplete
+                                  v-model="item.warehouseCode"
+                                  :disabled="hasRelatedTrans"
+                                  :items="warehouses"
+                                  :rules="rules.required"
+                                  item-text="initial"
+                                  item-value="code"
+                                  class="text-body-2 text-right mt-0"
+                                  dense
+                                  required
+                                ></v-autocomplete>
+                              </template>
+                              <template v-slot:[`item.warehouseInitialIn`]="{ item }">
+                                <v-autocomplete
+                                  v-model="item.warehouseCodeIn"
+                                  :disabled="hasRelatedTrans"
+                                  :items="warehouses"
+                                  item-text="initial"
+                                  item-value="code"
+                                  class="text-body-2 text-right mt-0"
+                                  dense
+                                ></v-autocomplete>
+                              </template>
+                              <template v-slot:[`item.qty`]="{ item }">
+                                <v-currency-field
+                                  v-model="item.qty"
+                                  :decimal-length="0"
+                                  :min="1"
+                                  :readonly="hasRelatedTrans"
+                                  class="text-body-2 text-right mt-0"
+                                  dense
+                                  @change="calcItemPrice(item)"
+                                ></v-currency-field>
+                              </template>
+                              <template v-slot:[`item.unitName`]="{ item }">
+                                <v-autocomplete
+                                  v-model="item.unitId"
+                                  :items="item.units"
+                                  item-text="unitEquivalent"
+                                  item-value="id"
+                                  class="text-body-2 mt-0"
+                                  dense
+                                  required
+                                  @change="unitItemChange(item)"
+                                ></v-autocomplete>
+                              </template>
+                              <template v-slot:[`item.unitPrice`]="{ item }">
+                                <v-currency-field
+                                  v-model="item.unitPrice"
+                                  :readonly="hasRelatedTrans"
+                                  class="text-body-2 text-right mt-0"
+                                  dense
+                                  @change="calcItemPrice(item)"
+                                ></v-currency-field>
+                              </template>
+                              <template v-slot:[`item.taxAmount`]="{ item }">
+                                {{ item.taxAmount | formatCurrency }}
+                              </template>
+                              <template v-slot:[`item.nettPrice`]="{ item }">
+                                {{ item.nettPrice | formatCurrency }}
+                              </template>
+                              <template v-slot:[`item.total`]="{ item }">
+                                {{ item.total | formatCurrency }}
+                              </template>
+                            </v-data-table>
+                          </v-col>
+                          
+                        </v-row>
+                        <v-row dense v-if="data.type === 3">
+                          <v-col cols="12">
+                            <v-app-bar dense flat>
+                              <v-spacer></v-spacer>
+                              <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-btn
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    v-shortkey="['ctrl', 'alt', 'i']"
+                                    :disabled="isVoid || hasRelatedTrans"
+                                    class="blue--text"
+                                    small
+                                    tile
+                                    @click="addDiffItem"
+                                    @shortkey="addDiffItem"
+                                  >
+                                    <v-icon left>mdi-plus</v-icon>
+                                    Tambah
+                                  </v-btn>
+                                </template>
+                                <span class="text-caption">(Ctrl + Alt + I)</span>
+                              </v-tooltip>
+                              </v-app-bar>
+                              <v-data-table
+                              :headers="gridDiffItem.columns"
+                              :items="gridDiffItem.data"
+                              :items-per-page="-1"
+                              height="300"
+                              class="elevation-1"
                               dense
-                              required
-                              @change="unitItemChange(item)"
-                            ></v-autocomplete>
-                          </template>
-                          <template v-slot:[`item.unitPrice`]="{ item }">
-                            <v-currency-field
-                              v-model="item.unitPrice"
-                              :readonly="hasRelatedTrans"
-                              class="text-body-2 text-right mt-0"
-                              dense
-                              @change="calcItemPrice(item)"
-                            ></v-currency-field>
-                          </template>
-                          <template v-slot:[`item.disc`]="{ item }">
-                            <v-currency-field
-                              v-model="item.disc"
-                              :readonly="hasRelatedTrans"
-                              class="text-body-2 text-right mt-0"
-                              dense
-                              @change="calcItemPrice(item)"
-                            ></v-currency-field>
-                          </template>
-                          <template v-slot:[`item.taxAmount`]="{ item }">
-                            {{ item.taxAmount | formatCurrency }}
-                          </template>
-                          <template v-slot:[`item.nettPrice`]="{ item }">
-                            {{ item.nettPrice | formatCurrency }}
-                          </template>
-                          <template v-slot:[`item.total`]="{ item }">
-                            {{ item.total | formatCurrency }}
-                          </template>
-                        </v-data-table>
+                              disable-sort
+                              fixed-header
+                              hide-default-footer
+                            >
+                              <template v-slot:[`item.action`]="{ item }">
+                                <v-tooltip bottom>
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-btn
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      color="red"
+                                      icon
+                                      small
+                                      :disabled="isVoid || hasRelatedTrans"
+                                      @click="removeDiffItem(item)"
+                                    >
+                                      <v-icon small>mdi-close-thick</v-icon>
+                                    </v-btn>
+                                  </template>
+                                  <span class="text-caption">Delete</span>
+                                </v-tooltip>
+                              </template>
+                              <template v-slot:[`item.itemId`]="{ item }">
+                                <v-autocomplete
+                                  ref="itemId"
+                                  v-model="item.itemId"
+                                  :items="items"
+                                  :rules="rules.required"
+                                  item-text="initial"
+                                  item-value="id"
+                                  class="text-body-2 mt-0"
+                                  dense
+                                  required
+                                  @change="itemIdChange(item)"
+                                >
+                                  <template v-slot:append>
+                                    <v-btn
+                                      color="primary"
+                                      icon
+                                      x-small
+                                      @click="showFindItemDialog(item)"
+                                    >
+                                      <v-icon>
+                                        mdi-settings-helper
+                                      </v-icon>
+                                    </v-btn>
+                                  </template>
+                                </v-autocomplete>
+                              </template>
+                              <template v-slot:[`item.qty`]="{ item }">
+                                <v-currency-field
+                                  v-model="item.qty"
+                                  :decimal-length="0"
+                                  :min="1"
+                                  class="text-body-2 text-right mt-0"
+                                  dense
+                                  @change="calcItemPrice(item)"
+                                ></v-currency-field>
+                              </template>
+                              <template v-slot:[`item.unitName`]="{ item }">
+                                <v-autocomplete
+                                  v-model="item.unitId"
+                                  :items="item.units"
+                                  :rules="rules.required"
+                                  item-text="unitEquivalent"
+                                  item-value="id"
+                                  class="text-body-2 mt-0"
+                                  dense
+                                  required
+                                  @change="unitItemChange(item)"
+                                ></v-autocomplete>
+                              </template>
+                              <template v-slot:[`item.unitPrice`]="{ item }">
+                                <v-currency-field
+                                  v-model="item.unitPrice"
+                                  class="text-body-2 text-right mt-0"
+                                  dense
+                                  @change="calcItemPrice(item)"
+                                ></v-currency-field>
+                              </template>
+                            </v-data-table>
+                          </v-col>
+                        </v-row>
                       </v-card>
                     </v-tab-item>
 
@@ -652,7 +745,108 @@
                         </template>
                       </v-data-table>
                     </v-tab-item>
+                    <v-tab-item
+                      key="tax"
+                      transition="false"
+                    >
+                      <v-card>
+                        <v-card-text>
+                          <v-row no-gutters>
+                            <v-col cols="12" md="6">
+                              <v-text-field
+                                v-model="data.taxInvoiceNo"
+                                label="No Faktur Pajak"
+                                class="mt-0"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="12" md="6" class="pl-md-1">
+                              <v-menu
+                                v-model="menu.taxInvoiceDate"
+                                :close-on-content-click="false"
+                                transition="scale-transition"
+                                min-width="290px"
+                                offset-y
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    :value="formatInvoiceDate"
+                                    label="Tanggal Faktur Pajak"
+                                    class="mt-0"
+                                    readonly
+                                  ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                  v-model="data.taxInvoiceDate"
+                                  no-title
+                                  scrollable
+                                  @change="menu.taxInvoiceDate = false"
+                                ></v-date-picker>
+                              </v-menu>
+                            </v-col>
+                          </v-row>
+                          <v-row dense>
+                            <v-col cols="12" md="6">
+                              <v-currency-field
+                                label="Sebelum Pajak"
+                                v-model="data.dpp"
+                                readonly
+                                class="text-body-2 text-right mt-0"
+                              ></v-currency-field>
+                            </v-col>
+                            <v-col cols="12" md="6" class="pl-md-1">
+                              <v-currency-field
+                                label="Pajak"
+                                v-model="data.taxAmount"
+                                readonly
+                                class="text-body-2 text-right mt-0"
+                              ></v-currency-field>
+                            </v-col>
+                          </v-row>
+                        </v-card-text>
+                      </v-card>
+                    </v-tab-item>
                   </v-tabs>
+                </v-card>
+              </v-col>
+            </v-row>
+            <v-row dense v-if="data.type === 3">
+              <v-col cols="12" md="12">
+                <v-card>
+                  <v-card-text>
+                    <v-row dense>
+                      <v-col cols="4" md="4">   
+                        <v-currency-field
+                          v-model="data.totalOut"
+                          :decimal-length="0"
+                          class="text-right"
+                          :readonly="true"
+                          label="Harga Barang Keluar"
+                        ></v-currency-field>             
+                      </v-col>
+                      <v-col cols="12" md="4">
+                        <v-currency-field
+                          v-model="data.totalIn"
+                          :decimal-length="0"
+                          class="text-right"
+                          :readonly="true"
+                          label="Harga Barang Masuk"
+                        ></v-currency-field>
+                      </v-col>
+                      <v-col cols="12" md="4">
+                        <v-currency-field
+                          v-model="data.difference"
+                          :min="-Number.MAX_SAFE_INTEGER"
+                          :max="Number.MAX_SAFE_INTEGER"
+                          :allow-negative="true"
+                          class="text-right"
+                          :readonly="true"
+                          label="Selisih"
+                        ></v-currency-field>
+                      </v-col>
+                    </v-row>
+                  </v-card-text>
                 </v-card>
               </v-col>
             </v-row>
@@ -670,11 +864,6 @@
       ref="findItem"
       @dblclick:row="bindItemData"
     ></find-item>
-    <add-item-replacement 
-      ref="addItemReplacement" 
-      :items="items"
-      @save="saveItemReplacement" 
-    ></add-item-replacement>
   </div>
 </template>
 
@@ -689,14 +878,12 @@ import api from '@/services/axios.service'
 import Confirm from '@/components/dialog/Confirm'
 import FindSupplier from '@/components/dialog/general/FindSupplier'
 import FindItem from '@/components/dialog/inventory/FindItem'
-import AddItemReplacement from '../../../components/dialog/purchase/AddItemReplacement.vue'
 
 export default {
   components: {
     Confirm,
     FindSupplier,
-    FindItem,
-    AddItemReplacement
+    FindItem
   },
 
   data: () => ({
@@ -713,12 +900,11 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Kode Transaksi', value: 'code', divider: true, width: '160' },
-        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120' },
+        { text: 'Kode', value: 'code', divider: true, width: '160' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200' },
         { text: 'Kode Penerimaan Barang', value: 'rcvCode', divider: true, width: '100' },
-        { text: 'Dikirim Oleh', value: 'shippedInitial', divider: true, width: '200' },
-        { text: 'Ref. No.', value: 'refNo', width: '150' }
+        { text: 'Dikirim Oleh', value: 'shippedInitial', divider: true, width: '200' }
       ],
       data: [],
       options: {
@@ -732,10 +918,21 @@ export default {
       columns: [],
       data: []
     },
+    gridDiffItem: {
+      columns: [
+        { value: 'action', sortable: false, divider: true, width: '90' },
+        { text: 'Item', value: 'itemId', divider: true, width: '100' },
+        { text: 'Name', value: 'itemName', divider: true, width: '280' },
+        { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
+        { text: 'Unit', value: 'unitName', divider: true, width: '90' },
+        { text: 'Unit Price', value: 'unitPrice', align: 'right', divider: true, width: '120' }
+      ],
+      data: []
+    },
     gridRelated: {
       columns: [
-        { text: 'Kode Transaksi', value: 'code', divider: true },
-        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true },
+        { text: 'Kode', value: 'code', divider: true },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true },
         { text: 'Status', value: 'mark' }
       ],
       data: []
@@ -743,7 +940,7 @@ export default {
     valid: false,
     defTaxInc: false,
     defWarehouseCode: '',
-    types: [{ id: 1, name: 'Exchange Memo' }, { id: 2, name: 'Exchange Same Item' }, { id: 3, name: 'Exchange Diff Item' }],
+    types: [{ id: 1, name: 'Tukar Memo' }, { id: 2, name: 'Tukar Barang Sama' }, { id: 3, name: 'Tukar Barang Beda' }],
     employees: [],
     suppliers: [],
     warehouses: [],
@@ -780,6 +977,9 @@ export default {
     formatReturnDate() {
       return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
     },
+    formatInvoiceDate() {
+      return this.data.taxInvoiceDate ? format(parseISO(this.data.taxInvoiceDate), 'dd-MMM-yyyy') : ''
+    },
     hasRelatedTrans() {
       return (this.gridRelated?.data?.length > 0)
     },
@@ -805,10 +1005,13 @@ export default {
         approveBy: null,
         dpp: 0,
         subTotal: 0,
-        finalDisc: 0,
         includeTax: this.defTaxInc,
         taxAmount: 0,
-        total: 0
+        totalIn: 0,
+        totalOut: 0,
+        difference: 0,
+        nonTax: this.defNonTax,
+        taxIncluded: this.defTaxInc
       }
       this.gridItem.data = []
       this.gridRelated.data = []
@@ -860,16 +1063,36 @@ export default {
         params: {
           param: 'systemParameter',
           fieldNames: 'code,value',
-          filters: JSON.stringify([{
-            field: 'code',
-            operator: 'equal',
-            keyword: 'DEF_PURC_TAX_INC'
-          }]),
+          filters: JSON.stringify([
+            {
+              field: 'code',
+              operator: 'equal',
+              keyword: 'DEF_SLS_RTN_NONTAX'
+            }
+          ]),
           includeMetaData: false
         }
       })
         .then(response => {
           this.defTaxInc = (response.data.tableData[0].value === '1')
+        })
+
+      api.getAll(this.endpoint.master, {
+        params: {
+          param: 'systemParameter',
+          fieldNames: 'code,value',
+          filters: JSON.stringify([
+            {
+              field: 'code',
+              operator: 'equal',
+              keyword: 'DEF_SLS_RTN_NONTAX'
+            }
+          ]),
+          includeMetaData: false
+        }
+      })
+        .then(response => {
+          this.defNonTax = (response.data.tableData[0].value === '1')
         })
     },
     getSupplierLists() {
@@ -984,9 +1207,17 @@ export default {
         params: { code: item.code }
       })
         .then(response => {
-          this.gridItem.data = response.data
+          this.gridItem.data = response.data.tableData
+          this.calcPrice()  
         })
-
+      // Get item details
+      api.getAll(`${this.endpoint.purchase.return}/diff-item`, {
+        params: { code: item.code }
+      })
+        .then(response => {
+          this.gridDiffItem.data = response.data.tableData  
+          this.calcPrice()  
+        })
       // Get related transaction details
       api.getAll(`${this.endpoint.purchase.return}/related-trans`, {
         params: { code: item.code }
@@ -1018,13 +1249,13 @@ export default {
     async save(closeDialog) {
       if (!this.dialog.add) return
       if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
 
       const data = this.data
       data.itemDetails = this.gridItem.data
-
+      data.currCode = 'IDR'
       let result = { success: false, message: '' }
       if (data.action === 'add') {
         const resp = await api.create(this.endpoint.purchase.return, data)
@@ -1069,15 +1300,12 @@ export default {
           unitId: null,
           unitName: null,
           unitPrice: 0,
-          disc: 0,
           taxAmount: 0,
           nettPrice: 0,
           total: 0,
           dpp: 0,
           totTax: 0,
           totDPP: 0,
-          itemReplacement: null,
-          itemReplacements: [],
           state: 'A'
         }
         this.gridItem.data.push(item)
@@ -1087,11 +1315,43 @@ export default {
         }, 0)
       }
     },
+    addDiffItem() {
+      const item = {
+        id: randomNumber(-1, -1000),
+        code: this.data.code,
+        itemId: null,
+        itemName: null,
+        qty: 1,
+        qtyDlv: 0,
+        length: null,
+        width: null,
+        height: null,
+        weight: null,
+        dimensionMeasurement: null,
+        weightMeasurement: null,
+        units: [],
+        uomId: null,
+        oldUnitId: null,
+        oldUnitName: null,
+        oldUnitPrice: 0,
+        unitId: null,
+        unitName: null,
+        unitPrice: 0,
+        taxAmount: 0,
+        nettPrice: 0,
+        total: 0,
+        dpp: 0,
+        totTax: 0,
+        totDPP: 0,
+        state: 'A'
+      }
+      this.gridDiffItem.data.push(item)
+    },
     async removeItem(item) {
       if (
         await this.$refs.confirm.open(
-          'Delete?',
-          'Are you sure want to delete this data?')
+          'Hapus?',
+          'Apakah anda yakin ingin menghapus data ini?')
       ) {
         const idx = this.gridItem.data.findIndex(i => i.id === item.id)
         this.gridItem.data.splice(idx, 1)
@@ -1100,17 +1360,26 @@ export default {
         this.calcPrice()
       }
     },
+    async removeDiffItem(item) {
+      if (
+        await this.$refs.confirm.open(
+          'Hapus?',
+          'Apakah anda yakin ingin menghapus data ini?')
+      ) {
+        const idx = this.gridDiffItem.data.findIndex(i => i.id === item.id)
+        this.gridDiffItem.data.splice(idx, 1)
+      }
+    },
     typeChange() {
       if (this.data.type === 1) {
         this.gridItem.columns = [
           { value: 'action', sortable: false, divider: true, width: '90' },
-          { text: 'ID Barang', value: 'itemId', divider: true, width: '100' },
+          { text: 'Inisial', value: 'itemId', divider: true, width: '100' },
           { text: 'Nama', value: 'itemName', divider: true, width: '280' },
-          { text: 'Lokasi', value: 'warehouseInitial', divider: true, width: '180' },
+          { text: 'Gudang', value: 'warehouseInitial', divider: true, width: '180' },
           { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
           { text: 'Satuan', value: 'unitName', divider: true, width: '90' },
           { text: 'Harga Satuan', value: 'unitPrice', align: 'right', divider: true, width: '120' },
-          { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '120' },
           { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '120' },
           { text: 'Harga Bersih', value: 'nettPrice', align: 'right', divider: true, width: '120' },
           { text: 'Total Harga', value: 'total', align: 'right', divider: true, width: '120' }
@@ -1118,19 +1387,18 @@ export default {
       } else if (this.data.type === 2) {
         this.gridItem.columns = [
           { value: 'action', sortable: false, divider: true, width: '90' },
-          { text: 'ID Barang', value: 'itemId', divider: true, width: '100' },
+          { text: 'Inisial', value: 'itemId', divider: true, width: '100' },
           { text: 'Nama', value: 'itemName', divider: true, width: '280' },
           { text: 'Lokasi Keluar', value: 'warehouseInitial', divider: true, width: '180' },
           { text: 'Lokasi Masuk', value: 'warehouseInitialIn', divider: true, width: '180' },
           { text: 'Qty Retur', value: 'qty', align: 'right', divider: true, width: '90' },
-          { text: 'Qty Masuk.', value: 'qtyRcv', align: 'right', divider: true, width: '90' },
+          { text: 'Qty Masuk', value: 'qtyRcv', align: 'right', divider: true, width: '90' },
           { text: 'Satuan', value: 'unitName', divider: true, width: '90' }
         ]
       } else {
         this.gridItem.columns = [
           { value: 'action', sortable: false, divider: true, width: '90' },
-          { text: 'ID Barang', value: 'itemId', divider: true, width: '100' },
-          { text: 'Barang Pengganti', value: 'itemReplacement', divider: true, width: '100' },
+          { text: 'Inisial', value: 'itemId', divider: true, width: '100' },
           { text: 'Nama', value: 'itemName', divider: true, width: '280' },
           { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
           { text: 'Satuan', value: 'unitName', divider: true, width: '90' },
@@ -1140,7 +1408,33 @@ export default {
           { text: 'Total Harga', value: 'total', align: 'right', divider: true, width: '120' }
         ]
       }
+      this.data.taxIncluded = this.defTaxInc
+      this.data.nonTax = this.defNonTax
       this.gridItem.data = []
+      this.gridDiffItem.data = []
+      this.data.difference = 0
+      this.data.totalIn = 0
+      this.data.totalOut = 0
+      this.calcPrice()
+    },
+    nonTaxChange() {
+      if (this.data.nonTax) {
+        for (let i = 0; i < this.gridItem.data.length; i++) {
+          this.gridItem.data[i].taxAmount = 0 
+        }
+        for (let i = 0; i < this.gridDiffItem.data.length; i++) {
+          this.gridDiffItem.data[i].taxAmount = 0 
+        }
+        this.data.taxIncluded = false
+      } else {
+        for (let i = 0; i < this.gridItem.data.length; i++) {
+          this.gridItem.data[i].taxAmount = this.gridItem.data[i].taxAmountTemp 
+        }
+        for (let i = 0; i < this.gridDiffItem.data.length; i++) {
+          this.gridDiffItem.data[i].taxAmount = 0 
+        }
+      }
+      this.calcTax()
     },
     supCodeChange() {
       const supplier = this.suppliers.find(s => s.code === this.data.supCode)
@@ -1169,9 +1463,9 @@ export default {
         item.unitId = data_i.uomBuyId
         item.unitName = data_i.uomBuyName
         item.unitPrice = data_i.buyPrice
-        item.disc = 0
         item.taxId = data_i.purchaseTaxId
         item.taxAmount = 0
+        item.taxAmountTemp = 0
         item.nettPrice = data_i.buyPrice
         item.dpp = data_i.buyPrice
         if (item.state !== 'A') {
@@ -1224,20 +1518,24 @@ export default {
       }
     },
     calcItemTax(item) {
+      
       const tax = this.taxes.find(t => t.id === item.taxId)
       if (tax) {
         if (this.data.includeTax) {
-          item.taxAmount = Math.round((item.unitPrice - item.disc) - ((item.unitPrice - item.disc) / (1 + (tax.rate / 100))))
-          item.nettPrice = item.unitPrice - item.disc
-          item.dpp = item.unitPrice - item.disc - item.taxAmount
+          item.taxAmount = Math.round((item.unitPrice) - ((item.unitPrice) / (1 + (tax.rate / 100))))
+          item.taxAmountTemp = item.taxAmount
+          item.nettPrice = item.unitPrice
+          item.dpp = item.unitPrice - item.taxAmount
         } else {
-          item.taxAmount = Math.round((item.unitPrice - item.disc) * (tax.rate / 100))
-          item.nettPrice = item.unitPrice - item.disc + item.taxAmount
-          item.dpp = item.unitPrice - item.disc
+          item.taxAmount = Math.round((item.unitPrice) * (tax.rate / 100))
+          item.taxAmountTemp = item.taxAmount
+          item.nettPrice = item.unitPrice + item.taxAmount
+          item.dpp = item.unitPrice
         }
       }
     },
     calcItemPrice(item, calcPrice = true) {
+      
       this.calcItemTax(item)
       item.total = item.qty * item.nettPrice
       item.totTax = item.qty * item.taxAmount
@@ -1254,10 +1552,31 @@ export default {
       this.calcPrice()
     },
     calcPrice() {
-      this.data.subTotal = _sumBy(this.gridItem.data, 'total')
-      this.data.taxAmount = _sumBy(this.gridItem.data, 'totTax')
-      this.data.dpp = _sumBy(this.gridItem.data, 'totDPP')
-      this.data.total = this.data.subTotal + this.data.taxAmount
+      
+
+      this.data.subTotalOut = _sumBy(this.gridItem.data, 'total')
+      this.data.taxAmountOut = _sumBy(this.gridItem.data, 'totTax')
+      this.data.dppOut = _sumBy(this.gridItem.data, 'totDPP')
+
+      this.data.subTotalIn = _sumBy(this.gridDiffItem.data, 'total')
+      this.data.taxAmountIn = _sumBy(this.gridDiffItem.data, 'totTax')
+      this.data.dppIn = _sumBy(this.gridDiffItem.data, 'totDPP')
+      
+      this.data.taxAmount = this.data.taxAmountIn + this.data.taxAmountOut
+      this.data.dpp = this.data.dppOut + this.data.dppIn
+
+      this.calcGrandTotal()
+    },
+    calcGrandTotal() {
+      
+      if (this.data.includeTax) {
+        this.data.totalOut = this.data.subTotalOut 
+        this.data.totalIn = this.data.subTotalIn 
+      } else {
+        this.data.totalOut = this.data.subTotalOut + this.data.taxAmountOut
+        this.data.totalIn = this.data.subTotalIn  + this.data.taxAmountIn
+      }
+      this.data.difference = this.data.totalOut - this.data.totalIn
     },
     showFindSupDialog() {
       this.$refs.findSup.open()
@@ -1265,9 +1584,7 @@ export default {
     showFindItemDialog(item) {
       this.$refs.findItem.open(item)
     },
-    showAddItemReplacement(item) {
-      this.$refs.addItemReplacement.open(item)
-    },
+
     bindSupData(item) {
       this.data.supCode = item.code
       this.data.supName = item.name
@@ -1277,13 +1594,6 @@ export default {
     },
     bindItemData(rowItem) {
       this.itemIdChange(rowItem)
-    },
-    saveItemReplacement(rowItem, itemReplacements) {
-      const item = this.gridItem.data.find(x => x.id === rowItem.id)
-      if (item) {
-        item.itemReplacements = itemReplacements
-        item.itemReplacement = itemReplacements.length > 1 ? 'Multi Item' : itemReplacements[0].itemName
-      }
     }
   }
 }
