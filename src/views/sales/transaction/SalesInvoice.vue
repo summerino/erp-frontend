@@ -695,7 +695,7 @@ export default {
     gridDet: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '1%' },
-        { text: 'No. Pengiriman', value: 'doCode', divider: true, width: '200' },
+        { text: 'Kode Pengiriman', value: 'doCode', divider: true, width: '200' },
         { text: 'Total Sebelum Pajak', value: 'dpp', align: 'right', divider: true, width: '120' },
         { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '120' },
         { text: 'Biaya Pengiriman', value: 'shipmentFee', align: 'right', divider: true, width: '120' },
