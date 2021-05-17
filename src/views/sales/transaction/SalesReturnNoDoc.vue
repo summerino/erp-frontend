@@ -688,6 +688,7 @@
                                   v-model="item.unitId"
                                   :items="item.units"
                                   :rules="rules.required"
+                                  :readonly="hasRelatedTrans"
                                   item-text="unitEquivalent"
                                   item-value="id"
                                   class="text-body-2 mt-0"
@@ -1244,8 +1245,10 @@ export default {
 
       const data = this.data
       data.itemDetails = this.gridItem.data
+      data.diffItemDetails = this.gridDiffItem.data
       data.currCode = 'IDR'
-      if (!data.itemDetails) {
+
+      if (data.itemDetails.length === 0 || (data.type === 3 && data.diffItemDetails.length === 0)) {
         this.$store.dispatch('app/showInfo', 'Detil tidak boleh kosong.')
         return
       }
