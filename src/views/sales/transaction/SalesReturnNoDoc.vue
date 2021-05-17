@@ -975,7 +975,6 @@ export default {
 
   methods: {
     reset(resetValidation = true) {
-      debugger
       this.data = {
         action: '',
         code: null,
