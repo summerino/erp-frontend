@@ -7,7 +7,7 @@
             <v-text-field
               v-model="grid.search"
               append-icon="mdi-magnify"
-              label="Pencarian..."
+              label="Cari..."
               class="font-weight-regular mt-0 pt-0"
               single-line
               @keyup.enter="getList()"
@@ -30,7 +30,7 @@
                   @shortkey="add"
                 >
                   <v-icon left>mdi-plus</v-icon>
-                  Tambah Baru
+                  Data Baru
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + Alt + N)</span>
@@ -68,7 +68,7 @@
             <span>Ubah</span>
           </v-tooltip>
           <v-tooltip bottom>
-            <template v-if="item.isActive" v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ on, attrs }">
               <v-btn
                 v-bind="attrs"
                 v-on="on"
@@ -80,37 +80,14 @@
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <template v-else v-slot:activator="{ on, attrs }">
-              <v-btn
-                v-bind="attrs"
-                v-on="on"
-                icon
-                small
-                color="green"
-                @click="reactivate(item)"
-              >
-                <v-icon small>mdi-check</v-icon>
-              </v-btn>
-            </template>
-            <span v-if="item.isActive">Nonaktifkan</span>
-            <span v-else>Aktifkan Kembali</span>
+            <span>Hapus</span>
           </v-tooltip>
         </template>
-        <template v-slot:[`item.isActive`]="{ item }">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-icon 
-                v-bind="attrs" 
-                v-on="on" 
-                :color="item.isActive === true ? 'green' : 'red'"
-              >
-                {{ item.isActive === true ? 'mdi-toggle-switch-outline' : 'mdi-toggle-switch-off-outline' }}
-              </v-icon>
-            </template>
-            <span class="text-caption">
-                {{ item.isActive === true ? 'Aktif' : 'Nonaktif' }}
-            </span>
-          </v-tooltip>
+        <template v-slot:[`item.maxLoadVolume`]="{ item }">
+          <span style="float:right;">{{ item.maxLoadVolume}} M³</span>
+        </template>
+        <template v-slot:[`item.maxLoadWeight`]="{ item }">
+          <span style="float:right;">{{ item.maxLoadWeight}} Kg</span>
         </template>
       </v-data-table>
     </v-card>
@@ -126,7 +103,7 @@
               v-if="data.action == 'edit'"
               class="text-caption mr-1"
             >
-              Terakhir Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
+              Tanggal Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -195,7 +172,7 @@
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-autocomplete
-                  v-model="data.typeId"
+                  v-model="data.driverId"
                   :items="types"
                   :item-text="item => `${item.initial} - ${item.name}`"
                   :rules="rules.required"
@@ -214,6 +191,7 @@
                   :decimal-length="0"
                   class="mt-0"
                   label="Volume Beban Maksimal"
+                  suffix="M³"
                 ></v-currency-field>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
@@ -222,34 +200,23 @@
                   :decimal-length="0"
                   class="mt-0"
                   label="Bobot Beban Maksimal"
+                  suffix="Kg"
                 ></v-currency-field>
               </v-col>
             </v-row>
 
             <v-row no-gutters>
               <v-col cols="12" md="6" class="pr-md-3">
-                <v-text-field
-                  v-model="data.driverId"
-                  label="Id Sopir"
+                <v-autocomplete
+                  v-model="data.typeId"
+                  :items="drivers"
+                  :item-text="item => `${item.initial} - ${item.firstName} ${item.lastName}`"
+                  :rules="rules.required"
+                  label="Supir"
+                  item-value="id"
                   class="mt-0"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-text-field
-                  v-model="data.helperId1"
-                  label="Id Pembantu 1"
-                  class="mt-0"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
-                <v-text-field
-                  v-model="data.helperId2"
-                  label="Id Pembantu 2"
-                  class="mt-0"
-                ></v-text-field>
+                  required
+                ></v-autocomplete>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-text-field
@@ -292,10 +259,7 @@ export default {
         { text: 'Tipe', value: 'typeName', divider: true, width: '150' },
         { text: 'Volume Beban Maksimal', value: 'maxLoadVolume', divider: true, width: '90' },
         { text: 'Bobot Beban Maksimal', value: 'maxLoadWeight', divider: true, width: '90' },
-        { text: 'Id Sopir', value: 'driverId', divider: true, width: '90' },
-        { text: 'Id Pembantu 1', value: 'helperId1', divider: true, width: '90' },
-        { text: 'Id Pembantu 2', value: 'helperId2', divider: true, width: '90' },
-        { text: 'Status', value: 'isActive', width: '90' }
+        { text: 'Supir', value: 'driverId', divider: true, width: '90' }
       ],
       data: [],
       options: {
@@ -307,12 +271,14 @@ export default {
     },
     valid: false,
     types: [],
-    data: {}
+    data: {},
+    drivers: []
   }),
 
   created: function () {
     this.getList()
     this.getTypesList()
+    this.getDriversList()
   },
 
   mounted: function () {
@@ -403,6 +369,26 @@ export default {
           this.types = response.data.tableData
         })
     },
+    getDriversList() {
+      api.getAll(this.endpoint.general.employee, {
+        params: {
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }]),
+          filters: JSON.stringify([
+            {
+              field: 'type',
+              operator: 'eq',
+              keyword: 3
+            }
+          ])
+        }
+      })
+        .then(response => {
+          this.drivers = response.data.tableData
+        })
+    },
     back() {
       this.main = true
     },
@@ -434,8 +420,8 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Nontaktifkan?',
-          'Apakah anda yakin untuk menonaktifkan data ini?')
+          'Hapus Data?',
+          'Apakah anda yakin untuk menghapus data ini?')
       ) {
         api.delete(this.endpoint.general.vehicle.vehicle, item.id)
           .then(response => {
@@ -446,30 +432,9 @@ export default {
           })
       }
     },
-    async reactivate(item) {
-      if (
-        await this.$refs.confirm.open(
-          'Aktifkan Kembali?',
-          'Apakah anda yakin untuk mengaktifkan kembali data ini?')
-      ) {
-        this.data = {
-          ...item,
-          action: 'edit',
-          isActive: true
-        }
-
-        api.update(this.endpoint.general.vehicle.vehicle, this.data.id, this.data)
-          .then(response => {
-            if (response.data.success) {
-              this.$store.dispatch('app/showSuccess', response.data.message)
-              this.getList()
-            }
-          })
-      }
-    },
     async save() {
       if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Tolong cek kembali bagian formulir yang wajib diisi atau yang terdapat kesalahan.')
+        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
 
