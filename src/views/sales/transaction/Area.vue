@@ -173,13 +173,13 @@
             v-model="valid"
           >
             <v-row dense>
-              <v-col cols="12">
+              <v-col cols="7">
                 <v-card>
                   <v-card-title>Umum</v-card-title>
 
                   <v-card-text>
                     <v-row no-gutters>
-                      <v-col cols="12" md="6">
+                      <v-col cols="12">
                         <v-autocomplete
                           ref="ParentId"
                           v-model="data.parentId"
@@ -193,9 +193,6 @@
                           @change="setPrefix"
                         ></v-autocomplete>
                       </v-col>
-                      <v-col cols="12" md="6" class="pl-md-1">
-                        &nbsp;
-                      </v-col>
                     </v-row>
 
                     <v-row no-gutters>
@@ -203,10 +200,10 @@
                         <v-text-field
                           ref="Initial"
                           v-model="data.initial"
-                          label="ID Wilayah"
+                          label="Inisial"
                           class="mt-0"
-                          counter="20"
-                          :rules="[rules.required[0], rules.max20chars[0]]"
+                          counter="50"
+                          :rules="[rules.required[0], rules.max50chars[0]]"
                           required
                         ></v-text-field>
                       </v-col>
@@ -216,13 +213,68 @@
                           v-model="data.name"
                           label="Nama"
                           class="mt-0"
-                          counter="50"
-                          :rules="[rules.required[0], rules.max50chars[0]]"
+                          counter="100"
+                          :rules="[rules.required[0], rules.max100chars[0]]"
                           required
                         ></v-text-field>
                       </v-col>
                     </v-row>
                   </v-card-text>
+                </v-card>
+              </v-col>
+
+              <v-col cols="5">
+                <v-card>
+                  <v-tabs v-model="tab.advancedItem">
+                    <v-tab key="user">Pengguna</v-tab>
+
+                    <v-tab-item
+                      key="user"
+                      transition="false"
+                    >
+                      <v-card>
+                        <v-card-text>
+                          <v-row no-gutters>
+                            <v-col cols="6">
+                              <v-text-field
+                                v-model="data.createdInitial"
+                                label="Dibuat Oleh"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="6" class="pl-md-1">
+                              <v-text-field
+                                v-model="data.createdDate"
+                                label="Dibuat Tanggal"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                          </v-row>
+                          
+                          <v-row no-gutters>
+                            <v-col cols="6">
+                              <v-text-field
+                                v-model="data.updatedInitial"
+                                label="Diperbarui Oleh"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="6" class="pl-md-1">
+                              <v-text-field
+                                v-model="data.updatedDate"
+                                label="Diperbarui Tanggal"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                          </v-row>
+                        </v-card-text>
+                      </v-card>
+                    </v-tab-item>
+                  </v-tabs>
                 </v-card>
               </v-col>
             </v-row>
@@ -254,6 +306,9 @@ export default {
     },
     menu: {
       receiveDate: false
+    },
+    tab: {
+      advancedItem: null
     },
     hierarchy: {
       data: [],
@@ -307,6 +362,7 @@ export default {
         isActive: null
       }
       this.parentRef = []
+      this.tab.advancedItem = 0
 
       // Reset form validation
       if (resetValidation) {
@@ -352,6 +408,7 @@ export default {
       this.data = {
         ...item,
         action: 'edit',
+        createdDate: format(parseISO(item.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
 

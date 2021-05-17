@@ -205,7 +205,7 @@
                         <v-text-field
                           ref="Initial"
                           v-model="data.initial"
-                          label="ID Barang"
+                          label="Inisial"
                           class="mt-0"
                           :rules="[rules.required[0], rules.max20chars[0]]"
                           required
@@ -351,6 +351,7 @@
                     <v-tab key="dimension">Dimensi</v-tab>
                     <v-tab key="account">Akun</v-tab>
                     <v-tab key="group">Grup</v-tab>
+                    <v-tab key="user">Pengguna</v-tab>
 
                     <v-tab-item
                       key="dimension"
@@ -566,6 +567,53 @@
                         </v-card-text>
                       </v-card>
                     </v-tab-item>
+
+                    <v-tab-item
+                      key="user"
+                      transition="false"
+                    >
+                      <v-card>
+                        <v-card-text>
+                          <v-row no-gutters>
+                            <v-col cols="6">
+                              <v-text-field
+                                v-model="data.createdInitial"
+                                label="Dibuat Oleh"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="6" class="pl-md-1">
+                              <v-text-field
+                                v-model="data.createdDate"
+                                label="Dibuat Tanggal"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                          </v-row>
+                          
+                          <v-row no-gutters>
+                            <v-col cols="6">
+                              <v-text-field
+                                v-model="data.updatedInitial"
+                                label="Diperbarui Oleh"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="6" class="pl-md-1">
+                              <v-text-field
+                                v-model="data.updatedDate"
+                                label="Diperbarui Tanggal"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                          </v-row>
+                        </v-card-text>
+                      </v-card>
+                    </v-tab-item>
                   </v-tabs>
                 </v-card>
               </v-col>
@@ -605,7 +653,7 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'ID Barang', value: 'initial', divider: true, width: '110' },
+        { text: 'Inisial', value: 'initial', divider: true, width: '110' },
         { text: 'Nama', value: 'name', divider: true, width: '270' },
         { text: 'Kategori', value: 'categoryName', divider: true, width: '270' },
         { text: 'Satuan Ukuran', value: 'uomInitial', divider: true, width: '270' },
@@ -911,6 +959,7 @@ export default {
       this.data = {
         ...item,
         action: 'edit',
+        createdDate: format(parseISO(item.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
 

@@ -84,22 +84,6 @@
             <span class="text-caption">Hapus</span>
           </v-tooltip>
         </template>
-        <template v-slot:[`item.isActive`]="{ item }">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-icon 
-                v-bind="attrs" 
-                v-on="on" 
-                :color="item.isActive === true ? 'green' : 'red'"
-              >
-                {{ item.isActive === true ? 'mdi-toggle-switch-outline' : 'mdi-toggle-switch-off-outline' }}
-              </v-icon>
-            </template>
-            <span class="text-caption">
-                {{ item.isActive === true ? 'Aktif' : 'Tidak Aktif' }}
-            </span>
-          </v-tooltip>
-        </template>
       </v-data-table>
     </v-card>
 
@@ -189,36 +173,96 @@
             v-model="valid"
           >
             <v-row dense>
-              <v-col cols="12">
+              <v-col cols="7">
                 <v-card>
                   <v-card-title>Umum</v-card-title>
 
                   <v-card-text>
                     <v-row no-gutters>
-                      <v-col cols="12" md="6" class="pr-md-3">
+                      <v-col cols="12">
                         <v-text-field
                           ref="Initial"
                           v-model="data.initial"
-                          label="ID Grup"
-                          :readonly="data.isActive === false"
-                          class="mt-0"
-                          :rules="[rules.required[0], rules.max20chars[0]]"
-                          required
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" md="6" class="pl-md-3">
-                        <v-text-field
-                          ref="Name"
-                          v-model="data.name"
-                          label="Nama Grup"
+                          label="Inisial"
                           :readonly="data.isActive === false"
                           class="mt-0"
                           :rules="[rules.required[0], rules.max50chars[0]]"
+                          counter="50"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+
+                    <v-row no-gutters>
+                      <v-col cols="12">
+                        <v-text-field
+                          ref="Name"
+                          v-model="data.name"
+                          label="Nama"
+                          :readonly="data.isActive === false"
+                          class="mt-0"
+                          :rules="[rules.required[0], rules.max100chars[0]]"
+                          counter="100"
                           required
                         ></v-text-field>
                       </v-col>
                     </v-row>
                   </v-card-text>
+                </v-card>
+              </v-col>
+
+              <v-col cols="5">
+                <v-card>
+                  <v-tabs v-model="tab.advancedItem">
+                    <v-tab key="user">Pengguna</v-tab>
+
+                    <v-tab-item
+                      key="user"
+                      transition="false"
+                    >
+                      <v-card>
+                        <v-card-text>
+                          <v-row no-gutters>
+                            <v-col cols="6">
+                              <v-text-field
+                                v-model="data.createdInitial"
+                                label="Dibuat Oleh"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="6" class="pl-md-1">
+                              <v-text-field
+                                v-model="data.createdDate"
+                                label="Dibuat Tanggal"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                          </v-row>
+                          
+                          <v-row no-gutters>
+                            <v-col cols="6">
+                              <v-text-field
+                                v-model="data.updatedInitial"
+                                label="Diperbarui Oleh"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="6" class="pl-md-1">
+                              <v-text-field
+                                v-model="data.updatedDate"
+                                label="Diperbarui Tanggal"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                          </v-row>
+                        </v-card-text>
+                      </v-card>
+                    </v-tab-item>
+                  </v-tabs>
                 </v-card>
               </v-col>
             </v-row>
@@ -234,29 +278,29 @@
                       </template>
                       <span class="text-caption">Nilai dari sub grup harus dipisahkan dengan tanda titik koma (;). contoh: "Value1;Value2;Value3" dan seterusnya</span>
                     </v-tooltip>
+                    <v-app-bar dense flat>
+                      <v-spacer></v-spacer>
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn
+                            v-bind="attrs"
+                            v-on="on"
+                            v-shortkey="['ctrl', 'i']"
+                            :disabled="data.isActive === false"
+                            class="blue--text"
+                            small
+                            tile
+                            @click="addItem"
+                            @shortkey="addItem"
+                          >
+                            <v-icon left>mdi-plus</v-icon>
+                            Tambah
+                          </v-btn>
+                        </template>
+                        <span class="text-caption">(Ctrl + I)</span>
+                      </v-tooltip>
+                    </v-app-bar>
                   </v-card-title>
-                  <v-app-bar dense flat>
-                    <v-spacer></v-spacer>
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          v-bind="attrs"
-                          v-on="on"
-                          v-shortkey="['ctrl', 'i']"
-                          :disabled="data.isActive === false"
-                          class="blue--text"
-                          small
-                          tile
-                          @click="addItem"
-                          @shortkey="addItem"
-                        >
-                          <v-icon left>mdi-plus</v-icon>
-                          Tambah
-                        </v-btn>
-                      </template>
-                      <span class="text-caption">(Ctrl + I)</span>
-                    </v-tooltip>
-                  </v-app-bar>
 
                   <v-card-text>
                     <v-data-table
@@ -347,12 +391,14 @@ export default {
     menu: {
       receiveDate: false
     },
+    tab: {
+      advancedItem: null
+    },
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'ID Grup', value: 'initial', divider: true, width: '110' },
-        { text: 'Nama Grup', value: 'name', divider: true, width: '270' },
-        { text: 'Status', value: 'isActive', align: 'center', width: '50' }
+        { text: 'Inisial', value: 'initial', divider: true, width: '110' },
+        { text: 'Nama', value: 'name', divider: true, width: '270' }
       ],
       data: [],
       options: {
@@ -412,6 +458,7 @@ export default {
         isActive: null
       }
       this.gridItem.data = []
+      this.tab.advancedItem = 0
 
       // Reset form validation
       if (resetValidation) {
@@ -473,6 +520,7 @@ export default {
       this.data = {
         ...item,
         action: 'edit',
+        createdDate: format(parseISO(item.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
 
