@@ -7,7 +7,7 @@
             <v-text-field
               v-model="grid.search"
               append-icon="mdi-magnify"
-              label="Pencarian..."
+              label="Cari..."
               class="font-weight-regular mt-0 pt-0"
               single-line
               @keyup.enter="getList()"
@@ -30,7 +30,7 @@
                   @shortkey="add"
                 >
                   <v-icon left>mdi-plus</v-icon>
-                  Tambah Baru
+                  Data Baru
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + Alt + N)</span>
@@ -126,7 +126,7 @@
               v-if="data.action == 'edit'"
               class="text-caption mr-1"
             >
-              Terakhir Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
+              Tanggal Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -278,7 +278,7 @@
                     :rules="rules.max30chars"
                     :counter="30"
                     class="mt-0"
-                    label="Ref. No."
+                    label="No. Ref."
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" md="6" class="pl-md-3">
@@ -806,7 +806,7 @@ export default {
     },
     async save() {
       if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Tolong cek kembali bagian formulir yang wajib diisi atau yang terdapat kesalahan.')
+        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
 

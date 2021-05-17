@@ -188,7 +188,7 @@
                   v-model="data.username"
                   :rules="[rules.required[0], rules.max50chars[0]]"
                   :counter="50"
-                  label="Nama Pengguna"
+                  label="Username"
                   class="mt-0"
                   required
                 ></v-text-field>
@@ -283,7 +283,7 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Nama Pengguna', value: 'username', divider: true, width: '150' },
+        { text: 'Username', value: 'username', divider: true, width: '150' },
         { text: 'Inisial', value: 'initial', divider: true, width: '150' },
         { text: 'Nama', value: 'name', divider: true, width: '200' },
         { text: 'Peran', value: 'roleName', divider: true, width: '150' },
@@ -350,7 +350,7 @@ export default {
         isActive: true,
         updatedInitial: null,
         roleName: null,
-        employeeUsername: null
+        employeeInitial: null
       }
 
       // Reset form validation

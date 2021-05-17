@@ -7,7 +7,7 @@
             <v-text-field
               v-model="grid.search"
               append-icon="mdi-magnify"
-              label="Pencarian..."
+              label="Cari..."
               class="font-weight-regular mt-0 pt-0"
               single-line
               @keyup.enter="getList()"
@@ -30,7 +30,7 @@
                   @shortkey="add"
                 >
                   <v-icon left>mdi-plus</v-icon>
-                  Tambah Baru
+                  Data Baru
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + Alt + N)</span>
@@ -101,9 +101,9 @@
           <span v-else>Perempuan</span>
         </template>
         <template v-slot:[`item.type`]="{ item }">
-          <span v-if="item.type === 1">Karyawaan</span>
+          <span v-if="item.type === 1">Karyawan</span>
           <span v-else-if="item.type === 2">Penjual</span>
-          <span v-else-if="item.type === 3">Sopir</span>
+          <span v-else-if="item.type === 3">Supir</span>
           <span v-else>Tidak diketahui</span>
         </template>
         <template v-slot:[`item.isActive`]="{ item }">
@@ -117,14 +117,14 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="6">
-            <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' }} Karyawaan</span>
+            <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' }} Karyawan</span>
           </v-col>
           <v-col cols="12" md="6" class="text-right">
             <label
               v-if="data.action == 'edit'"
               class="text-caption mr-1"
             >
-              Terakhir Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
+              Tanggal Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -406,7 +406,7 @@ export default {
       search: null
     },
     valid: false,
-    employeeTypeRef: [{text: 'Karyawan', value: 1}, {text: 'Penjual', value: 2}, {text: 'Sopir', value: 3}],
+    employeeTypeRef: [{text: 'Karyawan', value: 1}, {text: 'Penjual', value: 2}, {text: 'Supir', value: 3}],
     maritalStatusRef: [{text: 'Lajang', value: 1}, {text: 'Menikah', value: 2}, {text: 'Bercerai', value: 3}],
     religionRef: [{text: 'Islam', value: 1}, {text: 'Protestant', value: 2}, {text: 'Catholic', value: 3}, {text: 'Buddha', value: 4}, {text: 'Hindu', value: 5}, {text: 'Konghucu', value: 6}, {text: 'Lainnya', value: 7}],
     data: {}
@@ -561,7 +561,7 @@ export default {
     },
     async save() {
       if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Tolong cek kembali bagian formulir yang wajib diisi atau yang terdapat kesalahan.')
+        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
 

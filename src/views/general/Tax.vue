@@ -7,7 +7,7 @@
             <v-text-field
               v-model="grid.search"
               append-icon="mdi-magnify"
-              label="Pencarian..."
+              label="Cari..."
               class="font-weight-regular mt-0 pt-0"
               single-line
               @keyup.enter="getList"
@@ -30,7 +30,7 @@
                   @shortkey="add"
                 >
                   <v-icon left>mdi-plus</v-icon>
-                  Tambah Baru
+                  Data Baru
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + Alt + N)</span>
@@ -68,7 +68,7 @@
             <span>Ubah</span>
           </v-tooltip>
           <v-tooltip bottom>
-            <template v-if="item.isActive" v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ on, attrs }">
               <v-btn
                 v-bind="attrs"
                 v-on="on"
@@ -80,20 +80,7 @@
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <template v-else v-slot:activator="{ on, attrs }">
-              <v-btn
-                v-bind="attrs"
-                v-on="on"
-                icon
-                small
-                color="green"
-                @click="reactivate(item)"
-              >
-                <v-icon small>mdi-check</v-icon>
-              </v-btn>
-            </template>
-            <span v-if="item.isActive">Nonaktifkan</span>
-            <span v-else>Aktifkan Kembali</span>
+            <span>Hapus</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.typeId`]="{ item }">
@@ -101,21 +88,8 @@
           <span v-else-if="item.typeId == 2">Pajak Keluar</span>
           <span v-else-if="item.typeId == 3">PPh</span>
         </template>
-        <template v-slot:[`item.isActive`]="{ item }">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-icon 
-                v-bind="attrs" 
-                v-on="on" 
-                :color="item.isActive === true ? 'green' : 'red'"
-              >
-                {{ item.isActive === true ? 'mdi-toggle-switch-outline' : 'mdi-toggle-switch-off-outline' }}
-              </v-icon>
-            </template>
-            <span class="text-caption">
-                {{ item.isActive === true ? 'Aktif' : 'Nonaktif' }}
-            </span>
-          </v-tooltip>
+        <template v-slot:[`item.rate`]="{ item }">
+          <span style="float:right;">{{ item.rate}} %</span>
         </template>
       </v-data-table>
     </v-card>
@@ -131,7 +105,7 @@
               v-if="data.action == 'edit'"
               class="text-caption mr-1"
             >
-              Terakhir Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
+              Tanggal Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -221,31 +195,24 @@
                 ></v-autocomplete>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
-                <v-text-field
+                <v-currency-field
                   v-model="data.rate"
                   label="Persentase"
                   suffix="%"
                   class="mt-0"
-                ></v-text-field>
+                ></v-currency-field>
               </v-col>
             </v-row>
             <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
+              <v-col cols="12">
                 <v-autocomplete
                   v-model="data.coaCode"
                   :items="coas"
                   :item-text="item => `${item.code} - ${item.name}`"
-                  label="COA"
+                  label="Akun"
                   item-value="code"
                   class="mt-0"
                 ></v-autocomplete>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-text-field
-                  v-model="data.seq"
-                  label="Urutan"
-                  class="mt-0"
-                ></v-text-field>
               </v-col>
             </v-row>
           </v-container>
@@ -278,9 +245,8 @@ export default {
         { text: 'Inisial', value: 'initial', divider: true, width: '150' },
         { text: 'Nama', value: 'name', divider: true, width: '200' },
         { text: 'Tipe', value: 'typeId', divider: true, width: '180' },
-        { text: 'COA', value: 'coaName', divider: true, width: '180' },
-        { text: 'Persentase', value: 'rate', divider: true, width: '150' },
-        { text: 'Status', value: 'isActive', width: '90' }
+        { text: 'Akun', value: 'coaCode', divider: true, width: '180' },
+        { text: 'Persentase', value: 'rate', divider: true, width: '150' }
       ],
       data: [],
       options: {
@@ -360,13 +326,20 @@ export default {
           direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
         })
       }
-      
+
       api.getAll(this.endpoint.general.tax, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
           take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
-          sorts: JSON.stringify(sorts)
+          sorts: JSON.stringify(sorts),
+          filters: JSON.stringify([
+            {
+              field: 'isActive',
+              operator: 'eq',
+              keyword: 'true'
+            }
+          ])
         }
       })
         .then(response => {
@@ -465,7 +438,7 @@ export default {
     },
     async save() {
       if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Tolong cek kembali bagian formulir yang wajib diisi atau yang terdapat kesalahan.')
+        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
 

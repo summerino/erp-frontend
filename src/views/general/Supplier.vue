@@ -7,7 +7,7 @@
             <v-text-field
               v-model="grid.search"
               append-icon="mdi-magnify"
-              label="Pencarian..."
+              label="Cari..."
               class="font-weight-regular mt-0 pt-0"
               single-line
               @keyup.enter="getList()"
@@ -30,7 +30,7 @@
                   @shortkey="add"
                 >
                   <v-icon left>mdi-plus</v-icon>
-                  Tambah Baru
+                  Data Baru
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + Alt + N)</span>
@@ -114,7 +114,7 @@
               v-if="data.action == 'edit'"
               class="text-caption mr-1"
             >
-              Terakhir Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
+              Tanggal Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -269,7 +269,7 @@
                 <v-text-field
                   v-model="data.refNo"
                   class="mt-0"
-                  label="Ref. No."
+                  label="No. Ref."
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -300,7 +300,7 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Code', value: 'code', divider: true, width: '150' },
+        { text: 'Kode', value: 'code', divider: true, width: '150' },
         { text: 'Inisial', value: 'initial', divider: true, width: '150' },
         { text: 'Nama', value: 'name', divider: true, width: '200' },
         { text: 'Tipe', value: 'typeName', divider: true, width: '180' },
@@ -478,7 +478,7 @@ export default {
     },
     async save() {
       if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Tolong cek kembali bagian formulir yang wajib diisi atau yang terdapat kesalahan.')
+        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
 

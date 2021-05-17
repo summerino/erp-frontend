@@ -7,7 +7,7 @@
             <v-text-field
               v-model="grid.search"
               append-icon="mdi-magnify"
-              label="Pencarian..."
+              label="Cari..."
               class="font-weight-regular mt-0 pt-0"
               single-line
               @keyup.enter="getList"
@@ -30,7 +30,7 @@
                   @shortkey="add"
                 >
                   <v-icon left>mdi-plus</v-icon>
-                  Tambah Baru
+                  Data Baru
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + Alt + N)</span>
@@ -68,7 +68,7 @@
             <span>Ubah</span>
           </v-tooltip>
           <v-tooltip bottom>
-            <template v-if="item.isActive" v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ on, attrs }">
               <v-btn
                 v-bind="attrs"
                 v-on="on"
@@ -80,36 +80,7 @@
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <template v-else v-slot:activator="{ on, attrs }">
-              <v-btn
-                v-bind="attrs"
-                v-on="on"
-                icon
-                small
-                color="green"
-                @click="reactivate(item)"
-              >
-                <v-icon small>mdi-check</v-icon>
-              </v-btn>
-            </template>
-            <span v-if="item.isActive">Nonaktifkan</span>
-            <span v-else>Aktifkan Kembali</span>
-          </v-tooltip>
-        </template>
-        <template v-slot:[`item.isActive`]="{ item }">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-icon 
-                v-bind="attrs" 
-                v-on="on" 
-                :color="item.isActive === true ? 'green' : 'red'"
-              >
-                {{ item.isActive === true ? 'mdi-toggle-switch-outline' : 'mdi-toggle-switch-off-outline' }}
-              </v-icon>
-            </template>
-            <span class="text-caption">
-                {{ item.isActive === true ? 'Aktif' : 'Nonaktif' }}
-            </span>
+            <span>Hapus</span>
           </v-tooltip>
         </template>
       </v-data-table>
@@ -126,7 +97,7 @@
               v-if="data.action == 'edit'"
               class="text-caption mr-1"
             >
-              Terakhir Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
+              Tanggal Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -233,8 +204,7 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'Inisial', value: 'initial', divider: true, width: '150' },
-        { text: 'Nama', value: 'name', divider: true, width: '200' },
-        { text: 'Status', value: 'isActive', width: '90' }
+        { text: 'Nama', value: 'name', divider: true, width: '200' }
       ],
       data: [],
       options: {
@@ -309,7 +279,14 @@ export default {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
           take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
-          sorts: JSON.stringify(sorts)
+          sorts: JSON.stringify(sorts),
+          filters: JSON.stringify([
+            {
+              field: 'isActive',
+              operator: 'eq',
+              keyword: 'true'
+            }
+          ])
         }
       })
         .then(response => {
@@ -352,8 +329,8 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Nontaktifkan?',
-          'Apakah anda yakin untuk menonaktifkan data ini?')
+          'Hapus Data?',
+          'Apakah anda yakin untuk menghapus data ini?')
       ) {
         api.delete(this.endpoint.general.customer.type, item.id)
           .then(response => {
@@ -364,30 +341,9 @@ export default {
           })
       }
     },
-    async reactivate(item) {
-      if (
-        await this.$refs.confirm.open(
-          'Aktifkan Kembali?',
-          'Apakah anda yakin untuk mengaktifkan kembali data ini?')
-      ) {
-        this.data = {
-          ...item,
-          action: 'edit',
-          isActive: true
-        }
-
-        api.update(this.endpoint.general.customer.type, this.data.id, this.data)
-          .then(response => {
-            if (response.data.success) {
-              this.$store.dispatch('app/showSuccess', response.data.message)
-              this.getList()
-            }
-          })
-      }
-    },
     async save() {
       if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Tolong cek kembali bagian formulir yang wajib diisi atau yang terdapat kesalahan.')
+        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
 
