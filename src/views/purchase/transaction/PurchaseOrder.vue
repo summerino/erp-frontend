@@ -224,6 +224,28 @@
                   </v-list-item-title>
                 </v-list-item>
               </v-list>
+              <v-list class="cursor-pointer">
+                <v-list-item
+                  v-shortkey="['ctrl', 'alt', 'i']"
+                  :disabled="isSaveNReceiveAble"
+                  @click="saveInv()"
+                  @shortkey="saveInv()"
+                >
+                  <v-list-item-title>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <span
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          Simpan & Faktur
+                        </span>
+                      </template>
+                      <span class="text-caption">(Ctrl + Alt + I)</span>
+                    </v-tooltip>
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
             </v-menu>
             <v-divider vertical></v-divider>
           </v-toolbar-items>
@@ -761,7 +783,11 @@
     <po-save-receive
      ref="poSr"
      @closeParent="closeRcv"
-     ></po-save-receive>    
+     ></po-save-receive>
+     <po-save-invoice
+     ref="poSi"
+     @closeParent="closeRcv"
+     ></po-save-invoice>      
   </div>
 </template>
 
@@ -777,13 +803,15 @@ import Confirm from '@/components/dialog/Confirm'
 import FindSupplier from '@/components/dialog/general/FindSupplier'
 import FindItem from '@/components/dialog/inventory/FindItem'
 import PoSaveReceive from '@/components/dialog/purchase/POSaveReceive'
+import PoSaveInvoice from '@/components/dialog/purchase/POSaveInvoice'
 
 export default {
   components: {
     Confirm,
     FindSupplier,
     FindItem,
-    PoSaveReceive
+    PoSaveReceive,
+    PoSaveInvoice
   },
 
   data: () => ({
@@ -1220,6 +1248,19 @@ export default {
       this.$refs.poSr.open(data)
     },
     closeRcv() {
+      this.dialog.add = false
+      this.getList()
+    },
+    saveInv() {
+      if (!this.$refs.form.validate()) {
+        this.$store.dispatch('app/showInfo', 'Silahkan periksa kembali data yang wajib diisi.')
+        return
+      }
+      const data = this.data
+      data.itemDetails = this.gridItem.data
+      this.$refs.poSi.open(data)
+    },
+    closeInv() {
       this.dialog.add = false
       this.getList()
     },
