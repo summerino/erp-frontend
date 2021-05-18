@@ -36,7 +36,7 @@ export default {
       items: menuSales
     },
     {
-      text: 'Akunting',
+      text: 'Akuntansi',
       items: menuAccounting
     },
     {
