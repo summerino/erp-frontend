@@ -3,7 +3,7 @@
     v-model="dialog"
     :width="options.width"
     persistent
-    @keydown.esc="cancel"
+    @keydown.esc="close"
   >
     <v-card>
     <v-toolbar
@@ -73,17 +73,6 @@
         >
           <v-icon left>mdi-content-save</v-icon>
           Simpan
-        </v-btn>
-        <v-btn
-          color="red darken-2"
-          class="font-weight-regular"
-          dark
-          small
-          tile
-          @click="close"
-        >
-          <v-icon left>mdi-close-circle-outline</v-icon>
-          Batal
         </v-btn>
       </v-card-actions>
     </v-card>
