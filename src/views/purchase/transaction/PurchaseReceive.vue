@@ -918,7 +918,7 @@ export default {
         return
       }
 
-      if (_sumBy(this.gridItem.data, 'qty') <= 0) {
+      if (_sumBy(this.gridItem.data.filter(x => x.type === 0), 'qty') <= 0) {
         this.$store.dispatch('app/showInfo', 'Total receive qty can\'t be 0.')
         return
       }
