@@ -12,7 +12,7 @@
         dark
         dense
       >
-        <v-toolbar-title>Supplier</v-toolbar-title>
+        <v-toolbar-title>Pemasok</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn
           icon
@@ -28,7 +28,7 @@
             <v-autocomplete
               v-model="data.by"
               :items="data.items"
-              label="Search By"
+              label="Cari Berdasarkan"
               class="mt-0"
             ></v-autocomplete>
           </v-col>
@@ -36,7 +36,7 @@
             <v-text-field
               ref="search"
               v-model="data.value"
-              label="Search Text"
+              label="Teks Pencarian"
               class="mt-0"
               @keyup.enter="search"
             ></v-text-field>
@@ -79,7 +79,7 @@
           @click="close"
         >
           <v-icon left>mdi-close-circle-outline</v-icon>
-          Cancel
+          Batal
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -98,18 +98,18 @@ export default {
         by: 'name',
         value: '',
         items: [
-          { text: 'Code', value: 'code' },
-          { text: 'Initial', value: 'initial' },
-          { text: 'Name', value: 'name' }
+          { text: 'Kode', value: 'code' },
+          { text: 'Inisial', value: 'initial' },
+          { text: 'Nama', value: 'name' }
         ]
       },
       grid: {
         columns: [
-          { text: 'Code', value: 'code', divider: true, width: '120' },
-          { text: 'Initial', value: 'initial', divider: true, width: '150' },
-          { text: 'Name', value: 'name', divider: true, width: '300' },
-          { text: 'Address', value: 'address1', divider: true, width: '200' },
-          { text: 'Phone', value: 'phone', divider: true, width: '150' },
+          { text: 'Kode', value: 'code', divider: true, width: '120' },
+          { text: 'Inisial', value: 'initial', divider: true, width: '150' },
+          { text: 'Nama', value: 'name', divider: true, width: '300' },
+          { text: 'Alamat', value: 'address1', divider: true, width: '200' },
+          { text: 'Telepon', value: 'phone', divider: true, width: '150' },
           { text: 'Fax', value: 'fax', divider: true, width: '150' }
         ],
         data: []

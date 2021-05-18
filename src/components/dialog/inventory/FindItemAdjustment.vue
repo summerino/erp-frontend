@@ -13,7 +13,7 @@
         max-height="64"
         dark
       >
-        <v-toolbar-title>Item</v-toolbar-title>
+        <v-toolbar-title>Barang</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn
           icon
@@ -57,7 +57,7 @@
                     <v-autocomplete
                       v-model="data.by"
                       :items="data.items"
-                      label="Search By"
+                      label="Cari Berdasarkan"
                       class="mt-0"
                     ></v-autocomplete>
                   </v-col>
@@ -65,7 +65,7 @@
                     <v-text-field
                       ref="search"
                       v-model="data.value"
-                      label="Search Text"
+                      label="Teks Pencarian"
                       class="mt-0"
                       @keyup.enter="search"
                     ></v-text-field>
@@ -131,20 +131,20 @@ export default {
         by: 'name',
         value: '',
         items: [
-          { text: 'Initial', value: 'initial' },
-          { text: 'Name', value: 'name' },
-          { text: 'Type', value: 'typeName' }
+          { text: 'Inisial', value: 'initial' },
+          { text: 'Nama', value: 'name' },
+          { text: 'Tipe', value: 'typeName' }
         ]
       },
       rowItem: {},
       grid: {
         columns: [
-          { text: 'Initial', value: 'initial', divider: true, width: '120' },
-          { text: 'Name', value: 'name', divider: true, width: '300' },
-          { text: 'Type', value: 'typeName', divider: true, width: '150' },
+          { text: 'Inisial', value: 'initial', divider: true, width: '120' },
+          { text: 'Nama', value: 'name', divider: true, width: '300' },
+          { text: 'Tipe', value: 'typeName', divider: true, width: '150' },
           { text: 'Qty', value: 'qtyOnHand', align: 'right', divider: true, width: '100' },
-          { text: 'Unit', value: 'uomBuyName', divider: true, width: '150' },
-          { text: 'Category', value: 'categoryName', width: '150' }
+          { text: 'Satuan', value: 'uomBuyName', divider: true, width: '150' },
+          { text: 'Kategori', value: 'categoryName', width: '150' }
         ],
         data: [],
         height: 300

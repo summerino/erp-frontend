@@ -12,7 +12,7 @@
         dark
         dense
       >
-        <v-toolbar-title>Sales Order</v-toolbar-title>
+        <v-toolbar-title>Order Penjualan</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn
           icon
@@ -28,7 +28,7 @@
             <v-autocomplete
               v-model="data.by"
               :items="data.items"
-              label="Search By"
+              label="Cari Berdasarkan"
               class="mt-0"
               @change="searchByChange"
             ></v-autocomplete>
@@ -38,7 +38,7 @@
               ref="search"
               v-if="data.by !== 'date'"
               v-model="data.value"
-              label="Search Text"
+              label="Teks Pencarian"
               class="mt-0"
               @keyup.enter="search"
             ></v-text-field>
@@ -56,7 +56,7 @@
                   v-bind="attrs"
                   v-on="on"
                   :value="formatDate"
-                  label="Search Text"
+                  label="Tanggal Pencarian"
                   class="mt-0"
                   readonly
                   @keyup.enter="search"
@@ -113,7 +113,7 @@
           @click="close"
         >
           <v-icon left>mdi-close-circle-outline</v-icon>
-          Cancel
+          Batal
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -142,21 +142,19 @@ export default {
         by: 'code',
         value: '',
         items: [
-          { text: 'Code', value: 'code' },
-          { text: 'Date', value: 'date' },
-          { text: 'Customer', value: 'custName' },
-          { text: 'Curr.', value: 'curr' }
+          { text: 'Kode', value: 'code' },
+          { text: 'Tanggal', value: 'date' },
+          { text: 'Pelanggan', value: 'custName' }
         ]
       },
       grid: {
         data: [],
         columns: [
-          { text: 'Code', value: 'code', divider: true, width: '160' },
-          { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
-          { text: 'Curr.', value: 'curr', width: '90' },
-          { text: 'Amount', value: 'total', align: 'right', divider: true, width: '120' },
-          { text: 'Customer', value: 'custName', divider: true, width: '200' },
-          { text: 'Sales By', value: 'salesInitial', divider: true, width: '200' }
+          { text: 'Kode', value: 'code', divider: true, width: '160' },
+          { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
+          { text: 'Nilai', value: 'total', align: 'right', divider: true, width: '120' },
+          { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
+          { text: 'Dijual Oleh', value: 'salesInitial', divider: true, width: '200' }
         ]
       },
       options: {
