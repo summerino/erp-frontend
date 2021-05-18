@@ -1,7 +1,8 @@
 <template>
   <v-dialog
+    ref="dialog"
     v-model="dialog"
-    :width="options.width"
+    fullscreen
     persistent
     scrollable
     @keydown.esc="close"
@@ -9,10 +10,10 @@
     <v-card>
       <v-toolbar
         color="indigo darken-1"
+        max-height="64"
         dark
-        dense
       >
-        <v-toolbar-title>Purchase Receive</v-toolbar-title>
+        <v-toolbar-title>Penerimaan Barang</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn
           icon
@@ -28,7 +29,7 @@
             <v-autocomplete
               v-model="data.by"
               :items="data.items"
-              label="Search By"
+              label="Cari Berdasarkan"
               class="mt-0"
               @change="searchByChange"
             ></v-autocomplete>
@@ -38,7 +39,7 @@
               ref="search"
               v-if="data.by !== 'date'"
               v-model="data.value"
-              label="Search Text"
+              label="Teks Pencarian"
               class="mt-0"
               @keyup.enter="search"
             ></v-text-field>
@@ -56,7 +57,7 @@
                   v-bind="attrs"
                   v-on="on"
                   :value="formatDate"
-                  label="Search Text"
+                  label="Tanggal Pencarian"
                   class="mt-0"
                   readonly
                   @keyup.enter="search"
@@ -75,9 +76,9 @@
         <v-card>
           <v-data-table
             :headers="grid.columns"
+            :height="grid.height"
             :items="grid.data"
             :items-per-page="-1"
-            height="300"
             class="elevation-1 row-pointer"
             dense
             disable-sort
@@ -103,20 +104,6 @@
           </v-data-table>
         </v-card>
       </v-card-text>
-
-      <v-card-actions class="justify-end pb-2 pr-2">
-        <v-btn
-          color="red darken-2"
-          class="font-weight-regular"
-          dark
-          small
-          tile
-          @click="close"
-        >
-          <v-icon left>mdi-close-circle-outline</v-icon>
-          Cancel
-        </v-btn>
-      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
@@ -144,26 +131,24 @@ export default {
         by: 'code',
         value: '',
         items: [
-          { text: 'Code', value: 'code' },
-          { text: 'Date', value: 'date' },
-          { text: 'Trans. Code', value: 'transCode' },
-          { text: 'Ref. No.', value: 'refNo' }
+          { text: 'Kode', value: 'code' },
+          { text: 'Tanggal', value: 'date' },
+          { text: 'Kode Trans.', value: 'transCode' },
+          { text: 'No. Ref.', value: 'refNo' }
         ]
       },
       rowItem: {},
       grid: {
         columns: [
-          { text: 'Code', value: 'code', divider: true, width: '160' },
-          { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
-          { text: 'Trans. Code', value: 'transCode', divider: true, width: '160' },
-          { text: 'Amount', value: 'total', align: 'right', width: '120' },
-          { text: 'Received By', value: 'receiveInitial', divider: true, width: '200' },
-          { text: 'Ref. No.', value: 'refNo', divider: true, width: '160' }
+          { text: 'Kode', value: 'code', divider: true, width: '160' },
+          { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
+          { text: 'Kode Trans.', value: 'transCode', divider: true, width: '160' },
+          { text: 'Nilai', value: 'total', align: 'right', width: '120' },
+          { text: 'Diterima Oleh', value: 'receiveInitial', divider: true, width: '200' },
+          { text: 'No. Ref.', value: 'refNo', divider: true, width: '160' }
         ],
-        data: []
-      },
-      options: {
-        width: 800
+        data: [],
+        height: 300
       }
     }
   },
@@ -181,14 +166,14 @@ export default {
       this.data.value = ''
       this.grid.data = []
     },
-    open(rowItem, options) {
+    open(rowItem) {
       this.dialog = true
       this.rowItem = rowItem
-      this.options = Object.assign(this.options, options)
       this.reset()
       setTimeout(() => {
+        this.grid.height = this.$refs.dialog.$refs.content.clientHeight - 158
         this.$refs.search.focus()
-      }, 0)
+      }, 100)
     },
     close() {
       this.dialog = false
