@@ -1,9 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
 
-// mock
-import './fake-db/index.js'
-
 // Vuex Store
 import store from './store'
 
