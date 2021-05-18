@@ -81,20 +81,7 @@
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <template v-else v-slot:activator="{ on, attrs }">
-              <v-btn
-                v-bind="attrs"
-                v-on="on"
-                icon
-                small
-                color="green"
-                @click="reactivate(item)"
-              >
-                <v-icon small>mdi-check</v-icon>
-              </v-btn>
-            </template>
-            <span v-if="item.isActive">Non Aktifkan</span>
-            <span v-else>Aktifkan Kembali</span>
+            <span>Hapus</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.isActive`]="{ item }">
@@ -139,14 +126,14 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="6">
-            <span>Lokasi {{ data.action | capitalize }}</span>
+            <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' | capitalize }} Gudang</span>
           </v-col>
           <v-col cols="12" md="6" class="text-right">
             <label
               v-if="data.action == 'edit'"
               class="text-caption mr-1"
             >
-              Terakhir diperbarui : {{ data.updatedDate }} by {{ data.updatedInitial }}
+              Tanggal diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -216,7 +203,7 @@
                   v-model="data.initial"
                   :rules="[rules.required[0], rules.max20chars[0]]"
                   :counter="20"
-                  label="Initial"
+                  label="Inisial"
                   class="mt-0"
                   required
                 ></v-text-field>
@@ -301,8 +288,7 @@ export default {
         { text: 'Nama', value: 'name', divider: true, width: '200' },
         { text: 'Alamat', value: 'address', divider: true, width: '200' },
         { text: 'Telepon', value: 'phone', divider: true, width: '120' },
-        { text: 'Default', value: 'isDefault', divider: true, width: '120' },
-        { text: 'Status', value: 'isActive', width: '90' }
+        { text: 'Default', value: 'isDefault', divider: true, width: '120' }
       ],
       data: [],
       options: {
@@ -415,8 +401,8 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Non Aktifkan?',
-          'Apakah anda yakin ingin menonaktifkan data ini?')
+          'Hapus?',
+          'Apakah anda yakin ingin menghapus data ini?')
       ) {
         api.delete(this.endpoint.inventory.warehouse, item.code)
           .then(response => {
@@ -426,28 +412,7 @@ export default {
             }
           })
       }
-    },
-    async reactivate(item) {
-      if (
-        await this.$refs.confirm.open(
-          'Aktifkan kembali?',
-          'Apakah anda yakin ingin mengaktifkan kembali data ini?')
-      ) {
-        this.data = {
-          ...item,
-          action: 'edit',
-          isActive: true
-        }
-
-        api.update(this.endpoint.inventory.warehouse, this.data.code, this.data)
-          .then(response => {
-            if (response.data.success) {
-              this.$store.dispatch('app/showSuccess', response.data.message)
-              this.getList()
-            }
-          })
-      }
-    },
+    },    
     async save() {
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')

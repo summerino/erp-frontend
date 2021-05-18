@@ -2,7 +2,7 @@ import configs from '../../configs'
 import mutations from './mutations'
 import actions from './actions'
 
-const { product, time, theme, currency } = configs
+const { product, time, theme, currency, filter } = configs
 
 const { globalTheme, menuTheme, toolbarTheme, isToolbarDetached, isContentBoxed, isRTL } = theme
 
@@ -76,7 +76,11 @@ const state = {
   },
 
   // App.vue loading overlay
-  loadOverlay: false
+  loadOverlay: false,
+
+  // App.vue advanced search filter
+  filter
+  
 }
 
 export default {

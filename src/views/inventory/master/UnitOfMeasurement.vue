@@ -120,7 +120,7 @@
       scrollable
       @keydown.esc="close"
     >
-<v-card :style="{ background: $vuetify.theme.themes[theme].surface }">
+      <v-card :style="{ background: $vuetify.theme.themes[theme].surface }">
         <v-toolbar
           color="primary"
           max-height="64"
@@ -195,7 +195,7 @@
             v-model="valid"
           >
             <v-row>
-              <v-col cols="12">
+              <v-col cols="12" md="6">
                 <v-card>
                   <v-card-title>Satuan Ukuran</v-card-title>
                   <v-card-text>
@@ -207,7 +207,7 @@
                             :rules="[rules.max20chars[0], rules.required[0]]"
                             :counter="20"
                             class="text-body-2 mt-0"
-                            label="Initial"
+                            label="Inisial"
                         ></v-text-field>
                       </v-col>
                     </v-row>
@@ -237,9 +237,52 @@
                   </v-card-text>
                 </v-card>
               </v-col>
+              <v-col cols="12" md="6">
+                <v-card>
+                  <v-card-title>Pengguna</v-card-title>
+                  <v-card-text>
+                    <v-row no-gutters>
+                      <v-col cols="6">
+                        <v-text-field
+                          v-model="data.createdInitial"
+                          label="Dibuat Oleh"
+                          class="mt-0"
+                          readonly
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="6" class="pl-md-1">
+                        <v-text-field
+                          v-model="data.createdDate"
+                          label="Tanggal Dibuat"
+                          class="mt-0"
+                          readonly
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                    
+                    <v-row no-gutters>
+                      <v-col cols="6">
+                        <v-text-field
+                          v-model="data.updatedInitial"
+                          label="Diperbarui Oleh"
+                          class="mt-0"
+                          readonly
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="6" class="pl-md-1">
+                        <v-text-field
+                          v-model="data.updatedDate"
+                          label="Tanggal Diperbarui"
+                          class="mt-0"
+                          readonly
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                  </v-card-text>
+                </v-card>
+              </v-col>
             </v-row>
-
-            <v-row dense>
+            <v-row>
               <v-col cols="12">
                 <v-card>
                     <v-app-bar dense flat>
@@ -350,7 +393,7 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Initial', value: 'initial', divider: true },
+        { text: 'Inisial', value: 'initial', divider: true },
         { text: 'Nama', value: 'description', divider: true },
         { text: 'Satuan Terkecil', value: 'baseUnit', divider: true }
       ],
@@ -478,7 +521,8 @@ export default {
       this.data = {
         ...item,
         action: 'edit',
-        updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
+        createdDate: (item.createdDate === null) ? null : format(parseISO(item.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
+        updatedDate: (item.updatedDate === null) ? null : format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
 
       // Get item details
@@ -512,7 +556,7 @@ export default {
     async save(closeDialog) {
       if (!this.dialog.add) return
       if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
 
@@ -520,7 +564,7 @@ export default {
       data.details = this.gridItem.data
       
       if (data.details.length === 0 || !this.validateDetails()) {
-        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
       if (this.validateIsHasDuplicateItem()) {

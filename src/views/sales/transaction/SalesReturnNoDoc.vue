@@ -431,7 +431,7 @@
                         <v-col cols="6">
                           <v-text-field
                             v-model="data.updatedInitial"
-                            label="Diperbaharui Oleh"
+                            label="Diperbarui Oleh"
                             class="mt-0"
                             readonly
                           ></v-text-field>
@@ -439,7 +439,7 @@
                         <v-col cols="6" class="pl-1">
                           <v-text-field
                             v-model="data.updatedDate"
-                            label="Diperbaharui Tanggal"
+                            label="Diperbarui Tanggal"
                             class="mt-0"
                             readonly
                           ></v-text-field>
