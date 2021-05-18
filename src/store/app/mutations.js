@@ -66,5 +66,36 @@ export default {
    */
   setGridDefaultHeight: (state, contentHeight) => {
     state.grid.height = contentHeight - 154
+  },
+
+  /**
+   * Filter
+   */
+  setFilterFields: (state, fields) => {
+    state.filter.fields = fields
+  },
+  addSearch: (state) => {
+    const search = { field: '', operator:'', keyword: '', show: false}
+    state.filter.searches.push(search)
+  },
+  advSearch: (state) =>  {
+    state.filter.searches = []
+    state.isAdvancedSearch = !state.isAdvancedSearch
+  },
+  resetAdvancedFilter: (state) => {
+    state.filter.searches = []
+    state.isAdvancedSearch = true
+  },
+  removeSearch: (state, index) => {
+    state.filter.searches.splice(index, 1)
+    if (state.filter.searches.length === 0) state.isAdvancedSearch = false
+  },
+  onChangeField: (state, vm) => {
+    if (vm.category === 'datetime') {
+      state.filter.searches[vm.index].keyword = new Date()
+    } else {
+      state.filter.searches[vm.index].keyword = ''
+    }
+    state.filter.searches[vm.index].operators = state.filter.operator.filter(x => x.allowedCategoryTypes.includes(vm.category))
   }
 }
