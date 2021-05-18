@@ -1,7 +1,7 @@
 export default [
-  { icon: 'mdi-alpha-m-circle-outline', text: 'Master Data', regex: /^\/systemmanagement/,
+  { icon: 'mdi-alpha-m-circle-outline', text: 'Data Master', regex: /^\/systemmanagement/,
     items: [
-      { text: 'User', link: 'user' }
+      { text: 'Pengguna', link: 'user' }
     ]
   }
 ]
