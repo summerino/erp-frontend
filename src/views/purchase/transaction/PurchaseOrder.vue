@@ -58,6 +58,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
+                :disabled="item.mark.toUpperCase() === 'CLS'"
                 color="orange lighten-1"
                 icon
                 small
