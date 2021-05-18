@@ -7,7 +7,7 @@
             <v-text-field
               v-model="grid.search"
               append-icon="mdi-magnify"
-              label="Search..."
+              label="Cari..."
               class="font-weight-regular mt-0 pt-0"
               single-line
               @keyup.enter="getList()"
@@ -30,7 +30,7 @@
                   @shortkey="add"
                 >
                   <v-icon left>mdi-plus</v-icon>
-                  New
+                  Data Baru
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + Alt + N)</span>
@@ -65,7 +65,7 @@
                 <v-icon small>mdi-pencil</v-icon>
               </v-btn>
             </template>
-            <span class="text-caption">Edit</span>
+            <span class="text-caption">Ubah</span>
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -81,7 +81,7 @@
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <span class="text-caption">Delete</span>
+            <span class="text-caption">Hapus</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">
@@ -125,7 +125,7 @@
           <v-btn icon dark @click="close">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Delivery Order</v-toolbar-title>
+          <v-toolbar-title>Pengiriman Penjualan</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-tooltip bottom>
@@ -138,7 +138,7 @@
                   text
                   @click="save(true)"
                   @shortkey="save(true)"
-                >Save & Close</v-btn>
+                >Simpan & Tutup</v-btn>
               </template>
               <span class="text-caption">(Ctrl + Enter)</span>
             </v-tooltip>
@@ -194,7 +194,7 @@
             <v-row dense>
               <v-col cols="12" md="4">
                 <v-card>
-                  <v-card-title>General</v-card-title>
+                  <v-card-title>Umum</v-card-title>
 
                   <v-card-text>
                     <v-row no-gutters>
@@ -203,7 +203,7 @@
                           v-model="data.srcTrans"
                           :items="sources"
                           :rules="rules.required"
-                          label="Source Transaction"
+                          label="Sumber Transaksi"
                           item-text="name"
                           item-value="id"
                           class="mt-0"
@@ -217,7 +217,7 @@
                         <v-text-field
                           ref="code"
                           v-model="data.code"
-                          label="Delivery Code"
+                          label="Kode"
                           class="mt-0"
                           readonly
                         ></v-text-field>
@@ -236,7 +236,7 @@
                               v-on="on"
                               :rules="rules.required"
                               :value="formatDlvDate"
-                              label="Delivery Date"
+                              label="Tanggal"
                               class="mt-0"
                               readonly
                               required
@@ -286,10 +286,10 @@
               <v-col cols="12" md="8">
                 <v-card>
                   <v-tabs v-model="tab.cust">
-                    <v-tab key="cust">Customer</v-tab>
-                    <v-tab key="location">Location</v-tab>
-                    <v-tab key="notes">Notes</v-tab>
-                    <v-tab key="user">User</v-tab>
+                    <v-tab key="cust">Pelanggan</v-tab>
+                    <v-tab key="location">Gudang</v-tab>
+                    <v-tab key="notes">Catatan</v-tab>
+                    <v-tab key="user">Pengguna</v-tab>
                   </v-tabs>
 
                   <v-tabs-items v-model="tab.cust" class="pa-2">
@@ -302,7 +302,7 @@
                           <v-text-field
                             v-model="data.custCode"
                             :rules="rules.required"
-                            label="Code"
+                            label="Kode"
                             class="mt-0"
                             readonly
                             required
@@ -311,7 +311,7 @@
                         <v-col cols="9" class="pl-1">
                           <v-text-field
                             v-model="data.custName"
-                            label="Name"
+                            label="Nama"
                             class="mt-0"
                             readonly
                             required
@@ -323,7 +323,7 @@
                         <v-col cols="12">
                           <v-text-field
                             v-model="data.custAddr"
-                            label="Address"
+                            label="Alamat"
                             class="mt-0"
                             readonly
                           ></v-text-field>
@@ -334,7 +334,7 @@
                         <v-col cols="6">
                           <v-text-field
                             v-model="data.custPhone"
-                            label="Phone"
+                            label="Telepon"
                             class="mt-0"
                             readonly
                           ></v-text-field>
@@ -363,7 +363,7 @@
                             :item-text="item => `${item.initial} - ${item.name}`"
                             :rules="rules.required"
                             item-value="code"
-                            label="Location"
+                            label="Gudang"
                             class="mt-0"
                           ></v-autocomplete>
                         </v-col>
@@ -378,7 +378,7 @@
                         <v-textarea
                           v-model="data.notes"
                           :rules="rules.max256chars"
-                          label="Notes"
+                          label="Catatan"
                           counter="256"
                           class="mt-0"
                           rows="4"
@@ -398,7 +398,7 @@
                             :items="employees"
                             :item-text="item => `${item.initial} - ${item.firstName}`"
                             :rules="rules.required"
-                            label="Shipped By"
+                            label="Dikirim Oleh"
                             item-value="id"
                             class="mt-0"
                             required
@@ -412,7 +412,7 @@
                             v-model="data.approveBy"
                             :items="employees"
                             :item-text="item => `${item.initial} - ${item.firstName}`"
-                            label="Approved By"
+                            label="Disetujui Oleh"
                             item-value="id"
                             class="mt-0"
                           ></v-autocomplete>
@@ -423,7 +423,7 @@
                         <v-col cols="6">
                           <v-text-field
                             v-model="data.updatedInitial"
-                            label="Updated By"
+                            label="Diperbarui Oleh"
                             class="mt-0"
                             readonly
                           ></v-text-field>
@@ -431,7 +431,7 @@
                         <v-col cols="6" class="pl-1">
                           <v-text-field
                             v-model="data.updatedDate"
-                            label="Updated Date"
+                            label="Tanggal Diperbarui"
                             class="mt-0"
                             readonly
                           ></v-text-field>
@@ -447,8 +447,8 @@
               <v-col cols="12">
                 <v-card>
                   <v-tabs v-model="tab.item">
-                    <v-tab key="item">Item</v-tab>
-                    <v-tab key="related-trans">Related Transaction(s)</v-tab>
+                    <v-tab key="item">Barang</v-tab>
+                    <v-tab key="related-trans">Transaksi Terkait</v-tab>
 
                     <v-tab-item
                       key="item"
@@ -504,7 +504,7 @@
                                   <v-icon small>mdi-close-thick</v-icon>
                                 </v-btn>
                               </template>
-                              <span class="text-caption">Delete</span>
+                              <span class="text-caption">Hapus</span>
                             </v-tooltip>
                           </template>
                           <template v-slot:[`item.qty`]="{ item }">
@@ -608,11 +608,11 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Code', value: 'code', divider: true, width: '160' },
-        { text: 'Date', value: 'date', align: 'right', divider: true, width: '120' },
-        { text: 'Customer', value: 'custName', divider: true, width: '200' },
-        { text: 'SO Code', value: 'soCode', width: '150' },
-        { text: 'Shipped By', value: 'shippedInitial', divider: true, width: '200' },
+        { text: 'Kode', value: 'code', divider: true, width: '160' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
+        { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
+        { text: 'Kode Penjualan', value: 'soCode', width: '150' },
+        { text: 'Dikirim Oleh', value: 'shippedInitial', divider: true, width: '200' },
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
@@ -626,21 +626,21 @@ export default {
     gridItem: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Item', value: 'itemInitial', divider: true, width: '120' },
-        { text: 'Name', value: 'itemName', divider: true, width: '300' },
-        { text: 'Order Qty', value: 'orderQty', align: 'right', divider: true, width: '90' },
+        { text: 'Inisial', value: 'itemInitial', divider: true, width: '120' },
+        { text: 'Nama', value: 'itemName', divider: true, width: '300' },
+        { text: 'Qty', value: 'orderQty', align: 'right', divider: true, width: '90' },
         { text: 'Outstanding', value: 'outstandingQty', align: 'right', divider: true, width: '90' },
-        { text: 'Delivered Qty', value: 'qty', align: 'right', divider: true, width: '90' },
-        { text: 'Unit', value: 'unitName', divider: true, width: '90' },
-        { text: 'Description', value: 'notes' }
+        { text: 'Qty Terkirim', value: 'qty', align: 'right', divider: true, width: '90' },
+        { text: 'Satuan', value: 'unitName', divider: true, width: '90' },
+        { text: 'Catatan', value: 'notes' }
       ],
       data: []
     },
     gridRelated: {
       columns: [
-        { text: 'Code', value: 'code', divider: true },
-        { text: 'Date', value: 'date', align: 'right', divider: true },
-        { text: 'Amout', value: 'total', align: 'right', divider: true }
+        { text: 'Kode', value: 'code', divider: true },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true },
+        { text: 'Nilai', value: 'total', align: 'right', divider: true }
       ],
       data: []
     },
@@ -650,7 +650,7 @@ export default {
     taxes: [],
     data: {},
     lblTransCode: null,
-    sources: [{ id: 1, name: 'Sales Order' }, { id: 2, name: 'Sales Return' }]
+    sources: [{ id: 1, name: 'Penjualan' }, { id: 2, name: 'Retur' }]
   }),
 
   created: function () {
@@ -857,8 +857,8 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Delete?',
-          'Are you sure want to delete this data?')
+          'Hapus?',
+          'Apakah anda yakin ingin menghapus data ini?')
       ) {
         api.delete(this.endpoint.sales.delivery, item.code)
           .then(response => {
@@ -872,12 +872,12 @@ export default {
     async save(closeDialog) {
       if (!this.dialog.add) return
       if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
       
       if (_sumBy(this.gridItem.data, 'qty') <= 0) {
-        this.$store.dispatch('app/showInfo', 'Total delivery qty can\'t be 0.')
+        this.$store.dispatch('app/showInfo', 'Jumalah pengiriman tidak boleh 0.')
         return
       }
   
@@ -905,7 +905,7 @@ export default {
     },
     addItem() {
       if (!this.data.soCode) {
-        this.$store.dispatch('app/showInfo', 'Please choose sales order first.')
+        this.$store.dispatch('app/showInfo', 'Mohon pilih penjualan terlebih dahulu.')
         return
       }
 
@@ -941,8 +941,8 @@ export default {
     async removeItem(item) {
       if (
         await this.$refs.confirm.open(
-          'Delete?',
-          'Are you sure want to delete this data?')
+          'Hapus?',
+          'Apakah anda yakin ingin menghapus data ini?')
       ) {
         const idx = this.gridItem.data.findIndex(i => i.id === item.id)
         this.gridItem.data.splice(idx, 1)
@@ -953,9 +953,9 @@ export default {
     },
     srcTransChange() {
       if (this.data.srcTrans === 1) {
-        this.lblTransCode = 'SO Code'
+        this.lblTransCode = 'Kode Penjualan'
       } else {
-        this.lblTransCode = 'Return Code'
+        this.lblTransCode = 'Kode Retur'
       }
       this.data.soCode = null
       this.data.custCode = null
