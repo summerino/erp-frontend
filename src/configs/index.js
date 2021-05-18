@@ -8,6 +8,7 @@ import analytics from './analytics'
 import navigation from './navigation'
 import currency from './currency'
 import endpoint from './endpoint'
+import filter from './filter'
 
 export default {
   // product display information
@@ -44,5 +45,8 @@ export default {
   navigation,
 
   // endpoint configs
-  endpoint
+  endpoint,
+  
+  // filter config
+  filter
 }
