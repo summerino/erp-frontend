@@ -933,7 +933,7 @@ export default {
       }
       if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemId ?? null)) {
         let item = {}
-        if (this.data.type === 'Stock Opname') {
+        if (this.data.type === 'Perhitungan Persediaan') {
           item = {
             id: randomNumber(-1, -1000),
             itemId: 0,
