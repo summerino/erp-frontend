@@ -11,7 +11,7 @@
         dark
         dense
       >
-        <v-toolbar-title>Simpan & Kirim</v-toolbar-title>
+        <v-toolbar-title>Simpan & Faktur</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn
           icon
@@ -23,7 +23,7 @@
 
       <v-card-text class="px-2 pt-1">
         <v-row no-gutters>
-          <v-col cols="12">
+          <v-col cols="12" md="6">
             <v-menu
               v-model="menu.dlvDate"
               :close-on-content-click="false"
@@ -49,6 +49,65 @@
               no-title
               scrollable
               @change="menu.dlvDate = false"
+            ></v-date-picker>
+            </v-menu>
+          </v-col>
+          <v-col cols="12" md="6" class="pl-md-1">
+            <v-menu
+              v-model="menu.invDate"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              min-width="290px"
+              offset-y
+            >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-bind="attrs"
+                v-on="on"
+                :rules="rules.required"
+                :value="formatInvDate"
+                label="Tanggal Faktur"
+                class="mt-0"
+                readonly
+                required
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              v-model="data.invDate"
+              no-title
+              scrollable
+              @change="menu.invDate = false"
+            ></v-date-picker>
+            </v-menu>
+          </v-col>
+        </v-row>
+
+        <v-row no-gutters>
+          <v-col cols="12">
+            <v-menu
+              v-model="menu.invDueDate"
+              :close-on-content-click="false"
+              transition="scale-transition"
+              min-width="290px"
+              offset-y
+            >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-bind="attrs"
+                v-on="on"
+                :rules="rules.required"
+                :value="formatInvDueDate"
+                label="Tanggal Jatuh Tempo"
+                class="mt-0"
+                readonly
+                required
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              v-model="data.invDueDate"
+              no-title
+              scrollable
+              @change="menu.invDueDate = false"
             ></v-date-picker>
             </v-menu>
           </v-col>
@@ -85,7 +144,9 @@ export default {
     },
     data: {},
     menu: {
-      dlvDate: false
+      dlvDate: false,
+      invDate: false,
+      invDueDate: false
     }
   }),
   computed: {
@@ -94,6 +155,12 @@ export default {
       endpoint: state => state.api.endpoint }),
     formatDlvDate() {
       return this.data.dlvDate ? format(parseISO(this.data.dlvDate), 'dd-MMM-yyyy') : ''
+    },
+    formatInvDate() {
+      return this.data.invDate ? format(parseISO(this.data.invDate), 'dd-MMM-yyyy') : ''
+    },
+    formatInvDueDate() {
+      return this.data.invDueDate ? format(parseISO(this.data.invDueDate), 'dd-MMM-yyyy') : ''
     }
   },
   methods: {
@@ -119,14 +186,17 @@ export default {
         taxAmount: 0,
         total: 0,
         dlvDate : format(new Date(), 'yyyy-MM-dd'),
-        isSoDlv : false
+        isSoDlv : false,
+        invDate : format(new Date(), 'yyyy-MM-dd'),
+        invDueDate : format(new Date(), 'yyyy-MM-dd'),
+        isSoInv : false
       }
     },
     open(SOdata) {
       this.reset()
       this.dialog = true
       this.data = SOdata
-      this.data.isSoDlv = true
+      this.data.isSoInv = true
       setTimeout(() => {
         this.$refs.dlvDate.focus()
       }, 0)

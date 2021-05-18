@@ -214,10 +214,32 @@
                           v-bind="attrs"
                           v-on="on"
                         >
-                          Save & Delivery
+                          Simpan & Kirim
                         </span>
                       </template>
                       <span class="text-caption">(Ctrl + Alt + R)</span>
+                    </v-tooltip>
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+              <v-list class="cursor-pointer">
+                <v-list-item
+                  v-shortkey="['ctrl', 'alt', 'i']"
+                  :disabled="isSaveNInvoiceAble"
+                  @click="saveInv()"
+                  @shortkey="saveInv()"
+                >
+                  <v-list-item-title>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <span
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          Simpan & Faktur
+                        </span>
+                      </template>
+                      <span class="text-caption">(Ctrl + Alt + I)</span>
                     </v-tooltip>
                   </v-list-item-title>
                 </v-list-item>
@@ -856,6 +878,10 @@
       ref="soSd"
      @closeParent="closeDlv"
     ></so-save-delivery>
+    <so-save-Invoice
+      ref="soSi"
+     @closeParent="closeInv"
+    ></so-save-Invoice>
   </div>
 </template>
 
@@ -871,13 +897,15 @@ import Confirm from '@/components/dialog/Confirm'
 import FindCustomer from '@/components/dialog/general/FindCustomer'
 import FindItem from '@/components/dialog/inventory/FindItem'
 import SoSaveDelivery from '@/components/dialog/sales/SOSaveDelivery'
+import SoSaveInvoice from '@/components/dialog/sales/SOSaveInvoice'
 
 export default {
   components: {
     Confirm,
     FindCustomer,
     FindItem,
-    SoSaveDelivery
+    SoSaveDelivery,
+    SoSaveInvoice
   },
 
   data: () => ({
@@ -998,6 +1026,16 @@ export default {
         return false
       } if (this.data.mark === 'A' && this.data.action === 'edit') {
         return false
+      }
+      return true
+    },
+    isSaveNInvoiceAble() {
+      if (this.data.action === 'add') {
+        return false
+      } if (this.data.mark === 'CMP' || this.data.mark === 'A') {
+        if (this.data.action === 'edit') {
+          return false
+        }
       }
       return true
     }
@@ -1292,9 +1330,22 @@ export default {
       }
       const data = this.data
       data.itemDetails = this.gridItem.data
-      this.$refs.poSr.open(data)
+      this.$refs.soSd.open(data)
     },
     closeDlv() {
+      this.dialog.add = false
+      this.getList()
+    },
+    saveInv() {
+      if (!this.$refs.form.validate()) {
+        this.$store.dispatch('app/showInfo', 'Silahkan periksa kembali data yang wajib diisi.')
+        return
+      }
+      const data = this.data
+      data.itemDetails = this.gridItem.data
+      this.$refs.soSi.open(data)
+    },
+    closeInv() {
       this.dialog.add = false
       this.getList()
     },
