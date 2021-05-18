@@ -67,8 +67,7 @@ export default {
     gender: 'male'
   }),
   watch: {
-    menu(val) {
-      console.log(val)
+    menu() {
       setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
       // val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
     }
