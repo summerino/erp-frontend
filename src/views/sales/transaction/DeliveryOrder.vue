@@ -173,7 +173,7 @@
                           v-bind="attrs"
                           v-on="on"
                         >
-                          Save
+                          Simpan
                         </span>
                       </template>
                       <span class="text-caption">(Ctrl + S)</span>
@@ -650,7 +650,7 @@ export default {
     taxes: [],
     data: {},
     lblTransCode: null,
-    sources: [{ id: 1, name: 'Penjualan' }, { id: 2, name: 'Retur' }]
+    sources: [{ id: 1, name: 'Penjualan' }, { id: 2, name: 'Retur Penjualan' }]
   }),
 
   created: function () {

@@ -68,7 +68,7 @@
                 <v-icon small>mdi-pencil</v-icon>
               </v-btn>
             </template>
-            <span class="text-caption">Edit</span>
+            <span class="text-caption">Ubah</span>
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -203,7 +203,7 @@
                         <v-text-field
                           ref="code"
                           v-model="data.code"
-                          label="Kode Transaksi"
+                          label="Kode"
                           class="mt-0"
                           readonly
                         ></v-text-field>
@@ -222,7 +222,7 @@
                               v-on="on"
                               :rules="rules.required"
                               :value="formatDate"
-                              label="Tanggal Transaksi"
+                              label="Tanggal"
                               class="mt-0"
                               readonly
                               required
@@ -246,7 +246,7 @@
                           item-value="code"
                           :rules="rules.required"
                           @change="changeType"
-                          label="Tipe Transaksi"
+                          label="Tipe"
                           class="mt-0"
                           required
                         ></v-autocomplete>
@@ -258,7 +258,7 @@
                             :item-text="item => `${item.initial} - ${item.name}`"
                             :rules="rules.required"
                             @change="changeLocation"
-                            label="Lokasi"
+                            label="Gudang"
                             item-value="code"
                             class="mt-0"
                           ></v-autocomplete>
@@ -324,7 +324,7 @@
                         <v-col cols="6" class="pl-1">
                           <v-text-field
                             v-model.trim="data.updatedDate"
-                            label="Tangggal Pembaruan"
+                            label="Tanggal Diperbarui"
                             class="mt-0"
                             readonly
                           ></v-text-field>
@@ -355,7 +355,7 @@
                           @shortkey="addItem"
                           >
                           <v-icon left>mdi-plus</v-icon>
-                          Add
+                          Tambah
                         </v-btn>
                       </template>
                       <span class="text-caption">(Ctrl + I)</span>
@@ -580,8 +580,8 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Tanggal Transaksi', value: 'date', divider: true, width: '150' },
-        { text: 'Kode Transaksi', value: 'code', divider: true, width: '150' },
+        { text: 'Tanggal', value: 'date', divider: true, width: '150' },
+        { text: 'Kode', value: 'code', divider: true, width: '150' },
         { text: 'Lokasi', value: 'warehouseInitial', divider: true, width: '150' },
         { text: 'Catatan', value: 'notes', divider: true, width: '200' },
         { text: 'Status', value: 'mark', divider: true, width: '200' }
@@ -600,8 +600,8 @@ export default {
     },
     valid: false,
     types: [
-      { code: 1, name:'Adjustment' },
-      { code: 2, name:'Stock Opname' }
+      { code: 1, name:'Penyesuaian' },
+      { code: 2, name:'Perhitungan Persediaan' }
     ],
     locations: [],
     data: {},
@@ -649,7 +649,7 @@ export default {
   methods:{
     showAll() {
       if (!this.data.warehouseCode) {
-        this.$store.dispatch('app/showInfo', 'Please choose location first.')
+        this.$store.dispatch('app/showInfo', 'Mohon pilih gudang terlebih dahulu.')
         return
       }
       this.bindGridItems()
@@ -817,7 +817,8 @@ export default {
       this.data = {
         ...item,
         action: 'edit',
-        updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
+        createdDate: (item.createdDate === null) ? null : format(parseISO(item.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
+        updatedDate: (item.updatedDate === null) ? null : format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
       this.bindGridItems()
       // Get item details
@@ -837,7 +838,7 @@ export default {
       if (
         await this.$refs.confirm.open(
           'Void?',
-          'Are you sure want to void this data?')
+          'Apakah anda yakin ingin membuat void data ini?')
       ) {
         api.delete(this.endpoint.inventory.adjustment, item.code)
           .then(response => {
@@ -850,7 +851,7 @@ export default {
     },
     async save(closeDialog) {
       if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }      
       
@@ -858,7 +859,7 @@ export default {
       data.itemDetails = this.gridItem.data
 
       if (data.itemDetails.length === 0) {
-        this.$store.dispatch('app/showInfo', 'Item cannot be empty.')
+        this.$store.dispatch('app/showInfo', 'Detil tidak boleh kosong.')
         return
       }
       let result = { success: false, message: '' }
@@ -901,12 +902,12 @@ export default {
     bindStockOpnameTable() {
       this.gridItem.columns = [
         { value: 'action', sortable: false, divider: true, width: '90'},
-        { text: 'ID Barang', value: 'itemId', divider: true, width: '120' },
+        { text: 'Inisial', value: 'itemId', divider: true, width: '120' },
         { text: 'Nama', value: 'itemName', divider: true, width: '300' },
         { text: 'Satuan', value: 'unitName', sortable: false, divider: true, width: '100'},
-        { text: 'Qty Sistem', value: 'qtyOnHand', sortable: false, divider: true, width: '75'},
+        { text: 'Qty Sistem', value: 'qtyOnHand', sortable: false, align: 'right', divider: true, width: '75'},
         { text: 'Qty Aktual', value: 'qtyOpname', sortable: false, divider: true, width: '75'},
-        { text: 'Selisih', value: 'different', sortable: false, divider: true, width: '75'},
+        { text: 'Selisih', value: 'different', sortable: false, align: 'right', divider: true, width: '75'},
         // { text: 'COGS (smalles unit)', value: 'cogs', sortable: false, divider: true, width: '175'},
         // { text: 'Total COGS', value: 'totalCogs', sortable: false, divider: true, width: '175'},
         { text: 'Catatan', value: 'notes', sortable: false, divider: true, width: '250'}
@@ -915,10 +916,10 @@ export default {
     bindAdjustmentTable() {
       this.gridItem.columns = [
         { value: 'action', sortable: false, divider: true, width: '90'},
-        { text: 'ID Barang', value: 'itemId', divider: true, width: '120' },
+        { text: 'Inisial', value: 'itemId', divider: true, width: '120' },
         { text: 'Nama', value: 'itemName', divider: true, width: '300' },
         { text: 'Satuan', value: 'unitName', sortable: false, divider: true, width: '100'},
-        { text: 'Qty Sistem', value: 'qtyOnHand', sortable: false, divider: true, width: '75'},
+        { text: 'Qty Sistem', value: 'qtyOnHand', sortable: false, align: 'right', divider: true, width: '75'},
         { text: 'Qty Penyesuaian', value: 'qtyAdjust', sortable: false, divider: true, width: '75'},
         // { text: 'COGS (smalles unit)', value: 'cogs', sortable: false, divider: true},
         // { text: 'Total COGS', value: 'totalCogs', sortable: false, divider: true},
@@ -975,8 +976,8 @@ export default {
     async removeItem(item) {
       if (
         await this.$refs.confirm.open(
-          'Delete?',
-          'Are you sure want to delete this data?')
+          'Hapus?',
+          'Apakah anda yakin ingin menghapus data ini?')
       ) {
         const idx = this.gridItem.data.findIndex(i => i.id === item.id)
         this.gridItem.data.splice(idx, 1)
