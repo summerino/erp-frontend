@@ -1,26 +1,26 @@
 export default [
-  { icon: 'mdi-alpha-m-circle-outline', text: 'Master Data', regex: /^\/general/,
+  { icon: 'mdi-alpha-m-circle-outline', text: 'Data Master', regex: /^\/general/,
     items: [
-      { text: 'Customer', regex: /^\/general\/customer/,
+      { text: 'Pelanggan', regex: /^\/general\/customer/,
         items: [
-          { text: 'Customer', link: 'customer' },
-          { text: 'Type', link: 'customer-type' }
+          { text: 'Pelanggan', link: 'customer' },
+          { text: 'Tipe', link: 'customer-type' }
         ]
       },
       { text: 'Supplier', regex: /^\/general\/supplier/,
         items: [
           { text: 'Supplier', link: 'supplier' },
-          { text: 'Type', link: 'supplier-type' }
+          { text: 'Tipe', link: 'supplier-type' }
         ]
       },
-      { text: 'Employee', link: 'employee' },
-      { text: 'Vehicle', regex: /^\/general\/vehicle/,
+      { text: 'Karyawan', link: 'employee' },
+      { text: 'Kendaraan', regex: /^\/general\/vehicle/,
         items: [
-          { text: 'Vehicle', link: 'vehicle' },
-          { text: 'Vehicle Type', link: 'vehicle-type' }
+          { text: 'Kendaraan', link: 'vehicle' },
+          { text: 'Tipe', link: 'vehicle-type' }
         ]
       },
-      { text: 'Tax', link: 'tax' }
+      { text: 'Pajak', link: 'tax' }
     ]
   }
 ]

@@ -36,7 +36,7 @@ export default [{
 }, {
   path: '/inventory/transaction/adjustment',
   name: 'adjustment',
-  component: () => import(/* webpackChunkName: "inventory-transaction-adjustment" */ '@/views/inventory/transaction/Adjustment.vue'),
+  component: () => import(/* webpackChunkName: "inventory-trans-adjustment" */ '@/views/inventory/transaction/Adjustment.vue'),
   meta: {
     authRequired: true
   }

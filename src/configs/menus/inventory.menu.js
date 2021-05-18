@@ -1,23 +1,23 @@
 export default [
-  { icon: 'mdi-alpha-m-circle-outline', text: 'Master Data', regex: /^\/inventory\/master/,
+  { icon: 'mdi-alpha-m-circle-outline', text: 'Data Master', regex: /^\/inventory\/master/,
     items: [
-      { text: 'Item', regex: /^\/inventory\/master\/item/,
+      { text: 'Barang', regex: /^\/inventory\/master\/item/,
         items: [
-          { text: 'Item', link: 'item' },
-          { text: 'Category', link: 'item-category' },
-          { text: 'Group', link: 'item-group' }
+          { text: 'Barang', link: 'item' },
+          { text: 'Kategori', link: 'item-category' },
+          { text: 'Grup', link: 'item-group' }
         ]
       },
-      { text: 'Warehouse', link: 'warehouse' },
-      { text: 'Unit Of Measurement', link: 'unitofmeasurement' }
+      { text: 'Gudang', link: 'warehouse' },
+      { text: 'Satuan Ukuran', link: 'unitofmeasurement' }
     ]
   },
-  { icon: 'mdi-clipboard-edit-outline', text: 'Transaction', regex: /^\/inventory\/transaction/,
+  { icon: 'mdi-clipboard-edit-outline', text: 'Transaksi', regex: /^\/inventory\/transaction/,
     items: [
-      { text: 'Adjustment', link: 'adjustment' }
+      { text: 'Penyesuaian', link: 'adjustment' }
     ]
   },
-  { icon: 'mdi-chart-line', text: 'Report', regex: /^\/inventory\/report/,
+  { icon: 'mdi-chart-line', text: 'Laporan', regex: /^\/inventory\/report/,
     items: [
     ]
   }

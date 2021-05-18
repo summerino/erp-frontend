@@ -14,34 +14,33 @@ export default {
       items: [
         {
           icon: 'mdi-view-dashboard-outline',
-          text: 'Dashboard',
+          text: 'Dasbor',
           link: 'dashboard'
-        },
-        { icon: 'mdi-file-outline', text: 'Blank Page', link: 'blank' }
+        }
       ]
     },
     {
-      text: 'General',
+      text: 'Umum',
       items: menuGeneral
     },
     {
-      text: 'Inventory',
+      text: 'Persediaan',
       items: menuInventories
     },
     {
-      text: 'Purchase',
+      text: 'Pembelian',
       items: menuPurchases
     },
     {
-      text: 'Sales',
+      text: 'Penjualan',
       items: menuSales
     },
     {
-      text: 'Accounting',
+      text: 'Akunting',
       items: menuAccounting
     },
     {
-      text: 'System Management',
+      text: 'Manajemen Sistem',
       items: menuSystemManagement
     },
     {
