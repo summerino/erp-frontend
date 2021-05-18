@@ -31,13 +31,6 @@ export const routes = [{
 ...SystemManagementRoutes,
 ...ParameterRoutes,
 {
-  path: '/blank',
-  name: 'blank',
-  component: () => import(/* webpackChunkName: "blank" */ '@/views/BlankPage.vue'),
-  meta: {
-    authRequired: true
-  }
-}, {
   path: '/login',
   name: 'login',
   component: () => import(/* webpackChunkName: "login" */ '@/views/pages/Login.vue'),

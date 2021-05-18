@@ -1,4 +1,11 @@
 export default [{
+  path: '/sales/master/area',
+  name: 'area',
+  component: () => import(/* webpackChunkName: "sales-master-area" */ '@/views/sales/master/Area.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
   path: '/sales/transaction/sales-order',
   name: 'sales-order',
   component: () => import(/* webpackChunkName: "sales-trans-order" */ '@/views/sales/transaction/SalesOrder.vue'),
@@ -30,13 +37,6 @@ export default [{
   path: '/sales/transaction/credit-memo',
   name: 'credit-memo',
   component: () => import(/* webpackChunkName: "credit-memo" */ '@/views/sales/transaction/CreditMemo.vue'),
-  meta: {
-    authRequired: true
-  }
-}, {
-  path: '/sales/master/area',
-  name: 'area',
-  component: () => import(/* webpackChunkName: "master-area" */ '@/views/sales/transaction/Area.vue'),
   meta: {
     authRequired: true
   }
