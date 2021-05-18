@@ -7,10 +7,10 @@ module.exports = {
     extract: { ignoreOrder: true },
     loaderOptions: {
       sass: {
-        prependData: '@import \'~@/assets/scss/vuetify/variables\''
+        additionalData: '@import \'~@/assets/scss/vuetify/variables\''
       },
       scss: {
-        prependData: '@import \'~@/assets/scss/vuetify/variables\';'
+        additionalData: '@import \'~@/assets/scss/vuetify/variables\';'
       }
     }
   },

@@ -3,7 +3,9 @@
     ref="dialog"
     v-model="dialog"
     fullscreen
+    persistent
     scrollable
+    @keydown.esc="close"
   >
     <v-card :style="{ background: $vuetify.theme.themes[theme].surface }">
       <v-toolbar
@@ -16,7 +18,7 @@
         <v-btn
           icon
           dark
-          @click="dialog = false"
+          @click="close"
         >
           <v-icon>mdi-close</v-icon>
         </v-btn>
@@ -174,6 +176,9 @@ export default {
         this.grid.height = this.$refs.dialog.$refs.content.clientHeight - 178
         this.$refs.search.focus()
       }, 500)
+    },
+    close() {
+      this.dialog = false
     },
     getCategoryHierarchy() {
       api.getAll(`${this.endpoint.inventory.item.category}/hierarchy`)
