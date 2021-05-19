@@ -307,7 +307,7 @@
                           :items="employees"
                           :item-text="item => `${item.initial} - ${item.firstName}`"
                           :rules="rules.required"
-                          label="Penjualan Oleh"
+                          label="Penjual"
                           item-value="id"
                           class="mt-0"
                           required
@@ -708,7 +708,7 @@
                 <v-card>
                   <v-tabs v-model="tab.foot">
                     <v-tab key="notes">Catatan</v-tab>
-                    <v-tab key="detail">Detil</v-tab>
+                    <v-tab key="detail">Detail</v-tab>
                     <v-tab key="user">Pengguna</v-tab>
                   </v-tabs>
 
@@ -926,7 +926,7 @@ export default {
         { value: 'action', sortable: false, divider: true, width: '120' },
         { text: 'No. Ord. Penjualan', value: 'code', divider: true, width: '160' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
-        { text: 'Penjualan Oleh', value: 'salesInitial', divider: true, width: '200' },
+        { text: 'Penjual', value: 'salesInitial', divider: true, width: '200' },
         { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
         { text: 'Total', value: 'total', align: 'right', divider: true, width: '120' },
         { text: 'Status', value: 'mark', width: '50' }

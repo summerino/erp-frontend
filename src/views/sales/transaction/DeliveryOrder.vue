@@ -650,7 +650,7 @@ export default {
     taxes: [],
     data: {},
     lblTransCode: null,
-    sources: [{ id: 1, name: 'Penjualan' }, { id: 2, name: 'Retur Penjualan' }]
+    sources: [{ id: 1, name: 'Order Penjualan' }, { id: 2, name: 'Retur Penjualan' }]
   }),
 
   created: function () {

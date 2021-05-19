@@ -790,7 +790,7 @@
                 <v-card>
                   <v-tabs v-model="tab.foot">
                     <v-tab key="notes">Catatan</v-tab>
-                    <v-tab key="detail">Detil</v-tab>
+                    <v-tab key="detail">Detail</v-tab>
                     <v-tab key="user">Pengguna</v-tab>
                   </v-tabs>
 

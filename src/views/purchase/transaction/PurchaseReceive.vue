@@ -670,7 +670,7 @@ export default {
     },
     valid: false,
     lblTransCode: null,
-    sources: [{ id: 1, name: 'Pembelian' }, { id: 2, name: 'Retur Pembelian' }],
+    sources: [{ id: 1, name: 'Order Pembelian' }, { id: 2, name: 'Retur Pembelian' }],
     employees: [],
     taxes: [],
     items: [],

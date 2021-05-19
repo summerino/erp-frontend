@@ -1260,7 +1260,7 @@ export default {
       data.itemDetails = this.gridItem.data
       data.diffItemDetails = this.gridDiffItem.data
       if (data.itemDetails.length === 0 || (data.type === 3 && data.diffItemDetails.length === 0)) {
-        this.$store.dispatch('app/showInfo', 'Detil tidak boleh kosong.')
+        this.$store.dispatch('app/showInfo', 'Detail tidak boleh kosong.')
         return
       }
 
