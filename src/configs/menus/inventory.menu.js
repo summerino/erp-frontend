@@ -14,7 +14,8 @@ export default [
   },
   { icon: 'mdi-clipboard-edit-outline', text: 'Transaksi', regex: /^\/inventory\/transaction/,
     items: [
-      { text: 'Penyesuaian', link: 'adjustment' }
+      { text: 'Penyesuaian', link: 'adjustment' },
+      { text: 'Transfer Persediaan', link: 'transfer-stock' }
     ]
   },
   { icon: 'mdi-chart-line', text: 'Laporan', regex: /^\/inventory\/report/,
