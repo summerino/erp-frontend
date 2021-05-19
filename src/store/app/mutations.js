@@ -81,7 +81,7 @@ export default {
   },
   advSearch: (state) =>  {
     state.filter.searches = []
-    state.filter.isAdvancedSearch = !state.isAdvancedSearch
+    state.filter.isAdvancedSearch = !state.filter.isAdvancedSearch
   },
   resetAdvancedFilter: (state) => {
     state.filter.searches = []
@@ -89,7 +89,7 @@ export default {
   },
   removeSearch: (state, index) => {
     state.filter.searches.splice(index, 1)
-    if (state.filter.searches.length === 0) state.isAdvancedSearch = false
+    if (state.filter.searches.length === 0) state.filter.isAdvancedSearch = false
   },
   onChangeField: (state, vm) => {
     if (vm.category === 'datetime') {
