@@ -1204,6 +1204,7 @@ export default {
                   this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyRcv
                   this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
                   this.gridItem.data[i].warehouseCode = item.warehouseCodeIn
+                  this.gridItem.data[i].type = 0
                   this.gridItem.data[i].typeName = 'Normal'
                   this.calcItemPrice(this.gridItem.data[i], false)
                 }
