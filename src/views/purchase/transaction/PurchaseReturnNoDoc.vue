@@ -1398,8 +1398,8 @@ export default {
           { value: 'action', sortable: false, divider: true, width: '90' },
           { text: 'Inisial', value: 'itemId', divider: true, width: '100' },
           { text: 'Nama', value: 'itemName', divider: true, width: '280' },
-          { text: 'Lokasi Keluar', value: 'warehouseInitial', divider: true, width: '180' },
-          { text: 'Lokasi Masuk', value: 'warehouseInitialIn', divider: true, width: '180' },
+          { text: 'Gudang Keluar', value: 'warehouseInitial', divider: true, width: '180' },
+          { text: 'Gudang Masuk', value: 'warehouseInitialIn', divider: true, width: '180' },
           { text: 'Qty Retur', value: 'qty', align: 'right', divider: true, width: '90' },
           { text: 'Qty Masuk', value: 'qtyRcv', align: 'right', divider: true, width: '90' },
           { text: 'Satuan', value: 'unitName', divider: true, width: '90' }
@@ -1409,6 +1409,7 @@ export default {
           { value: 'action', sortable: false, divider: true, width: '90' },
           { text: 'Inisial', value: 'itemId', divider: true, width: '100' },
           { text: 'Nama', value: 'itemName', divider: true, width: '280' },
+          { text: 'Gudang', value: 'warehouseInitial', divider: true, width: '180' },
           { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
           { text: 'Satuan', value: 'unitName', divider: true, width: '90' },
           { text: 'Satuan Harga', value: 'unitPrice', align: 'right', divider: true, width: '120' },

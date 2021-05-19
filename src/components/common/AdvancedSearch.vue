@@ -3,7 +3,7 @@
     <v-row no-gutters>
       <v-col cols="9">
         <v-text-field
-          :readonly="isAdvancedSearch"
+          :readonly="filter.isAdvancedSearch"
           v-model="search"
           append-icon="mdi-magnify"
           class="flex-grow-1 mr-md-2"
@@ -34,7 +34,7 @@
         
       </v-col>
     </v-row>
-    <v-row no-gutters v-if="isAdvancedSearch">
+    <v-row no-gutters v-if="filter.isAdvancedSearch">
       <v-col class="pt-0 mt-0">
         <div class="pt-0 mt-0" v-for="(item, index) in filter.searches" :key="index">
           <v-row class="pl-2 mt-0 pt-0" no-gutters>
@@ -105,7 +105,7 @@
               </v-tooltip>
               <v-tooltip v-if="index === filter.searches.length - 1" bottom>
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn v-if="isAdvancedSearch"
+                  <v-btn v-if="filter.isAdvancedSearch"
                     v-bind="attrs"
                     v-on="on"
                     class="mt-2"
@@ -158,21 +158,20 @@ export default {
 
   computed: {
     ...mapState({
-      filter: state => state.app.filter,
-      isAdvancedSearch: state => state.app.isAdvancedSearch
+      filter: state => state.app.filter
     })    
   },
   methods: {
     advSearch() {
       this.$store.commit('app/advSearch')
-      if (this.isAdvancedSearch) this.addSearch()
+      if (this.filter.isAdvancedSearch) this.addSearch()
     },
     addSearch() {
       this.$store.commit('app/addSearch')
     },
     advancedSearch() {      
       const filters = this.filter.searches.filter(x => x.operator !== '' && x.field !== '' && x.keyword !== '')
-      this.getList(false, filters, true)
+      this.getList(false, filters)
     },
     resetAdvancedFilter() {
       this.$store.commit('app/resetAdvancedFilter')
@@ -198,11 +197,10 @@ export default {
       const temp = this.filter.mapDataTypeToCategory.find(x => x.dataTypes.includes(selectedField.dataType))
       return temp.category
     },
-    getList(bindToForm, filters = [], isAdvancedSearch = false) {
+    getList(bindToForm, filters = []) {
       const vm = {
         bindToForm: bindToForm,
         filters: filters,
-        isAdvancedSearch: isAdvancedSearch,
         search: this.search
       }
       this.$emit('search', vm)

@@ -1,4 +1,5 @@
 import Vuetify from '../../plugins/vuetify'
+import { format } from 'date-fns'
 
 export default {
   /**
@@ -80,19 +81,20 @@ export default {
   },
   advSearch: (state) =>  {
     state.filter.searches = []
-    state.isAdvancedSearch = !state.isAdvancedSearch
+    state.filter.isAdvancedSearch = !state.filter.isAdvancedSearch
   },
   resetAdvancedFilter: (state) => {
     state.filter.searches = []
-    state.isAdvancedSearch = true
+    state.filter.isAdvancedSearch = true
   },
   removeSearch: (state, index) => {
     state.filter.searches.splice(index, 1)
-    if (state.filter.searches.length === 0) state.isAdvancedSearch = false
+    if (state.filter.searches.length === 0) state.filter.isAdvancedSearch = false
   },
   onChangeField: (state, vm) => {
     if (vm.category === 'datetime') {
-      state.filter.searches[vm.index].keyword = new Date()
+      // state.filter.searches[vm.index].keyword = new Date()
+      state.filter.searches[vm.index].keyword = format(new Date(), 'yyyy-MM-dd')
     } else {
       state.filter.searches[vm.index].keyword = ''
     }

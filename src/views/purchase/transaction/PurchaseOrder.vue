@@ -3,152 +3,6 @@
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row no-gutters>        
-          <!-- <v-col cols="12" md="6" >
-            <v-row no-gutters>
-              <v-col cols="9">
-                <v-text-field
-                  :readonly="isAdvancedSearch"
-                  v-model="grid.search"
-                  append-icon="mdi-magnify"
-                  class="flex-grow-1 mr-md-2"
-                  solo
-                  hide-details
-                  dense
-                  clearable
-                  @keyup.enter="getList(false)"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="3" class="text-right">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      v-bind="attrs"
-                      v-on="on"
-                      v-shortkey="['ctrl', 'alt', 's']"
-                      color="primary"
-                      class="font-weight-regular"
-                      dark
-                      small
-                      tile
-                      @click="advSearch"
-                      @shortkey="advSearch"
-                    >
-                      Advanced Search
-                    </v-btn>
-                  </template>
-                  <span class="text-caption">(Ctrl + Alt + S)</span>
-                </v-tooltip>
-                
-              </v-col>
-            </v-row>
-            <v-row no-gutters v-if="isAdvancedSearch">
-              <v-col class="pt-0 mt-0">
-                <div class="pt-0 mt-0" v-for="(item, index) in filter.searches" :key="index">
-                  <v-row class="pl-2 mt-0 pt-0" no-gutters>
-                    <v-col cols="3" class="ma-0 pa-0">
-                      <v-select
-                        v-model="item.field"
-                        :items="filter.fields"
-                        @change="onChangeField(index, item.field)"
-                        label="Field"
-                        class="mt-0 ml-1 font-weight-regular"
-                      ></v-select>
-                    </v-col>
-                    <v-col cols="3" class="ma-0 pa-0">
-                      <v-select
-                        v-model="item.operator"
-                        :items="item.operators"
-                        label="Operator"
-                        class="mt-0 ml-1 font-weight-regular"
-                      ></v-select>
-                    </v-col>
-                    <v-col cols="4" class="ma-0 pa-0">
-                      <div v-if="getCategoryFromDataField(item.field) === 'number' || getCategoryFromDataField(item.field) === 'text' || getCategoryFromDataField(item.field) === ''">  
-                        <v-text-field class="mt-0 ml-1 font-weight-regular" v-model="item.keyword" label="Keyword" @keyup.enter="advancedSearch()"></v-text-field>                
-                      </div>
-                      <div v-else-if="getCategoryFromDataField(item.field) === 'bit'"> bit </div>
-                      <div v-else-if="getCategoryFromDataField(item.field) === 'datetime'"> 
-                        <v-menu
-                              v-model="item.show"
-                              :close-on-content-click="false"
-                              transition="scale-transition"
-                              min-width="290px"
-                              offset-y
-                          >
-                              <template v-slot:activator="{ on, attrs }">
-                              <v-text-field
-                                  v-bind="attrs"
-                                  v-on="on"
-                                  v-model="item.keyword"
-                                  label="Date"
-                                  class="mt-0 ml-1 font-weight-regular"
-                                  readonly
-                              ></v-text-field>
-                              </template>
-                              <v-date-picker
-                                  v-model="item.keyword"
-                                  no-title
-                                  scrollable
-                                  @change="item.show = false"
-                              ></v-date-picker>
-                          </v-menu>
-                      </div>
-
-                    </v-col>
-                    <v-col cols="2" class="ma-0 pa-0">
-                      <v-tooltip bottom>
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn
-                            v-bind="attrs"
-                            v-on="on"
-                            class="mt-2"
-                            icon
-                            @click="removeSearch(index)"
-                          >
-                            <v-icon>mdi-trash-can</v-icon>
-                          </v-btn>
-                        </template>
-                        <span class="text-caption">Hapus Pencarian</span>
-                      </v-tooltip>
-                      <v-tooltip v-if="index === filter.searches.length - 1" bottom>
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-btn v-if="isAdvancedSearch"
-                            v-bind="attrs"
-                            v-on="on"
-                            class="mt-2"
-                            icon
-                            small
-                            @click="addSearch()"
-                          >
-                            <v-icon>mdi-plus</v-icon>
-                          </v-btn>
-                        </template>
-                        <span class="text-caption">Tambah Pencarian</span>
-                      </v-tooltip>
-                    </v-col>
-                  </v-row>
-                </div>
-                <div>
-                  <v-row class="pl-2 mt-0 pt-0" no-gutters>
-                    <v-col cols="10 text-right">
-                      <v-btn
-                        small
-                        text
-                        @click="resetAdvancedFilter()"
-                      >Cancel</v-btn>
-                      <v-btn
-                        class="primary"
-                        text
-                        small
-                        @click="advancedSearch()"
-                        tile
-                      >Apply</v-btn>
-                    </v-col>
-                  </v-row>
-                </div>
-              </v-col>
-            </v-row>
-          </v-col> -->
           <advanced-search @search="search"></advanced-search>
           <v-col cols="12" md="6" class="text-right">
             <v-tooltip bottom>
@@ -1103,8 +957,7 @@ export default {
       gridDefOpts: state => state.app.grid,
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
-      filter: state => state.app.filter,
-      isAdvancedSearch: state => state.app.isAdvancedSearch
+      filter: state => state.app.filter
     }),
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'
@@ -1186,11 +1039,10 @@ export default {
     },
     search(vm) {
       this.grid.search = vm.search
-      this.getList(vm.bindToForm, vm.filters, vm.isAdvancedSearch)
+      this.getList(vm.bindToForm, vm.filters)
     },
-    getList(bindToForm = false, filter = [], isAdvancedSearch = false) {
+    getList(bindToForm = false, filters = []) {
       const sorts = []
-      let filters = []
 
       for (let i = 0; i < this.grid.options.sortBy.length; i++) {
         sorts.push({
@@ -1198,17 +1050,13 @@ export default {
           direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
         })
       }
-      if (isAdvancedSearch) {
-        filters = filter
-      }
       api.getAll(this.endpoint.purchase.order, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
           take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
           sorts: JSON.stringify(sorts),
-          filters: JSON.stringify(filters),
-          isAdvancedSearch: isAdvancedSearch
+          filters: JSON.stringify(filters)
         }
       })
         .then(response => {
