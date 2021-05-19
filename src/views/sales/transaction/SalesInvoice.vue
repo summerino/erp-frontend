@@ -264,7 +264,7 @@
                             ></v-text-field>
                           </template>
                           <v-date-picker
-                            v-model="data.date"
+                            v-model="data.dueDate"
                             no-title
                             scrollable
                             @change="menu.dueDate = false"

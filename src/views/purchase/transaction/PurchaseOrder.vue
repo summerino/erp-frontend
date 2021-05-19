@@ -888,7 +888,7 @@ export default {
         { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '120' },
         { text: 'Harga Nett', value: 'nettPrice', align: 'right', divider: true, width: '120' },
         { text: 'Harga Total', value: 'total', align: 'right', divider: true, width: '120' },
-        { text: 'Deskripsi', value: 'notes', width: '200' }
+        { text: 'Catatan', value: 'notes', width: '200' }
       ],
       data: []
     },

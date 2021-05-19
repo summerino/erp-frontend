@@ -125,7 +125,7 @@
           <v-btn icon dark @click="close">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Pengiriman Penjualan</v-toolbar-title>
+          <v-toolbar-title>Surat Jalan</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-tooltip bottom>
@@ -255,13 +255,13 @@
                     <v-row no-gutters>
                       <v-col cols="12">
                         <v-text-field
-                          v-model="data.soCode"
+                          v-model="data.transCode"
                           :readonly="hasRelatedTrans"
                           :rules="rules.required"
                           :label="lblTransCode"
                           class="mt-0"
                           required
-                          @change="soCodeChange"
+                          @change="transCodeChange"
                         >
                           <template v-slot:append>
                               <v-btn
@@ -611,7 +611,7 @@ export default {
         { text: 'Kode', value: 'code', divider: true, width: '160' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
         { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
-        { text: 'Kode Penjualan', value: 'soCode', width: '150' },
+        { text: 'Kode Trans.', value: 'transCode', width: '150' },
         { text: 'Dikirim Oleh', value: 'shippedInitial', divider: true, width: '200' },
         { text: 'Status', value: 'mark', width: '50' }
       ],
@@ -702,7 +702,7 @@ export default {
         srcTrans: 1,
         code: null,
         date: format(new Date(), 'yyyy-MM-dd'),
-        soCode: null,
+        transCode: null,
         custCode: null,
         custName: null,
         custAddr: null,
@@ -830,6 +830,13 @@ export default {
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
 
+      // Define label trans code
+      if (this.data.srcTrans === 1) {
+        this.lblTransCode = 'Kode Order Penjualan'
+      } else {
+        this.lblTransCode = 'Kode Retur'
+      }
+
       // Get customer details
       this.bindCustData(this.data)
 
@@ -904,7 +911,7 @@ export default {
       }
     },
     addItem() {
-      if (!this.data.soCode) {
+      if (!this.data.transCode) {
         this.$store.dispatch('app/showInfo', 'Mohon pilih penjualan terlebih dahulu.')
         return
       }
@@ -953,11 +960,11 @@ export default {
     },
     srcTransChange() {
       if (this.data.srcTrans === 1) {
-        this.lblTransCode = 'Kode Penjualan'
+        this.lblTransCode = 'Kode Order Penjualan'
       } else {
         this.lblTransCode = 'Kode Retur'
       }
-      this.data.soCode = null
+      this.data.transCode = null
       this.data.custCode = null
       this.data.custName = null
       this.data.currCode = null
@@ -971,13 +978,13 @@ export default {
       this.gridItem.data = []
       this.gridRelated.data = []
     },
-    soCodeChange() {
+    transCodeChange() {
       api.getAll(this.endpoint.sales.order, {
         params: {
           filters: JSON.stringify([{
             field: 'code',
             operator: 'eq',
-            keyword: this.data.soCode
+            keyword: this.data.transCode
           }, {
             field: 'mark',
             operator: 'doesnotcontain',
@@ -1035,7 +1042,7 @@ export default {
     },
     bindTransData(item) {
       if (item) {
-        this.data.soCode = item.code
+        this.data.transCode = item.code
         this.data.custCode = item.custCode
         this.data.custName = item.custName
         this.data.currCode = item.currCode

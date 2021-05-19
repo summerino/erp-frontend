@@ -433,6 +433,7 @@
                     <v-tab-item
                       key="others"
                       transition="false"
+                      eager
                     >
                       <v-row no-gutters>
                         <v-col cols="12">
@@ -440,7 +441,7 @@
                             v-model="data.warehouseCode"
                             :items="warehouses"
                             :item-text="item => `${item.initial} - ${item.name}`"
-                            label="Lokasi"
+                            label="Gudang"
                             item-value="code"
                             class="mt-0"
                           ></v-autocomplete>
@@ -943,7 +944,7 @@ export default {
       data: [],
       columns: [
         { value: 'action', sortable: false, divider: true, width: '1%' },
-        { text: 'Inisial Barang', value: 'itemId', divider: true, width: '120' },
+        { text: 'Inisial', value: 'itemId', divider: true, width: '120' },
         { text: 'Nama', value: 'itemName', divider: true, width: '300' },
         { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
         { text: 'Satuan', value: 'unitName', divider: true, width: '90' },
@@ -952,7 +953,7 @@ export default {
         { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '120' },
         { text: 'Harga Nett', value: 'nettPrice', align: 'right', divider: true, width: '120' },
         { text: 'Harga Total', value: 'total', align: 'right', divider: true, width: '120' },
-        { text: 'Deskripsi', value: 'notes', width: '200' }
+        { text: 'Catatan', value: 'notes', width: '200' }
       ]
     },
     gridRelated: {

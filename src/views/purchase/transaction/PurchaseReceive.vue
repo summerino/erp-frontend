@@ -746,7 +746,7 @@ export default {
         taxAmount: 0,
         total: 0
       }
-      this.lblTransCode = 'Kode PO'
+      this.lblTransCode = 'Kode Order Pembelian'
       this.gridItem.data = []
       this.gridRelated.data = []
       this.tab.sup = 0
@@ -867,7 +867,7 @@ export default {
 
       // Define label trans code
       if (this.data.srcTrans === 1) {
-        this.lblTransCode = 'Kode PO'
+        this.lblTransCode = 'Kode Order Pembelian'
       } else {
         this.lblTransCode = 'Kode Retur'
       }
@@ -1002,7 +1002,7 @@ export default {
     },
     srcTransChange() {
       if (this.data.srcTrans === 1) {
-        this.lblTransCode = 'Kode PO'
+        this.lblTransCode = 'Kode Order Pembelian'
       } else {
         this.lblTransCode = 'Kode Retur'
       }
