@@ -40,4 +40,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/inventory/transaction/transfer-stock',
+  name: 'transfer-stock',
+  component: () => import(/* webpackChunkName: "inventory-trans-transfer-stock" */ '@/views/inventory/transaction/TransferStock.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
