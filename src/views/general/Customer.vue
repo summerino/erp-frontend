@@ -1,8 +1,13 @@
 <template>
   <div class="w-full">
+    <!-- <div class="display-1">Pelanggan</div> -->
+    <v-breadcrumbs :items="breadcrumbs" class="pa-0 pb-2"></v-breadcrumbs>
     <v-card v-if="main">
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
+          <v-col cols="12" md="2">
+            Pelanggan
+          </v-col>
           <v-col cols="12" md="4">
             <v-text-field
               v-model="grid.search"
@@ -561,6 +566,13 @@ export default {
   },
 
   data: () => ({
+    breadcrumbs: [{
+      text: 'Umum'
+    }, {
+      text: 'Data Master'
+    }, {
+      text: 'Pelanggan'
+    }],
     main: true,
     tab: {
       advancedItem: null
