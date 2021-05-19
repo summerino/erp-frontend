@@ -7,17 +7,16 @@ export default {
       customer: 'customer',
       type: 'customer-type'
     },
-    salesman: 'salesman',
     supplier: {
       supplier: 'supplier',
       type: 'supplier-type'
     },
-    tax: 'tax',
     employee: 'employee',
     vehicle: {
       vehicle: 'vehicle',
       type: 'vehicle-type'
     },
+    tax: 'tax',
     master: 'master'
   },
 
@@ -29,8 +28,8 @@ export default {
     },
     uom: 'uom',
     warehouse: 'warehouse',
-    adjustment: 'adjustment',
-    transferStock: 'transfer-stock' 
+    transferStock: 'transfer-stock',
+    adjustment: 'adjustment'
   },
 
   purchase: {
@@ -42,19 +41,22 @@ export default {
   },
 
   sales: {
+    area: 'area',
     order: 'sales-order',
     delivery: 'sales-delivery',
     invoice: 'sales-invoice',
+    directInvoice: 'direct-invoice',
     return: 'sales-return',
-    creditMemo: 'credit-memo',
-    area: 'area'
+    creditMemo: 'credit-memo'
   },
 
   accounting: {
     coa: 'coa',
     currencyRate: 'currency-rate'
   },
+
   systemManagement:{
-    user: 'user'
+    user: 'user',
+    parameter: 'system-parameter'
   }
 }

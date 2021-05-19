@@ -34,7 +34,7 @@ const state = {
   // App.vue rule
   rules: {
     required: [
-      (v) => !!v || 'wajib diisi'
+      (v) => !!v || 'Wajib diisi'
     ],
     above0: [
       (v) => parseFloat((v || '0').toString().replace(/,/g, '')) > 0 || 'Nilai harus lebih dari 0 (nol)'
