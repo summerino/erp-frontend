@@ -123,17 +123,17 @@
           <v-row class="pl-2 mt-0 pt-0" no-gutters>
             <v-col cols="10 text-right">
               <v-btn
-                small
-                text
-                @click="resetAdvancedFilter()"
-              >Batal</v-btn>
-              <v-btn
                 class="primary"
                 text
                 small
                 @click="advancedSearch()"
                 tile
               >Cari</v-btn>
+              <v-btn
+                small
+                text
+                @click="resetAdvancedFilter()"
+              >Batal</v-btn>
             </v-col>
           </v-row>
         </div>
@@ -147,8 +147,6 @@
 import { mapState } from 'vuex'
 
 export default {
-
-
   data: () => ({
     search: null,
     searches: []    
@@ -161,13 +159,14 @@ export default {
   },
   methods: {
     advSearch() {
+      this.search = null
       this.$store.commit('app/advSearch')
       if (this.filter.isAdvancedSearch) this.addSearch()
     },
     addSearch() {
       this.$store.commit('app/addSearch')
     },
-    advancedSearch() {      
+    advancedSearch() {
       const filters = this.filter.searches.filter(x => x.operator !== '' && x.field !== '' && x.keyword !== '')
       this.getList(false, filters)
     },
@@ -199,7 +198,8 @@ export default {
       const vm = {
         bindToForm: bindToForm,
         filters: filters,
-        search: this.search
+        search: this.search,
+        isAdvancedSearch: this.filter.isAdvancedSearch
       }
       this.$emit('search', vm)
     }
