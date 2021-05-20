@@ -1001,7 +1001,6 @@ export default {
       else this.bindStockOpnameTable()
     },
     bindGridItemsData(data) {
-      debugger
       if (data.some(this.checkIfHasDifferentUnit)) {
         for (let i = 0; i < data.length; i++) {
           if (data[i].differentUnits.length > 0) {
@@ -1053,7 +1052,6 @@ export default {
       this.itemIdChange(rowItem)
     },
     bindDifferentUnit(rowItem) {
-      debugger
       const data_i = this.gridItem.data.find(i => i.id === rowItem.id)
       if (data_i) {
         data_i.differentUnits = rowItem.differentUnits

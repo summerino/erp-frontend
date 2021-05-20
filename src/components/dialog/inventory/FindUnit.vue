@@ -194,7 +194,6 @@ export default {
       }, 0)
     },
     open(item, options) {
-      debugger
       this.dialog = true
       this.reset()
       this.rowItem = item
@@ -219,7 +218,6 @@ export default {
         })
     },
     bindUnit() {
-      debugger
       const item = this.rowItem
       const selectedUnit = item.units.find(x => x.id === item.unitId)
       if (selectedUnit) {
@@ -260,7 +258,6 @@ export default {
       this.rowItem.differentUnit = temp.join(', ')
     },
     calculateSumQtyOpname() {
-      debugger
       let totalSumQtyOpname = 0
       const tempDest = this.rowItem.units.find(x => x.id === this.rowItem.unitId)
       let toSequence = 0
