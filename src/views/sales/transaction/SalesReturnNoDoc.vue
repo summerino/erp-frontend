@@ -1049,7 +1049,7 @@ export default {
             {
               field: 'code',
               operator: 'contains',
-              keyword: ['DEF_SALES_TAX_INC','DEF_SLS_RTN_NONTAX']
+              keyword: ['DEF_SALES_TAX_INC', 'DEF_SLS_RTN_NONTAX']
             }
           ]),
           sorts: JSON.stringify([
