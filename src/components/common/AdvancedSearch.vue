@@ -5,12 +5,10 @@
         <v-text-field
           :readonly="filter.isAdvancedSearch"
           v-model="search"
+          label="Cari..."
           append-icon="mdi-magnify"
-          class="flex-grow-1 mr-md-2"
-          solo
-          hide-details
-          dense
-          clearable
+          class="font-weight-regular mt-0 pt-0"
+          single-line
           @keyup.enter="getList(false)"
         ></v-text-field>
       </v-col>
