@@ -1,16 +1,16 @@
 export default {
   isAdvancedSearch: false,
   operator: [
-    { text: 'Equal', value: 'eq', allowedCategoryTypes: ['number', 'datetime', 'text', 'bit'] },
-    { text: 'Not Equal', value: 'neq', allowedCategoryTypes: ['number', 'datetime', 'text', 'bit'] },
-    { text: 'Start With', value: 'startwith', allowedCategoryTypes: ['text'] },
-    { text: 'End With', value: 'endswith', allowedCategoryTypes: ['text'] },
-    { text: 'Contains', value: 'contains', allowedCategoryTypes: ['text'] },
-    { text: 'Not Contains', value: 'doesnotcontain', allowedCategoryTypes: ['text'] },
-    { text: 'Less than', value: 'lt', allowedCategoryTypes: ['number', 'datetime'] },
-    { text: 'Greater than', value: 'gt', allowedCategoryTypes: ['number', 'datetime'] },
-    { text: 'Less than equal', value: 'lte', allowedCategoryTypes: ['number', 'datetime'] },
-    { text: 'Greater than equal', value: 'gte', allowedCategoryTypes: ['number', 'datetime'] }
+    { text: 'Sama dgn.', value: 'eq', allowedCategoryTypes: ['number', 'datetime', 'text', 'bit'] },
+    { text: 'Tdk. sama dgn.', value: 'neq', allowedCategoryTypes: ['number', 'datetime', 'text', 'bit'] },
+    { text: 'Dimulai dgn.', value: 'startwith', allowedCategoryTypes: ['text'] },
+    { text: 'Diakhiri dgn.', value: 'endswith', allowedCategoryTypes: ['text'] },
+    { text: 'Mengandung', value: 'contains', allowedCategoryTypes: ['text'] },
+    { text: 'Tdk. mengandung', value: 'doesnotcontain', allowedCategoryTypes: ['text'] },
+    { text: 'Lbh. kecil', value: 'lt', allowedCategoryTypes: ['number', 'datetime'] },
+    { text: 'Lbh. besar', value: 'gt', allowedCategoryTypes: ['number', 'datetime'] },
+    { text: 'Lbh. kecil sama dgn.', value: 'lte', allowedCategoryTypes: ['number', 'datetime'] },
+    { text: 'Lbh. besar sama dgn.', value: 'gte', allowedCategoryTypes: ['number', 'datetime'] }
   ],
   mapDataTypeToCategory: [
     {

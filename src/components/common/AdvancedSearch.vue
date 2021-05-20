@@ -149,8 +149,6 @@
 import { mapState } from 'vuex'
 
 export default {
-
-
   data: () => ({
     search: null,
     searches: []    
@@ -163,6 +161,7 @@ export default {
   },
   methods: {
     advSearch() {
+      this.search = null
       this.$store.commit('app/advSearch')
       if (this.filter.isAdvancedSearch) this.addSearch()
     },
@@ -201,7 +200,8 @@ export default {
       const vm = {
         bindToForm: bindToForm,
         filters: filters,
-        search: this.search
+        search: this.search,
+        isAdvancedSearch: filter.isAdvancedSearch
       }
       this.$emit('search', vm)
     }
