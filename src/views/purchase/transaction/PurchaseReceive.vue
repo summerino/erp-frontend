@@ -494,7 +494,7 @@
                               ref="itemId"
                               v-model="item.itemId"
                               :items="items"
-                              :readonly="item.type == 0 || hasRelatedTrans"
+                              :readonly="item.type == 0 || hasRelatedTrans || isPurchaseReturn"
                               :rules="rules.required"
                               item-text="initial"
                               item-value="id"
@@ -505,7 +505,7 @@
                             >
                               <template v-slot:append>
                                 <v-btn
-                                  :disabled="item.type == 0 || hasRelatedTrans"
+                                  :disabled="item.type == 0 || hasRelatedTrans || isPurchaseReturn"
                                   color="primary"
                                   icon
                                   x-small
@@ -718,6 +718,9 @@ export default {
     },
     isVoid() {
       return (this.data?.mark?.toUpperCase() === 'V')
+    },
+    isPurchaseReturn() {
+      return (this.data.srcTrans === 2)
     }
   },
 
