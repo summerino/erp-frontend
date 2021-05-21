@@ -934,10 +934,10 @@ export default {
     },
     gridRelated: {
       columns: [
-        { text: 'Kode', value: 'code', divider: true },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true },
-        { text: 'Status', value: 'mark' },
-        { text: 'Tipe', value: 'type'}
+        { text: 'Kode Trans.', value: 'code', divider: true },
+        { text: 'Tipe Trans.', value: 'type', divider: true },
+        { text: 'Tgl. Trans.', value: 'date', align: 'right', divider: true },
+        { text: 'Status', value: 'mark' }
       ],
       data: []
     },
