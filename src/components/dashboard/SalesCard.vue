@@ -54,11 +54,11 @@
 </template>
 
 <script>
-import moment from 'moment'
+import { format, parseISO } from 'date-fns'
 import TrendPercent from '../common/TrendPercent'
 
 function formatDate(date) {
-  return date ? moment(date).format('D MMM') : ''
+  return date ? format(parseISO(date), 'dd MMM') : ''
 }
 
 /*

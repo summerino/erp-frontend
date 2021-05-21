@@ -17,7 +17,6 @@ import './plugins/apexcharts'
 import './plugins/echarts'
 import './plugins/animate'
 import './plugins/clipboard'
-import './plugins/moment'
 
 // FILTERS
 import './filters/capitalize'

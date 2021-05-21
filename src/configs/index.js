@@ -1,5 +1,4 @@
 import maps from './maps'
-import time from './time'
 import icons from './icons'
 import theme from './theme'
 import toolbar from './toolbar'
@@ -19,9 +18,6 @@ export default {
 
   // google maps
   maps,
-
-  // time configs
-  time,
 
   // icon libraries
   icons,
