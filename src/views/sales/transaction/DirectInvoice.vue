@@ -1,134 +1,7 @@
 <template>
   <div class="w-full">
-    <v-card>
-      <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row dense>
-          <v-col cols="12" md="4">
-            <v-text-field
-              v-model="grid.search"
-              append-icon="mdi-magnify"
-              label="Cari..."
-              class="font-weight-regular mt-0 pt-0"
-              single-line
-              @keyup.enter="getList()"
-            ></v-text-field>
-          </v-col>
-          <v-spacer></v-spacer>
-          <v-col cols="12" md="6" class="text-right">
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  v-bind="attrs"
-                  v-on="on"
-                  v-shortkey="['ctrl', 'alt', 'n']"
-                  color="green darken-1"
-                  class="font-weight-regular"
-                  dark
-                  small
-                  tile
-                  @click="add"
-                  @shortkey="add"
-                >
-                  <v-icon left>mdi-plus</v-icon>
-                  Data Baru
-                </v-btn>
-              </template>
-              <span class="text-caption">(Ctrl + Alt + N)</span>
-            </v-tooltip>
-          </v-col>
-        </v-row>
-      </v-card-title>
-
-      <v-data-table
-        :headers="grid.columns"
-        :footer-props="{ itemsPerPageOptions: gridDefOpts.pageSizes }"
-        :height="gridDefOpts.height"
-        :items="grid.data"
-        :items-per-page="gridDefOpts.pageSize"
-        :options.sync="grid.options"
-        :server-items-length="grid.total"
-        :sort-by="grid.options.sortBy"
-        :sort-desc="grid.options.sortDesc"
-        class="elevation-1"
-        fixed-header
-      >
-        <template v-slot:[`item.action`]="{ item }">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                v-bind="attrs"
-                v-on="on"
-                color="orange lighten-1"
-                icon
-                small
-                @click="edit(item)"
-              >
-                <v-icon small>mdi-pencil</v-icon>
-              </v-btn>
-            </template>
-            <span class="text-caption">Ubah</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                v-bind="attrs"
-                v-on="on"
-                :disabled="item.mark.toUpperCase() !== 'A'"
-                color="red"
-                icon
-                small
-                @click="remove(item)"
-              >
-                <v-icon small>mdi-close-thick</v-icon>
-              </v-btn>
-            </template>
-            <span class="text-caption">Void</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                v-bind="attrs"
-                v-on="on"
-                :disabled="item.mark.toUpperCase() !== 'PR' && item.mark.toUpperCase() !== 'A'"
-                color="blue darken-2"
-                icon
-                small
-                @click="closeOrder(item)"
-              >
-                <v-icon small>mdi-lock</v-icon>
-              </v-btn>
-            </template>
-            <span class="text-caption">Tutup</span>
-          </v-tooltip>
-        </template>
-        <template v-slot:[`item.date`]="{ item }">
-          {{ item.date | formatDate('dd-MMM-yyyy') }}
-        </template>
-        <template v-slot:[`item.total`]="{ item }">
-          {{ item.total | formatCurrency }}
-        </template>
-        <template v-slot:[`item.mark`]="{ item }">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-chip
-                v-bind="attrs"
-                v-on="on"
-                :color="item.mark.toUpperCase() === 'CLS' ? 'grey darken-1' : item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
-                class="px-1"
-                dark
-                small
-              >
-                {{ item.mark }}
-              </v-chip>
-            </template>
-            <span class="text-caption">{{ item.status }}</span>
-          </v-tooltip>
-        </template>
-      </v-data-table>
-    </v-card>
-
     <v-dialog
-      v-model="dialog.add"
+      :value="true"
       transition="dialog-bottom-transition"
       fullscreen
       hide-overlay
@@ -145,7 +18,7 @@
           <v-btn icon dark @click="dialog.add = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Order Penjualan</v-toolbar-title>
+          <v-toolbar-title>Penjualan Langsung</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-tooltip bottom>
@@ -200,50 +73,6 @@
                   </v-list-item-title>
                 </v-list-item>
               </v-list>
-               <v-list class="cursor-pointer">
-                <v-list-item
-                  v-shortkey="['ctrl', 'alt', 'r']"
-                  :disabled="isSaveNDeliveryAble"
-                  @click="saveDlv()"
-                  @shortkey="saveDlv()"
-                >
-                  <v-list-item-title>
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on, attrs }">
-                        <span
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                          Simpan & Kirim
-                        </span>
-                      </template>
-                      <span class="text-caption">(Ctrl + Alt + R)</span>
-                    </v-tooltip>
-                  </v-list-item-title>
-                </v-list-item>
-              </v-list>
-              <v-list class="cursor-pointer">
-                <v-list-item
-                  v-shortkey="['ctrl', 'alt', 'i']"
-                  :disabled="isSaveNInvoiceAble"
-                  @click="saveInv()"
-                  @shortkey="saveInv()"
-                >
-                  <v-list-item-title>
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on, attrs }">
-                        <span
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                          Simpan & Faktur
-                        </span>
-                      </template>
-                      <span class="text-caption">(Ctrl + Alt + I)</span>
-                    </v-tooltip>
-                  </v-list-item-title>
-                </v-list-item>
-              </v-list>
             </v-menu>
             <v-divider vertical></v-divider>
           </v-toolbar-items>
@@ -261,18 +90,21 @@
 
                   <v-card-text>
                     <v-row no-gutters>
-                      <v-col cols="12" md="6">
+                      <v-col cols="12">
                         <v-text-field
                           ref="code"
                           v-model="data.code"
-                          label="No. Order Penjualan"
+                          label="No. Faktur"
                           class="mt-0"
                           readonly
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="12" md="6" class="pl-md-1">
+                    </v-row>
+
+                    <v-row no-gutters>
+                      <v-col cols="12" md="6">
                         <v-menu
-                          v-model="menu.orderDate"
+                          v-model="menu.invDate"
                           :close-on-content-click="false"
                           transition="scale-transition"
                           min-width="290px"
@@ -283,8 +115,8 @@
                               v-bind="attrs"
                               v-on="on"
                               :rules="rules.required"
-                              :value="formatOrderDate"
-                              label="Tanggal"
+                              :value="formatDate(data.date)"
+                              label="Tanggal Transaksi"
                               class="mt-0"
                               readonly
                               required
@@ -294,7 +126,35 @@
                             v-model="data.date"
                             no-title
                             scrollable
-                            @change="menu.orderDate = false"
+                            @change="menu.invDate = false"
+                          ></v-date-picker>
+                        </v-menu>
+                      </v-col>
+                      <v-col cols="12" md="6" class="pl-md-1">
+                        <v-menu
+                          v-model="menu.dueDate"
+                          :close-on-content-click="false"
+                          transition="scale-transition"
+                          min-width="290px"
+                          offset-y
+                        >
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-text-field
+                              v-bind="attrs"
+                              v-on="on"
+                              :rules="rules.required"
+                              :value="formatDate(data.dueDate)"
+                              label="Tanggal Jatuh Tempo"
+                              class="mt-0"
+                              readonly
+                              required
+                            ></v-text-field>
+                          </template>
+                          <v-date-picker
+                            v-model="data.dueDate"
+                            no-title
+                            scrollable
+                            @change="menu.dueDate = false"
                           ></v-date-picker>
                         </v-menu>
                       </v-col>
@@ -312,33 +172,6 @@
                           class="mt-0"
                           required
                         ></v-autocomplete>
-                      </v-col>
-                    </v-row>
-
-                    <v-row no-gutters>
-                      <v-col cols="5">
-                        <v-combobox
-                          v-model="data.currCode"
-                          :items="currencies"
-                          :readonly="hasRelatedTrans"
-                          :rules="rules.required"
-                          label="Mata Uang"
-                          item-text="code"
-                          item-value="code"
-                          class="mt-0"
-                          required
-                        ></v-combobox>
-                      </v-col>
-
-                      <v-col cols="7" class="pl-1">
-                        <v-currency-field
-                          v-model="data.rate"
-                          :readonly="hasRelatedTrans"
-                          :rules="rules.required"
-                          label="Nilai Tukar"
-                          class="text-right mt-0"
-                          required
-                        ></v-currency-field>
                       </v-col>
                     </v-row>
                   </v-card-text>
@@ -441,9 +274,26 @@
                             v-model="data.warehouseCode"
                             :items="warehouses"
                             :item-text="item => `${item.initial} - ${item.name}`"
+                            :rules="rules.required"
                             label="Gudang"
                             item-value="code"
                             class="mt-0"
+                            required
+                          ></v-autocomplete>
+                        </v-col>
+                      </v-row>
+
+                      <v-row no-gutters>
+                        <v-col cols="12">
+                          <v-autocomplete
+                            v-model="data.issuedBy"
+                            :items="employees"
+                            :item-text="item => `${item.initial} - ${item.firstName}`"
+                            :rules="rules.required"
+                            label="Dikeluarkan Oleh"
+                            item-value="id"
+                            class="mt-0"
+                            required
                           ></v-autocomplete>
                         </v-col>
                       </v-row>
@@ -697,6 +547,9 @@
                         <template v-slot:[`item.date`]="{ item }">
                           {{ item.date | formatDate('dd-MMM-yyyy') }}
                         </template>
+                        <template v-slot:[`item.amount`]="{ item }">
+                          {{ item.amount | formatCurrency }}
+                        </template>
                       </v-data-table>
                     </v-tab-item>
                   </v-tabs>
@@ -875,14 +728,6 @@
       ref="findItem"
       @dblclick:row="bindItemData"
     ></find-item>
-    <so-save-delivery
-      ref="soSd"
-     @closeParent="closeDlv"
-    ></so-save-delivery>
-    <so-save-Invoice
-      ref="soSi"
-     @closeParent="closeInv"
-    ></so-save-Invoice>
   </div>
 </template>
 
@@ -897,48 +742,23 @@ import api from '@/services/axios.service'
 import Confirm from '@/components/dialog/Confirm'
 import FindCustomer from '@/components/dialog/general/FindCustomer'
 import FindItem from '@/components/dialog/inventory/FindItem'
-import SoSaveDelivery from '@/components/dialog/sales/SOSaveDelivery'
-import SoSaveInvoice from '@/components/dialog/sales/SOSaveInvoice'
 
 export default {
   components: {
     Confirm,
     FindCustomer,
-    FindItem,
-    SoSaveDelivery,
-    SoSaveInvoice
+    FindItem
   },
 
   data: () => ({
-    dialog: {
-      add: false
-    },
     menu: {
-      orderDate: false,
-      deliveryDate: false
+      invDate: false,
+      dueDate: false
     },
     tab: {
       cust: null,
       item: null,
       foot: null
-    },
-    grid: {
-      columns: [
-        { value: 'action', sortable: false, divider: true, width: '120' },
-        { text: 'No. Ord. Penjualan', value: 'code', divider: true, width: '160' },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
-        { text: 'Penjual', value: 'salesInitial', divider: true, width: '200' },
-        { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
-        { text: 'Total', value: 'total', align: 'right', divider: true, width: '120' },
-        { text: 'Status', value: 'mark', width: '50' }
-      ],
-      data: [],
-      options: {
-        sortBy: ['code'],
-        sortDesc: [true]
-      },
-      total: 0,
-      search: null
     },
     gridItem: {
       data: [],
@@ -958,87 +778,69 @@ export default {
     },
     gridRelated: {
       columns: [
-        { text: 'No. Dokumen', value: 'code', divider: true },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true },
+        { text: 'Kode Trans.', value: 'code', divider: true },
+        { text: 'Tipe Trans.', value: 'code', divider: true },
+        { text: 'Tgl. Trans.', value: 'date', align: 'right', divider: true },
+        { text: 'Nilai', value: 'total', align: 'right', divider: true },
         { text: 'Status', value: 'mark' }
       ],
       data: []
     },
     valid: false,
-    defTaxInc: false,
     employees: [],
-    currencies: [],
     customers: [],
     warehouses: [],
     taxes: [],
     items: [],
-    data: {}
+    data: {
+      action: '',
+      code: null,
+      date: format(new Date(), 'yyyy-MM-dd'),
+      dueDate: format(new Date(), 'yyyy-MM-dd'),
+      salesBy: null,
+      currCode: 'IDR',
+      rate: 1,
+      custCode: null,
+      custName: null,
+      custAddr: null,
+      custPhone: null,
+      custFax: null,
+      warehouseCode: null,
+      issuedBy: null,
+      notes: null,
+      dpp: 0,
+      subTotal: 0,
+      finalDiscPercent: 0,
+      finalDisc: 0,
+      includeTax: false,
+      taxAmount: 0,
+      total: 0
+    }
   }),
 
   created: function () {
-    this.getList()
     this.getDefTaxIncSetting()
     this.getSalesmanLists()
-    this.getCurrLists()
     this.getCustomerLists()
     this.getWarehouseLists()
     this.getTaxLists()
     this.getItemLists()
-  },
-
-  mounted: function () {
-    setTimeout(() => {
-      this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
-    }, 0)
-  },
-
-  watch: {
-    'grid.options': {
-      handler() {
-        this.getList()
-      },
-      deep: true
-    }
+    this.defineAction()
   },
 
   computed: {
     ...mapState({
-      gridDefOpts: state => state.app.grid,
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint
     }),
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'
     },
-    formatOrderDate() {
-      return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
-    },
-    formatDeliveryDate() {
-      return this.data.deliveryDate ? format(parseISO(this.data.deliveryDate), 'dd-MMM-yyyy') : ''
-    },
     hasRelatedTrans() {
       return (this.gridRelated?.data?.length > 0)
     },
     isVoid() {
       return (this.data?.mark?.toUpperCase() === 'V')
-    },
-    isSaveNDeliveryAble() {
-      if (this.data.action === 'add') {
-        return false
-      } if (this.data.mark === 'A' && this.data.action === 'edit') {
-        return false
-      }
-      return true
-    },
-    isSaveNInvoiceAble() {
-      if (this.data.action === 'add') {
-        return false
-      } if (this.data.mark === 'CMP' || this.data.mark === 'A') {
-        if (this.data.action === 'edit') {
-          return false
-        }
-      }
-      return true
     }
   },
 
@@ -1085,51 +887,21 @@ export default {
         this.data.warehouseCode = defWarehouse.code
       }
     },
-    getList(bindToForm = false) {
-      const sorts = []
-      for (let i = 0; i < this.grid.options.sortBy.length; i++) {
-        sorts.push({
-          field: this.grid.options.sortBy[i],
-          direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
-        })
-      }
-      
-      api.getAll(this.endpoint.sales.order, {
-        params: {
-          search: this.grid.search,
-          skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
-          take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
-          sorts: JSON.stringify(sorts)
-        }
-      })
-        .then(response => {
-          this.grid.data = response.data.tableData
-          this.grid.total = response.data.rowCount
-          if (bindToForm) {
-            const item = this.grid.data.find(h => h.code === this.data.code)
-            this.edit(item)
-          }
-        })
+    formatDate(date) {
+      return date ? format(parseISO(date), 'dd-MMM-yyyy') : ''
     },
     getDefTaxIncSetting() {
-      api.getAll(this.endpoint.master, {
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
         params: {
-          param: 'systemParameter',
-          fieldNames: 'code,value',
           filters: JSON.stringify([{
             field: 'code',
-            operator: 'equal',
+            operator: 'eq',
             keyword: 'DEF_SALES_TAX_INC'
-          }]),
-          sorts: JSON.stringify([{
-            field: 'code',
-            direction: 'asc'
-          }]),
-          includeMetaData: false
+          }])
         }
       })
         .then(response => {
-          this.defTaxInc = (response.data.tableData[0].value === '1')
+          this.data.includeTax = (response.data.tableData[0].value === '1')
         })
     },
     getSalesmanLists() {
@@ -1148,27 +920,6 @@ export default {
       })
         .then(response => {
           this.employees = response.data.tableData
-        })
-    },
-    getCurrLists() {
-      api.getAll(this.endpoint.master, {
-        params: {
-          param: 'currency',
-          fieldNames: 'code',
-          filters: JSON.stringify([{
-            field: 'isActive',
-            operator: 'EQUAL',
-            keyword: true
-          }]),
-          sorts: JSON.stringify([{
-            field: 'sort',
-            direction: 'asc'
-          }]),
-          includeMetaData: false
-        }
-      })
-        .then(response => {
-          this.currencies = response.data.tableData
         })
     },
     getCustomerLists() {
@@ -1225,60 +976,52 @@ export default {
           item.units = response.data.tableData
         })
     },
-    close() {
-      this.dialog.add = false
-    },
-    add() {
-      if (this.dialog.add) return
-      this.dialog.add = true
-      this.reset(false)
-      this.data.action = 'add'
+    async defineAction() {
+      if (this.$route.params.action.toLowerCase() === 'edit') {
+        
+        // Get invoice details
+        const resp = await api.getOne(this.endpoint.sales.directInvoice, this.$route.params.code)
 
-      setTimeout(() => {
-        // Set focus to order code field
-        this.$refs.code.focus()
+        if (!resp.data.tableData) return
 
+        this.data = {
+          ...resp.data.tableData,
+          action: 'edit',
+          createdDate: (resp.data.tableData.createdDate === null) ? null : format(parseISO(resp.data.tableData.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
+          updatedDate: (resp.data.tableData.updatedDate === null) ? null : format(parseISO(resp.data.tableData.updatedDate), 'dd-MMM-yyyy HH:mm:ss'),
+          approvedDate: (resp.data.tableData.approvedDate === null) ? null : format(parseISO(resp.data.tableData.approvedDate), 'dd-MMM-yyyy HH:mm:ss')
+        }
+
+        // Get customer details
+        this.custCodeChange()
+
+        // Get item details
+        api.getAll(`${this.endpoint.sales.directInvoice}/item`, {
+          params: { code: resp.data.tableData.code }
+        })
+          .then(response => {
+            this.gridItem.data = response.data.tableData
+          })
+
+        // Get related transaction details
+        api.getAll(`${this.endpoint.sales.directInvoice}/related-trans`, {
+          params: { code: resp.data.tableData.code }
+        })
+          .then(response => {
+            this.gridRelated.data = response.data.tableData
+          })
+      } else {
+        this.data.action = 'add'
+        
         // Validate form first
         this.$refs.form.validate()
-      }, 0)
-    },
-    edit(item) {
-      if (!item) return
-
-      this.dialog.add = true
-      this.reset()
-
-      this.data = {
-        ...item,
-        action: 'edit',
-        createdDate: (item.createdDate === null) ? null : format(parseISO(item.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
-        updatedDate: (item.updatedDate === null) ? null : format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss'),
-        approvedDate: (item.approvedDate === null) ? null : format(parseISO(item.approvedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
 
-      // Get customer details
-      this.custCodeChange()
-
-      // Get item details
-      api.getAll(`${this.endpoint.sales.order}/item`, {
-        params: { code: item.code }
-      })
-        .then(response => {
-          this.gridItem.data = response.data.tableData
-        })
-
-      // Get related transaction details
-      api.getAll(`${this.endpoint.sales.order}/related-trans`, {
-        params: { code: item.code }
-      })
-        .then(response => {
-          this.gridRelated.data = response.data.tableData
-        })
-
       // Set focus to order code field
-      setTimeout(() => {
-        this.$refs.code.focus()
-      }, 0)
+      this.$refs.code.focus()
+    },
+    close() {
+      this.$router.push({name: 'sales-invoice'})
     },
     async remove(item) {
       if (
@@ -1286,11 +1029,10 @@ export default {
           'Void?',
           'Apakah anda yakin ingin membuat void data ini?')
       ) {
-        api.delete(this.endpoint.sales.order, item.code)
+        api.delete(this.endpoint.sales.directInvoice, item.code)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
-              this.getList()
             }
           })
       }
@@ -1307,10 +1049,10 @@ export default {
 
       let result = { success: false, message: '' }
       if (data.action === 'add') {
-        const resp = await api.create(this.endpoint.sales.order, data)
+        const resp = await api.create(this.endpoint.sales.directInvoice, data)
         result = resp.data
       } else if (data.action === 'edit') {
-        const resp = await api.update(this.endpoint.sales.order, data.code, data)
+        const resp = await api.update(this.endpoint.sales.directInvoice, data.code, data)
         result = resp.data
       }
 
@@ -1321,34 +1063,7 @@ export default {
         } else {
           this.data.code = result.data
         }
-        this.getList(!closeDialog)
       }
-    },
-    saveDlv() {
-      if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Silahkan periksa kembali data yang wajib diisi.')
-        return
-      }
-      const data = this.data
-      data.itemDetails = this.gridItem.data
-      this.$refs.soSd.open(data)
-    },
-    closeDlv() {
-      this.dialog.add = false
-      this.getList()
-    },
-    saveInv() {
-      if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Silahkan periksa kembali data yang wajib diisi.')
-        return
-      }
-      const data = this.data
-      data.itemDetails = this.gridItem.data
-      this.$refs.soSi.open(data)
-    },
-    closeInv() {
-      this.dialog.add = false
-      this.getList()
     },
     addItem() {
       if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0].itemId ?? null)) {

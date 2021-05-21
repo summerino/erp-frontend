@@ -517,8 +517,29 @@
                             v-model="item.qtyOpname"
                             class="text-body-2 text-right mt-0"
                             dense
-                            @change="calculateDifferent(item)"
+                            @change="qtyAdjustChange(item)"
                         ></v-currency-field>
+                    </template>
+                    <template v-slot:[`item.differentUnit`]="{ item }">
+                      <v-text-field
+                        v-model="item.differentUnit"
+                        class="text-body-2 mt-0"
+                        dense
+                        readonly
+                      >
+                        <template v-slot:append>
+                          <v-btn
+                            color="primary"
+                            icon
+                            x-small
+                            @click="showFindUnitDialog(item)"
+                          >
+                            <v-icon>
+                              mdi-settings-helper
+                            </v-icon>
+                          </v-btn>
+                        </template>
+                      </v-text-field>
                     </template>
                     <template v-slot:[`item.different`]="{ item }">
                       <span class="text-body-2 text-right mt-0">
@@ -550,6 +571,11 @@
       @dblclick:row="bindItemData"
       
     ></find-item-adjustment>
+    <find-unit
+      ref="findUnit"
+      @save="bindDifferentUnit"
+      
+    ></find-unit>
   </div>
 </template>
 
@@ -560,11 +586,13 @@ import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 import Confirm from '@/components/dialog/Confirm'
 import FindItemAdjustment from '@/components/dialog/inventory/FindItemAdjustment'
+import FindUnit from '@/components/dialog/inventory/FindUnit'
 
 export default {
   components:{
     Confirm,
-    FindItemAdjustment
+    FindItemAdjustment,
+    FindUnit
   },
 
   data: () => ({
@@ -647,80 +675,8 @@ export default {
   },
   
   methods:{
-    showAll() {
-      if (!this.data.warehouseCode) {
-        this.$store.dispatch('app/showInfo', 'Mohon pilih gudang terlebih dahulu.')
-        return
-      }
-      this.bindGridItems()
-      for (let i = 0; i < this.items.length; i++) {
-        const item = this.items[i]
-        const units = this.uoms.filter(x => x.uomId === item.uomId)
-        const defaultUnitId = units[0].id
-        const buyUnit = item.uomBuyId
-        const temp = {
-          id: randomNumber(-1, -1000),
-          itemId: item.id,
-          itemName: item.name,
-          unitName: null,
-          units: units,
-          uomId: item.uomId,
-          unitId: buyUnit,
-          oldUnitId: defaultUnitId,
-          qtyOnHand: item.qtyOnHand,
-          baseQtyOnHand: item.qtyOnHand,
-          qtyOnTransit: 0,
-          qtyOpname: 0,
-          different: 0,
-          cogs: 0,
-          totalCogs: 0,
-          notes: ''
-        }
-        this.unitItemChange(temp)
-        this.gridItem.data.push(temp)
-      }
-      this.isButtonShowItemDisabled()
-    },
-    unitItemChange(item) {
-      const oldUnit = item.units.find(u => u.id === item.oldUnitId)
-      const unit = item.units.find(u => u.id === item.unitId)
-      if (oldUnit && unit) {
-        item.oldUnitId = item.unitId
-        item.qtyAdjust = 0
-        item.qtyOpname = 0
-        item.different = 0
-        this.convertUOM(item, oldUnit.seq, unit.seq)
-      }
-    },
-    calculateDifferent(item) {
-      item.different = item.qtyOpname - item.qtyOnHand 
-      item.qtyAdjust = item.different
-    },
-    convertUOM(item, fromSequence, toSequence) {
-      let depth = 0
-      let direction = ''
-      let different = 1
-      let itterateSeq = 0
-      if (fromSequence < toSequence) {
-        depth = toSequence - fromSequence
-        direction = 'up'
-        itterateSeq = fromSequence
-      } else {
-        depth = fromSequence - toSequence
-        direction = 'down'
-        itterateSeq = toSequence
-      }
-      for (let i = 0; i < depth; i++) {
-        itterateSeq++
-        const data = item.units.find(u => u.seq === itterateSeq)
-        different *=  data.conversion
-      }
-      if (direction === 'up') {
-        item.qtyOnHand = Math.round(item.qtyOnHand / different)
-      } else {
-        item.qtyOnHand = item.qtyOnHand * different
-      }
-    },
+    
+    
     getUnitItemLists(item) {
       const units = this.uoms.filter(x => x.uomId === item.uomId)
       item.units = units
@@ -744,7 +700,6 @@ export default {
       const defWarehouse = this.warehouses.find(w => w.isDefault)
       if (defWarehouse) {
         this.data.warehouseCode = defWarehouse.code
-        this.getItemLists()
       }
 
       // Reset form validation
@@ -797,6 +752,19 @@ export default {
           this.uoms = response.data.tableData
         })
     },
+    getWarehouseLists() {
+      api.getAll(`${this.endpoint.inventory.warehouse}/lists`, {
+        params: {
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.warehouses = response.data.tableData
+        })
+    },
     back() {
       this.main = true
     },
@@ -807,124 +775,7 @@ export default {
       this.data.action = 'add'
       this.data.type = 1
       this.bindGridItems()
-    },
-    edit(item) {
-      if (!item) return
-      this.isButtonShowItemDisabled()
-      this.dialog.add = true
-      this.reset()
-
-      this.data = {
-        ...item,
-        action: 'edit',
-        createdDate: (item.createdDate === null) ? null : format(parseISO(item.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
-        updatedDate: (item.updatedDate === null) ? null : format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
-      }
-      this.bindGridItems()
-      // Get item details
-      api.getAll(`${this.endpoint.inventory.adjustment}/item`, {
-        params: { code: item.code }
-      })
-        .then(response => {
-          this.gridItem.data = response.data.tableData
-        })
-
-      // Set focus to order code field
-      setTimeout(() => {
-        this.$refs.code.focus()
-      }, 0)
-    },
-    async remove(item) {
-      if (
-        await this.$refs.confirm.open(
-          'Void?',
-          'Apakah anda yakin ingin membuat void data ini?')
-      ) {
-        api.delete(this.endpoint.inventory.adjustment, item.code)
-          .then(response => {
-            if (response.data.success) {
-              this.$store.dispatch('app/showSuccess', response.data.message)
-              this.getList()
-            }
-          })
-      }
-    },
-    async save(closeDialog) {
-      if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
-        return
-      }      
-      
-      const data = this.data
-      data.itemDetails = this.gridItem.data
-
-      if (data.itemDetails.length === 0) {
-        this.$store.dispatch('app/showInfo', 'Detil tidak boleh kosong.')
-        return
-      }
-      let result = { success: false, message: '' }
-      if (this.data.action === 'add') {
-        const resp = await api.create(this.endpoint.inventory.adjustment, this.data)
-        result = resp.data
-      } else if (this.data.action === 'edit') {
-        const resp = await api.update(this.endpoint.inventory.adjustment, this.data.code, this.data)
-        result = resp.data
-      }
-
-      if (result.success) {
-        this.$store.dispatch('app/showSuccess', result.message)
-        if (closeDialog) {
-          this.dialog.add = false
-        } else {
-          this.data.code = result.data
-        }
-        this.getList(!closeDialog)
-      }
-    },
-    close() {
-      this.reset()
-      this.dialog.add = false
-    },
-    async changeType() {
-      if (this.gridItem.data.length > 0) this.gridItem.data = []
-      this.bindGridItems()
-      this.isButtonShowItemDisabled()
-    },
-    changeLocation() {
-      this.gridItem.data = []
       this.getItemLists()
-      this.isButtonShowItemDisabled()
-    },
-    bindGridItems() {
-      if (this.data.type === 1) this.bindAdjustmentTable()
-      else this.bindStockOpnameTable()
-    },
-    bindStockOpnameTable() {
-      this.gridItem.columns = [
-        { value: 'action', sortable: false, divider: true, width: '90'},
-        { text: 'Inisial', value: 'itemId', divider: true, width: '120' },
-        { text: 'Nama', value: 'itemName', divider: true, width: '300' },
-        { text: 'Satuan', value: 'unitName', sortable: false, divider: true, width: '100'},
-        { text: 'Qty Sistem', value: 'qtyOnHand', sortable: false, align: 'right', divider: true, width: '75'},
-        { text: 'Qty Aktual', value: 'qtyOpname', sortable: false, divider: true, width: '75'},
-        { text: 'Selisih', value: 'different', sortable: false, align: 'right', divider: true, width: '75'},
-        // { text: 'COGS (smalles unit)', value: 'cogs', sortable: false, divider: true, width: '175'},
-        // { text: 'Total COGS', value: 'totalCogs', sortable: false, divider: true, width: '175'},
-        { text: 'Catatan', value: 'notes', sortable: false, divider: true, width: '250'}
-      ]
-    }, 
-    bindAdjustmentTable() {
-      this.gridItem.columns = [
-        { value: 'action', sortable: false, divider: true, width: '90'},
-        { text: 'Inisial', value: 'itemId', divider: true, width: '120' },
-        { text: 'Nama', value: 'itemName', divider: true, width: '300' },
-        { text: 'Satuan', value: 'unitName', sortable: false, divider: true, width: '100'},
-        { text: 'Qty Sistem', value: 'qtyOnHand', sortable: false, align: 'right', divider: true, width: '75'},
-        { text: 'Qty Penyesuaian', value: 'qtyAdjust', sortable: false, divider: true, width: '75'},
-        // { text: 'COGS (smalles unit)', value: 'cogs', sortable: false, divider: true},
-        // { text: 'Total COGS', value: 'totalCogs', sortable: false, divider: true},
-        { text: 'Catatan', value: 'notes', sortable: false, divider: true, width: '250'}
-      ]
     },
     addItem() {
       if (!this.data.warehouseCode) {
@@ -973,6 +824,48 @@ export default {
         }, 0)
       }
     },
+    edit(item) {
+      if (!item) return
+      this.isButtonShowItemDisabled()
+      this.dialog.add = true
+      this.reset()
+
+      this.data = {
+        ...item,
+        action: 'edit',
+        createdDate: (item.createdDate === null) ? null : format(parseISO(item.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
+        updatedDate: (item.updatedDate === null) ? null : format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
+      }
+      this.bindGridItems()
+      this.getItemLists()
+      // Get item details
+      api.getAll(`${this.endpoint.inventory.adjustment}/item`, {
+        params: { code: item.code }
+      })
+        .then(response => {
+          this.bindGridItemsData(response.data.tableData)
+        })
+
+      // Set focus to order code field
+      setTimeout(() => {
+        this.$refs.code.focus()
+      }, 0)
+    },
+    async remove(item) {
+      if (
+        await this.$refs.confirm.open(
+          'Void?',
+          'Apakah anda yakin ingin membuat void data ini?')
+      ) {
+        api.delete(this.endpoint.inventory.adjustment, item.code)
+          .then(response => {
+            if (response.data.success) {
+              this.$store.dispatch('app/showSuccess', response.data.message)
+              this.getList()
+            }
+          })
+      }
+    },
     async removeItem(item) {
       if (
         await this.$refs.confirm.open(
@@ -982,6 +875,73 @@ export default {
         const idx = this.gridItem.data.findIndex(i => i.id === item.id)
         this.gridItem.data.splice(idx, 1)
       }
+    },
+    async save(closeDialog) {
+      if (!this.$refs.form.validate()) {
+        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
+        return
+      }      
+      
+      const data = this.data
+      data.itemDetails = this.gridItem.data
+
+      if (data.itemDetails.length === 0) {
+        this.$store.dispatch('app/showInfo', 'Detil tidak boleh kosong.')
+        return
+      }
+      let result = { success: false, message: '' }
+      if (this.data.action === 'add') {
+        const resp = await api.create(this.endpoint.inventory.adjustment, this.data)
+        result = resp.data
+      } else if (this.data.action === 'edit') {
+        const resp = await api.update(this.endpoint.inventory.adjustment, this.data.code, this.data)
+        result = resp.data
+      }
+
+      if (result.success) {
+        this.$store.dispatch('app/showSuccess', result.message)
+        if (closeDialog) {
+          this.dialog.add = false
+        } else {
+          this.data.code = result.data
+        }
+        this.getList(!closeDialog)
+      }
+    },
+    close() {
+      this.reset()
+      this.dialog.add = false
+    },
+    async changeType() {
+      if (this.gridItem.data.length > 0) this.gridItem.data = []
+      this.bindGridItems()
+      this.isButtonShowItemDisabled()
+    },
+    changeLocation() {
+      this.gridItem.data = []
+      this.getItemLists()
+      this.isButtonShowItemDisabled()
+    },
+    unitItemChange(item) {
+      item.differentUnit = ''
+      item.differentUnits = []
+      const oldUnit = item.units.find(u => u.id === item.oldUnitId)
+      const unit = item.units.find(u => u.id === item.unitId)
+      if (oldUnit && unit) {
+        item.oldUnitId = item.unitId
+        item.qtyAdjust = 0
+        item.qtyOpname = 0
+        item.different = 0
+        this.convertUOM(item, oldUnit.seq, unit.seq)
+      }
+    },
+    qtyAdjustChange(item) {
+      item.different = item.qtyOpname - item.qtyOnHand 
+      item.qtyAdjust = item.different
+      // if (item.qtyAdjust > 0) {
+      //   item.differentUnit = null
+      //   item.differentUnits = []
+      // }
     },
     itemIdChange(item) {
 
@@ -1005,27 +965,142 @@ export default {
       }
       this.getUnitItemLists(item)
     },
-    showFindItemDialog(item) {
-      this.$refs.findItem.open(item, this.data.warehouseCode)
+    convertUOM(item, fromSequence, toSequence) {
+      let depth = 0
+      let direction = ''
+      let different = 1
+      let itterateSeq = 0
+      if (fromSequence < toSequence) {
+        depth = toSequence - fromSequence
+        direction = 'up'
+        itterateSeq = fromSequence
+      } else {
+        depth = fromSequence - toSequence
+        direction = 'down'
+        itterateSeq = toSequence
+      }
+      for (let i = 0; i < depth; i++) {
+        itterateSeq++
+        const data = item.units.find(u => u.seq === itterateSeq)
+        different *=  data.conversion
+      }
+      if (direction === 'up') {
+        item.qtyOnHand = Number((item.qtyOnHand / different).toFixed(6))
+      } else {
+        item.qtyOnHand = item.qtyOnHand * different
+      }
+    },
+    checkIfHasDifferentUnit(item) {
+      return item.differentUnits.length > 0
+    },
+    isButtonShowItemDisabled() {
+      this.showItemDisabled =  this.gridItem.data.length > 0 && this.data.type === 2
+    },
+    bindGridItems() {
+      if (this.data.type === 1) this.bindAdjustmentTable()
+      else this.bindStockOpnameTable()
+    },
+    bindGridItemsData(data) {
+      if (data.some(this.checkIfHasDifferentUnit)) {
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].differentUnits.length > 0) {
+            const diffUnit = []
+            const temp = data[i].differentUnits
+            for (let j = 0; j < temp.length; j++) {
+              const tempUnit = data[i].units.find(x => x.id === temp[j].unitId)
+              if (tempUnit) {
+                diffUnit.push(`${temp[j].qtyAdjust} ${tempUnit.unitEquivalent}`)
+              }
+            }
+            data[i].differentUnit = diffUnit.join(', ')
+          } 
+          this.gridItem.data.push(data[i])
+        }
+      } else {
+        this.gridItem.data = data
+      }
+    },
+    bindStockOpnameTable() {
+      this.gridItem.columns = [
+        { value: 'action', sortable: false, divider: true, width: '90'},
+        { text: 'Inisial', value: 'itemId', divider: true, width: '120' },
+        { text: 'Nama', value: 'itemName', divider: true, width: '300' },
+        { text: 'Satuan', value: 'unitName', sortable: false, divider: true, width: '100'},
+        { text: 'Qty Sistem', value: 'qtyOnHand', sortable: false, align: 'right', divider: true, width: '75'},
+        { text: 'Qty Aktual', value: 'qtyOpname', sortable: false, divider: true, width: '75'},
+        { text: 'Selisih', value: 'different', sortable: false, align: 'right', divider: true, width: '75'},
+        { text: 'Satuan Lain', value: 'differentUnit', sortable: false, divider: true, width: '75'},        
+        // { text: 'COGS (smalles unit)', value: 'cogs', sortable: false, divider: true, width: '175'},
+        // { text: 'Total COGS', value: 'totalCogs', sortable: false, divider: true, width: '175'},
+        { text: 'Catatan', value: 'notes', sortable: false, divider: true, width: '250'}
+      ]
+    }, 
+    bindAdjustmentTable() {
+      this.gridItem.columns = [
+        { value: 'action', sortable: false, divider: true, width: '90'},
+        { text: 'Inisial', value: 'itemId', divider: true, width: '120' },
+        { text: 'Nama', value: 'itemName', divider: true, width: '300' },
+        { text: 'Satuan', value: 'unitName', sortable: false, divider: true, width: '100'},
+        { text: 'Qty Sistem', value: 'qtyOnHand', sortable: false, align: 'right', divider: true, width: '75'},
+        { text: 'Qty Penyesuaian', value: 'qtyAdjust', sortable: false, divider: true, width: '75'},
+        // { text: 'COGS (smalles unit)', value: 'cogs', sortable: false, divider: true},
+        // { text: 'Total COGS', value: 'totalCogs', sortable: false, divider: true},
+        { text: 'Catatan', value: 'notes', sortable: false, divider: true, width: '250'}
+      ]
     },
     bindItemData(rowItem) {
       this.itemIdChange(rowItem)
     },
-    getWarehouseLists() {
-      api.getAll(`${this.endpoint.inventory.warehouse}/lists`, {
-        params: {
-          sorts: JSON.stringify([{
-            field: 'initial',
-            direction: 'asc'
-          }])
-        }
-      })
-        .then(response => {
-          this.warehouses = response.data.tableData
-        })
+    bindDifferentUnit(rowItem) {
+      const data_i = this.gridItem.data.find(i => i.id === rowItem.id)
+      if (data_i) {
+        data_i.differentUnits = rowItem.differentUnits
+        data_i.differentUnit = rowItem.differentUnit
+        data_i.qtyOpname = rowItem.qtyOpname
+        this.qtyAdjustChange(data_i)
+      }
     },
-    isButtonShowItemDisabled() {
-      this.showItemDisabled =  this.gridItem.data.length > 0 && this.data.type === 2
+    showAll() {
+      if (!this.data.warehouseCode) {
+        this.$store.dispatch('app/showInfo', 'Mohon pilih gudang terlebih dahulu.')
+        return
+      }
+      this.bindGridItems()
+      for (let i = 0; i < this.items.length; i++) {
+        const item = this.items[i]
+        const units = this.uoms.filter(x => x.uomId === item.uomId)
+        const defaultUnitId = units[0].id
+        const buyUnit = item.uomBuyId
+        const temp = {
+          id: randomNumber(-1, -1000),
+          itemId: item.id,
+          itemName: item.name,
+          unitName: null,
+          units: units,
+          uomId: item.uomId,
+          unitId: buyUnit,
+          oldUnitId: defaultUnitId,
+          qtyOnHand: item.qtyOnHand,
+          baseQtyOnHand: item.qtyOnHand,
+          qtyOnTransit: 0,
+          qtyOpname: 0,
+          differentUnit: null,
+          differentUnits: [],
+          different: 0,
+          cogs: 0,
+          totalCogs: 0,
+          notes: ''
+        }
+        this.unitItemChange(temp)
+        this.gridItem.data.push(temp)
+      }
+      this.isButtonShowItemDisabled()
+    },
+    showFindItemDialog(item) {
+      this.$refs.findItem.open(item, this.data.warehouseCode)
+    },
+    showFindUnitDialog(item) {
+      this.$refs.findUnit.open(item)
     }
   }
 }

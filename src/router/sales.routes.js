@@ -27,6 +27,13 @@ export default [{
     authRequired: true
   }
 }, {
+  path: '/sales/transaction/direct-invoice/:action?/:code?',
+  name: 'direct-invoice',
+  component: () => import(/* webpackChunkName: "sales-trans-direct-invoice" */ '@/views/sales/transaction/DirectInvoice.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
   path: '/sales/transaction/sales-return-wo-doc',
   name: 'sales-return-wo-doc',
   component: () => import(/* webpackChunkName: "sales-trans-return-wo-doc" */ '@/views/sales/transaction/SalesReturnNoDoc.vue'),

@@ -8,12 +8,13 @@ export default [
           { text: 'Grup', link: 'item-group' }
         ]
       },
-      { text: 'Gudang', link: 'warehouse' },
-      { text: 'Satuan Ukuran', link: 'unitofmeasurement' }
+      { text: 'Satuan Ukuran', link: 'unitofmeasurement' },
+      { text: 'Gudang', link: 'warehouse' }
     ]
   },
   { icon: 'mdi-clipboard-edit-outline', text: 'Transaksi', regex: /^\/inventory\/transaction/,
     items: [
+      { text: 'Transfer Persediaan', link: 'transfer-stock' },
       { text: 'Penyesuaian', link: 'adjustment' }
     ]
   },

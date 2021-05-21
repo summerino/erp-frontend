@@ -81,7 +81,7 @@
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <span class="text-caption">Hapus</span>
+            <span class="text-caption">Void</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">
@@ -125,7 +125,7 @@
           <v-btn icon dark @click="close">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Surat Jalan</v-toolbar-title>
+          <v-toolbar-title>Transfer Persediaan</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-tooltip bottom>
@@ -134,6 +134,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
+                  :disabled="isVoid"
                   dark
                   text
                   @click="save(true)"
@@ -198,33 +199,18 @@
 
                   <v-card-text>
                     <v-row no-gutters>
-                      <v-col cols="12">
-                        <v-autocomplete
-                          v-model="data.srcTrans"
-                          :items="sources"
-                          :rules="rules.required"
-                          label="Sumber Transaksi"
-                          item-text="name"
-                          item-value="id"
-                          class="mt-0"
-                          required
-                          @change="srcTransChange"
-                        ></v-autocomplete>
-                      </v-col>
-                    </v-row>
-                    <v-row no-gutters>
                       <v-col cols="12" md="6">
                         <v-text-field
                           ref="code"
                           v-model="data.code"
-                          label="Kode"
+                          label="No. Transfer Persediaan"
                           class="mt-0"
                           readonly
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12" md="6" class="pl-md-1">
                         <v-menu
-                          v-model="menu.dlvDate"
+                          v-model="menu.transfDate"
                           :close-on-content-click="false"
                           transition="scale-transition"
                           min-width="290px"
@@ -235,7 +221,7 @@
                               v-bind="attrs"
                               v-on="on"
                               :rules="rules.required"
-                              :value="formatDlvDate"
+                              :value="formatTransfDate"
                               label="Tanggal"
                               class="mt-0"
                               readonly
@@ -246,7 +232,7 @@
                             v-model="data.date"
                             no-title
                             scrollable
-                            @change="menu.dlvDate = false"
+                            @change="menu.transfDate = false"
                           ></v-date-picker>
                         </v-menu>
                       </v-col>
@@ -254,28 +240,43 @@
 
                     <v-row no-gutters>
                       <v-col cols="12">
-                        <v-text-field
-                          v-model="data.transCode"
-                          :readonly="hasRelatedTrans"
+                        <v-autocomplete
+                          v-model="data.type"
+                          :items="typeRef"
+                          :item-text="item => `${item.text}`"
                           :rules="rules.required"
-                          :label="lblTransCode"
+                          label="Tipe"
+                          item-value="value"
                           class="mt-0"
                           required
-                          @change="transCodeChange"
+                          @change="onChangeType"
+                        ></v-autocomplete>
+                      </v-col>
+                    </v-row>
+
+                    <v-row no-gutters>
+                      <v-col cols="12">
+                        <v-text-field
+                          v-model="data.originTransferCode"
+                          :rules="(data.type === 2) ? rules.required : []"
+                          label="No. Transf. Persd. Keluar"
+                          class="mt-0"
+                          :required="data.type === 2"
+                          :readonly="data.type !== 2"
+                          @change="tsCodeChange"
                         >
-                          <template v-slot:append>
-                              <v-btn
-                                :disabled="hasRelatedTrans"
-                                color="primary"
-                                icon
-                                small
-                                @click="showFindTransDialog"
-                              >
-                                <v-icon>
-                                  mdi-shopping-search
-                                </v-icon>
-                              </v-btn>
-                            </template>
+                          <template v-slot:append v-if="data.type === 2">
+                            <v-btn
+                              color="primary"
+                              icon
+                              small
+                              @click="showFindTSDialog"
+                            >
+                              <v-icon>
+                                mdi-shopping-search
+                              </v-icon>
+                            </v-btn>
+                          </template>
                         </v-text-field>
                       </v-col>
                     </v-row>
@@ -285,86 +286,45 @@
 
               <v-col cols="12" md="8">
                 <v-card>
-                  <v-tabs v-model="tab.cust">
-                    <v-tab key="cust">Pelanggan</v-tab>
-                    <v-tab key="location">Gudang</v-tab>
+                  <v-tabs v-model="tab.loc">
+                    <v-tab key="location">Lokasi</v-tab>
                     <v-tab key="notes">Catatan</v-tab>
                     <v-tab key="user">Pengguna</v-tab>
                   </v-tabs>
 
-                  <v-tabs-items v-model="tab.cust" class="pa-2">
-                    <v-tab-item
-                      key="cust"
-                      transition="false"
-                    >
-                      <v-row no-gutters>
-                        <v-col cols="3">
-                          <v-text-field
-                            v-model="data.custCode"
-                            :rules="rules.required"
-                            label="Kode"
-                            class="mt-0"
-                            readonly
-                            required
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="9" class="pl-1">
-                          <v-text-field
-                            v-model="data.custName"
-                            label="Nama"
-                            class="mt-0"
-                            readonly
-                            required
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-
-                      <v-row no-gutters>
-                        <v-col cols="12">
-                          <v-text-field
-                            v-model="data.custAddr"
-                            label="Alamat"
-                            class="mt-0"
-                            readonly
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-
-                      <v-row no-gutters>
-                        <v-col cols="6">
-                          <v-text-field
-                            v-model="data.custPhone"
-                            label="Telepon"
-                            class="mt-0"
-                            readonly
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="6" class="pl-1">
-                          <v-text-field
-                            v-model="data.custFax"
-                            label="Fax"
-                            class="mt-0"
-                            readonly
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-                    </v-tab-item>
-
+                  <v-tabs-items v-model="tab.loc" class="pa-2">
                     <v-tab-item
                       key="location"
                       transition="false"
-                      eager
                     >
                       <v-row no-gutters>
                         <v-col cols="12">
                           <v-autocomplete
-                            v-model="data.warehouseCode"
-                            :items="warehouses"
+                            v-model="data.warehouseCodeFrom"
+                            :items="warehouseRef"
                             :item-text="item => `${item.initial} - ${item.name}`"
-                            :rules="rules.required"
+                            :rules="(data.type !== 2) ? rules.required : []"
+                            :readonly="data.type === 2"
+                            label="Gudang Asal"
                             item-value="code"
-                            label="Gudang"
                             class="mt-0"
+                            :required="data.type !== 2"
+                          ></v-autocomplete>
+                        </v-col>
+                      </v-row>
+
+                      <v-row no-gutters>
+                        <v-col cols="12">
+                          <v-autocomplete
+                            v-model="data.warehouseCodeTo"
+                            :items="warehouseRef"
+                            :item-text="item => `${item.initial} - ${item.name}`"
+                            :rules="(data.type !== 2) ? rules.required : []"
+                            :readonly="data.type === 2"
+                            label="Gudang Tujuan"
+                            item-value="code"
+                            class="mt-0"
+                            :required="data.type !== 2"
                           ></v-autocomplete>
                         </v-col>
                       </v-row>
@@ -374,48 +334,38 @@
                       key="notes"
                       transition="false"
                     >
-                      <v-row no-gutters>
-                        <v-textarea
-                          v-model="data.notes"
-                          :rules="rules.max256chars"
-                          label="Catatan"
-                          counter="256"
-                          class="mt-0"
-                          rows="4"
-                        ></v-textarea>
-                      </v-row>
+                      <v-textarea
+                        v-model="data.notes"
+                        :rules="rules.max256chars"
+                        label="Catatan"
+                        counter="256"
+                        class="mt-0"
+                        rows="4"
+                      ></v-textarea>
                     </v-tab-item>
-                    
+
                     <v-tab-item
                       key="user"
                       transition="false"
                       eager
                     >
+
                       <v-row no-gutters>
-                        <v-col cols="12">
-                          <v-autocomplete
-                            v-model="data.shippedBy"
-                            :items="employees"
-                            :item-text="item => `${item.initial} - ${item.firstName}`"
-                            :rules="rules.required"
-                            label="Dikirim Oleh"
-                            item-value="id"
+                        <v-col cols="6">
+                          <v-text-field
+                            v-model="data.createdInitial"
+                            label="Dibuat Oleh"
                             class="mt-0"
-                            required
-                          ></v-autocomplete>
+                            readonly
+                          ></v-text-field>
                         </v-col>
-                      </v-row>
-                      
-                      <v-row no-gutters>
-                        <v-col cols="12">
-                          <v-autocomplete
-                            v-model="data.approveBy"
-                            :items="employees"
-                            :item-text="item => `${item.initial} - ${item.firstName}`"
-                            label="Disetujui Oleh"
-                            item-value="id"
+                        <v-col cols="6" class="pl-1">
+                          <v-text-field
+                            v-model="data.createdDate"
+                            label="Tanggal Dibuat"
                             class="mt-0"
-                          ></v-autocomplete>
+                            readonly
+                          ></v-text-field>
                         </v-col>
                       </v-row>
 
@@ -437,6 +387,25 @@
                           ></v-text-field>
                         </v-col>
                       </v-row>
+
+                      <v-row no-gutters>
+                        <v-col cols="6">
+                          <v-text-field
+                            v-model="data.approvedInitial"
+                            label="Disetujui Oleh"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="6" class="pl-1">
+                          <v-text-field
+                            v-model="data.approvedDate"
+                            label="Tanggal Disetujui"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
                     </v-tab-item>
                   </v-tabs-items>
                 </v-card>
@@ -446,16 +415,16 @@
             <v-row dense>
               <v-col cols="12">
                 <v-card>
-                  <v-tabs v-model="tab.item">
-                    <v-tab key="item">Barang</v-tab>
+                  <v-tabs v-model="tab.det">
+                    <v-tab key="detail-trans">Detil</v-tab>
                     <v-tab key="related-trans">Transaksi Terkait</v-tab>
 
                     <v-tab-item
-                      key="item"
+                      key="detail-trans"
                       transition="false"
                     >
                       <v-card>
-                        <!-- <v-app-bar dense flat>
+                        <v-app-bar dense flat>
                           <v-spacer></v-spacer>
                           <v-tooltip bottom>
                             <template v-slot:activator="{ on, attrs }">
@@ -463,7 +432,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid || hasRelatedTrans"
+                                :disabled="isVoid || data.type === 2"
                                 class="blue--text"
                                 small
                                 tile
@@ -471,16 +440,16 @@
                                 @shortkey="addItem"
                               >
                                 <v-icon left>mdi-plus</v-icon>
-                                Add
+                                Tambah
                               </v-btn>
                             </template>
                             <span class="text-caption">(Ctrl + I)</span>
                           </v-tooltip>
-                        </v-app-bar> -->
+                        </v-app-bar>
 
                         <v-data-table
-                          :headers="gridItem.columns"
-                          :items="gridItem.data"
+                          :headers="gridDet.columns"
+                          :items="gridDet.data"
                           :items-per-page="-1"
                           height="300"
                           class="elevation-1"
@@ -495,7 +464,7 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
-                                  :disabled="item.type == 0 || isVoid || hasRelatedTrans"
+                                  :disabled="isVoid"
                                   color="red"
                                   icon
                                   small
@@ -507,19 +476,64 @@
                               <span class="text-caption">Hapus</span>
                             </v-tooltip>
                           </template>
+                          <template v-slot:[`item.itemId`]="{ item }">
+                            <v-autocomplete
+                              ref="itemId"
+                              v-model="item.itemId"
+                              :items="items"
+                              :readonly="hasRelatedTrans"
+                              :rules="rules.required"
+                              item-text="initial"
+                              item-value="id"
+                              class="text-body-2 mt-0"
+                              dense
+                              required
+                              @change="itemIdChange(item)"
+                            >
+                              <template v-slot:append>
+                                <v-btn
+                                  :disabled="hasRelatedTrans"
+                                  color="primary"
+                                  icon
+                                  x-small
+                                  @click="showFindItemDialog(item)"
+                                >
+                                  <v-icon>
+                                    mdi-settings-helper
+                                  </v-icon>
+                                </v-btn>
+                              </template>
+                            </v-autocomplete>
+                          </template>
                           <template v-slot:[`item.qty`]="{ item }">
                             <v-currency-field
                               v-model="item.qty"
                               :decimal-length="0"
+                              :min="1"
                               :readonly="hasRelatedTrans"
                               class="text-body-2 text-right mt-0"
+                              dense
                               @change="calcItemPrice(item)"
                             ></v-currency-field>
+                          </template>
+                          <template v-slot:[`item.unitName`]="{ item }">
+                            <v-autocomplete
+                              v-model="item.unitId"
+                              :items="item.units"
+                              :readonly="hasRelatedTrans"
+                              :rules="rules.required"
+                              item-text="unitEquivalent"
+                              item-value="id"
+                              class="text-body-2 mt-0"
+                              dense
+                              required
+                              @change="unitItemChange(item)"
+                            ></v-autocomplete>
                           </template>
                           <template v-slot:[`item.notes`]="{ item }">
                             <v-text-field
                               v-model="item.notes"
-                              :rules="rules.max256chars"
+                              :readonly="hasRelatedTrans"
                               class="text-body-2 mt-0"
                               dense
                             ></v-text-field>
@@ -546,9 +560,6 @@
                         <template v-slot:[`item.date`]="{ item }">
                           {{ item.date | formatDate('dd-MMM-yyyy') }}
                         </template>
-                        <template v-slot:[`item.total`]="{ item }">
-                          {{ item.total | formatCurrency }}
-                        </template>
                       </v-data-table>
                     </v-tab-item>
                   </v-tabs>
@@ -561,37 +572,35 @@
     </v-dialog>
 
     <confirm ref="confirm"></confirm>
-    <find-so
-      ref="findSO"
-      :mark-exclude="['V', 'CLS', 'CMP']"
-      @dblclick:row="bindTransData"
-    ></find-so>
-    <find-return
-      ref="findReturn"
-      :type="2"
-      :mark-exclude="['V', 'CLS', 'CMP']"
-      @dblclick:row="bindTransData"
-    ></find-return>
+    <find-item
+      ref="findItem"
+      :mark-exclude="['A', 'V', 'CLS']"
+      @dblclick:row="bindTSData"
+    ></find-item>
+    <find-transfer-stock
+      ref="findTransferStock"
+      :mark-exclude="['V', 'CLS']"
+      @dblclick:row="bindTSData"
+    ></find-transfer-stock>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
-import { sumBy as _sumBy } from 'lodash'
 
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
-import FindSo from '@/components/dialog/sales/FindSO'
-import FindReturn from '@/components/dialog/sales/FindReturn'
+import FindItem from '@/components/dialog/inventory/FindItem'
+import FindTransferStock from '@/components/dialog/inventory/FindTransferStock'
 
 export default {
   components: {
     Confirm,
-    FindSo,
-    FindReturn
+    FindItem,
+    FindTransferStock
   },
 
   data: () => ({
@@ -599,20 +608,20 @@ export default {
       add: false
     },
     menu: {
-      dlvDate: false
+      transfDate: false
     },
     tab: {
-      cust: null,
-      item: null
+      loc: null,
+      det: null
     },
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Kode', value: 'code', divider: true, width: '160' },
+        { text: 'No. Transf. Persd.', value: 'code', divider: true, width: '160' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
-        { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
-        { text: 'Kode Trans.', value: 'transCode', width: '150' },
-        { text: 'Dikirim Oleh', value: 'shippedInitial', divider: true, width: '200' },
+        { text: 'Tipe', value: 'typeInitial', divider: true, width: '150' },
+        { text: 'Gudang Asal', value: 'warehouseInitialFrom', divider: true, width: '200' },
+        { text: 'Gudang Tujuan', value: 'warehouseInitialTo', divider: true, width: '200' },
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
@@ -623,41 +632,36 @@ export default {
       total: 0,
       search: null
     },
-    gridItem: {
+    gridDet: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Inisial', value: 'itemInitial', divider: true, width: '120' },
-        { text: 'Nama', value: 'itemName', divider: true, width: '300' },
-        { text: 'Qty', value: 'orderQty', align: 'right', divider: true, width: '90' },
-        { text: 'Outstanding', value: 'outstandingQty', align: 'right', divider: true, width: '90' },
-        { text: 'Qty Terkirim', value: 'qty', align: 'right', divider: true, width: '90' },
-        { text: 'Satuan', value: 'unitName', divider: true, width: '90' },
-        { text: 'Catatan', value: 'notes' }
+        { value: 'action', sortable: false, divider: true, width: '1%' },
+        { text: 'Inisial', value: 'itemId', divider: true, width: '50' },
+        { text: 'Nama', value: 'itemName', divider: true, width: '200' },
+        { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '70' },
+        { text: 'Satuan', value: 'unitName', divider: true, width: '70' },
+        { text: 'Catatan', value: 'notes', divider: true, width: '120' }
       ],
       data: []
     },
     gridRelated: {
       columns: [
-        { text: 'Kode', value: 'code', divider: true },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true },
-        { text: 'Nilai', value: 'total', align: 'right', divider: true }
+        { text: 'No. Transf. Persd.', value: 'code', divider: true },
+        { text: 'Tanggal', value: 'date', align: 'center', divider: true },
+        { text: 'Status', value: 'mark' }
       ],
       data: []
     },
     valid: false,
-    employees: [],
-    warehouses: [],
-    taxes: [],
-    data: {},
-    lblTransCode: null,
-    sources: [{ id: 1, name: 'Order Penjualan' }, { id: 2, name: 'Retur Penjualan' }]
+    typeRef: [{ value: 1, text: 'Barang Keluar'}, { value: 2, text: 'Barang Masuk'}, { value: 3, text: 'Transfer Langsung'}],
+    warehouseRef: [],
+    items: [],
+    data: {}
   }),
 
   created: function () {
     this.getList()
-    this.getEmployeeLists()
-    this.getWarehouseLists()
-    this.getTaxLists()
+    this.loadWarehouse()
+    this.getItemLists()
   },
 
   mounted: function () {
@@ -684,7 +688,7 @@ export default {
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'
     },
-    formatDlvDate() {
+    formatTransfDate() {
       return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
     },
     hasRelatedTrans() {
@@ -699,29 +703,19 @@ export default {
     reset(resetValidation = true) {
       this.data = {
         action: '',
-        srcTrans: 1,
         code: null,
         date: format(new Date(), 'yyyy-MM-dd'),
-        transCode: null,
-        custCode: null,
-        custName: null,
-        custAddr: null,
-        custPhone: null,
-        custFax: null,
-        warehouseCode: null,
+        type: null,
+        originTransferCode: null,
+        warehouseCodeFrom: null,
+        WarehouseCodeTo: null,
         notes: null,
-        shippedBy: null,
-        approveBy: null,
-        dpp: 0,
-        subTotal: 0,
-        finalDisc: 0,
-        taxAmount: 0,
+        typeInitial: null,
         total: 0
       }
-      this.gridItem.data = []
-      this.gridRelated.data = []
-      this.tab.cust = 0
-      this.tab.item = 0
+      this.gridDet.data = []
+      this.tab.loc = 0
+      this.tab.det = 0
 
       // Reset form validation
       if (resetValidation) {
@@ -739,7 +733,7 @@ export default {
         })
       }
 
-      api.getAll(this.endpoint.sales.delivery, {
+      api.getAll(this.endpoint.inventory.transferStock, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -756,51 +750,6 @@ export default {
           }
         })
     },
-    getEmployeeLists() {
-      api.getAll(`${this.endpoint.general.employee}/lists`, {
-        params: {
-          filters: JSON.stringify([{
-            field: 'type',
-            operator: 'eq',
-            keyword: 1
-          }]),
-          sorts: JSON.stringify([{
-            field: 'initial',
-            direction: 'asc'
-          }])
-        }
-      })
-        .then(response => {
-          this.employees = response.data.tableData
-        })
-    },
-    getWarehouseLists() {
-      api.getAll(`${this.endpoint.inventory.warehouse}/lists`, {
-        params: {
-          sorts: JSON.stringify([{
-            field: 'initial',
-            direction: 'asc'
-          }])
-        }
-      })
-        .then(response => {
-          this.warehouses = response.data.tableData
-        })
-    },
-    getTaxLists() {
-      api.getAll(this.endpoint.general.tax, {
-        params: {
-          filters: JSON.stringify([{
-            field: 'typeId',
-            operator: 'eq',
-            keyword: 2
-          }])
-        }
-      })
-        .then(response => {
-          this.taxes = response.data.tableData
-        })
-    },
     close() {
       this.dialog.add = false
     },
@@ -811,7 +760,7 @@ export default {
       this.data.action = 'add'
 
       setTimeout(() => {
-        // Set focus to receive code field
+        // Set focus to invoice code field
         this.$refs.code.focus()
 
         // Validate form first
@@ -827,36 +776,20 @@ export default {
       this.data = {
         ...item,
         action: 'edit',
-        updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
+        createdDate: (item.createdDate === null) ? null : format(parseISO(item.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
+        updatedDate: (item.updatedDate === null) ? null : format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss'),
+        approvedDate: (item.approvedDate === null) ? null : format(parseISO(item.approvedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
-
-      // Define label trans code
-      if (this.data.srcTrans === 1) {
-        this.lblTransCode = 'Kode Order Penjualan'
-      } else {
-        this.lblTransCode = 'Kode Retur'
-      }
-
-      // Get customer details
-      this.bindCustData(this.data)
 
       // Get item details
-      api.getAll(`${this.endpoint.sales.delivery}/item`, {
+      api.getAll(`${this.endpoint.inventory.transferStock}/item`, {
         params: { code: item.code }
       })
         .then(response => {
-          this.gridItem.data = response.data.tableData
+          this.gridDet.data = response.data.tableData
         })
 
-      // Get related transaction details
-      api.getAll(`${this.endpoint.sales.delivery}/related-trans`, {
-        params: { code: item.code }
-      })
-        .then(response => {
-          this.gridRelated.data = response.data.tableData
-        })
-
-      // Set focus to delivery code field
+      // Set focus to transfer code field
       setTimeout(() => {
         this.$refs.code.focus()
       }, 0)
@@ -864,10 +797,10 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Hapus?',
-          'Apakah anda yakin ingin menghapus data ini?')
+          'Void?',
+          'Apakah anda yakin ingin membuat void data ini?')
       ) {
-        api.delete(this.endpoint.sales.delivery, item.code)
+        api.delete(this.endpoint.inventory.transferStock, item.code)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -879,24 +812,19 @@ export default {
     async save(closeDialog) {
       if (!this.dialog.add) return
       if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
+        this.$store.dispatch('app/showInfo', 'Silahkan periksa kembali data yang wajib diisi.')
         return
       }
       
-      if (_sumBy(this.gridItem.data, 'qty') <= 0) {
-        this.$store.dispatch('app/showInfo', 'Jumalah pengiriman tidak boleh 0.')
-        return
-      }
-  
       const data = this.data
-      data.itemDetails = this.gridItem.data
-
+      data.details = this.gridDet.data
+      
       let result = { success: false, message: '' }
       if (data.action === 'add') {
-        const resp = await api.create(this.endpoint.sales.delivery, data)
+        const resp = await api.create(this.endpoint.inventory.transferStock, data)
         result = resp.data
       } else if (data.action === 'edit') {
-        const resp = await api.update(this.endpoint.sales.delivery, data.code, data)
+        const resp = await api.update(this.endpoint.inventory.transferStock, data.code, data)
         result = resp.data
       }
 
@@ -911,37 +839,28 @@ export default {
       }
     },
     addItem() {
-      if (!this.data.transCode) {
-        this.$store.dispatch('app/showInfo', 'Mohon pilih penjualan terlebih dahulu.')
+      if (!this.data.warehouseCodeFrom) {
+        this.$store.dispatch('app/showInfo', 'Silahkan pilih gudang asal terlebih dahulu.')
         return
       }
 
-      if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemId ?? null)) {
+      if (this.gridDet.data.length === 0 || (this.gridDet.data.slice(-1)[0]?.itemId ?? null)) {
         const item = {
           id: randomNumber(-1, -1000),
           code: this.data.code,
           itemId: null,
-          itemCode: null,
-          itemName: null,
-          orderQty: 0,
-          outstandingQty: 0,
-          qty: 1,
-          uomId: null,
-          unitId: null,
+          uomId: 0,
+          unitId: 0,
+          qty: 0,
+          notes: null,
           unitName: null,
-          unitPrice: 0,
-          itemSellPrice: 0,
-          disc: 0,
-          nettPrice: 0,
-          total: 0,
-          typeId: 1,
-          typeName: 'Bonus',
+          units: [],
           state: 'A'
         }
-        this.gridItem.data.push(item)
+        this.gridDet.data.push(item)
 
         setTimeout(() => {
-          this.$refs.itemId.focus()
+          this.$refs.qty.focus()
         }, 0)
       }
     },
@@ -951,182 +870,175 @@ export default {
           'Hapus?',
           'Apakah anda yakin ingin menghapus data ini?')
       ) {
-        const idx = this.gridItem.data.findIndex(i => i.id === item.id)
-        this.gridItem.data.splice(idx, 1)
+        const idx = this.gridDet.data.findIndex(i => i.id === item.id)
+        this.gridDet.data.splice(idx, 1)
 
         // Calc price
         this.calcPrice()
       }
     },
-    srcTransChange() {
-      if (this.data.srcTrans === 1) {
-        this.lblTransCode = 'Kode Order Penjualan'
-      } else {
-        this.lblTransCode = 'Kode Retur'
-      }
-      this.data.transCode = null
-      this.data.custCode = null
-      this.data.custName = null
-      this.data.currCode = null
-      this.data.rate = 0
-      this.data.dpp = 0
-      this.data.subTotal = 0
-      this.data.finalDisc = 0
-      this.data.includeTax = 0
-      this.data.taxAmount = 0
-      this.data.total = 0
-      this.gridItem.data = []
-      this.gridRelated.data = []
+    getItemLists() {
+      api.getAll(this.endpoint.inventory.item.item, {
+        // params: {
+        //   param: 'item',
+        //   fieldNames: 'id,initial,name,uomId,uomBuyId,buyPrice,purchaseTaxId',
+        //   sorts: JSON.stringify([{
+        //     field: 'initial',
+        //     direction: 'asc'
+        //   }]),
+        //   includeMetaData: false
+        // }
+      })  
+        .then(response => {
+          this.items = response.data.tableData
+        })
     },
-    transCodeChange() {
-      api.getAll(this.endpoint.sales.order, {
-        params: {
+    loadWarehouse() {
+      api.getAll(`${this.endpoint.inventory.warehouse}/lists`, {
+        params: { 
           filters: JSON.stringify([{
-            field: 'code',
+            field: 'isactive',
             operator: 'eq',
-            keyword: this.data.transCode
-          }, {
-            field: 'mark',
-            operator: 'doesnotcontain',
-            keyword: ['V', 'CLS', 'CMP']
+            keyword: true
+          }]),
+          sorts: JSON.stringify([{
+            field: 'name',
+            direction: 'asc'
           }])
         }
       })
         .then(response => {
-          this.bindTransData(response.data.tableData[0] ?? null)
+          this.warehouseRef = response.data.tableData
         })
     },
-    calcItemTax(item) {
-      const tax = this.taxes.find(t => t.id === item.taxId)
-      if (tax) {
-        if (this.data.includeTax) {
-          item.taxAmount = Math.round((item.unitPrice - item.disc) - ((item.unitPrice - item.disc) / (1 + (tax.rate / 100))))
-          item.nettPrice = item.unitPrice - item.disc
-          item.dpp = item.unitPrice - item.disc - item.taxAmount
-        } else {
-          item.taxAmount = Math.round((item.unitPrice - item.disc) * (tax.rate / 100))
-          item.nettPrice = item.unitPrice - item.disc + item.taxAmount
-          item.dpp = item.unitPrice - item.disc
+    tsCodeChange() {
+      api.getAll(this.endpoint.inventory.transferStock, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: this.data.originTransferCode
+          }, {
+            field: 'mark',
+            operator: 'doesnotcontain',
+            keyword: ['A', 'V', 'CLS']
+          }, {
+            field: 'type',
+            operator: 'neq',
+            keyword: 2
+          }])
         }
-      }
-    },
-    calcItemPrice(item, calcPrice = true) {
-      this.calcItemTax(item)
-      item.total = item.qty * item.nettPrice
-      item.totTax = item.qty * item.taxAmount
-      item.totDPP = item.qty * item.dpp
-      
-      if (calcPrice) {
-        this.calcPrice()
-      }
-    },
-    calcPrice() {
-      this.data.subTotal = _sumBy(this.gridItem.data, 'total')
-      this.data.taxAmount = _sumBy(this.gridItem.data, 'totTax')
-      this.data.dpp = _sumBy(this.gridItem.data, 'totDPP') - this.data.finalDisc
-      this.calcGrandTotal()
-    },
-    calcGrandTotal() {
-      if (this.data.includeTax) {
-        this.data.total = this.data.subTotal - this.data.finalDisc
-      } else {
-        this.data.total = this.data.subTotal - this.data.finalDisc + this.data.taxAmount
-      }
-    },
-    showFindTransDialog() {
-      if (this.data.srcTrans === 1) {
-        this.$refs.findSO.open()
-      } else {
-        this.$refs.findReturn.open()
-      }
-    },
-    bindTransData(item) {
-      if (item) {
-        this.data.transCode = item.code
-        this.data.custCode = item.custCode
-        this.data.custName = item.custName
-        this.data.currCode = item.currCode
-        this.data.rate = item.rate
-        this.data.dpp = item.dpp
-        this.data.subTotal = item.subTotal
-        this.data.finalDisc = item.finalDisc
-        this.data.includeTax = item.includeTax
-        this.data.taxAmount = item.taxAmount
-        this.data.total = item.total
-        const test = true
-        if (!item.called || test) {
-          // Get customer details
-          this.bindCustData(this.data)
-
-          if (this.data.srcTrans === 1) {
-            // Get sales order item details
-            api.getAll(`${this.endpoint.sales.order}/item`, {
-              params: {
-                code: item.code,
-                fullDelivered: false
-              }
-            })
-              .then(response => {
-                this.gridItem.data = [...response.data.tableData]
-                for (let i = 0; i < this.gridItem.data.length; i++) {
-                  this.gridItem.data[i].soDetailId = this.gridItem.data[i].id
-                  this.gridItem.data[i].id = randomNumber(-1, -1000)
-                  this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
-                  this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyDlv
-                  this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
-                  this.gridItem.data[i].typeName = 'Normal'
-                  this.calcItemPrice(this.gridItem.data[i], false)
-                }
-                this.calcPrice()
-              })
-          } else {
-            // Get sales return item details
-            api.getAll(`${this.endpoint.sales.return}/item`, {
-              params: {
-                code: item.code,
-                fullDelivered: false
-              }
-            })
-              .then(response => {
-                this.gridItem.data = [...response.data.tableData]
-                for (let i = 0; i < this.gridItem.data.length; i++) {
-                  this.gridItem.data[i].soDetailId = this.gridItem.data[i].id
-                  this.gridItem.data[i].id = randomNumber(-1, -1000)
-                  this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
-                  this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyDlv
-                  this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
-                  this.gridItem.data[i].typeName = 'Normal'
-                  this.calcItemPrice(this.gridItem.data[i], false)
-                }
-                this.calcPrice()
-              })
-          }
-        }
-      } else {
-        this.data.custCode = null
-        this.data.custName = null
-        this.data.custAddr = null
-        this.data.custPhone = null
-        this.data.custFax = null
-        this.data.warehouseCode = null
-        this.data.dpp = 0
-        this.data.subTotal = 0
-        this.data.finalDisc = 0
-        this.data.taxAmount = 0
-        this.data.total = 0
-        this.gridItem.data = []
-      }
-    },
-    bindCustData(item) {
-      api.getOne(this.endpoint.general.customer.customer, item.custCode)
+      })
         .then(response => {
-          if (response.data) {
-            item.custAddr = response.data.address1
-            item.custPhone = response.data.phone
-            item.custFax = response.data.fax
-          }
+          this.bindTSData(response.data.tableData[0] ?? null)
         })
-    }    
+    },
+    showFindTSDialog() {
+      this.$refs.findTransferStock.open()
+    },
+    showFindItemDialog(item) {
+      this.$refs.findItem.open(item)
+    },
+    bindTSData(item) {
+      if (item) {
+        this.data.originTransferCode = item.code
+      } else {
+        this.data.originTransferCode = null
+        this.gridDet.data = []
+      }
+    },
+    onChangeType() {
+      if (!this.data.type) return
+
+      if (this.data.type === 2) {
+        this.data.warehouseCodeFrom = null
+        this.data.warehouseCodeTo = null
+        this.gridDet.data = []
+      }
+    },
+    getUnitItemLists(item) {
+      api.getAll(`${this.endpoint.inventory.uom}/item`, {
+        params: { uomId: item.uomId }
+      })
+        .then(response => {
+          item.units = response.data.tableData
+        })
+    },
+    itemIdChange(item) {
+      const data_i = this.items.find(i => i.id === item.itemId)
+      if (data_i) {
+        item.itemId = data_i.id
+        item.itemName = data_i.name
+        item.qty = 1
+        item.length = data_i.length
+        item.width = data_i.width
+        item.height = data_i.height
+        item.weight = data_i.weight
+        item.dimensionMeasurement = data_i.dimensionMeasurement
+        item.weightMeasurement = data_i.weightMeasurement
+        item.qtyRcv = 0
+        item.uomId = data_i.uomId
+        item.oldUnitId = data_i.uomBuyId
+        item.oldUnitName = data_i.uomBuyName
+        item.oldUnitPrice = data_i.buyPrice
+        item.unitId = data_i.uomBuyId
+        item.unitName = data_i.uomBuyName
+        item.unitPrice = data_i.buyPrice
+        item.disc = 0
+        item.taxId = data_i.purchaseTaxId
+        item.taxAmount = 0
+        item.nettPrice = data_i.buyPrice
+        item.total = data_i.buyPrice
+        item.dpp = data_i.buyPrice
+        item.totTax = 0
+        item.totDPP = data_i.buyPrice
+        item.notes = null
+        item.coaInventory = data_i.coaInventory
+        item.coaCogs = data_i.coaCogs
+        item.coaPurc = data_i.coaPurc
+        item.coaPurcDisc = data_i.coaPurcDisc
+        item.coaPurcReturn = data_i.coaPurcReturn
+        if (item.state !== 'A') {
+          item.state = 'M'
+        }
+
+        // Get unit item lists
+        this.getUnitItemLists(item)
+      }
+    },
+    unitItemChange(item) {
+      const oldUnit = item.units.find(u => u.id === item.oldUnitId)
+      const unit = item.units.find(u => u.id === item.unitId)
+
+      if (oldUnit.seq < unit.seq) {
+        item.uomConversion = unit.conversion
+        if (unit.unitToConvert !== item.oldUnitName) {
+          this.calcUomConversion(true, item, unit.unitToConvert)
+        }
+      } else {
+        item.uomConversion = 1
+        if (unit.unitEquivalent !== item.oldUnitName) {
+          this.calcUomConversion(false, item, unit.unitEquivalent)
+        }
+      }
+    },
+    calcUomConversion(seqSmaller, item, unitCode) {
+      if (seqSmaller) {
+        const data = item.units.find(u => u.unitEquivalent === unitCode)
+        item.uomConversion *= data.conversion
+
+        if (data.unitToConvert !== item.oldUnitName) {
+          this.calcUomConversion(seqSmaller, item, data.unitToConvert)
+        }
+      } else {
+        const data = item.units.find(u => u.unitToConvert === unitCode && !u.isBaseUnit)
+        item.uomConversion *= data.conversion
+        
+        if (data.unitEquivalent !== item.oldUnitName) {
+          this.calcUomConversion(seqSmaller, item, data.unitEquivalent)
+        }
+      }
+    }
   }
 }
 </script>

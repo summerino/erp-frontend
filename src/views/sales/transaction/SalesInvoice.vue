@@ -264,7 +264,7 @@
                             ></v-text-field>
                           </template>
                           <v-date-picker
-                            v-model="data.date"
+                            v-model="data.dueDate"
                             no-title
                             scrollable
                             @change="menu.dueDate = false"
@@ -467,7 +467,7 @@
               <v-col cols="12">
                 <v-card>
                   <v-tabs v-model="tab.det">
-                    <v-tab key="detail-trans">Detil</v-tab>
+                    <v-tab key="detail-trans">Detail</v-tab>
                     <v-tab key="related-trans">Transaksi Terkait</v-tab>
 
                     <v-tab-item

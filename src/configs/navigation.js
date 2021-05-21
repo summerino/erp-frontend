@@ -14,7 +14,7 @@ export default {
       items: [
         {
           icon: 'mdi-view-dashboard-outline',
-          text: 'Dasbor',
+          text: 'Dashboard',
           link: 'dashboard'
         }
       ]

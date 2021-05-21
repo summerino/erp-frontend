@@ -3,14 +3,12 @@
     <v-row no-gutters>
       <v-col cols="9">
         <v-text-field
-          :readonly="isAdvancedSearch"
+          :readonly="filter.isAdvancedSearch"
           v-model="search"
+          label="Cari..."
           append-icon="mdi-magnify"
-          class="flex-grow-1 mr-md-2"
-          solo
-          hide-details
-          dense
-          clearable
+          class="font-weight-regular mt-0 pt-0"
+          single-line
           @keyup.enter="getList(false)"
         ></v-text-field>
       </v-col>
@@ -34,7 +32,7 @@
         
       </v-col>
     </v-row>
-    <v-row no-gutters v-if="isAdvancedSearch">
+    <v-row no-gutters v-if="filter.isAdvancedSearch">
       <v-col class="pt-0 mt-0">
         <div class="pt-0 mt-0" v-for="(item, index) in filter.searches" :key="index">
           <v-row class="pl-2 mt-0 pt-0" no-gutters>
@@ -105,7 +103,7 @@
               </v-tooltip>
               <v-tooltip v-if="index === filter.searches.length - 1" bottom>
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn v-if="isAdvancedSearch"
+                  <v-btn v-if="filter.isAdvancedSearch"
                     v-bind="attrs"
                     v-on="on"
                     class="mt-2"
@@ -125,17 +123,17 @@
           <v-row class="pl-2 mt-0 pt-0" no-gutters>
             <v-col cols="10 text-right">
               <v-btn
-                small
-                text
-                @click="resetAdvancedFilter()"
-              >Batal</v-btn>
-              <v-btn
                 class="primary"
                 text
                 small
                 @click="advancedSearch()"
                 tile
               >Cari</v-btn>
+              <v-btn
+                small
+                text
+                @click="resetAdvancedFilter()"
+              >Batal</v-btn>
             </v-col>
           </v-row>
         </div>
@@ -149,8 +147,6 @@
 import { mapState } from 'vuex'
 
 export default {
-
-
   data: () => ({
     search: null,
     searches: []    
@@ -158,21 +154,21 @@ export default {
 
   computed: {
     ...mapState({
-      filter: state => state.app.filter,
-      isAdvancedSearch: state => state.app.isAdvancedSearch
+      filter: state => state.app.filter
     })    
   },
   methods: {
     advSearch() {
+      this.search = null
       this.$store.commit('app/advSearch')
-      if (this.isAdvancedSearch) this.addSearch()
+      if (this.filter.isAdvancedSearch) this.addSearch()
     },
     addSearch() {
       this.$store.commit('app/addSearch')
     },
-    advancedSearch() {      
+    advancedSearch() {
       const filters = this.filter.searches.filter(x => x.operator !== '' && x.field !== '' && x.keyword !== '')
-      this.getList(false, filters, true)
+      this.getList(false, filters)
     },
     resetAdvancedFilter() {
       this.$store.commit('app/resetAdvancedFilter')
@@ -198,12 +194,12 @@ export default {
       const temp = this.filter.mapDataTypeToCategory.find(x => x.dataTypes.includes(selectedField.dataType))
       return temp.category
     },
-    getList(bindToForm, filters = [], isAdvancedSearch = false) {
+    getList(bindToForm, filters = []) {
       const vm = {
         bindToForm: bindToForm,
         filters: filters,
-        isAdvancedSearch: isAdvancedSearch,
-        search: this.search
+        search: this.search,
+        isAdvancedSearch: this.filter.isAdvancedSearch
       }
       this.$emit('search', vm)
     }

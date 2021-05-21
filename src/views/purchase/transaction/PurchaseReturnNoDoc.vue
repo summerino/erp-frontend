@@ -1062,40 +1062,26 @@ export default {
         })
     },
     getDefTaxIncSetting() {
-      api.getAll(this.endpoint.master, {
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
         params: {
-          param: 'systemParameter',
-          fieldNames: 'code,value',
           filters: JSON.stringify([
             {
               field: 'code',
-              operator: 'equal',
-              keyword: 'DEF_SLS_RTN_NONTAX'
+              operator: 'contains',
+              keyword: ['DEF_SALES_TAX_INC', 'DEF_SLS_RTN_NONTAX']
             }
           ]),
-          includeMetaData: false
+          sorts: JSON.stringify([
+            {
+              field: 'code',
+              direction: 'asc'
+            }
+          ])
         }
       })
         .then(response => {
           this.defTaxInc = (response.data.tableData[0].value === '1')
-        })
-
-      api.getAll(this.endpoint.master, {
-        params: {
-          param: 'systemParameter',
-          fieldNames: 'code,value',
-          filters: JSON.stringify([
-            {
-              field: 'code',
-              operator: 'equal',
-              keyword: 'DEF_SLS_RTN_NONTAX'
-            }
-          ]),
-          includeMetaData: false
-        }
-      })
-        .then(response => {
-          this.defNonTax = (response.data.tableData[0].value === '1')
+          this.defNonTax = (response.data.tableData[1].value === '1')
         })
     },
     getSupplierLists() {
@@ -1260,7 +1246,7 @@ export default {
       data.itemDetails = this.gridItem.data
       data.diffItemDetails = this.gridDiffItem.data
       if (data.itemDetails.length === 0 || (data.type === 3 && data.diffItemDetails.length === 0)) {
-        this.$store.dispatch('app/showInfo', 'Detil tidak boleh kosong.')
+        this.$store.dispatch('app/showInfo', 'Detail tidak boleh kosong.')
         return
       }
 
@@ -1398,8 +1384,8 @@ export default {
           { value: 'action', sortable: false, divider: true, width: '90' },
           { text: 'Inisial', value: 'itemId', divider: true, width: '100' },
           { text: 'Nama', value: 'itemName', divider: true, width: '280' },
-          { text: 'Lokasi Keluar', value: 'warehouseInitial', divider: true, width: '180' },
-          { text: 'Lokasi Masuk', value: 'warehouseInitialIn', divider: true, width: '180' },
+          { text: 'Gudang Keluar', value: 'warehouseInitial', divider: true, width: '180' },
+          { text: 'Gudang Masuk', value: 'warehouseInitialIn', divider: true, width: '180' },
           { text: 'Qty Retur', value: 'qty', align: 'right', divider: true, width: '90' },
           { text: 'Qty Masuk', value: 'qtyRcv', align: 'right', divider: true, width: '90' },
           { text: 'Satuan', value: 'unitName', divider: true, width: '90' }
@@ -1409,6 +1395,7 @@ export default {
           { value: 'action', sortable: false, divider: true, width: '90' },
           { text: 'Inisial', value: 'itemId', divider: true, width: '100' },
           { text: 'Nama', value: 'itemName', divider: true, width: '280' },
+          { text: 'Gudang', value: 'warehouseInitial', divider: true, width: '180' },
           { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
           { text: 'Satuan', value: 'unitName', divider: true, width: '90' },
           { text: 'Satuan Harga', value: 'unitPrice', align: 'right', divider: true, width: '120' },

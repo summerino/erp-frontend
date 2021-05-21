@@ -670,7 +670,7 @@ export default {
     },
     valid: false,
     lblTransCode: null,
-    sources: [{ id: 1, name: 'Pembelian' }, { id: 2, name: 'Retur Pembelian' }],
+    sources: [{ id: 1, name: 'Order Pembelian' }, { id: 2, name: 'Retur Pembelian' }],
     employees: [],
     taxes: [],
     items: [],
@@ -746,7 +746,7 @@ export default {
         taxAmount: 0,
         total: 0
       }
-      this.lblTransCode = 'Kode PO'
+      this.lblTransCode = 'Kode Order Pembelian'
       this.gridItem.data = []
       this.gridRelated.data = []
       this.tab.sup = 0
@@ -867,7 +867,7 @@ export default {
 
       // Define label trans code
       if (this.data.srcTrans === 1) {
-        this.lblTransCode = 'Kode PO'
+        this.lblTransCode = 'Kode Order Pembelian'
       } else {
         this.lblTransCode = 'Kode Retur'
       }
@@ -1002,7 +1002,7 @@ export default {
     },
     srcTransChange() {
       if (this.data.srcTrans === 1) {
-        this.lblTransCode = 'Kode PO'
+        this.lblTransCode = 'Kode Order Pembelian'
       } else {
         this.lblTransCode = 'Kode Retur'
       }
@@ -1204,6 +1204,7 @@ export default {
                   this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyRcv
                   this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
                   this.gridItem.data[i].warehouseCode = item.warehouseCodeIn
+                  this.gridItem.data[i].type = 0
                   this.gridItem.data[i].typeName = 'Normal'
                   this.calcItemPrice(this.gridItem.data[i], false)
                 }
