@@ -2,8 +2,10 @@
   <div class="w-full">
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row no-gutters>        
-          <advanced-search @search="search"></advanced-search>
+        <v-row no-gutters>
+          <v-col cols="12" md="6" >
+            <advanced-search   @search="search"></advanced-search>
+          </v-col>           
           <v-col cols="12" md="6" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
