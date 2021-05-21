@@ -47,6 +47,7 @@ export default {
     invoice: 'sales-invoice',
     directInvoice: 'direct-invoice',
     return: 'sales-return',
+    plan: 'delivery-plan',
     creditMemo: 'credit-memo'
   },
 

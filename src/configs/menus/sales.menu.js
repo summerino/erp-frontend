@@ -14,7 +14,8 @@ export default [
           { text: 'Retur', link: 'sales-return-wo-doc' }
         ]
       },
-      { text: 'Nota Kredit', link: 'credit-memo' }
+      { text: 'Nota Kredit', link: 'credit-memo' },
+      { text: 'Rencana Pengiriman', link: 'delivery-plan'}
     ]
   },
   { icon: 'mdi-chart-line', text: 'Laporan', regex: /^\/sales\/report/,
