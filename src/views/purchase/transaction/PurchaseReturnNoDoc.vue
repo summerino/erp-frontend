@@ -936,7 +936,8 @@ export default {
       columns: [
         { text: 'Kode', value: 'code', divider: true },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true },
-        { text: 'Status', value: 'mark' }
+        { text: 'Status', value: 'mark' },
+        { text: 'Tipe', value: 'type'}
       ],
       data: []
     },
