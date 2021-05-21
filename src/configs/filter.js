@@ -1,16 +1,66 @@
 export default {
   isAdvancedSearch: false,
   operator: [
-    { text: 'Sama dgn.', value: 'eq', allowedCategoryTypes: ['number', 'datetime', 'text', 'bit'] },
-    { text: 'Tdk. sama dgn.', value: 'neq', allowedCategoryTypes: ['number', 'datetime', 'text', 'bit'] },
-    { text: 'Dimulai dgn.', value: 'startwith', allowedCategoryTypes: ['text'] },
-    { text: 'Diakhiri dgn.', value: 'endswith', allowedCategoryTypes: ['text'] },
-    { text: 'Mengandung', value: 'contains', allowedCategoryTypes: ['text'] },
-    { text: 'Tdk. mengandung', value: 'doesnotcontain', allowedCategoryTypes: ['text'] },
-    { text: 'Lbh. kecil', value: 'lt', allowedCategoryTypes: ['number', 'datetime'] },
-    { text: 'Lbh. besar', value: 'gt', allowedCategoryTypes: ['number', 'datetime'] },
-    { text: 'Lbh. kecil sama dgn.', value: 'lte', allowedCategoryTypes: ['number', 'datetime'] },
-    { text: 'Lbh. besar sama dgn.', value: 'gte', allowedCategoryTypes: ['number', 'datetime'] }
+    { 
+      text: 'Sama dgn.', 
+      value: 'eq', 
+      swiftValue: '1', 
+      allowedCategoryTypes: ['number', 'datetime', 'text', 'bit'] 
+    },
+    { 
+      text: 'Tdk. sama dgn.', 
+      value: 'neq', 
+      swiftValue: '2', 
+      allowedCategoryTypes: ['number', 'datetime', 'text', 'bit'] 
+    },
+    { 
+      text: 'Dimulai dgn.', 
+      value: 'startwith', 
+      swiftValue: '3', 
+      allowedCategoryTypes: ['text'] 
+    },
+    { 
+      text: 'Diakhiri dgn.', 
+      value: 'endswith', 
+      swiftValue: '4', 
+      allowedCategoryTypes: ['text'] 
+    },
+    { 
+      text: 'Mengandung', 
+      value: 'contains', 
+      swiftValue: '5', 
+      allowedCategoryTypes: ['text'] 
+    },
+    { 
+      text: 'Tdk. mengandung', 
+      value: 'doesnotcontain', 
+      swiftValue: '6', 
+      allowedCategoryTypes: ['text'] 
+    },
+    { 
+      text: 'Lbh. kecil', 
+      value: 'lt', 
+      swiftValue: '7', 
+      allowedCategoryTypes: ['number', 'datetime'] 
+    },
+    { 
+      text: 'Lbh. besar', 
+      value: 'gt', 
+      swiftValue: '8', 
+      allowedCategoryTypes: ['number', 'datetime'] 
+    },
+    { 
+      text: 'Lbh. kecil sama dgn.', 
+      value: 'lte', 
+      swiftValue: '9', 
+      allowedCategoryTypes: ['number', 'datetime'] 
+    },
+    { 
+      text: 'Lbh. besar sama dgn.', 
+      value: 'gte', 
+      swiftValue: '10', 
+      allowedCategoryTypes: ['number', 'datetime'] 
+    }
   ],
   mapDataTypeToCategory: [
     {

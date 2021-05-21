@@ -1,16 +1,14 @@
 <template>
-  <v-col cols="12" md="6" >
+  <div>
     <v-row no-gutters>
       <v-col cols="9">
         <v-text-field
           :readonly="filter.isAdvancedSearch"
-          v-model="search"
+          v-model.trim="search"
           append-icon="mdi-magnify"
-          class="flex-grow-1 mr-md-2"
-          solo
-          hide-details
-          dense
-          clearable
+          label="Cari..."
+          class="font-weight-regular mt-0 pt-0"
+          single-line
           @keyup.enter="getList(false)"
         ></v-text-field>
       </v-col>
@@ -48,11 +46,21 @@
               ></v-select>
             </v-col>
             <v-col cols="3" class="ma-0 pa-0">
+
               <v-select
                 v-model="item.operator"
                 :items="item.operators"
                 label="Operator"
                 class="mt-0 ml-1 font-weight-regular"
+                item-value="swiftValue"
+                v-if="source === 'swift'"
+              ></v-select>
+              <v-select
+                v-model="item.operator"
+                :items="item.operators"                
+                label="Operator"
+                class="mt-0 ml-1 font-weight-regular"
+                v-else
               ></v-select>
             </v-col>
             <v-col cols="4" class="ma-0 pa-0">
@@ -141,19 +149,20 @@
         </div>
       </v-col>
     </v-row>
-  </v-col>
+  </div>
 </template>
 
 
 <script>
 import { mapState } from 'vuex'
+import { isValid } from 'date-fns'
 
 export default {
+  props: ['source'],
   data: () => ({
     search: null,
-    searches: []    
+    searches: []
   }),
-
   computed: {
     ...mapState({
       filter: state => state.app.filter
@@ -196,6 +205,12 @@ export default {
       const temp = this.filter.mapDataTypeToCategory.find(x => x.dataTypes.includes(selectedField.dataType))
       return temp.category
     },
+    getCategoryFromDataType(dataType) {
+      // only for swift
+      dataType = dataType.toLowerCase()
+      const temp = this.filter.mapDataTypeToCategory.find(x => x.dataTypes.includes(dataType))
+      return temp.category
+    },
     getList(bindToForm, filters = []) {
       const vm = {
         bindToForm: bindToForm,
@@ -203,7 +218,43 @@ export default {
         search: this.search,
         isAdvancedSearch: this.filter.isAdvancedSearch
       }
+      if (this.source === 'swift' && !this.filter.isAdvancedSearch) {
+        vm.filters = this.getFilter()
+      }
       this.$emit('search', vm)
+    },
+    getFilter() {
+      // only for swift
+      // search all for swift
+      const filters = []
+      if (this.search) {
+        this.filter.fields.forEach(data => {
+          if (this.getCategoryFromDataType(data.dataType) === 'number') {
+            if (!isNaN(this.search)) {
+              filters.push({
+                field: data.value,
+                operator: '1',
+                keyword: this.search
+              })
+            }
+          } else if (this.getCategoryFromDataType(data.dataType) === 'text') {
+            filters.push({
+              field: data.value,
+              operator: '5',
+              keyword: this.search
+            })
+          } else if (this.getCategoryFromDataType(data.dataType) === 'datetime') {
+            if (isValid(new Date(this.search))) {
+              filters.push({
+                field: data.value,
+                operator: '1',
+                keyword: this.search
+              })
+            }
+          }
+        })
+      }
+      return filters
     }
   }
 }
