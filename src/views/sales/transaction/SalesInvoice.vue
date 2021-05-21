@@ -15,26 +15,75 @@
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" md="6" class="text-right">
-            <v-tooltip bottom>
+            <v-menu
+              bottom
+              eager
+              left
+              open-on-hover
+            >
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   v-bind="attrs"
                   v-on="on"
-                  v-shortkey="['ctrl', 'alt', 'n']"
                   color="green darken-1"
                   class="font-weight-regular"
                   dark
                   small
                   tile
-                  @click="add"
-                  @shortkey="add"
                 >
                   <v-icon left>mdi-plus</v-icon>
                   Data Baru
                 </v-btn>
               </template>
-              <span class="text-caption">(Ctrl + Alt + N)</span>
-            </v-tooltip>
+              <v-list
+                class="cursor-pointer"
+                color="green darken-1"
+                dark
+              >
+                <v-list-item
+                  v-shortkey="['ctrl', 'alt', 'n']"
+                  dense
+                  @click="add()"
+                  @shortkey="add()"
+                >
+                  <v-list-item-title>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <span
+                          v-bind="attrs"
+                          v-on="on"
+                          class="text-subtitle-2"
+                        >
+                          Faktur Penjualan
+                        </span>
+                      </template>
+                      <span class="text-caption">(Ctrl + Alt + N)</span>
+                    </v-tooltip>
+                  </v-list-item-title>
+                </v-list-item>
+                <v-list-item
+                  v-shortkey="['ctrl', 'alt', 'd']"
+                  dense
+                  @click="add(true)"
+                  @shortkey="add(true)"
+                >
+                  <v-list-item-title>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <span
+                          v-bind="attrs"
+                          v-on="on"
+                          class="text-subtitle-2"
+                        >
+                          Penjualan langsung
+                        </span>
+                      </template>
+                      <span class="text-caption">(Ctrl + Alt + D)</span>
+                    </v-tooltip>
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
           </v-col>
         </v-row>
       </v-card-title>
@@ -86,6 +135,9 @@
         </template>
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
+        </template>
+        <template v-slot:[`item.fromDirectInvoice`]="{ item }">
+          {{ item.fromDirectInvoice ? 'Penjualan Langsung' : 'Faktur Penjualan' }}
         </template>
         <template v-slot:[`item.total`]="{ item }">
           {{ item.total | formatCurrency }}
@@ -677,6 +729,7 @@ export default {
         { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'No. Faktur', value: 'code', divider: true, width: '160' },
         { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120' },
+        { text: 'Tipe', value: 'fromDirectInvoice', divider: true, width: '170' },
         { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
         { text: 'No. Ord. Penjualan', value: 'soCode', divider: true, width: '150' },
         { text: 'Total', value: 'total', align: 'right', divider: true, width: '120' },
@@ -849,7 +902,15 @@ export default {
     close() {
       this.dialog.add = false
     },
-    add() {
+    add(fromDI = false) {
+      if (fromDI) {
+        this.$router.push({
+          name: 'direct-invoice',
+          params: { action: 'add' }
+        })
+        return
+      }
+
       if (this.dialog.add) return
       this.dialog.add = true
       this.reset(false)
@@ -865,6 +926,14 @@ export default {
     },
     edit(item) {
       if (!item) return
+
+      if (item.fromDirectInvoice) {
+        this.$router.push({
+          name: 'direct-invoice',
+          params: { action: 'edit', code: item.code }
+        })
+        return
+      }
       
       this.dialog.add = true
       this.reset()

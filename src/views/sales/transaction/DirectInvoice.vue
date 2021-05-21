@@ -978,26 +978,25 @@ export default {
     },
     async defineAction() {
       if (this.$route.params.action.toLowerCase() === 'edit') {
-        
         // Get invoice details
         const resp = await api.getOne(this.endpoint.sales.directInvoice, this.$route.params.code)
 
-        if (!resp.data.tableData) return
+        if (!resp.data) return
 
         this.data = {
-          ...resp.data.tableData,
+          ...resp.data,
           action: 'edit',
-          createdDate: (resp.data.tableData.createdDate === null) ? null : format(parseISO(resp.data.tableData.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
-          updatedDate: (resp.data.tableData.updatedDate === null) ? null : format(parseISO(resp.data.tableData.updatedDate), 'dd-MMM-yyyy HH:mm:ss'),
-          approvedDate: (resp.data.tableData.approvedDate === null) ? null : format(parseISO(resp.data.tableData.approvedDate), 'dd-MMM-yyyy HH:mm:ss')
+          createdDate: (resp.data.createdDate === null) ? null : format(parseISO(resp.data.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
+          updatedDate: (resp.data.updatedDate === null) ? null : format(parseISO(resp.data.updatedDate), 'dd-MMM-yyyy HH:mm:ss'),
+          approvedDate: (resp.data.approvedDate === null) ? null : format(parseISO(resp.data.approvedDate), 'dd-MMM-yyyy HH:mm:ss')
         }
 
         // Get customer details
         this.custCodeChange()
 
         // Get item details
-        api.getAll(`${this.endpoint.sales.directInvoice}/item`, {
-          params: { code: resp.data.tableData.code }
+        api.getAll(`${this.endpoint.sales.order}/item`, {
+          params: { code: resp.data.soCode }
         })
           .then(response => {
             this.gridItem.data = response.data.tableData
@@ -1005,7 +1004,7 @@ export default {
 
         // Get related transaction details
         api.getAll(`${this.endpoint.sales.directInvoice}/related-trans`, {
-          params: { code: resp.data.tableData.code }
+          params: { code: resp.data.code }
         })
           .then(response => {
             this.gridRelated.data = response.data.tableData
@@ -1021,7 +1020,7 @@ export default {
       this.$refs.code.focus()
     },
     close() {
-      this.$router.push({name: 'sales-invoice'})
+      this.$router.push({ name: 'sales-invoice' })
     },
     async remove(item) {
       if (
