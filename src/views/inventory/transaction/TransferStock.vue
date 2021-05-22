@@ -134,11 +134,11 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="isVoid"
+                  :disabled="isVoid || data.mark === 'CMP'"
                   dark
                   text
-                  @click="save(true)"
-                  @shortkey="save(true)"
+                  @click="save(true, false)"
+                  @shortkey="save(true, false)"
                 >Simpan & Tutup</v-btn>
               </template>
               <span class="text-caption">(Ctrl + Enter)</span>
@@ -163,9 +163,9 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="isVoid"
-                  @click="save(false)"
-                  @shortkey="save(false)"
+                  :disabled="isVoid || data.mark === 'CMP'"
+                  @click="save(false, false)"
+                  @shortkey="save(false, false)"
                 >
                   <v-list-item-title>
                     <v-tooltip bottom>
@@ -178,6 +178,27 @@
                         </span>
                       </template>
                       <span class="text-caption">(Ctrl + S)</span>
+                    </v-tooltip>
+                  </v-list-item-title>
+                </v-list-item>
+                <v-list-item
+                  v-if="data.type === 1"
+                  v-shortkey="['ctrl', 'alt', 's']"
+                  :disabled="isVoid || data.mark === 'CMP'"
+                  @click="save(false, true)"
+                  @shortkey="save(false, true)"
+                >
+                  <v-list-item-title>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <span
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          Simpan & Buat Brg. Masuk
+                        </span>
+                      </template>
+                      <span class="text-caption">(Ctrl + Alt + S)</span>
                     </v-tooltip>
                   </v-list-item-title>
                 </v-list-item>
@@ -224,7 +245,7 @@
                               :value="formatTransfDate"
                               label="Tanggal"
                               class="mt-0"
-                              readonly
+                              :readonly="data.mark === 'CMP'"
                               required
                             ></v-text-field>
                           </template>
@@ -248,6 +269,7 @@
                           label="Tipe"
                           item-value="value"
                           class="mt-0"
+                          :readonly="data.mark === 'CMP'"
                           required
                           @change="onChangeType"
                         ></v-autocomplete>
@@ -262,7 +284,7 @@
                           label="No. Transf. Persd. Keluar"
                           class="mt-0"
                           :required="data.type === 2"
-                          :readonly="data.type !== 2"
+                          :readonly="data.type !== 2 || data.mark === 'CMP'"
                           @change="tsCodeChange"
                         >
                           <template v-slot:append v-if="data.type === 2">
@@ -304,7 +326,7 @@
                             :items="warehouseRef"
                             :item-text="item => `${item.initial} - ${item.name}`"
                             :rules="(data.type !== 2) ? rules.required : []"
-                            :readonly="data.type === 2"
+                            :readonly="data.type === 2 || data.mark === 'CMP'"
                             label="Gudang Asal"
                             item-value="code"
                             class="mt-0"
@@ -320,7 +342,7 @@
                             :items="warehouseRef"
                             :item-text="item => `${item.initial} - ${item.name}`"
                             :rules="(data.type !== 2) ? rules.required : []"
-                            :readonly="data.type === 2"
+                            :readonly="data.type === 2 || data.mark === 'CMP'"
                             label="Gudang Tujuan"
                             item-value="code"
                             class="mt-0"
@@ -341,6 +363,7 @@
                         counter="256"
                         class="mt-0"
                         rows="4"
+                        :readonly="data.mark === 'CMP'"
                       ></v-textarea>
                     </v-tab-item>
 
@@ -417,7 +440,7 @@
                 <v-card>
                   <v-tabs v-model="tab.det">
                     <v-tab key="detail-trans">Detil</v-tab>
-                    <v-tab key="related-trans">Transaksi Terkait</v-tab>
+                    <v-tab key="related-trans" @click="loadRelatedTransfer">Transaksi Terkait</v-tab>
 
                     <v-tab-item
                       key="detail-trans"
@@ -432,7 +455,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid || data.type === 2"
+                                :disabled="isVoid || data.type === 2 || data.mark === 'CMP'"
                                 class="blue--text"
                                 small
                                 tile
@@ -464,7 +487,7 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
-                                  :disabled="isVoid"
+                                  :disabled="isVoid || data.type === 2 || data.mark === 'CMP'"
                                   color="red"
                                   icon
                                   small
@@ -481,7 +504,7 @@
                               ref="itemId"
                               v-model="item.itemId"
                               :items="items"
-                              :readonly="hasRelatedTrans"
+                              :readonly="data.type === 2 || data.mark === 'CMP'"
                               :rules="rules.required"
                               item-text="initial"
                               item-value="id"
@@ -492,7 +515,7 @@
                             >
                               <template v-slot:append>
                                 <v-btn
-                                  :disabled="hasRelatedTrans"
+                                  :disabled="data.type === 2 || data.mark === 'CMP'"
                                   color="primary"
                                   icon
                                   x-small
@@ -510,7 +533,7 @@
                               v-model="item.qty"
                               :decimal-length="0"
                               :min="1"
-                              :readonly="hasRelatedTrans"
+                              :readonly="data.type === 2 || data.mark === 'CMP'"
                               class="text-body-2 text-right mt-0"
                               dense
                               @change="calcItemPrice(item)"
@@ -520,7 +543,7 @@
                             <v-autocomplete
                               v-model="item.unitId"
                               :items="item.units"
-                              :readonly="hasRelatedTrans"
+                              :readonly="data.type === 2 || data.mark === 'CMP'"
                               :rules="rules.required"
                               item-text="unitEquivalent"
                               item-value="id"
@@ -533,7 +556,7 @@
                           <template v-slot:[`item.notes`]="{ item }">
                             <v-text-field
                               v-model="item.notes"
-                              :readonly="hasRelatedTrans"
+                              :readonly="data.type === 2 || data.mark === 'CMP'"
                               class="text-body-2 mt-0"
                               dense
                             ></v-text-field>
@@ -560,6 +583,23 @@
                         <template v-slot:[`item.date`]="{ item }">
                           {{ item.date | formatDate('dd-MMM-yyyy') }}
                         </template>
+                        <template v-slot:[`item.mark`]="{ item }">
+                          <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-chip
+                                v-bind="attrs"
+                                v-on="on"
+                                :color="item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
+                                class="px-1"
+                                dark
+                                small
+                              >
+                                {{ item.mark }}
+                              </v-chip>
+                            </template>
+                            <span class="text-caption">{{ item.status }}</span>
+                          </v-tooltip>
+                        </template>
                       </v-data-table>
                     </v-tab-item>
                   </v-tabs>
@@ -574,12 +614,11 @@
     <confirm ref="confirm"></confirm>
     <find-item
       ref="findItem"
-      :mark-exclude="['A', 'V', 'CLS']"
-      @dblclick:row="bindTSData"
+      @dblclick:row="bindItemData"
     ></find-item>
     <find-transfer-stock
       ref="findTransferStock"
-      :mark-exclude="['V', 'CLS']"
+      :mark-exclude="['V']"
       @dblclick:row="bindTSData"
     ></find-transfer-stock>
   </div>
@@ -620,8 +659,8 @@ export default {
         { text: 'No. Transf. Persd.', value: 'code', divider: true, width: '160' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
         { text: 'Tipe', value: 'typeInitial', divider: true, width: '150' },
-        { text: 'Gudang Asal', value: 'warehouseInitialFrom', divider: true, width: '200' },
-        { text: 'Gudang Tujuan', value: 'warehouseInitialTo', divider: true, width: '200' },
+        { text: 'Gudang Asal', value: 'warehouseInitialFrom', divider: true, width: '180' },
+        { text: 'Gudang Tujuan', value: 'warehouseInitialTo', divider: true, width: '180' },
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
@@ -645,9 +684,13 @@ export default {
     },
     gridRelated: {
       columns: [
-        { text: 'No. Transf. Persd.', value: 'code', divider: true },
-        { text: 'Tanggal', value: 'date', align: 'center', divider: true },
-        { text: 'Status', value: 'mark' }
+        { text: 'No. Transf. Persd.', value: 'code', divider: true, width: '160' },
+        { text: 'Tipe', value: 'typeInitial', divider: true, width: '150' },
+        { text: 'Tanggal', value: 'date', align: 'center', divider: true, width: '120' },
+        { text: 'Gudang Asal', value: 'warehouseInitialFrom', divider: true, width: '180' },
+        { text: 'Gudang Tujuan', value: 'warehouseInitialTo', divider: true, width: '180' },
+        { text: 'Catatan', value: 'notes', divider: true, width: '180' },
+        { text: 'Status', value: 'mark', width: '50' }
       ],
       data: []
     },
@@ -809,7 +852,7 @@ export default {
           })
       }
     },
-    async save(closeDialog) {
+    async save(closeDialog, saveNew) {
       if (!this.dialog.add) return
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Silahkan periksa kembali data yang wajib diisi.')
@@ -817,7 +860,7 @@ export default {
       }
       
       const data = this.data
-      data.details = this.gridDet.data
+      data.itemDetails = this.gridDet.data
       
       let result = { success: false, message: '' }
       if (data.action === 'add') {
@@ -832,6 +875,10 @@ export default {
         this.$store.dispatch('app/showSuccess', result.message)
         if (closeDialog) {
           this.dialog.add = false
+        } else if (saveNew) {
+          this.data.originTransferCode = result.data
+          this.tsCodeChange()
+          this.data.type = 2
         } else {
           this.data.code = result.data
         }
@@ -872,26 +919,30 @@ export default {
       ) {
         const idx = this.gridDet.data.findIndex(i => i.id === item.id)
         this.gridDet.data.splice(idx, 1)
-
-        // Calc price
-        this.calcPrice()
       }
     },
-    getItemLists() {
-      api.getAll(this.endpoint.inventory.item.item, {
-        // params: {
-        //   param: 'item',
-        //   fieldNames: 'id,initial,name,uomId,uomBuyId,buyPrice,purchaseTaxId',
-        //   sorts: JSON.stringify([{
-        //     field: 'initial',
-        //     direction: 'asc'
-        //   }]),
-        //   includeMetaData: false
-        // }
-      })  
-        .then(response => {
-          this.items = response.data.tableData
+    getItemLists(bindToGridDet = false) {
+      if (bindToGridDet) {
+        api.getAll(`${this.endpoint.inventory.transferStock}/item`, {
+          params: { code: this.data.originTransferCode }
         })
+          .then(response => {
+            this.gridDet.data = response.data.tableData
+          })
+      } else {
+        api.getAll(this.endpoint.inventory.item.item, {
+          params: {
+            filters: JSON.stringify([{
+              field: 'isactive',
+              operator: 'eq',
+              keyword: true
+            }])
+          }
+        })  
+          .then(response => {
+            this.items = response.data.tableData
+          })
+      }
     },
     loadWarehouse() {
       api.getAll(`${this.endpoint.inventory.warehouse}/lists`, {
@@ -921,7 +972,7 @@ export default {
           }, {
             field: 'mark',
             operator: 'doesnotcontain',
-            keyword: ['A', 'V', 'CLS']
+            keyword: ['V']
           }, {
             field: 'type',
             operator: 'neq',
@@ -942,10 +993,35 @@ export default {
     bindTSData(item) {
       if (item) {
         this.data.originTransferCode = item.code
+        this.data.warehouseCodeFrom = item.warehouseCodeFrom
+        this.data.warehouseCodeTo = item.warehouseCodeTo
+
+        // Get item details
+        this.getItemLists(true)
       } else {
         this.data.originTransferCode = null
+        this.data.warehouseCodeFrom = null
+        this.data.warehouseCodeTo = null
         this.gridDet.data = []
       }
+    },
+    loadRelatedTransfer() {
+      api.getAll(this.endpoint.inventory.transferStock, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'origintransfercode',
+            operator: 'eq',
+            keyword: this.data.code
+          }, {
+            field: 'type',
+            operator: 'eq',
+            keyword: 2
+          }])
+        }
+      })
+        .then(response => {
+          this.gridRelated.data = response.data.tableData
+        })
     },
     onChangeType() {
       if (!this.data.type) return
@@ -963,6 +1039,9 @@ export default {
         .then(response => {
           item.units = response.data.tableData
         })
+    },
+    bindItemData(rowItem) {
+      this.itemIdChange(rowItem)
     },
     itemIdChange(item) {
       const data_i = this.items.find(i => i.id === item.itemId)
