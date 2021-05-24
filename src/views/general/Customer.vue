@@ -1,7 +1,5 @@
 <template>
   <div class="w-full">
-    <!-- <div class="display-1">Pelanggan</div> -->
-    <v-breadcrumbs :items="breadcrumbs" class="pa-0 pb-2"></v-breadcrumbs>
     <v-card v-if="main">
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
@@ -566,13 +564,6 @@ export default {
   },
 
   data: () => ({
-    breadcrumbs: [{
-      text: 'Umum'
-    }, {
-      text: 'Data Master'
-    }, {
-      text: 'Pelanggan'
-    }],
     main: true,
     tab: {
       advancedItem: null
@@ -626,6 +617,13 @@ export default {
 
   mounted: function () {
     setTimeout(() => {
+      this.$store.commit('app/setBreadcrumbs', [{
+        text: 'Umum'
+      }, {
+        text: 'Data Master'
+      }, {
+        text: 'Pelanggan'
+      }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
   },

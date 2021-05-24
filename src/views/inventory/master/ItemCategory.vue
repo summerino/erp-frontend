@@ -3,6 +3,9 @@
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
+          <v-col cols="12" md="2">
+            Kategori Barang
+          </v-col>
           <v-col cols="12" md="4">
             <v-text-field
               v-model="hierarchy.search"
@@ -212,7 +215,7 @@
                         <v-text-field
                           ref="Initial"
                           v-model="data.initial"
-                          label="ID Kategori"
+                          label="Inisial"
                           class="mt-0"
                           counter="50"
                           :rules="[rules.required[0], rules.max50chars[0]]"
@@ -223,7 +226,7 @@
                         <v-text-field
                           ref="Name"
                           v-model="data.name"
-                          label="Nama Kategori"
+                          label="Nama"
                           class="mt-0"
                           counter="100"
                           :rules="[rules.required[0], rules.max100chars[0]]"
@@ -339,6 +342,15 @@ export default {
 
   mounted: function () {
     setTimeout(() => {
+      this.$store.commit('app/setBreadcrumbs', [{
+        text: 'Persediaan'
+      }, {
+        text: 'Data Master'
+      }, {
+        text: 'Barang'
+      }, {
+        text: 'Kategori'
+      }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
   },
