@@ -2,15 +2,13 @@ import configs from '../../configs'
 import mutations from './mutations'
 import actions from './actions'
 
-const { product, time, theme, currency, filter } = configs
+const { product, theme, currency, filter } = configs
 
 const { globalTheme, menuTheme, toolbarTheme, isToolbarDetached, isContentBoxed, isRTL } = theme
 
 // state initial values
 const state = {
   product,
-
-  time,
 
   currency,
 

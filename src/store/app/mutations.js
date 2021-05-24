@@ -49,12 +49,6 @@ export default {
   setToolbarTheme: (state, theme) => {
     state.toolbarTheme = theme
   },
-  setTimeZone: (state, zone) => {
-    state.time.zone = zone
-  },
-  setTimeFormat: (state, format) => {
-    state.time.format = format
-  },
   setCurrency: (state, currency) => {
     state.currency = currency
   },
@@ -96,7 +90,6 @@ export default {
   },
   onChangeField: (state, vm) => {
     if (vm.category === 'datetime') {
-      // state.filter.searches[vm.index].keyword = new Date()
       state.filter.searches[vm.index].keyword = format(new Date(), 'yyyy-MM-dd')
     } else {
       state.filter.searches[vm.index].keyword = ''
