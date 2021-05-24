@@ -21,6 +21,7 @@ const state = {
   isToolbarDetached,
   isContentBoxed,
   isRTL,
+  breadcrumbs: [],
 
   // App.vue main toast
   toast: {
@@ -80,7 +81,6 @@ const state = {
 
   // App.vue advanced search filter
   filter
-  
 }
 
 export default {

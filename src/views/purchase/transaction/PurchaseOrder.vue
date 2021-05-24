@@ -3,10 +3,13 @@
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row no-gutters>
+          <v-col cols="12" md="2">
+            Order Pembelian
+          </v-col>
           <v-col cols="12" md="6" >
             <advanced-search   @search="search"></advanced-search>
           </v-col>           
-          <v-col cols="12" md="6" class="text-right">
+          <v-col cols="12" md="4" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -941,6 +944,13 @@ export default {
 
   mounted: function () {
     setTimeout(() => {
+      this.$store.commit('app/setBreadcrumbs', [{
+        text: 'Pembelian'
+      }, {
+        text: 'Transaksi'
+      }, {
+        text: 'Order'
+      }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
   },

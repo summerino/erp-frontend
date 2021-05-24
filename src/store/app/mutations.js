@@ -61,12 +61,15 @@ export default {
   setToolbarDetached: (state, isDetached) => {
     state.isToolbarDetached = isDetached
   },
+  setBreadcrumbs: (state, breadcrumbs) => {
+    state.breadcrumbs = breadcrumbs
+  },
 
   /**
    * Data table
    */
   setGridDefaultHeight: (state, contentHeight) => {
-    state.grid.height = contentHeight - 154
+    state.grid.height = contentHeight - 200
   },
 
   /**

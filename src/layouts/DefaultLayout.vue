@@ -85,6 +85,11 @@
 
     <v-main>
       <v-container class="fill-height" :fluid="!isContentBoxed">
+        <v-row>
+          <v-col cols="12" class="pt-0">
+            <v-breadcrumbs :items="breadcrumbs" class="pa-0"></v-breadcrumbs>
+          </v-col>
+        </v-row>
         <v-layout>
           <slot></slot>
         </v-layout>
@@ -125,11 +130,11 @@ export default {
       drawer: null,
       showSearch: false,
 
-      navigation: config.navigation
+      navigation: config.navigation      
     }
   },
   computed: {
-    ...mapState('app', ['product', 'isContentBoxed', 'menuTheme', 'toolbarTheme', 'isToolbarDetached'])
+    ...mapState('app', ['product', 'isContentBoxed', 'menuTheme', 'toolbarTheme', 'isToolbarDetached', 'breadcrumbs'])
   },
   methods: {
     onKeyup() {

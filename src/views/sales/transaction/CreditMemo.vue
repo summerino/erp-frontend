@@ -3,6 +3,9 @@
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
+          <v-col cols="12" md="2">
+            Nota Kredit
+          </v-col>
           <v-col cols="12" md="4">
             <v-text-field
               v-model.trim="grid.search"
@@ -367,6 +370,13 @@ export default {
 
   mounted: function () {
     setTimeout(() => {
+      this.$store.commit('app/setBreadcrumbs', [{
+        text: 'Penjualan'
+      }, {
+        text: 'Transaksi'
+      }, {
+        text: 'Nota Kredit'
+      }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
   },
