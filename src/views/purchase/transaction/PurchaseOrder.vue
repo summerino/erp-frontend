@@ -7,7 +7,37 @@
             Order Pembelian
           </v-col>
           <v-col cols="12" md="6" >
-            <advanced-search   @search="search"></advanced-search>
+            <v-row no-gutters>
+              <v-text-field
+                append-icon="mdi-magnify"
+                label="Cari..."
+                class="font-weight-regular mt-0 pt-0"
+                single-line
+                v-model="grid.search"
+                :readonly="filter.isAdvancedSearch"
+                @click:append-outer="advancedSearch"
+                @keyup.enter="getList(false)"
+              ></v-text-field>            
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    color="blue darken-2 ml-1"
+                    class="font-weight-regular"
+                    dark
+                    small
+                    tile
+                    @click="advancedSearch"
+                  >
+                    <v-icon>
+                      mdi-magnify-plus-outline
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <span class="text-caption">Pencarian lanjutan</span>
+              </v-tooltip>
+            </v-row>
           </v-col>           
           <v-col cols="12" md="4" class="text-right">
             <v-tooltip bottom>
@@ -34,7 +64,9 @@
         </v-row>
         
       </v-card-title>
-
+      <v-card-text v-if="true" class="pb-1">
+        <advanced-search @search="search"></advanced-search>
+      </v-card-text>
       <v-data-table
         :headers="grid.columns"
         :footer-props="{ itemsPerPageOptions: gridDefOpts.pageSizes }"
@@ -1047,6 +1079,13 @@ export default {
       const defWarehouse = this.warehouses.find(w => w.isDefault)
       if (defWarehouse) {
         this.data.warehouseCode = defWarehouse.code
+      }
+    },
+    advancedSearch() {
+      this.grid.search = null
+      this.$store.commit('app/advSearch')
+      if (this.filter.isAdvancedSearch) {
+        this.$store.commit('app/addSearch')
       }
     },
     search(vm) {
