@@ -2,15 +2,32 @@
   <div class="w-full">
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row no-gutters>   
+        <v-row no-gutters> 
+          <v-col cols="12" md="2">
+            {{ param }}
+          </v-col>  
           <v-col cols="12" md="6" >
-            <advanced-search :source="source"  @search="search"></advanced-search>
+            <v-text-field
+              append-icon="mdi-magnify"
+              append-outer-icon="mdi-magnify-plus-outline"
+              label="Cari..."
+              class="font-weight-regular mt-0 pt-0 mr-10"
+              single-line
+              v-model="grid.search"
+              :readonly="filter.isAdvancedSearch"
+              @click:append-outer="advancedSearch"
+              @keyup.enter="getList()"
+            ></v-text-field>
+            <!-- <advanced-search :source="source"  @search="search"></advanced-search> -->
           </v-col>     
-          <v-col cols="12" md="6" class="text-right">
+          <v-col cols="12" md="4" class="text-right">
             <add-new-btn @add="add"></add-new-btn>
           </v-col>
         </v-row>
       </v-card-title>
+      <v-card-text v-if="true" class="pb-1">
+        <advanced-search :source="source" @search="search"></advanced-search>
+      </v-card-text>
       <main-grid :grid="grid" @edit="edit" @remove="remove"></main-grid>
     </v-card>
     <confirm ref="confirm"></confirm>
@@ -47,7 +64,8 @@ export default {
         options: {
           sortBy: [],
           sortDesc: []
-        }
+        },
+        search: null
       },      
       filterfields: []     
     }
@@ -59,6 +77,7 @@ export default {
   },
   computed: {
     ...mapState({
+      filter: state => state.app.filter,
       endpoint: state => state.api.endpoint,
       gridDefOpts: state => state.app.grid
     }),
@@ -67,6 +86,13 @@ export default {
     }   
   },
   methods: {
+    advancedSearch() {
+      this.grid.search = null
+      this.$store.commit('app/advSearch')
+      if (this.filter.isAdvancedSearch) {
+        this.$store.commit('app/addSearch')
+      }
+    },
     search(vm) {
       this.getList(vm.filters, vm.isAdvancedSearch)
     },

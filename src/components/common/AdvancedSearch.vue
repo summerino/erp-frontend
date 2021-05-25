@@ -1,41 +1,9 @@
 <template>
   <div>
-    <v-row no-gutters>
-      <v-col cols="9">
-        <v-text-field
-          :readonly="filter.isAdvancedSearch"
-          v-model.trim="search"
-          append-icon="mdi-magnify"
-          label="Cari..."
-          class="font-weight-regular mt-0 pt-0"
-          single-line
-          @keyup.enter="getList(false)"
-        ></v-text-field>
-      </v-col>
-      <v-col cols="3">
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              v-bind="attrs"
-              v-on="on"
-              v-shortkey="['ctrl', 'alt', 's']"
-              tile
-              icon
-              @click="advSearch"
-              @shortkey="advSearch"
-            >
-              <v-icon>mdi-magnify-plus-outline</v-icon>
-            </v-btn>
-          </template>
-          <span class="text-caption"><div>Pencarian Lanjutan</div></span>
-        </v-tooltip>
-        
-      </v-col>
-    </v-row>
     <v-row no-gutters v-if="filter.isAdvancedSearch">
       <v-col class="pt-0 mt-0">
         <div class="pt-0 mt-0" v-for="(item, index) in filter.searches" :key="index">
-          <v-row class="pl-2 mt-0 pt-0" no-gutters>
+          <v-row class="mt-0 pt-0" no-gutters>
             <v-col cols="3" class="ma-0 pa-0">
               <v-select
                 v-model="item.field"
@@ -46,7 +14,6 @@
               ></v-select>
             </v-col>
             <v-col cols="3" class="ma-0 pa-0">
-
               <v-select
                 v-model="item.operator"
                 :items="item.operators"
@@ -111,9 +78,9 @@
                 </template>
                 <span class="text-caption">Hapus Pencarian</span>
               </v-tooltip>
-              <v-tooltip v-if="index === filter.searches.length - 1" bottom>
+              <v-tooltip v-if="index === filter.searches.length - 1 || filter.searches.length === 1" bottom>
                 <template v-slot:activator="{ on, attrs }">
-                  <v-btn v-if="filter.isAdvancedSearch"
+                  <v-btn 
                     v-bind="attrs"
                     v-on="on"
                     class="mt-2"
@@ -169,11 +136,6 @@ export default {
     })    
   },
   methods: {
-    advSearch() {
-      this.search = null
-      this.$store.commit('app/advSearch')
-      if (this.filter.isAdvancedSearch) this.addSearch()
-    },
     addSearch() {
       this.$store.commit('app/addSearch')
     },
@@ -256,6 +218,9 @@ export default {
       }
       return filters
     }
+  },
+  created: function () {
+    this.addSearch()
   }
 }
 </script>
