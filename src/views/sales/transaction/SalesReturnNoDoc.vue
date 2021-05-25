@@ -468,6 +468,7 @@
                     >
                       <v-card>
                         <v-app-bar dense flat>
+                          <label v-if="data.type === 3">Barang Masuk</label>
                           <v-spacer></v-spacer>
                           <v-tooltip bottom>
                             <template v-slot:activator="{ on, attrs }">
@@ -596,6 +597,7 @@
 
                       <v-card v-if="data.type === 3" class="rounded-t-0 pt-2">
                         <v-app-bar dense flat>
+                          <label v-if="data.type === 3">Barang Keluar</label>
                           <v-spacer></v-spacer>
                           <v-tooltip bottom>
                             <template v-slot:activator="{ on, attrs }">
@@ -904,11 +906,11 @@ export default {
     gridDiffItem: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Item', value: 'itemId', divider: true, width: '100' },
-        { text: 'Name', value: 'itemName', divider: true, width: '280' },
+        { text: 'Kode', value: 'itemId', divider: true, width: '100' },
+        { text: 'Nama', value: 'itemName', divider: true, width: '280' },
         { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
-        { text: 'Unit', value: 'unitName', divider: true, width: '90' },
-        { text: 'Unit Price', value: 'unitPrice', align: 'right', divider: true, width: '120' }
+        { text: 'Satuan', value: 'unitName', divider: true, width: '90' },
+        { text: 'Harga Satuan', value: 'unitPrice', align: 'right', divider: true, width: '120' }
       ],
       data: []
     },
