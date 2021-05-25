@@ -434,7 +434,7 @@
                     >
                       <v-textarea
                         v-model="data.notes"
-                        :rules="[rules.max256chars, rules.required[0]]"
+                        :rules="[rules.max256chars[0], rules.required[0]]"
                         label="Catatan"
                         counter="256"
                         class="mt-0"
@@ -459,275 +459,268 @@
                       transition="false"
                     >
                       <v-card>
-                        
-                        <v-row dense>
-                          <v-col cols="12">
-                            <v-app-bar dense flat>
-                              <v-spacer></v-spacer>
-                              <v-tooltip bottom>
-                                <template v-slot:activator="{ on, attrs }">
-                                  <v-btn
-                                    v-bind="attrs"
-                                    v-on="on"
-                                    v-shortkey="['ctrl', 'i']"
-                                    :disabled="isVoid || hasRelatedTrans"
-                                    class="blue--text"
-                                    small
-                                    tile
-                                    @click="addItem"
-                                    @shortkey="addItem"
-                                  >
-                                    <v-icon left>mdi-plus</v-icon>
-                                    Tambah
-                                  </v-btn>
-                                </template>
-                                <span class="text-caption">(Ctrl + I)</span>
-                              </v-tooltip>
-                            </v-app-bar>
-                            <v-data-table
-                              :headers="gridItem.columns"
-                              :items="gridItem.data"
-                              :items-per-page="-1"
-                              height="300"
-                              class="elevation-1"
-                              dense
-                              disable-sort
-                              fixed-header
-                              hide-default-footer
-                            >
-                              <template v-slot:[`item.action`]="{ item }">
-                                <v-tooltip bottom>
-                                  <template v-slot:activator="{ on, attrs }">
-                                    <v-btn
-                                      v-bind="attrs"
-                                      v-on="on"
-                                      :disabled="isVoid || hasRelatedTrans"
-                                      color="red"
-                                      icon
-                                      small
-                                      @click="removeItem(item)"
-                                    >
-                                      <v-icon small>mdi-close-thick</v-icon>
-                                    </v-btn>
-                                  </template>
-                                  <span class="text-caption">Delete</span>
-                                </v-tooltip>
-                              </template>
-                              <template v-slot:[`item.itemId`]="{ item }">
-                                <v-autocomplete
-                                  ref="itemId"
-                                  v-model="item.itemId"
-                                  :items="items"
-                                  :readonly="hasRelatedTrans"
-                                  :rules="rules.required"
-                                  item-text="initial"
-                                  item-value="id"
-                                  class="text-body-2 mt-0"
-                                  dense
-                                  required
-                                  @change="itemIdChange(item)"
+                        <v-app-bar dense flat>
+                          <v-spacer></v-spacer>
+                          <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                v-bind="attrs"
+                                v-on="on"
+                                v-shortkey="['ctrl', 'i']"
+                                :disabled="isVoid || hasRelatedTrans"
+                                class="blue--text"
+                                small
+                                tile
+                                @click="addItem"
+                                @shortkey="addItem"
+                              >
+                                <v-icon left>mdi-plus</v-icon>
+                                Tambah
+                              </v-btn>
+                            </template>
+                            <span class="text-caption">(Ctrl + I)</span>
+                          </v-tooltip>
+                        </v-app-bar>
+                        <v-data-table
+                          :headers="gridItem.columns"
+                          :items="gridItem.data"
+                          :items-per-page="-1"
+                          height="300"
+                          class="elevation-1"
+                          dense
+                          disable-sort
+                          fixed-header
+                          hide-default-footer
+                        >
+                          <template v-slot:[`item.action`]="{ item }">
+                            <v-tooltip bottom>
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-btn
+                                  v-bind="attrs"
+                                  v-on="on"
+                                  :disabled="isVoid || hasRelatedTrans"
+                                  color="red"
+                                  icon
+                                  small
+                                  @click="removeItem(item)"
                                 >
-                                  <template v-slot:append>
-                                    <v-btn
-                                      :disabled="hasRelatedTrans"
-                                      color="primary"
-                                      icon
-                                      x-small
-                                      @click="showFindItemDialog(item)"
-                                    >
-                                      <v-icon>
-                                        mdi-settings-helper
-                                      </v-icon>
-                                    </v-btn>
-                                  </template>
-                                </v-autocomplete>
+                                  <v-icon small>mdi-close-thick</v-icon>
+                                </v-btn>
                               </template>
-                              <template v-slot:[`item.warehouseInitial`]="{ item }">
-                                <v-autocomplete
-                                  v-model="item.warehouseCode"
-                                  :disabled="hasRelatedTrans"
-                                  :items="warehouses"
-                                  :rules="rules.required"
-                                  item-text="initial"
-                                  item-value="code"
-                                  class="text-body-2 text-right mt-0"
-                                  dense
-                                  required
-                                ></v-autocomplete>
-                              </template>
-                              <template v-slot:[`item.warehouseInitialIn`]="{ item }">
-                                <v-autocomplete
-                                  v-model="item.warehouseCodeIn"
-                                  :disabled="hasRelatedTrans"
-                                  :items="warehouses"
-                                  item-text="initial"
-                                  item-value="code"
-                                  class="text-body-2 text-right mt-0"
-                                  dense
-                                ></v-autocomplete>
-                              </template>
-                              <template v-slot:[`item.qty`]="{ item }">
-                                <v-currency-field
-                                  v-model="item.qty"
-                                  :decimal-length="0"
-                                  :min="1"
-                                  :readonly="hasRelatedTrans"
-                                  class="text-body-2 text-right mt-0"
-                                  dense
-                                  @change="calcItemPrice(item)"
-                                ></v-currency-field>
-                              </template>
-                              <template v-slot:[`item.unitName`]="{ item }">
-                                <v-autocomplete
-                                  v-model="item.unitId"
-                                  :items="item.units"
-                                  :rules="rules.required"
-                                  :readonly="hasRelatedTrans"
-                                  item-text="unitEquivalent"
-                                  item-value="id"
-                                  class="text-body-2 mt-0"
-                                  dense
-                                  required
-                                  @change="unitItemChange(item)"
-                                ></v-autocomplete>
-                              </template>
-                              <template v-slot:[`item.unitPrice`]="{ item }">
-                                <v-currency-field
-                                  v-model="item.unitPrice"
-                                  :readonly="hasRelatedTrans"
-                                  class="text-body-2 text-right mt-0"
-                                  dense
-                                  @change="calcItemPrice(item)"
-                                ></v-currency-field>
-                              </template>
-                              <template v-slot:[`item.taxAmount`]="{ item }">
-                                {{ item.taxAmount | formatCurrency }}
-                              </template>
-                              <template v-slot:[`item.nettPrice`]="{ item }">
-                                {{ item.nettPrice | formatCurrency }}
-                              </template>
-                              <template v-slot:[`item.total`]="{ item }">
-                                {{ item.total | formatCurrency }}
-                              </template>
-                            </v-data-table>
-                          </v-col>
-                          
-                        </v-row>
-                        <v-row dense v-if="data.type === 3">
-                          <v-col cols="12">
-                            <v-app-bar dense flat>
-                              <v-spacer></v-spacer>
-                              <v-tooltip bottom>
-                                <template v-slot:activator="{ on, attrs }">
-                                  <v-btn
-                                    v-bind="attrs"
-                                    v-on="on"
-                                    v-shortkey="['ctrl', 'alt', 'i']"
-                                    :disabled="isVoid || hasRelatedTrans"
-                                    class="blue--text"
-                                    small
-                                    tile
-                                    @click="addDiffItem"
-                                    @shortkey="addDiffItem"
-                                  >
-                                    <v-icon left>mdi-plus</v-icon>
-                                    Tambah
-                                  </v-btn>
-                                </template>
-                                <span class="text-caption">(Ctrl + Alt + I)</span>
-                              </v-tooltip>
-                              </v-app-bar>
-                              <v-data-table
-                              :headers="gridDiffItem.columns"
-                              :items="gridDiffItem.data"
-                              :items-per-page="-1"
-                              height="300"
-                              class="elevation-1"
+                              <span class="text-caption">Delete</span>
+                            </v-tooltip>
+                          </template>
+                          <template v-slot:[`item.itemId`]="{ item }">
+                            <v-autocomplete
+                              ref="itemId"
+                              v-model="item.itemId"
+                              :items="items"
+                              :readonly="hasRelatedTrans"
+                              :rules="rules.required"
+                              item-text="initial"
+                              item-value="id"
+                              class="text-body-2 mt-0"
                               dense
-                              disable-sort
-                              fixed-header
-                              hide-default-footer
+                              required
+                              @change="itemIdChange(item)"
                             >
-                              <template v-slot:[`item.action`]="{ item }">
-                                <v-tooltip bottom>
-                                  <template v-slot:activator="{ on, attrs }">
-                                    <v-btn
-                                      v-bind="attrs"
-                                      v-on="on"
-                                      color="red"
-                                      icon
-                                      small
-                                      :disabled="isVoid || hasRelatedTrans"
-                                      @click="removeDiffItem(item)"
-                                    >
-                                      <v-icon small>mdi-close-thick</v-icon>
-                                    </v-btn>
-                                  </template>
-                                  <span class="text-caption">Delete</span>
-                                </v-tooltip>
-                              </template>
-                              <template v-slot:[`item.itemId`]="{ item }">
-                                <v-autocomplete
-                                  ref="itemId"
-                                  v-model="item.itemId"
-                                  :items="items"
-                                  :rules="rules.required"
-                                  item-text="initial"
-                                  item-value="id"
-                                  class="text-body-2 mt-0"
-                                  dense
-                                  required
-                                  @change="itemIdChange(item)"
+                              <template v-slot:append>
+                                <v-btn
+                                  :disabled="hasRelatedTrans"
+                                  color="primary"
+                                  icon
+                                  x-small
+                                  @click="showFindItemDialog(item)"
                                 >
-                                  <template v-slot:append>
-                                    <v-btn
-                                      color="primary"
-                                      icon
-                                      x-small
-                                      @click="showFindItemDialog(item)"
-                                    >
-                                      <v-icon>
-                                        mdi-settings-helper
-                                      </v-icon>
-                                    </v-btn>
-                                  </template>
-                                </v-autocomplete>
+                                  <v-icon>
+                                    mdi-settings-helper
+                                  </v-icon>
+                                </v-btn>
                               </template>
-                              <template v-slot:[`item.qty`]="{ item }">
-                                <v-currency-field
-                                  v-model="item.qty"
-                                  :decimal-length="0"
-                                  :min="1"
-                                  class="text-body-2 text-right mt-0"
-                                  dense
-                                  @change="calcItemPrice(item)"
-                                ></v-currency-field>
+                            </v-autocomplete>
+                          </template>
+                          <template v-slot:[`item.warehouseInitial`]="{ item }">
+                            <v-autocomplete
+                              v-model="item.warehouseCode"
+                              :disabled="hasRelatedTrans"
+                              :items="warehouses"
+                              :rules="rules.required"
+                              item-text="initial"
+                              item-value="code"
+                              class="text-body-2 text-right mt-0"
+                              dense
+                              required
+                            ></v-autocomplete>
+                          </template>
+                          <template v-slot:[`item.warehouseInitialIn`]="{ item }">
+                            <v-autocomplete
+                              v-model="item.warehouseCodeIn"
+                              :disabled="hasRelatedTrans"
+                              :items="warehouses"
+                              item-text="initial"
+                              item-value="code"
+                              class="text-body-2 text-right mt-0"
+                              dense
+                            ></v-autocomplete>
+                          </template>
+                          <template v-slot:[`item.qty`]="{ item }">
+                            <v-currency-field
+                              v-model="item.qty"
+                              :decimal-length="0"
+                              :min="1"
+                              :readonly="hasRelatedTrans"
+                              class="text-body-2 text-right mt-0"
+                              dense
+                              @change="calcItemPrice(item)"
+                            ></v-currency-field>
+                          </template>
+                          <template v-slot:[`item.unitName`]="{ item }">
+                            <v-autocomplete
+                              v-model="item.unitId"
+                              :items="item.units"
+                              :rules="rules.required"
+                              :readonly="hasRelatedTrans"
+                              item-text="unitEquivalent"
+                              item-value="id"
+                              class="text-body-2 mt-0"
+                              dense
+                              required
+                              @change="unitItemChange(item)"
+                            ></v-autocomplete>
+                          </template>
+                          <template v-slot:[`item.unitPrice`]="{ item }">
+                            <v-currency-field
+                              v-model="item.unitPrice"
+                              :readonly="hasRelatedTrans"
+                              class="text-body-2 text-right mt-0"
+                              dense
+                              @change="calcItemPrice(item)"
+                            ></v-currency-field>
+                          </template>
+                          <template v-slot:[`item.taxAmount`]="{ item }">
+                            {{ item.taxAmount | formatCurrency }}
+                          </template>
+                          <template v-slot:[`item.nettPrice`]="{ item }">
+                            {{ item.nettPrice | formatCurrency }}
+                          </template>
+                          <template v-slot:[`item.total`]="{ item }">
+                            {{ item.total | formatCurrency }}
+                          </template>
+                        </v-data-table>
+                      </v-card>
+
+                      <v-card v-if="data.type === 3" class="rounded-t-0 pt-2">
+                        <v-app-bar dense flat>
+                          <v-spacer></v-spacer>
+                          <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                v-bind="attrs"
+                                v-on="on"
+                                v-shortkey="['ctrl', 'alt', 'i']"
+                                :disabled="isVoid || hasRelatedTrans"
+                                class="blue--text"
+                                small
+                                tile
+                                @click="addDiffItem"
+                                @shortkey="addDiffItem"
+                              >
+                                <v-icon left>mdi-plus</v-icon>
+                                Tambah
+                              </v-btn>
+                            </template>
+                            <span class="text-caption">(Ctrl + Alt + I)</span>
+                          </v-tooltip>
+                        </v-app-bar>
+                        <v-data-table
+                          :headers="gridDiffItem.columns"
+                          :items="gridDiffItem.data"
+                          :items-per-page="-1"
+                          height="300"
+                          class="elevation-1"
+                          dense
+                          disable-sort
+                          fixed-header
+                          hide-default-footer
+                        >
+                          <template v-slot:[`item.action`]="{ item }">
+                            <v-tooltip bottom>
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-btn
+                                  v-bind="attrs"
+                                  v-on="on"
+                                  color="red"
+                                  icon
+                                  small
+                                  :disabled="isVoid || hasRelatedTrans"
+                                  @click="removeDiffItem(item)"
+                                >
+                                  <v-icon small>mdi-close-thick</v-icon>
+                                </v-btn>
                               </template>
-                              <template v-slot:[`item.unitName`]="{ item }">
-                                <v-autocomplete
-                                  v-model="item.unitId"
-                                  :items="item.units"
-                                  :rules="rules.required"
-                                  :readonly="hasRelatedTrans"
-                                  item-text="unitEquivalent"
-                                  item-value="id"
-                                  class="text-body-2 mt-0"
-                                  dense
-                                  required
-                                  @change="unitItemChange(item)"
-                                ></v-autocomplete>
+                              <span class="text-caption">Delete</span>
+                            </v-tooltip>
+                          </template>
+                          <template v-slot:[`item.itemId`]="{ item }">
+                            <v-autocomplete
+                              ref="itemId"
+                              v-model="item.itemId"
+                              :items="items"
+                              :rules="rules.required"
+                              item-text="initial"
+                              item-value="id"
+                              class="text-body-2 mt-0"
+                              dense
+                              required
+                              @change="itemIdChange(item)"
+                            >
+                              <template v-slot:append>
+                                <v-btn
+                                  color="primary"
+                                  icon
+                                  x-small
+                                  @click="showFindItemDialog(item)"
+                                >
+                                  <v-icon>
+                                    mdi-settings-helper
+                                  </v-icon>
+                                </v-btn>
                               </template>
-                              <template v-slot:[`item.unitPrice`]="{ item }">
-                                <v-currency-field
-                                  v-model="item.unitPrice"
-                                  class="text-body-2 text-right mt-0"
-                                  dense
-                                  @change="calcItemPrice(item)"
-                                ></v-currency-field>
-                              </template>
-                            </v-data-table>
-                          </v-col>
-                        </v-row>
+                            </v-autocomplete>
+                          </template>
+                          <template v-slot:[`item.qty`]="{ item }">
+                            <v-currency-field
+                              v-model="item.qty"
+                              :decimal-length="0"
+                              :min="1"
+                              class="text-body-2 text-right mt-0"
+                              dense
+                              @change="calcItemPrice(item)"
+                            ></v-currency-field>
+                          </template>
+                          <template v-slot:[`item.unitName`]="{ item }">
+                            <v-autocomplete
+                              v-model="item.unitId"
+                              :items="item.units"
+                              :rules="rules.required"
+                              :readonly="hasRelatedTrans"
+                              item-text="unitEquivalent"
+                              item-value="id"
+                              class="text-body-2 mt-0"
+                              dense
+                              required
+                              @change="unitItemChange(item)"
+                            ></v-autocomplete>
+                          </template>
+                          <template v-slot:[`item.unitPrice`]="{ item }">
+                            <v-currency-field
+                              v-model="item.unitPrice"
+                              class="text-body-2 text-right mt-0"
+                              dense
+                              @change="calcItemPrice(item)"
+                            ></v-currency-field>
+                          </template>
+                        </v-data-table>
                       </v-card>
                     </v-tab-item>
 
