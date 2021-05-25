@@ -1,9 +1,5 @@
 <template>
-  <div
-    v-shortkey="['ctrl', '/']"
-    class="d-flex flex-grow-1"
-    @shortkey="onKeyup"
-  >
+  <div class="d-flex flex-grow-1">
     <!-- Navigation -->
     <v-navigation-drawer
       v-model="drawer"
@@ -36,49 +32,17 @@
     >
       <v-card class="flex-grow-1 d-flex" :class="[isToolbarDetached ? 'pa-1 mt-3 mx-1' : 'pa-0 ma-0']" :flat="!isToolbarDetached">
         <div class="d-flex flex-grow-1 align-center">
+          <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
 
-          <!-- search input mobile -->
-          <v-text-field
-            v-if="showSearch"
-            append-icon="mdi-close"
-            placeholder="Search"
-            prepend-inner-icon="mdi-magnify"
-            hide-details
-            solo
-            flat
-            autofocus
-            @click:append="showSearch = false"
-          ></v-text-field>
+          <v-spacer class="d-none d-lg-block"></v-spacer>
 
-          <div v-else class="d-flex flex-grow-1 align-center">
-            <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+          <v-spacer class="d-block d-sm-none"></v-spacer>
 
-            <v-spacer class="d-none d-lg-block"></v-spacer>
-
-            <!-- search input desktop -->
-            <v-text-field
-              ref="search"
-              class="mx-1 hidden-xs-only"
-              :placeholder="$t('menu.search')"
-              prepend-inner-icon="mdi-magnify"
-              hide-details
-              filled
-              rounded
-              dense
-            ></v-text-field>
-
-            <v-spacer class="d-block d-sm-none"></v-spacer>
-
-            <v-btn class="d-block d-sm-none" icon @click="showSearch = true">
-              <v-icon>mdi-magnify</v-icon>
-            </v-btn>
-
-            <div :class="[$vuetify.rtl ? 'ml-1' : 'mr-1']">
-              <toolbar-notifications />
-            </div>
-
-            <toolbar-user />
+          <div :class="[$vuetify.rtl ? 'ml-1' : 'mr-1']">
+            <toolbar-notifications />
           </div>
+
+          <toolbar-user />
         </div>
       </v-card>
     </v-app-bar>
@@ -102,8 +66,6 @@
         </div>
       </v-footer>
     </v-main>
-
-    <!-- <confirm ref="confirm"></confirm> -->
   </div>
 </template>
 
@@ -116,30 +78,22 @@ import config from '../configs'
 import MainMenu from '../components/navigation/MainMenu'
 import ToolbarUser from '../components/toolbar/ToolbarUser'
 import ToolbarNotifications from '../components/toolbar/ToolbarNotifications'
-// import Confirm from '../components/dialog/Confirm'
 
 export default {
   components: {
     MainMenu,
     ToolbarUser,
     ToolbarNotifications
-    // Confirm
   },
   data() {
     return {
       drawer: null,
-      showSearch: false,
 
       navigation: config.navigation      
     }
   },
   computed: {
     ...mapState('app', ['product', 'isContentBoxed', 'menuTheme', 'toolbarTheme', 'isToolbarDetached', 'breadcrumbs'])
-  },
-  methods: {
-    onKeyup() {
-      this.$refs.search.focus()
-    }
   }
 }
 </script>
