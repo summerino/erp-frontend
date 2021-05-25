@@ -387,7 +387,7 @@
                       <v-row no-gutters>
                         <v-textarea
                           v-model="data.notes"
-                          :rules="[rules.max256char[0], rules.required[0]]"
+                          :rules="[rules.max256chars[0], rules.required[0]]"
                           label="Catatan"
                           counter="256"
                           class="mt-0"
