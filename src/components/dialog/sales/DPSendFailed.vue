@@ -208,7 +208,6 @@ export default {
       this.checkAll = true
       this.reset()
       this.getDetail(rowItem)
-      this.rowItem.undeliveredItem = this.grid.data
       setTimeout(() => {
         this.grid.height = this.$refs.dialog.$refs.content.clientHeight - 158
       }, 100)
@@ -219,7 +218,7 @@ export default {
     getDetail(item) {
       api.getAll(`${this.endpoint.sales.delivery}/item`, {
         params: { 
-          code: 'doCode' in item ? item.doCode : item.code
+          code: 'doCode' in item ? item.doCode : item.transCode
         }
       })
         .then(response => {
@@ -227,12 +226,13 @@ export default {
           for (let i = 0; i < this.data.length; i++) {
             const item = {
               id: randomNumber(-1, -1000),
+              code: this.rowItem.code,
               itemId: this.data[i].itemId,
               uomId: this.data[i].uomId,
               unitId: this.data[i].unitId,
               qty: this.data[i].qty,
               warehouseCode: this.warehouseCode,
-              type: null,
+              type: 0,
               unitName: this.data[i].unitName
             }
             this.grid.data.push(item) 
@@ -253,12 +253,13 @@ export default {
       if (this.grid.data.length === 0 || (this.grid.data.slice(-1)[0]?.itemId ?? null)) {
         const item = {
           id: randomNumber(-1, -1000),
+          code: this.rowItem.code,
           itemId: null,
           uomId: null,
           unitId: null,
           qty: null,
           warehouseCode: this.warehouseCode,
-          type: null,
+          type: 0,
           unitName: null
         }
         this.grid.data.push(item)
@@ -279,11 +280,11 @@ export default {
             unitId: this.data[i].unitId,
             qty: this.data[i].qty,
             warehouseCode: this.warehouseCode,
-            type: null,
+            type: 0,
             unitName: this.data[i].unitName
           }
           this.grid.data.push(item) 
-          this.rowItem.undeliveredItem = this.grid.data
+          this.rowItem.undeliveredItems = this.grid.data
         }
       }
     },
@@ -307,7 +308,8 @@ export default {
         this.$store.dispatch('app/showInfo', 'Barang tidak boleh duplikat.')
       } else {
         this.rowItem.notesFailShipment = this.notes
-        if (!this.rowItem.undeliveredItem.length) {
+        this.rowItem.undeliveredItems = this.grid.data
+        if (!this.rowItem.undeliveredItems.length) {
           this.rowItem.isFailShipment = false
         } else {
           this.rowItem.isFailShipment = true
