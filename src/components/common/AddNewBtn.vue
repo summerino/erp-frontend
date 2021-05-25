@@ -14,7 +14,7 @@
           @shortkey="add"
         >
           <v-icon left>mdi-plus</v-icon>
-          New
+          Data Baru
         </v-btn>
       </template>
       <span class="text-caption">(Ctrl + Alt + N)</span>

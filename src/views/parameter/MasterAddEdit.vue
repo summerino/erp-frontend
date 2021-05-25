@@ -5,7 +5,7 @@
         <v-card-title class="indigo--text text--lighten-2 pb-1">
           <v-row dense>
             <v-col cols="12" md="6">
-              <span class="mx-1">{{ action }} {{ param }}</span>
+              <span class="mx-1">{{ action === edit ? 'Ubah' : 'Tambah' }} {{ param }}</span>
             </v-col>
             <!-- <v-col cols="12" md="6" class="text-right">
               <v-btn
@@ -43,7 +43,7 @@
                     <v-icon left>
                       mdi-content-save
                     </v-icon>
-                    Save
+                    Simpan
                   </v-btn>
                 </template>
                 <span class="text-caption">(Ctrl + S)</span>
@@ -63,7 +63,7 @@
                     <v-icon left>
                       mdi-undo-variant
                     </v-icon>
-                    Back
+                    Kembali
                   </v-btn>
                 </template>
                 <span class="text-caption">(Esc)</span>
@@ -76,7 +76,7 @@
             <v-container class="px-1 pt-0 pb-1">
               <div v-for="field in fields" :key="field.id">
                 <v-row no-gutters>
-                  <template v-if="field.componentType == 'textfield'" >
+                  <template v-if="field.componentType == 'textfield' && !field.isHiddenColumn" >
                     <v-col cols="12" :md="field.length">
                       <v-text-field
                           v-model="paramdata[field.name]"
@@ -89,7 +89,7 @@
                         ></v-text-field>
                     </v-col>
                   </template>
-                  <template v-else-if="field.componentType == 'textarea'">
+                  <template v-else-if="field.componentType == 'textarea' && !field.isHiddenColumn">
                     <v-col cols="12" :md="field.length">
                       <v-textarea
                         v-model="paramdata[field.name]"
@@ -103,7 +103,7 @@
                       ></v-textarea>
                     </v-col>
                   </template>
-                  <template v-else-if="field.componentType == 'switch'">
+                  <template v-else-if="field.componentType == 'switch' && !field.isHiddenColumn">
                     <v-col cols="12">
                       <v-switch
                         v-model="paramdata[field.name]"
@@ -111,20 +111,20 @@
                       ></v-switch>
                     </v-col>
                   </template>
-                  <template v-else-if="field.componentType == 'currencyfield'">
-                    <v-col cols="12">
+                  <template v-else-if="field.componentType == 'currencyfield' && !field.isHiddenColumn">
+                    <v-col cols="12" >
                       <v-currency-field
                           v-model="paramdata[field.name]"
+                          :label="field.label"
                           :decimal-length="field.numericScale === 255 ? 0 : field.numericScale"
                           :max-length="field.numericPrecision"
                           class="text-body-2 text-right mt-0"
                           :rules="field.rules"
-                          dense
                           :ref="field.name"
                       ></v-currency-field>
                     </v-col>
                   </template>
-                  <template v-else-if="field.componentType == 'datepicker'">
+                  <template v-else-if="field.componentType == 'datepicker' && !field.isHiddenColumn">
                     <v-col cols="12">
                       <v-menu
                         v-model="menu[field.name]"
@@ -179,8 +179,10 @@
                       ></v-text-field>
                     </v-col>
                   </template> -->
-                  <template v-else>
-                    <p>else</p>
+                  <template v-else-if="field.componentType == 'autocomplete' && !field.isHiddenColumn">
+                    <v-col cols="12" :md="field.length">
+                      <swift-auto-complete :param="field.foreignKeyTable" :fieldValue="field.foreignKeyField" :fieldName="field.foreignKeyName" :fieldModel="field.name" :value="paramdata[field.name]" :rules="field.rules" @onSelected="onSelected"></swift-auto-complete>
+                    </v-col>
                   </template>
                 </v-row>
               </div>
@@ -196,8 +198,13 @@
 import api from '@/services/axios.service'
 import { format, parseISO } from 'date-fns'
 import { mapState } from 'vuex'
+import SwiftAutoComplete from '@/components/common/SwiftAutoComplete'
+
 export default {
   props: ['master', 'param', 'id'],
+  components: {
+    SwiftAutoComplete
+  },
   created: function () {
     this.getView()
   },
@@ -260,10 +267,16 @@ export default {
             'bit'
           ]
         }
-      ]     
+      ],
+      ignoredFields: ['createdBy', 'createdDate', 'updatedBy', 'updatedDate']  
     }
   },
   methods: {
+    onSelected(vm) {
+      const field = vm.field
+      const value = vm.value
+      this.paramdata[field] = value
+    },
     convertDate(date) {
       return date ? format(parseISO(date), 'dd-MMM-yyyy') : ''
     },
@@ -279,26 +292,29 @@ export default {
     defineRules(fields) {
       const result = fields
       result.forEach(item => {
-        const rules = []
-        if (item.required) {
-          rules.push(this.rules.required[0])
+        if (!this.ignoredFields.includes(item.name)) {
+          const rules = []
+          if (item.required) {
+            rules.push(this.rules.required[0])
+          }
+          item.rules = rules   
+          this.createDefaultValue(item) 
         }
-        item.rules = rules   
-        this.createDefaultValue(item)      
       })
       return result
     }, 
     async save() {
       if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
+        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }   
       let result = { success: false, message: '' }
-      const url = `${this.endpoint.general.master}?param=${this.param}&id=${this.id}`
       if (this.action === 'add') {
+        const url = `${this.endpoint.general.master}?param=${this.param}`
         const resp = await api.create(url, this.paramdata)
         result = resp.data
       } else if (this.action === 'edit') {
+        const url = `${this.endpoint.general.master}?param=${this.param}&id=${this.id}`
         const resp = await api.updatemaster(url, this.paramdata)
         result = resp.data
       }

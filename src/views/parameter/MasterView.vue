@@ -87,7 +87,7 @@ export default {
         }
       }).then(response => {
         this.grid.data = response.data.tableData
-        this.grid.columns = response.data.metaData
+        this.grid.columns = response.data.metaData.filter(x => !x.isHidden)
         this.grid.primaryKey = response.data.pkColumnName        
         this.grid.rowCount = response.data.RowCount
       })
@@ -101,7 +101,7 @@ export default {
       }
       ).then(response => {
         this.grid.data = response.data.tableData
-        this.grid.columns = response.data.metaData
+        this.grid.columns = response.data.metaData.filter(x => !x.isHidden)
         this.grid.primaryKey = response.data.pkColumnName      
         this.grid.rowCount = response.data.RowCount
         this.generateField()
@@ -109,7 +109,7 @@ export default {
     },
     generateField() {
       this.grid.columns.forEach(data => {
-        if (data.value !== 'sw_action' && data.displayAs !== 'tick') {
+        if (data.value !== 'sw_action' && data.displayAs !== 'tick' && !data.isHidden) {
           this.filterfields.push({text:data.text, value: data.value, dataType: data.dataType.toLowerCase()})
         }
         if (data.value === 'sw_action') {

@@ -20,9 +20,14 @@ export default [
             params: { param: 'currency' }
           },
           {
-            text: 'CurrencyRate',
+            text: 'Currency Rate',
             link: 'parameter-master',
             params: { param: 'currencyrate' }
+          },
+          {
+            text: 'Vechicle',
+            link: 'parameter-master',
+            params: { param: 'vehicle' }
           }
         ]
       }   
