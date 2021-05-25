@@ -477,10 +477,10 @@
                                   <span class="text-caption">Hapus</span>
                                 </v-tooltip>
                               </template>
-                              <template v-slot:[`item.code`]="{ item }">
+                              <template v-slot:[`item.transCode`]="{ item }">
                                 <v-text-field
                                   ref="itemId"
-                                  v-model="item.code"
+                                  v-model="item.transCode"
                                   readonly
                                   :rules="rules.required"
                                   class="text-body-2 mt-0"
@@ -693,7 +693,7 @@ export default {
     gridItem: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '80' },
-        { text: 'No. Dokumen', value: 'code', divider: true, width: '120' },
+        { text: 'No. Dokumen', value: 'transCode', divider: true, width: '120' },
         { text: 'Penjual', value: 'custName', divider: true, width: '120' },
         { text: 'Volume', value: 'volume', align: 'right', divider: true, width: '120' },
         { text: 'Bobot', value: 'weight', align: 'right', divider: true, width: '120' },
@@ -921,14 +921,14 @@ export default {
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
 
-      // // Get item details
-      // api.getAll(`${this.endpoint.sales.return}/item`, {
-      //   params: { code: item.code }
-      // })
-      //   .then(response => {
-      //     this.gridItem.data = response.data.tableData
-      //     this.calcTotal()  
-      //   })
+      // Get item details
+      api.getAll(`${this.endpoint.sales.plan}/item`, {
+        params: { code: item.code }
+      })
+        .then(response => {
+          this.gridItem.data = response.data.tableData
+          this.calcTotal()  
+        })
 
       // // Get related transaction details
       // api.getAll(`${this.endpoint.sales.return}/related-trans`, {
@@ -995,16 +995,17 @@ export default {
       }
     },
     addDetail() {
-      if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.code ?? null)) {
+      if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.transCode ?? null)) {
         const item = {
           id: randomNumber(-1, -1000),
           code: this.data.code,
+          transCode: null,
           volume: 0,
           weight: 0,
           isFailShipment: false,
           notesFailShipment: null,
           custName: null,
-          undeliveredItem: {}
+          undeliveredItems: {}
         }
         this.gridItem.data.push(item)
 

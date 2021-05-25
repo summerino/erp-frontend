@@ -24,7 +24,7 @@
       </v-toolbar>
 
       <v-card-text class="px-2 pt-1">
-        <v-row no-gutters>
+        <v-row v-if="srcTrans !== 3" no-gutters>
           <v-col cols="12" md="4">
             <v-autocomplete
               v-model="data.by"
@@ -87,9 +87,9 @@
             @dblclick:row="dblclickRow"
             @click:row="clickRow"
           >
-            <template v-slot:[`item.code`]="{ item }">
+            <template v-slot:[`item.transCode`]="{ item }">
               <v-text-field
-                v-model="item.code"
+                v-model="item.transCode"
                 class="text-body-2 mt-0 no-border"
                 dense
                 readonly
@@ -154,10 +154,9 @@ export default {
       grid: {
         columns: [
           { text: 'Kode Transaksi', value: 'code', divider: true, width: '160' },
+          { text: 'Tipe', value: 'type', divider: true, width: '160' },
           { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
-          { text: 'Kode Trans.', value: 'soCode', divider: true, width: '160' },
-          { text: 'Nilai', value: 'total', align: 'right', width: '120' },
-          { text: 'Dikirim Oleh', value: 'shippedInitial', divider: true, width: '200' }
+          { text: 'Status', value: 'mark', align: 'right', width: '120' }
         ],
         data: [],
         height: 400
@@ -198,6 +197,9 @@ export default {
       setTimeout(() => {
         this.$refs.search.focus()
       }, 100)
+      if (this.srcTrans === 3) {
+        this.getAllTrans()
+      }
     },
     close() {
       this.dialog = false
@@ -232,6 +234,9 @@ export default {
           }
         })
           .then(response => {
+            for (let j = 0; j < response.data.tableData.length; j++) {
+              response.data.tableData[j].type = 'Surat Jalan'
+            }
             this.grid.data = response.data.tableData
           })
       } else if (srcTrans === 1) {
@@ -243,10 +248,10 @@ export default {
               operator: this.data.by === 'date' ? 'eq' : 'contains',
               keyword: this.data.value
             }, {
-            //   field: 'frominvoiceDetail',
-            //   operator: 'eq',
-            //   keyword: true
-            // }, {
+              field: 'fromDirectInvoice',
+              operator: 'eq',
+              keyword: true
+            }, {
               field: 'mark',
               operator: 'doesnotcontain',
               keyword: ['V', 'INV']
@@ -262,6 +267,9 @@ export default {
           }
         })
           .then(response => {
+            for (let j = 0; j < response.data.tableData.length; j++) {
+              response.data.tableData[j].type = 'Penjualan Langsung'
+            }
             this.grid.data = response.data.tableData
           })
       }
@@ -273,13 +281,25 @@ export default {
       this.menu = false
       this.$refs.search.focus()
     },
+    getAllTrans() {
+      api.getAll(`${this.endpoint.sales.plan}/all-trans`, {
+        params: {
+          code: this.warehouseCode
+        }
+      })
+        .then(response => {
+          this.grid.data = response.data.tableData
+        })
+    },
     dblclickRow(event, { item }) {
       const srcTrans = this.srcTrans
-      if (srcTrans === 1) {
-        const data_i = this.invoiceDetail.find(i => i.code === item.code)
+      const data_i = this.invoiceDetail.find(i => i.code === item.code)
+      if (data_i) {
         this.rowItem.doCode = data_i.doCode
       }
-      this.rowItem.code = item.code
+
+      this.rowItem.srcTrans = srcTrans
+      this.rowItem.transCode = item.code
       this.rowItem.custName = item.custName
       this.rowItem.volume = _sumBy(this.gridDetail.data, 'finalVolume')
       this.rowItem.weight = _sumBy(this.gridDetail.data, 'finalWeight')
@@ -321,6 +341,40 @@ export default {
                 })
             }
           })
+      } else if (srcTrans === 3) {
+        if (item.type === 'Surat Jalan') {
+          api.getAll(`${this.endpoint.sales.delivery}/item`, {
+            params: { code: item.code }
+          })
+            .then(response => {
+              this.gridDetail.data = response.data.tableData
+              for (let i = 0; i < this.gridDetail.data.length; i++) {
+                this.gridDetail.data[i].volume = this.gridDetail.data[i].length * this.gridDetail.data[i].width * this.gridDetail.data[i].height
+                this.gridDetail.data[i].finalVolume = this.gridDetail.data[i].dimensionMeasurement === 'cm' ? (this.gridDetail.data[i].volume * this.gridDetail.data[i].qty) / 100 : this.gridDetail.data[i].dimensionMeasurement === 'mm' ? (this.gridDetail.data[i].volume * this.gridDetail.data[i].qty) / 1000 : (this.gridDetail.data[i].volume * this.gridDetail.data[i].qty)
+                this.gridDetail.data[i].finalWeight = this.gridDetail.data[i].weightMeasurement === 'gr' ? (this.gridDetail.data[i].weight * this.gridDetail.data[i].qty) / 1000 : (this.gridDetail.data[i].weight * this.gridDetail.data[i].qty)
+              }
+            })
+        } else {
+          api.getAll(`${this.endpoint.sales.invoice}/detail`, {
+            params: { code: item.code }
+          })
+            .then(response => {
+              this.invoiceDetail = response.data.tableData
+              for (let i = 0; i < this.invoiceDetail.length; i++) {
+                api.getAll(`${this.endpoint.sales.delivery}/item`, {
+                  params: { code: this.invoiceDetail[i].doCode }
+                })
+                  .then(response => {
+                    for (let j = 0; j < response.data.tableData.length; j++) {
+                      response.data.tableData[j].volume = response.data.tableData[j].length * response.data.tableData[j].width * response.data.tableData[j].height
+                      response.data.tableData[j].finalVolume = response.data.tableData[j].dimensionMeasurement === 'cm' ? (response.data.tableData[j].volume * response.data.tableData[j].qty) / 100 : response.data.tableData[j].dimensionMeasurement === 'mm' ? (response.data.tableData[j].volume * response.data.tableData[j].qty) / 1000 : (response.data.tableData[j].volume * response.data.tableData[j].qty)
+                      response.data.tableData[j].finalWeight = response.data.tableData[j].weightMeasurement === 'gr' ? (response.data.tableData[j].weight * response.data.tableData[j].qty) / 1000 : (response.data.tableData[j].weight * response.data.tableData[j].qty)
+                      this.gridDetail.data.push(response.data.tableData[j])
+                    }
+                  })
+              }
+            })
+        }
       }
     }
     
