@@ -290,6 +290,7 @@
                             item-text="unitEquivalent"
                             item-value="id"
                             class="mt-0"
+                            @change="loadUnitQuantity"
                           ></v-autocomplete>
                       </v-col>
                       <v-col cols="9" class="pl-md-1">
@@ -311,6 +312,7 @@
                             item-text="unitEquivalent"
                             item-value="id"
                             class="mt-0"
+                            @change="loadUnitQuantity"
                           ></v-autocomplete>
                       </v-col>
                       <v-col cols="9" class="pl-md-1">
@@ -354,10 +356,59 @@
               <v-col cols="12">
                 <v-card>
                   <v-tabs v-model="tab.advancedItem">
+                    <v-tab key="quantity">Kuantitas</v-tab>
                     <v-tab key="dimension">Dimensi</v-tab>
                     <v-tab key="account">Akun</v-tab>
                     <v-tab key="group">Grup</v-tab>
                     <v-tab key="user">Pengguna</v-tab>
+
+                    <v-tab-item
+                      key="quantity"
+                      transition="false"
+                    >
+                      <v-card>
+                        <v-card-text>
+                          <template>
+                            <v-row no-gutters>
+                              <v-col cols="4" md="4">
+                                <v-autocomplete
+                                  v-model="data.viewUnit"
+                                  :items="quantityViewRef"
+                                  :item-text="item => `${item.text}`"
+                                  item-value="value"
+                                  label="Qty ditampilkan dalam"
+                                  class="mt-0"
+                                  @change="getQuantity"
+                                ></v-autocomplete>
+                              </v-col>
+                            </v-row>
+
+                            <v-row no-gutters>
+                              <v-col cols="12">
+                                <v-data-table
+                                  :headers="gridQuantity.columns"
+                                  :items="gridQuantity.data"
+                                  :items-per-page="-1"
+                                  height="300"
+                                  class="elevation-1"
+                                  dense
+                                  disable-sort
+                                  fixed-header
+                                  hide-default-footer
+                                >
+                                  <template v-slot:[`item.qtyOnAvailable`]="{ item }">
+                                    {{ item.qtyOnHand - item.qtyOnOrder }}
+                                  </template>
+                                  <template v-slot:[`item.updatedDate`]="{ item }">
+                                    {{ item.updatedDate | formatDate('dd-MMM-yyyy') }}
+                                  </template>                                
+                                </v-data-table>
+                              </v-col>
+                            </v-row>
+                          </template>
+                        </v-card-text>
+                      </v-card>
+                    </v-tab-item>
 
                     <v-tab-item
                       key="dimension"
@@ -677,6 +728,25 @@ export default {
       total: 0,
       search: null
     },
+    gridQuantity: {
+      columns: [
+        { text: 'Lokasi Gudang', value: 'warehouseInitial', divider: true, width: '200' },
+        { text: 'Qty Tersedia', value: 'qtyOnAvailable', align: 'right', divider: true, width: '120' },
+        { text: 'Qty Sistem', value: 'qtyOnHand', align: 'right', divider: true, width: '120' },
+        { text: 'Qty Dipesan', value: 'qtyOnOrder', align: 'right', divider: true, width: '120' },
+        { text: 'Qty Indent', value: 'qtyOnIndent', align: 'right', divider: true, width: '120' },
+        { text: 'Qty Titik Pemesanan Kembali', value: 'qtyReorderPoint', align: 'right', divider: true, width: '120' },
+        { text: 'Qty Transfer', value: 'qtyOnTransfer', align: 'right', divider: true, width: '120' },
+        { text: 'Diperbarui Tgl.', value: 'updatedDate', divider: true, width: '60' }
+      ],
+      data: [],
+      options: {
+        sortBy: ['warehouseCode'],
+        sortDesc: [false]
+      },
+      total: 0,
+      search: null
+    },
     valid: false,
     unitUomSell: [],
     unitUomBuy: [],
@@ -686,6 +756,7 @@ export default {
     purcTaxes: [],
     dimensionOfMeasurement: [{text: 'mm'}, {text: 'cm'}, {text: 'm'}],
     weightOfMeasurement: [{text: 'g'}, {text: 'ons'}, {text: 'kg'}],
+    quantityViewRef: [{value: 1, text: 'Satuan Terkecil'}, {value: 2, text: 'Satuan Beli'}, {value: 3, text: 'Satuan Jual'}],
     coa: [],
     subGroupRef: [],
     data: {}
@@ -784,10 +855,27 @@ export default {
         categoryName: '',
         uomInitial: '',
         uomSellName: '',
-        uomBuyName: ''
+        uomBuyName: '',
+        viewUnit: 0
       }
+
+      const item = {
+        warehouseCode: null,
+        itemId: 0,
+        qtyOnAvailable: 0,
+        qtyOnHand: 0,
+        qtyOnOrder: 0,
+        qtyOnIndent: 0,
+        qtyReorderPoint: 0,
+        qtyOnTransfer: 0,
+        uomConversion: 0,
+        updatedDate: null
+      }
+      this.gridQuantity.data.push(item)
+
       this.tab.advancedItem = 0
       this.subGroupRef = []
+      this.gridQuantity.data = []
 
       // Reset form validation
       if (resetValidation) {
@@ -822,6 +910,27 @@ export default {
           }
         })
     },
+    getQuantity() {
+      api.getAll(this.endpoint.inventory.warehouseQuantity, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'itemid',
+            operator: 'eq',
+            keyword: this.data.id
+          }]),
+          sorts: JSON.stringify([{
+            field: 'warehousecode',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.gridQuantity.data = response.data.tableData
+          if (this.data.viewUnit !== 1) {
+            this.calcQuantity()
+          }
+        })
+    },
     getUnitSellingOrBuying() {
       api.getAll(`${this.endpoint.inventory.uom}/item`, {
         params: {
@@ -831,6 +940,9 @@ export default {
         .then(response => {
           this.unitUomSell = response.data.tableData
           this.unitUomBuy = response.data.tableData
+
+          // Load unit on tab quantity
+          this.loadUnitQuantity()
         })
     },
     getCategory() {
@@ -943,6 +1055,7 @@ export default {
 
       this.getUnitSellingOrBuying()
       this.loadSubGroup()
+      this.getQuantity()
 
       // Set focus to receive code field
       setTimeout(() => {
@@ -1003,6 +1116,57 @@ export default {
         .then(response => {
           this.subGroupRef = response.data.tableData
         })
+    },
+    loadUnitQuantity() {
+      this.quantityViewRef = [{value: 1, text: 'Satuan Terkecil'}, {value: 2, text: 'Satuan Beli'}, {value: 3, text: 'Satuan Jual'}]
+
+      const smallestUnit = this.quantityViewRef[0].text
+      const sellUnit = this.quantityViewRef[1].text
+      const buyUnit = this.quantityViewRef[2].text
+
+      this.quantityViewRef[0].text = `${smallestUnit} (${this.unitUomSell.find(x => x.isbaseunit).unitequivalent})`
+
+      const uomSellRef = this.unitUomSell.find(x => x.id === this.data.uomSellId)
+      if (uomSellRef) {
+        this.quantityViewRef[1].text = `${sellUnit} (${uomSellRef.unitequivalent})`
+      }
+
+      const uomBuyRef = this.unitUomBuy.find(x => x.id === this.data.uomBuyId)
+      if (uomBuyRef) {
+        this.quantityViewRef[2].text = `${buyUnit} (${uomBuyRef.unitequivalent})`
+      }
+
+      if (this.data.action === 'edit') {
+        this.data.viewUnit = 1
+      }
+    },
+    calcQuantity() {
+      for (let i = 0; i < this.gridQuantity.data.length; i++) {
+        this.convertQuantity(this.gridQuantity.data[i], this.data.viewUnit)
+      }
+    },
+    convertQuantity(item, unit) {
+      let buyOrSellId = 0
+      if (unit === 2) {
+        buyOrSellId = this.data.uomSellId
+      } else if (unit === 3) {
+        buyOrSellId = this.data.uomBuyId
+      }
+
+      const unitSellId = this.unitUomSell.find(x => x.id === buyOrSellId)
+      let conversionValue = 1
+
+      for (let i = 0; i < this.unitUomSell.length; i++) {
+        if (this.unitUomSell[i].seq <= unitSellId.seq) {
+          conversionValue *= this.unitUomSell[i].conversion
+        }
+      }
+
+      item.qtyOnHand /= conversionValue
+      item.qtyOnOrder /= conversionValue
+      item.qtyOnIndent /= conversionValue
+      item.qtyReorderPoint /= conversionValue
+      item.qtyOnTransfer /= conversionValue
     }
   }
 }

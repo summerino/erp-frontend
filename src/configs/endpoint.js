@@ -29,7 +29,8 @@ export default {
     uom: 'uom',
     warehouse: 'warehouse',
     transferStock: 'transfer-stock',
-    adjustment: 'adjustment'
+    adjustment: 'adjustment',
+    warehouseQuantity: 'warehouse-quantity'
   },
 
   purchase: {
