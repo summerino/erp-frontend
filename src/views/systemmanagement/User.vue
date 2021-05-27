@@ -200,11 +200,11 @@
                 <v-text-field
                   v-model="data.password"
                   :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-                  
+                  :required="data.action === 'add'"
+                  :rules="data.action === 'add' ? rules.required : ''"
                   :type="show ? 'text' : 'password'"
                   label="Kata Sandi"
                   class="mt-0"
-                  
                   @click:append="show = !show"
                 ></v-text-field>
               </v-col>
