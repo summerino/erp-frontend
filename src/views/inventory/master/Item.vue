@@ -221,6 +221,7 @@
                         <v-text-field
                           ref="Name"
                           v-model="data.name"
+                          :counter="50"
                           label="Nama"
                           class="mt-0"
                           :rules="[rules.required[0], rules.max50chars[0]]"
@@ -250,6 +251,7 @@
                         <v-text-field
                           ref="Description"
                           v-model="data.description"
+                          :counter="100"
                           label="Deskripsi"
                           class="mt-0"
                         ></v-text-field>

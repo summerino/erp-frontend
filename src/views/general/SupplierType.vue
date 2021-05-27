@@ -171,6 +171,7 @@
                 <v-text-field
                   v-model="data.name"
                   :rules="rules.required"
+                  :counter="50"
                   label="Nama"
                   class="mt-0"
                   required

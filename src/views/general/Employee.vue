@@ -225,6 +225,7 @@
                 <v-text-field
                   v-model="data.firstName"
                   :rules="rules.required"
+                  :counter="50"
                   label="Nama Depan"
                   class="mt-0"
                   required
@@ -233,6 +234,7 @@
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-text-field
                   v-model="data.lastName"
+                  :counter="50"
                   label="Nama Belakang"
                   class="mt-0"
                 ></v-text-field>
@@ -271,6 +273,7 @@
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-text-field
                   v-model="data.birthPlace"
+                  :counter="50"
                   label="Tempat Lahir"
                   class="mt-0"
                 ></v-text-field>
@@ -282,6 +285,7 @@
                 <v-text-field
                   v-model="data.address1"
                   :rules="rules.required"
+                  :counter="50"
                   label="Alamat 1"
                   class="mt-0"
                   required
@@ -293,6 +297,7 @@
               <v-col cols="12">
                 <v-text-field
                   v-model="data.address2"
+                  :counter="50"
                   label="Alamat 2"
                   class="mt-0"
                 ></v-text-field>
@@ -303,6 +308,7 @@
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-text-field
                   v-model="data.phone"
+                  :counter="30"
                   label="Telepon"
                   class="mt-0"
                 ></v-text-field>
@@ -310,6 +316,7 @@
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-text-field
                   v-model="data.identityCardNo"
+                  :counter="20"
                   label="Nomor Identitas"
                   class="mt-0"
                 ></v-text-field>
