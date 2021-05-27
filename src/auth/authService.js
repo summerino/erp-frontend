@@ -17,8 +17,7 @@ export default {
     if (accessToken) {
       return true
     } else {
-      //return false
-      return true
+      return false
     }
   }
 }
