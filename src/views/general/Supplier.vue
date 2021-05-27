@@ -199,6 +199,7 @@
                 <v-text-field
                   v-model="data.name"
                   :rules="rules.required"
+                  :counter="50"
                   label="Nama"
                   class="mt-0"
                   required
@@ -223,6 +224,7 @@
                 <v-text-field
                   v-model="data.address1"
                   :rules="rules.required"
+                  :counter="100"
                   label="Alamat 1"
                   class="mt-0"
                   required
@@ -234,6 +236,7 @@
               <v-col cols="12">
                 <v-text-field
                   v-model="data.address2"
+                  :counter="100"
                   label="Alamat 2"
                   class="mt-0"
                 ></v-text-field>
@@ -245,6 +248,7 @@
                 <v-text-field
                   v-model="data.phone"
                   :rules="rules.required"
+                  :counter="30"
                   label="Telepon"
                   class="mt-0"
                   required
@@ -253,6 +257,7 @@
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-text-field
                   v-model="data.fax"
+                  :counter="15"
                   label="Fax"
                   class="mt-0"
                 ></v-text-field>
@@ -264,6 +269,7 @@
                 <v-text-field
                   v-model="data.email"
                   :rules="[rules.required[0], rules.email[0]]"
+                  :counter="30"
                   class="mt-0"
                   label="Email"
                 ></v-text-field>
@@ -271,6 +277,7 @@
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-text-field
                   v-model="data.refNo"
+                  :counter="30"
                   class="mt-0"
                   label="No. Ref."
                 ></v-text-field>
