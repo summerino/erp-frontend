@@ -148,16 +148,12 @@ export default {
       this.dialog = false
     },
     search() {
-      api.getAll(this.endpoint.general.customer.customer, {
+      api.getAll(`${this.endpoint.general.customer.customer}/lists`, {
         params: {
           filters: JSON.stringify([{
             field: this.data.by,
             operator: 'contains',
             keyword: this.data.value
-          }, {
-            field: 'isActive',
-            operator: 'eq',
-            keyword: true
           }]),
           sorts: JSON.stringify([{
             field: this.data.by,

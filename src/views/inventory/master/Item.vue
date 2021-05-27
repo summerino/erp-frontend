@@ -271,8 +271,8 @@
                         <v-autocomplete
                             v-model="data.uomId"
                             :items="uom"
-                            :item-text="item => `${item.initial}`"
                             label="Satuan Ukuran"
+                            item-text="initial"
                             item-value="id"
                             class="mt-0"
                             @change="categoryChanged"
@@ -285,8 +285,8 @@
                         <v-autocomplete
                             v-model="data.uomSellId"
                             :items="unitUomSell"
-                            :item-text="item => `${item.unitequivalent}`"
                             label="Satuan Jual"
+                            item-text="unitEquivalent"
                             item-value="id"
                             class="mt-0"
                           ></v-autocomplete>
@@ -306,8 +306,8 @@
                         <v-autocomplete
                             v-model="data.uomBuyId"
                             :items="unitUomBuy"
-                            :item-text="item => `${item.unitequivalent}`"
                             label="Satuan Beli"
+                            item-text="unitEquivalent"
                             item-value="id"
                             class="mt-0"
                           ></v-autocomplete>
@@ -822,20 +822,9 @@ export default {
         })
     },
     getUnitSellingOrBuying() {
-      api.getAll(this.endpoint.master, {
+      api.getAll(`${this.endpoint.inventory.uom}/item`, {
         params: {
-          param: 'uomconversion',
-          fieldNames: 'id,uomid,unittoconvert,unitequivalent',
-          filters: JSON.stringify([{
-            field: 'uomid',
-            operator: 'equal',
-            keyword: (this.data.uomId === null) ? 0 : this.data.uomId
-          }]),
-          sorts: JSON.stringify([{
-            field: 'unittoconvert',
-            direction: 'asc'
-          }]),
-          includeMetaData: false
+          uomId: (this.data.uomId === null) ? 0 : this.data.uomId
         }
       })
         .then(response => {
@@ -850,20 +839,12 @@ export default {
         })
     },
     getUOM() {
-      api.getAll(this.endpoint.master, {
+      api.getAll(`${this.endpoint.inventory.uom}/lists`, {
         params: {
-          param: 'uom',
-          fieldNames: 'id,initial',
-          filters: JSON.stringify([{
-            field: 'isactive',
-            operator: 'equal',
-            keyword: 1
-          }]),
           sorts: JSON.stringify([{
             field: 'initial',
             direction: 'asc'
-          }]),
-          includeMetaData: false
+          }])
         }
       })
         .then(response => {
@@ -871,25 +852,17 @@ export default {
         })
     },
     getSellingTaxes() {
-      api.getAll(this.endpoint.master, {
+      api.getAll(`${this.endpoint.general.tax}/lists`, {
         params: {
-          param: 'tax',
-          fieldNames: 'id,initial,name,rate',
           filters: JSON.stringify([{
-            field: 'typeid',
-            operator: 'equal',
+            field: 'typeId',
+            operator: 'eq',
             keyword: 2
-          },
-          {
-            field: 'isActive',
-            operator: 'equal',
-            keyword: 1
           }]),
           sorts: JSON.stringify([{
             field: 'initial',
             direction: 'asc'
-          }]),
-          includeMetaData: false
+          }])
         }
       })
         .then(response => {
@@ -897,25 +870,17 @@ export default {
         })
     },
     getBuyingTaxes() {
-      api.getAll(this.endpoint.master, {
+      api.getAll(`${this.endpoint.general.tax}/lists`, {
         params: {
-          param: 'tax',
-          fieldNames: 'id,initial,name,rate',
           filters: JSON.stringify([{
-            field: 'typeid',
-            operator: 'equal',
-            keyword: 1
-          },
-          {
-            field: 'isActive',
-            operator: 'equal',
+            field: 'typeId',
+            operator: 'eq',
             keyword: 1
           }]),
           sorts: JSON.stringify([{
             field: 'initial',
             direction: 'asc'
-          }]),
-          includeMetaData: false
+          }])
         }
       })
         .then(response => {

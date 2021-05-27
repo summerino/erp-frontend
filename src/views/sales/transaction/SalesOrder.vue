@@ -982,7 +982,7 @@ export default {
     this.getList()
     this.getDefTaxIncSetting()
     this.getSalesmanLists()
-    this.getCurrLists()
+    // this.getCurrLists()
     this.getCustomerLists()
     this.getWarehouseLists()
     this.getTaxLists()
@@ -1122,20 +1122,13 @@ export default {
         })
     },
     getDefTaxIncSetting() {
-      api.getAll(this.endpoint.master, {
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
         params: {
-          param: 'systemParameter',
-          fieldNames: 'code,value',
           filters: JSON.stringify([{
             field: 'code',
-            operator: 'equal',
+            operator: 'eq',
             keyword: 'DEF_SALES_TAX_INC'
-          }]),
-          sorts: JSON.stringify([{
-            field: 'code',
-            direction: 'asc'
-          }]),
-          includeMetaData: false
+          }])
         }
       })
         .then(response => {
