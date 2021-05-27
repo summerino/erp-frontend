@@ -730,6 +730,7 @@ export default {
         taxAmount: 0,
         total: 0
       }
+      this.lblTransCode = 'Kode Order Penjualan'
       this.gridItem.data = []
       this.gridRelated.data = []
       this.tab.cust = 0
@@ -821,7 +822,7 @@ export default {
       this.dialog.add = true
       this.reset(false)
       this.data.action = 'add'
-
+      
       setTimeout(() => {
         // Set focus to receive code field
         this.$refs.code.focus()
