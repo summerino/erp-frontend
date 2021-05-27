@@ -264,7 +264,7 @@
 
                   <v-card-text>
                     <v-row no-gutters>
-                      <v-col cols="12" md="6">
+                      <v-col cols="12">
                         <v-text-field
                           ref="code"
                           v-model="data.code"
@@ -273,7 +273,9 @@
                           readonly
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="12" md="6" class="pl-md-1">
+                    </v-row>
+                    <v-row no-gutters>
+                      <v-col cols="12">
                         <v-menu
                           v-model="menu.orderDate"
                           :close-on-content-click="false"
@@ -302,7 +304,6 @@
                         </v-menu>
                       </v-col>
                     </v-row>
-
                     <v-row no-gutters>
                       <v-col cols="12">
                         <v-autocomplete
@@ -318,7 +319,7 @@
                       </v-col>
                     </v-row>
 
-                    <v-row no-gutters>
+                    <!-- <v-row no-gutters>
                       <v-col cols="5">
                         <v-combobox
                           v-model="data.currCode"
@@ -343,7 +344,7 @@
                           required
                         ></v-currency-field>
                       </v-col>
-                    </v-row>
+                    </v-row> -->
                   </v-card-text>
                 </v-card>
               </v-col>
