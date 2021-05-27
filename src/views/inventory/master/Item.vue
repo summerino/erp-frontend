@@ -208,6 +208,7 @@
                         <v-text-field
                           ref="Initial"
                           v-model="data.initial"
+                          :counter="20"
                           label="Inisial"
                           class="mt-0"
                           :rules="[rules.required[0], rules.max20chars[0]]"
