@@ -966,7 +966,7 @@ export default {
     this.getList()
     this.getDefTaxIncSetting()
     this.getPurchaserLists()
-    this.getCurrLists()
+    // this.getCurrLists()
     this.getSupplierLists()
     this.getWarehouseLists()
     this.getTaxLists()
@@ -1120,16 +1120,13 @@ export default {
         })
     },
     getDefTaxIncSetting() {
-      api.getAll(this.endpoint.master, {
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
         params: {
-          param: 'systemParameter',
-          fieldNames: 'code,value',
           filters: JSON.stringify([{
             field: 'code',
-            operator: 'equal',
+            operator: 'eq',
             keyword: 'DEF_PURC_TAX_INC'
-          }]),
-          includeMetaData: false
+          }])
         }
       })
         .then(response => {
