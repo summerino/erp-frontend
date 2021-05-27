@@ -142,24 +142,17 @@ export default {
       this.dialog = false
     },
     search() {
-      api.getAll(this.endpoint.master, {
+      api.getAll(`${this.endpoint.general.supplier.supplier}/lists`, {
         params: {
-          param: 'supplier',
-          fieldNames: 'code,initial,name,address1,phone',
           filters: JSON.stringify([{
             field: this.data.by,
-            operator: 'STRING_CONTAINS',
+            operator: 'contains',
             keyword: this.data.value
-          }, {
-            field: 'isActive',
-            operator: 'EQUAL',
-            keyword: true
           }]),
           sorts: JSON.stringify([{
             field: this.data.by,
             direction: 'asc'
-          }]),
-          includeMetaData: false
+          }])
         }
       })
         .then(response => {
