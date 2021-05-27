@@ -975,7 +975,14 @@ export default {
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
   },
-
+  watch: {
+    'grid.options': {
+      handler() {
+        this.getList()
+      },
+      deep: true
+    }
+  },
   computed: {
     ...mapState({
       gridDefOpts: state => state.app.grid,
