@@ -534,6 +534,7 @@
                           <template v-slot:[`item.qty`]="{ item }">
                             <v-currency-field
                               v-model="item.qty"
+                              :decimal-length="0"
                               :min="1"
                               :readonly="data.type === 2 || data.mark === 'CMP'"
                               class="text-body-2 text-right mt-0"
