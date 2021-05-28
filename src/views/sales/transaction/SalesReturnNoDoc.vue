@@ -806,7 +806,6 @@
                       <v-col cols="4" md="4">   
                         <v-currency-field
                           v-model="data.totalIn"
-                          :decimal-length="0"
                           class="text-right"
                           :readonly="true"
                           label="Harga Barang Masuk"
@@ -815,7 +814,6 @@
                       <v-col cols="12" md="4">
                         <v-currency-field
                           v-model="data.totalOut"
-                          :decimal-length="0"
                           class="text-right"
                           :readonly="true"
                           label="Harga Barang Keluar"
