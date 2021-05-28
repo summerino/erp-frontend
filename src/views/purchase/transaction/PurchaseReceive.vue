@@ -1176,56 +1176,54 @@ export default {
         this.data.taxAmount = item.taxAmount
         this.data.total = item.total
 
-        if (!item.called) {
-          // Get supplier details
-          this.bindSupData(this.data)
+        // Get supplier details
+        this.bindSupData(this.data)
 
-          if (this.data.srcTrans === 1) {
-            // Get purchase order item details
-            api.getAll(`${this.endpoint.purchase.order}/item`, {
-              params: {
-                code: item.code,
-                fullReceived: false
+        if (this.data.srcTrans === 1) {
+          // Get purchase order item details
+          api.getAll(`${this.endpoint.purchase.order}/item`, {
+            params: {
+              code: item.code,
+              fullReceived: false
+            }
+          })
+            .then(response => {
+              this.gridItem.data = [...response.data.tableData]
+              for (let i = 0; i < this.gridItem.data.length; i++) {
+                this.gridItem.data[i].transDetailId = this.gridItem.data[i].id
+                this.gridItem.data[i].id = randomNumber(-1, -1000)
+                this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
+                this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyRcv
+                this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
+                this.gridItem.data[i].warehouseCode = item.warehouseCode
+                this.gridItem.data[i].typeName = 'Normal'
+                this.calcItemPrice(this.gridItem.data[i], false)
               }
+              this.calcPrice()
             })
-              .then(response => {
-                this.gridItem.data = [...response.data.tableData]
-                for (let i = 0; i < this.gridItem.data.length; i++) {
-                  this.gridItem.data[i].transDetailId = this.gridItem.data[i].id
-                  this.gridItem.data[i].id = randomNumber(-1, -1000)
-                  this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
-                  this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyRcv
-                  this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
-                  this.gridItem.data[i].warehouseCode = item.warehouseCode
-                  this.gridItem.data[i].typeName = 'Normal'
-                  this.calcItemPrice(this.gridItem.data[i], false)
-                }
-                this.calcPrice()
-              })
-          } else {
-            // Get purchase return item details
-            api.getAll(`${this.endpoint.purchase.return}/item`, {
-              params: {
-                code: item.code,
-                fullReceived: false
+        } else {
+          // Get purchase return item details
+          api.getAll(`${this.endpoint.purchase.return}/item`, {
+            params: {
+              code: item.code,
+              fullReceived: false
+            }
+          })
+            .then(response => {
+              this.gridItem.data = [...response.data.tableData]
+              for (let i = 0; i < this.gridItem.data.length; i++) {
+                this.gridItem.data[i].transDetailId = this.gridItem.data[i].id
+                this.gridItem.data[i].id = randomNumber(-1, -1000)
+                this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
+                this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyRcv
+                this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
+                this.gridItem.data[i].warehouseCode = item.warehouseCodeIn
+                this.gridItem.data[i].type = 0
+                this.gridItem.data[i].typeName = 'Normal'
+                this.calcItemPrice(this.gridItem.data[i], false)
               }
+              this.calcPrice()
             })
-              .then(response => {
-                this.gridItem.data = [...response.data.tableData]
-                for (let i = 0; i < this.gridItem.data.length; i++) {
-                  this.gridItem.data[i].transDetailId = this.gridItem.data[i].id
-                  this.gridItem.data[i].id = randomNumber(-1, -1000)
-                  this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
-                  this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyRcv
-                  this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
-                  this.gridItem.data[i].warehouseCode = item.warehouseCodeIn
-                  this.gridItem.data[i].type = 0
-                  this.gridItem.data[i].typeName = 'Normal'
-                  this.calcItemPrice(this.gridItem.data[i], false)
-                }
-                this.calcPrice()
-              })
-          }
         }
       } else {
         this.data.supCode = null

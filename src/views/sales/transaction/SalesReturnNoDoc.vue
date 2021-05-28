@@ -132,7 +132,7 @@
           <v-btn icon dark @click="dialog.add = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Retur Penjualan Tanpa Dockumen</v-toolbar-title>
+          <v-toolbar-title>Retur Penjualan Tanpa Dokumen</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-tooltip bottom>
@@ -806,7 +806,6 @@
                       <v-col cols="4" md="4">   
                         <v-currency-field
                           v-model="data.totalIn"
-                          :decimal-length="0"
                           class="text-right"
                           :readonly="true"
                           label="Harga Barang Masuk"
@@ -815,7 +814,6 @@
                       <v-col cols="12" md="4">
                         <v-currency-field
                           v-model="data.totalOut"
-                          :decimal-length="0"
                           class="text-right"
                           :readonly="true"
                           label="Harga Barang Keluar"
