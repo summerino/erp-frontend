@@ -69,6 +69,12 @@ export default {
   /**
    * Filter
    */
+  initAdvancedSearch: (state) => {
+    state.filter.isAdvancedSearch = false
+    state.searches = []
+    const search = { field: '', operator:'', keyword: '', show: false}
+    state.filter.searches.push(search)
+  },
   setFilterFields: (state, fields) => {
     state.filter.fields = fields
   },

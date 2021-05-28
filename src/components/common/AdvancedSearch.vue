@@ -139,6 +139,9 @@ export default {
     addSearch() {
       this.$store.commit('app/addSearch')
     },
+    initAdvancedSearch() {
+      this.$store.commit('app/initAdvancedSearch')
+    },
     advancedSearch() {
       const filters = this.filter.searches.filter(x => x.operator !== '' && x.field !== '' && x.keyword !== '')
       this.getList(false, filters)
@@ -220,7 +223,7 @@ export default {
     }
   },
   created: function () {
-    this.addSearch()
+    this.initAdvancedSearch()
   }
 }
 </script>
