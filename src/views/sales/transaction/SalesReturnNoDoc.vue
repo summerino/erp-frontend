@@ -132,7 +132,7 @@
           <v-btn icon dark @click="dialog.add = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Retur Penjualan Tanpa Dockumen</v-toolbar-title>
+          <v-toolbar-title>Retur Penjualan Tanpa Dokumen</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-tooltip bottom>
