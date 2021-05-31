@@ -994,7 +994,7 @@ export default {
     transCodeChange() {
       if (this.data.srcTrans === 1) {
         // Get purchase order details
-        api.getAll(this.endpoint.purchase.order, {
+        api.getAll(this.endpoint.sales.order, {
           params: {
             filters: JSON.stringify([{
               field: 'code',
@@ -1012,7 +1012,7 @@ export default {
           })
       } else {
         // Get purchase return details
-        api.getAll(this.endpoint.purchase.return, {
+        api.getAll(this.endpoint.sales.return, {
           params: {
             filters: JSON.stringify([{
               field: 'code',
@@ -1020,8 +1020,8 @@ export default {
               keyword: this.data.transCode
             }, {
               field: 'type',
-              operator: 'eq',
-              keyword: 2
+              operator: 'contains',
+              keyword: [ 2, 3 ]
             }, {
               field: 'mark',
               operator: 'doesnotcontain',
