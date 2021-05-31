@@ -1021,7 +1021,7 @@ export default {
             }, {
               field: 'type',
               operator: 'contains',
-              keyword: [ 2, 3 ]
+              keyword: [2, 3]
             }, {
               field: 'mark',
               operator: 'doesnotcontain',

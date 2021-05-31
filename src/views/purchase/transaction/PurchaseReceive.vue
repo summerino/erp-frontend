@@ -1064,8 +1064,8 @@ export default {
               keyword: this.data.transCode
             }, {
               field: 'type',
-              operator: 'eq',
-              keyword: 2
+              operator: 'contains',
+              keyword: [2, 3]
             }, {
               field: 'mark',
               operator: 'doesnotcontain',
