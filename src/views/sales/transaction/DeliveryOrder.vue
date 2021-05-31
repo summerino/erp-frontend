@@ -992,22 +992,47 @@ export default {
       this.gridRelated.data = []
     },
     transCodeChange() {
-      api.getAll(this.endpoint.sales.order, {
-        params: {
-          filters: JSON.stringify([{
-            field: 'code',
-            operator: 'eq',
-            keyword: this.data.transCode
-          }, {
-            field: 'mark',
-            operator: 'doesnotcontain',
-            keyword: ['V', 'CLS', 'CMP']
-          }])
-        }
-      })
-        .then(response => {
-          this.bindTransData(response.data.tableData[0] ?? null)
+      if (this.data.srcTrans === 1) {
+        // Get sales order details
+        api.getAll(this.endpoint.sales.order, {
+          params: {
+            filters: JSON.stringify([{
+              field: 'code',
+              operator: 'eq',
+              keyword: this.data.transCode
+            }, {
+              field: 'mark',
+              operator: 'doesnotcontain',
+              keyword: ['V', 'CLS', 'CMP']
+            }])
+          }
         })
+          .then(response => {
+            this.bindTransData(response.data.tableData[0] ?? null)
+          })
+      } else {
+        // Get sales return details
+        api.getAll(this.endpoint.sales.return, {
+          params: {
+            filters: JSON.stringify([{
+              field: 'code',
+              operator: 'eq',
+              keyword: this.data.transCode
+            }, {
+              field: 'type',
+              operator: 'contains',
+              keyword: [ 2, 3 ]
+            }, {
+              field: 'mark',
+              operator: 'doesnotcontain',
+              keyword: ['V', 'CLS', 'CMP']
+            }])
+          }
+        })
+          .then(response => {
+            this.bindTransData(response.data.tableData[0] ?? null)
+          })
+      }
     },
     calcItemTax(item) {
       const tax = this.taxes.find(t => t.id === item.taxId)
