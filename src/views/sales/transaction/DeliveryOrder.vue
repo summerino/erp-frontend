@@ -264,6 +264,7 @@
                           :label="lblTransCode"
                           class="mt-0"
                           required
+                          @change="transCodeChange"
                         >
                           <template v-slot:append>
                               <v-btn
@@ -989,6 +990,49 @@ export default {
       this.data.total = 0
       this.gridItem.data = []
       this.gridRelated.data = []
+    },
+    transCodeChange() {
+      if (this.data.srcTrans === 1) {
+        // Get purchase order details
+        api.getAll(this.endpoint.purchase.order, {
+          params: {
+            filters: JSON.stringify([{
+              field: 'code',
+              operator: 'eq',
+              keyword: this.data.transCode
+            }, {
+              field: 'mark',
+              operator: 'doesnotcontain',
+              keyword: ['V', 'CLS', 'CMP']
+            }])
+          }
+        })
+          .then(response => {
+            this.bindTransData(response.data.tableData[0] ?? null)
+          })
+      } else {
+        // Get purchase return details
+        api.getAll(this.endpoint.purchase.return, {
+          params: {
+            filters: JSON.stringify([{
+              field: 'code',
+              operator: 'eq',
+              keyword: this.data.transCode
+            }, {
+              field: 'type',
+              operator: 'eq',
+              keyword: 2
+            }, {
+              field: 'mark',
+              operator: 'doesnotcontain',
+              keyword: ['V', 'CLS', 'CMP']
+            }])
+          }
+        })
+          .then(response => {
+            this.bindTransData(response.data.tableData[0] ?? null)
+          })
+      }
     },
     calcItemTax(item) {
       const tax = this.taxes.find(t => t.id === item.taxId)
