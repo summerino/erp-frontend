@@ -993,7 +993,7 @@ export default {
     },
     transCodeChange() {
       if (this.data.srcTrans === 1) {
-        // Get purchase order details
+        // Get sales order details
         api.getAll(this.endpoint.sales.order, {
           params: {
             filters: JSON.stringify([{
@@ -1011,7 +1011,7 @@ export default {
             this.bindTransData(response.data.tableData[0] ?? null)
           })
       } else {
-        // Get purchase return details
+        // Get sales return details
         api.getAll(this.endpoint.sales.return, {
           params: {
             filters: JSON.stringify([{
