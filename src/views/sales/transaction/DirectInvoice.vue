@@ -15,7 +15,7 @@
           max-height="64"
           dark
         >
-          <v-btn icon dark @click="dialog.add = false">
+          <v-btn icon dark @click="close">
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-toolbar-title>Penjualan Langsung</v-toolbar-title>
@@ -1013,11 +1013,15 @@ export default {
         this.data.action = 'add'
         
         // Validate form first
-        this.$refs.form.validate()
+        setTimeout(() => {
+          this.$refs.form.validate()
+        }, 0)
       }
 
       // Set focus to order code field
-      this.$refs.code.focus()
+      setTimeout(() => {
+        this.$refs.code.focus()
+      }, 0)
     },
     close() {
       this.$router.push({ name: 'sales-invoice' })
@@ -1037,7 +1041,6 @@ export default {
       }
     },
     async save(closeDialog) {
-      if (!this.dialog.add) return
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Silahkan periksa kembali data yang wajib diisi.')
         return
@@ -1058,7 +1061,7 @@ export default {
       if (result.success) {
         this.$store.dispatch('app/showSuccess', result.message)
         if (closeDialog) {
-          this.dialog.add = false
+          this.close()
         } else {
           this.data.code = result.data
         }
