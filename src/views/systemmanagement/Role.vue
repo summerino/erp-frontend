@@ -604,9 +604,6 @@ export default {
         data.roleMenus = this.selectionTable
         data.roleMenuActions = this.selectionAction
 
-        console.log(data.roleMenus)
-        console.log(data.roleMenuActions)
-
         const resp = await api.update(this.endpoint.systemManagement.role, data.id, data)
         result = resp.data
       }
