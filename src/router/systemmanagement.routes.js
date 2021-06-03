@@ -5,4 +5,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/systemmanagement/role',
+  name: 'role',
+  component: () => import(/* webpackChunkName: "systemmanagement-role" */ '@/views/systemmanagement/Role.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
