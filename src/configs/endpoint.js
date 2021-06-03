@@ -59,6 +59,8 @@ export default {
 
   systemManagement:{
     user: 'user',
-    parameter: 'system-parameter'
+    parameter: 'system-parameter',
+    role: 'role',
+    menu: 'menu'
   }
 }
