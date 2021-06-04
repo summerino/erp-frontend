@@ -142,7 +142,6 @@ export default {
         items: [
           { text: 'No. Transf. Persd.', value: 'code' },
           { text: 'Tanggal', value: 'date' },
-          { text: 'Tipe', value: 'typeInitial' },
           { text: 'Gudang Asal', value: 'warehouseInitialFrom' },
           { text: 'Gudang Tujuan', value: 'warehouseInitialTo' }
         ]
@@ -151,7 +150,6 @@ export default {
         columns: [
           { text: 'No. Transf. Persd.', value: 'code', divider: true, width: '160' },
           { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
-          { text: 'Tipe', value: 'typeInitial', width: '90' },
           { text: 'Gudang Asal', value: 'warehouseInitialFrom', divider: true, width: '200' },
           { text: 'Gudang Tujuan', value: 'warehouseInitialTo', divider: true, width: '200' }
         ],
@@ -200,8 +198,12 @@ export default {
             keyword: this.MarkExclude
           }, {
             field: 'type',
-            operator: 'neq',
-            keyword: 2
+            operator: 'doesnotcontain',
+            keyword: [2, 3]
+          }, {
+            field: 'origintransfercode',
+            operator: 'eq',
+            keyword: null
           }]),
           sorts: JSON.stringify([{
             field: this.data.by,

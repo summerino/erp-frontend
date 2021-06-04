@@ -187,7 +187,7 @@
                 <v-list-item
                   v-if="data.type === 1"
                   v-shortkey="['ctrl', 'alt', 's']"
-                  :disabled="isVoid || data.mark === 'CMP'"
+                  :disabled="isVoid || data.mark === 'CMP' || hasRelatedTrans"
                   @click="save(false, true)"
                   @shortkey="save(false, true)"
                 >
@@ -272,7 +272,7 @@
                           label="Tipe"
                           item-value="value"
                           class="mt-0"
-                          :readonly="data.mark === 'CMP'"
+                          :readonly="data.mark === 'CMP' || hasRelatedTrans"
                           required
                           @change="onChangeType"
                         ></v-autocomplete>
@@ -329,7 +329,7 @@
                             :items="warehouseRef"
                             :item-text="item => `${item.initial} - ${item.name}`"
                             :rules="(data.type !== 2) ? rules.required : []"
-                            :readonly="data.type === 2 || data.mark === 'CMP'"
+                            :readonly="data.type === 2 || data.mark === 'CMP' || hasRelatedTrans"
                             label="Gudang Asal"
                             item-value="code"
                             class="mt-0"
@@ -345,7 +345,7 @@
                             :items="warehouseRef"
                             :item-text="item => `${item.initial} - ${item.name}`"
                             :rules="(data.type !== 2) ? rules.required : []"
-                            :readonly="data.type === 2 || data.mark === 'CMP'"
+                            :readonly="data.type === 2 || data.mark === 'CMP' || hasRelatedTrans"
                             label="Gudang Tujuan"
                             item-value="code"
                             class="mt-0"
@@ -442,7 +442,7 @@
               <v-col cols="12">
                 <v-card>
                   <v-tabs v-model="tab.det">
-                    <v-tab key="detail-trans">Detil</v-tab>
+                    <v-tab key="detail-trans">Detail</v-tab>
                     <v-tab key="related-trans" @click="loadRelatedTransfer">Transaksi Terkait</v-tab>
 
                     <v-tab-item
@@ -458,7 +458,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid || data.type === 2 || data.mark === 'CMP'"
+                                :disabled="isVoid || data.type === 2 || data.mark === 'CMP' || hasRelatedTrans"
                                 class="blue--text"
                                 small
                                 tile
@@ -490,7 +490,7 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
-                                  :disabled="isVoid || data.type === 2 || data.mark === 'CMP'"
+                                  :disabled="isVoid || data.type === 2 || data.mark === 'CMP' || hasRelatedTrans"
                                   color="red"
                                   icon
                                   small
@@ -507,7 +507,7 @@
                               ref="itemId"
                               v-model="item.itemId"
                               :items="items"
-                              :readonly="data.type === 2 || data.mark === 'CMP'"
+                              :readonly="data.type === 2 || data.mark === 'CMP' || hasRelatedTrans"
                               :rules="rules.required"
                               item-text="initial"
                               item-value="id"
@@ -518,7 +518,7 @@
                             >
                               <template v-slot:append>
                                 <v-btn
-                                  :disabled="data.type === 2 || data.mark === 'CMP'"
+                                  :disabled="data.type === 2 || data.mark === 'CMP' || hasRelatedTrans"
                                   color="primary"
                                   icon
                                   x-small
@@ -546,7 +546,7 @@
                             <v-autocomplete
                               v-model="item.unitId"
                               :items="item.units"
-                              :readonly="data.type === 2 || data.mark === 'CMP'"
+                              :readonly="data.type === 2 || data.mark === 'CMP' || hasRelatedTrans"
                               :rules="rules.required"
                               item-text="unitEquivalent"
                               item-value="id"
@@ -689,7 +689,7 @@ export default {
       columns: [
         { text: 'No. Transf. Persd.', value: 'code', divider: true, width: '160' },
         { text: 'Tipe', value: 'typeInitial', divider: true, width: '150' },
-        { text: 'Tanggal', value: 'date', align: 'center', divider: true, width: '120' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
         { text: 'Gudang Asal', value: 'warehouseInitialFrom', divider: true, width: '180' },
         { text: 'Gudang Tujuan', value: 'warehouseInitialTo', divider: true, width: '180' },
         { text: 'Catatan', value: 'notes', divider: true, width: '180' },
@@ -842,6 +842,9 @@ export default {
           this.gridDet.data = response.data.tableData
         })
 
+      // Get related transaction
+      this.loadRelatedTransfer()
+
       // Set focus to transfer code field
       setTimeout(() => {
         this.$refs.code.focus()
@@ -871,6 +874,15 @@ export default {
       
       const data = this.data
       data.itemDetails = this.gridDet.data
+      if (data.originTransferCode === '') {
+        data.originTransferCode = null
+      }
+
+      // Date validation
+      if (this.isDateGreaterThanRelated(data.date)) {
+        this.$store.dispatch('app/showInfo', 'Tanggal tidak boleh lebih besar dari Tanggal Barang Masuk pada Transaksi Terkait.')
+        return
+      }
       
       let result = { success: false, message: '' }
       if (data.action === 'add') {
@@ -953,6 +965,20 @@ export default {
             this.items = response.data.tableData
           })
       }
+    },
+    isDateGreaterThanRelated(dt) {
+      let result = false
+      if (this.gridRelated.data.length) {
+        for (let i = 0; i < this.gridRelated.data.length; i++) {
+          if (dt > this.gridRelated.data[i].date) {
+            result = true
+          }
+        }
+      } else {
+        result = false
+      }
+
+      return result
     },
     loadWarehouse() {
       api.getAll(`${this.endpoint.inventory.warehouse}/lists`, {
