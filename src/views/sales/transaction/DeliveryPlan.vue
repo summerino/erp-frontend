@@ -1005,7 +1005,7 @@ export default {
           isFailShipment: false,
           notesFailShipment: null,
           custName: null,
-          undeliveredItems: {}
+          undeliveredItems: []
         }
         this.gridItem.data.push(item)
 
