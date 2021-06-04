@@ -4,7 +4,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="2">
-            Retur
+            Retur Pembelian
           </v-col>
           <v-col cols="12" md="4">
             <v-text-field
@@ -966,9 +966,7 @@ export default {
       }, {
         text: 'Transaksi'
       }, {
-        text: 'Order'
-      }, {
-        text: 'Retur'
+        text: 'Retur Pembelian'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
