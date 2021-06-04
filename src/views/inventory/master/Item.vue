@@ -731,9 +731,9 @@ export default {
     gridQuantity: {
       columns: [
         { text: 'Lokasi Gudang', value: 'warehouseInitial', divider: true, width: '200' },
-        { text: 'Qty Tersedia', value: 'qtyOnAvailable', align: 'right', divider: true, width: '120' },
         { text: 'Qty Sistem', value: 'qtyOnHand', align: 'right', divider: true, width: '120' },
         { text: 'Qty Dipesan', value: 'qtyOnOrder', align: 'right', divider: true, width: '120' },
+        { text: 'Qty Tersedia', value: 'qtyOnAvailable', align: 'right', divider: true, width: '120' },
         { text: 'Qty Indent', value: 'qtyOnIndent', align: 'right', divider: true, width: '120' },
         { text: 'Qty Titik Pemesanan Kembali', value: 'qtyReorderPoint', align: 'right', divider: true, width: '120' },
         { text: 'Qty Transfer', value: 'qtyOnTransfer', align: 'right', divider: true, width: '120' },
@@ -940,7 +940,7 @@ export default {
         .then(response => {
           this.unitUomSell = response.data.tableData
           this.unitUomBuy = response.data.tableData
-
+          
           // Load unit on tab quantity
           this.loadUnitQuantity()
         })
@@ -1124,20 +1124,20 @@ export default {
       const sellUnit = this.quantityViewRef[1].text
       const buyUnit = this.quantityViewRef[2].text
 
-      this.quantityViewRef[0].text = `${smallestUnit} (${this.unitUomSell.find(x => x.isbaseunit).unitequivalent})`
+      this.quantityViewRef[0].text = `${smallestUnit} (${this.unitUomSell.find(x => x.isBaseUnit).unitEquivalent})`
 
       const uomSellRef = this.unitUomSell.find(x => x.id === this.data.uomSellId)
       if (uomSellRef) {
-        this.quantityViewRef[1].text = `${sellUnit} (${uomSellRef.unitequivalent})`
+        this.quantityViewRef[1].text = `${sellUnit} (${uomSellRef.unitEquivalent})`
       }
 
       const uomBuyRef = this.unitUomBuy.find(x => x.id === this.data.uomBuyId)
       if (uomBuyRef) {
-        this.quantityViewRef[2].text = `${buyUnit} (${uomBuyRef.unitequivalent})`
+        this.quantityViewRef[2].text = `${buyUnit} (${uomBuyRef.unitEquivalent})`
       }
 
       if (this.data.action === 'edit') {
-        this.data.viewUnit = 1
+        this.data.viewUnit = 2
       }
     },
     calcQuantity() {
