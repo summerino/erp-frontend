@@ -932,7 +932,7 @@ export default {
         })
     },
     getUnitSellingOrBuying() {
-      api.getAll(`${this.endpoint.inventory.uomConversion}`, {
+      api.getAll(`${this.endpoint.inventory.uom}/item`, {
         params: {
           uomId: (this.data.uomId === null) ? 0 : this.data.uomId
         }
