@@ -27,8 +27,8 @@ export default [{
     authRequired: true
   }
 }, {
-  path: '/inventory/master/unitofmeasurement',
-  name: 'unitofmeasurement',
+  path: '/inventory/master/unit-of-measurement',
+  name: 'unit-of-measurement',
   component: () => import(/* webpackChunkName: "inventory-master-unit-of-measurement" */ '@/views/inventory/master/UnitOfMeasurement.vue'),
   meta: {
     authRequired: true

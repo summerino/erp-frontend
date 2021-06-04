@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-list-item
-      v-if="!menuItem.items"
+      v-if="!hasItems(menuItem.items)"
       :input-value="menuItem.value"
       :to="{ name: menuItem.link, params: menuItem.params }"
       :exact="menuItem.exact"
@@ -23,7 +23,7 @@
 
     <v-list-group
       v-else
-      :value="menuItem.regex ? menuItem.regex.test($route.path) : false"
+      :value="menuItem.regex ? new RegExp(menuItem.regex).test($route.path) : false"
       :disabled="menuItem.disabled"
       :sub-group="subgroup"
       :to="menuItem.link"
@@ -69,6 +69,12 @@ export default {
     small: {
       type: Boolean,
       default: false
+    }
+  },
+
+  methods: {
+    hasItems(items) {
+      return (items?.length ?? 0) > 0
     }
   }
 }

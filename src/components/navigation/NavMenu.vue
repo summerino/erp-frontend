@@ -2,7 +2,7 @@
   <div>
     <!-- menu level 1 -->
     <nav-menu-item v-for="(level1Item, level1Index) in menu" :key="level1Index" :menu-item="level1Item">
-      <template v-if="level1Item.items">
+      <template v-if="hasItems(level1Item.items)">
 
         <!-- menu level 2 -->
         <nav-menu-item
@@ -12,7 +12,7 @@
           subgroup
           small
         >
-          <template v-if="level2Item.items">
+          <template v-if="hasItems(level2Item.items)">
 
             <!-- menu level 3 -->
             <nav-menu-item
@@ -55,10 +55,17 @@ export default {
   components: {
     NavMenuItem
   },
+
   props: {
     menu: {
       type: Array,
       default: () => []
+    }
+  },
+
+  methods: {
+    hasItems(items) {
+      return (items?.length ?? 0) > 0
     }
   }
 }

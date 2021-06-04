@@ -72,8 +72,7 @@
 <script>
 import { mapState } from 'vuex'
 
-// navigation menu configurations
-import config from '../configs'
+import api from '@/services/axios.service'
 
 import MainMenu from '../components/navigation/MainMenu'
 import ToolbarUser from '../components/toolbar/ToolbarUser'
@@ -85,15 +84,39 @@ export default {
     ToolbarUser,
     ToolbarNotifications
   },
+  
   data() {
     return {
       drawer: null,
-
-      navigation: config.navigation      
+      navigation: []
     }
   },
+
+  created: function () {
+    this.getMenu()
+  },
+  
   computed: {
-    ...mapState('app', ['product', 'isContentBoxed', 'menuTheme', 'toolbarTheme', 'isToolbarDetached', 'breadcrumbs'])
+    ...mapState({
+      product: state => state.app.product,
+      isContentBoxed: state => state.app.isContentBoxed,
+      menuTheme: state => state.app.menuTheme,
+      toolbarTheme: state => state.app.toolbarTheme,
+      isToolbarDetached: state => state.app.isToolbarDetached,
+      breadcrumbs: state => state.app.breadcrumbs,
+      endpoint: state => state.api.endpoint
+    })
+  },
+
+  methods: {
+    getMenu() {
+      api.getAll(`${this.endpoint.systemManagement.menu}/navigation`, {})
+        .then(response => {
+          this.navigation = {
+            menu: response.data
+          }
+        })
+    }
   }
 }
 </script>
