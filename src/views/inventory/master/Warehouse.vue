@@ -393,7 +393,7 @@ export default {
         this.$refs.initial.focus()
 
         // Validate form first
-        //this.$refs.form.validate()
+        this.$refs.form.validate()
       }, 0)
     },
     edit(item) {
