@@ -6,18 +6,21 @@ const login = ({ commit }, payload) => {
     auth.login(payload.username, payload.password)
       .then(response => {
         // If there's user data in response
-        if (response.data.userData) {
-          // Navigate to homepage
-          router.push(router.currentRoute.query.to || '/')
-
+        if (response.data.success) {
           // Set accessToken
           localStorage.setItem('accessToken', response.data.accessToken)
+
+          // Set expToken
+          localStorage.setItem('expToken', response.data.expToken)
 
           // Set user info
           commit('SET_USER_INFO', response.data.userData)
 
           // Set bearer token in axios
           commit('SET_BEARER', response.data.accessToken)
+
+          // Navigate to homepage
+          router.push({ path: router.currentRoute.query.to || '/' }).catch(() => {})
 
           resolve(response)
         } else {
@@ -34,6 +37,7 @@ const logout = () => {
       .then(response => {
         // Remove localStorage
         localStorage.removeItem('accessToken')
+        localStorage.removeItem('expToken')
         localStorage.removeItem('userInfo')
 
         // Navigate to login page

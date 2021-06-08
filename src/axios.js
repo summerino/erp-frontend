@@ -1,4 +1,5 @@
 import axios from 'axios'
+import router from './router'
 import store from './store'
 
 // Set config defaults when creating the instance
@@ -33,11 +34,20 @@ instance.interceptors.response.use((response) => {
 }, (error) => {
   store.state.app.loadOverlay = false
   if (error.response) {
-    let errMessage = error.response?.data?.title ?? ''
-    if (!errMessage) {
-      errMessage = `${error.response.statusText}.`
+    if (error.response.status === 401 || error.response.status === 403) {
+      // Remove localStorage
+      localStorage.removeItem('accessToken')
+      localStorage.removeItem('userInfo')
+
+      // Navigate to login page
+      router.push({ name: 'login' })
+    } else {
+      let errMessage = error.response?.data?.title ?? ''
+      if (!errMessage) {
+        errMessage = `${error.response.statusText}.`
+      }
+      store.dispatch('app/showError', `${error.response.status} ${errMessage}`)
     }
-    store.dispatch('app/showError', `${error.response.status} ${errMessage}`)
   }
   return Promise.reject(error)
 })
