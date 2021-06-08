@@ -1,59 +1,93 @@
-import Excel from 'exceljs/dist/es5/exceljs.browser.js'
+import Excel from 'exceljs/dist/exceljs.min.js'
 import { saveAs } from 'file-saver'
 
 class ExcelService {
   getExcelColumns(grid) {
+    debugger
     const result = []
-    result.push('No')
+    result.push({
+      text: 'No',
+      value: 'no'
+    })
     for (let i = 0; i < grid.columns.length; i++) {
       const column = grid.columns[i].text
       if (column) {
+        result.push({
+          text: column,
+          value: grid.columns[i].value
+        })
+      }
+    }
+    return result
+  }
+  getExcelField(grid) {
+    debugger
+    const result = []
+    result.push('No')
+    for (let i = 0; i < grid.columns.length; i++) {
+      const column = grid.columns[i].value
+      if (column && column !== 'sw_action') {
         result.push(column)
       }
     }
     return result
   }
-  getExcelDatas(grid, strNumber) {
+  getExcelDatas(grid, columns, strNumber) {
+    debugger
     const result = []
     let number = Number(strNumber)
+    
     for (let i = 0; i < grid.data.length; i++) {
       const temp = [] 
-      const code = grid.data[i].code
-      const initial = grid.data[i].initial
-      const name = grid.data[i].name
-      const address = grid.data[i].address
-      const phone = grid.data[i].phone
-      const isDefault = grid.data[i].isDefault
-      temp.push(
-        number,
-        code,
-        initial,
-        name,
-        address,
-        phone,
-        isDefault
-      )
+      temp.push(number)
+      for (let j = 0; j < columns.length; j++) {
+
+        const value = grid.data[i][columns[j].value]
+        if (value) {
+          temp.push(value)
+        }
+      }
       result.push(temp)
       number++
     }
     return result
   }
+  // getExcelDataSwift(grid, columns, strNumber) {
+  //   debugger
+  //   const result = []
+  //   let number = Number(strNumber)
+    
+  //   for (let i = 0; i < grid.data.length; i++) {
+  //     const temp = [] 
+  //     temp.push(number)
+  //     for (let j = 0; j < columns.length; j++) {
+
+  //       const value = grid.data[i][columns[j]]
+  //       if (value) {
+  //         temp.push(value)
+  //       }
+  //     }
+  //     result.push(temp)
+  //     number++
+  //   }
+  //   return result
+  // }
   getFirstNumber(currentPage, pageSize) {
     return `${Math.ceil((currentPage - 1) * pageSize) + 1}`
   }
   getPageInfo(firstNumber, currentPage, pageSize, totalRow) {
     return `${firstNumber} - ${Math.ceil(currentPage * pageSize)} dari ${totalRow} data`    
   }
-  async export(title, grid, gridDefOpts) {
-    
+  async export(title, grid, gridDefOpts, fromSwift = false) {
+    debugger
     const company = 'Sahassa'
     const currentPage = grid.options.page
     const pageSize = gridDefOpts.pageSize
-    const totalRow = grid.total  
+    const totalRow = !fromSwift ? grid.total : grid.rowCount  
     const firstNumber = this.getFirstNumber(currentPage, pageSize)
     const pageInfo = this.getPageInfo(firstNumber, currentPage, pageSize, totalRow)
     const columns = this.getExcelColumns(grid)
-    const datas = this.getExcelDatas(grid, firstNumber)
+    const datas = this.getExcelDatas(grid, columns, firstNumber)
     
     const workbook = new Excel.Workbook()
     const worksheet = workbook.addWorksheet(title)
@@ -63,8 +97,10 @@ class ExcelService {
     worksheet.addRow([title])
     worksheet.addRow([''])
     worksheet.addRow([pageInfo])
-
-    worksheet.addRow(columns)
+    const columnOnly = columns.map(x => {
+      return x.text
+    })
+    worksheet.addRow(columnOnly)
     datas.forEach(data => {
       worksheet.addRow(data)
     })
@@ -104,34 +140,24 @@ class ExcelService {
       bgColor:{argb:'6e6e6e'}
     }
 
-    worksheet.getCell('A5').fill = pattern
-    worksheet.getCell('B5').fill = pattern
-    worksheet.getCell('C5').fill = pattern
-    worksheet.getCell('D5').fill = pattern
-    worksheet.getCell('E5').fill = pattern
-    worksheet.getCell('F5').fill = pattern
-    worksheet.getCell('G5').fill = pattern
-
     //style tulisan
     const headerColumnFontSettings = { 
       //name: 'Arial', 
       //size: 16
       bold: true 
     }
-    worksheet.getCell('A5').font = headerColumnFontSettings
-    worksheet.getCell('B5').font = headerColumnFontSettings
-    worksheet.getCell('C5').font = headerColumnFontSettings
-    worksheet.getCell('D5').font = headerColumnFontSettings
-    worksheet.getCell('E5').font = headerColumnFontSettings
-    worksheet.getCell('F5').font = headerColumnFontSettings
-    worksheet.getCell('G5').font = headerColumnFontSettings
 
-    worksheet.getCell('A5').alignment = { vertical: 'middle', horizontal: 'center' }
-    worksheet.getCell('A6').alignment = { vertical: 'middle', horizontal: 'center' }
-    worksheet.getCell('A7').alignment = { vertical: 'middle', horizontal: 'center' }
-    worksheet.getCell('A8').alignment = { vertical: 'middle', horizontal: 'center' }
-    worksheet.getCell('A9').alignment = { vertical: 'middle', horizontal: 'center' }
-    worksheet.getCell('A10').alignment = { vertical: 'middle', horizontal: 'center' }
+    // style align header column
+    for (let i = 1; i <= columns.length; i++) {
+      worksheet.getCell(5, i).fill = pattern
+      worksheet.getCell(5, i).font = headerColumnFontSettings
+      worksheet.getCell(5, i).alignment = { vertical: 'middle', horizontal: 'center' }
+    }
+    
+    // style align column number
+    for (let i = 5; i <= datas.length; i++) {
+      worksheet.getCell(i, 1).alignment = { vertical: 'middle', horizontal: 'center' }
+    }
 
     const buf = await workbook.xlsx.writeBuffer()
     saveAs(new Blob([buf]), `${title}.xlsx`)

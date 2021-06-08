@@ -3,6 +3,14 @@
     :headers="grid.columns"
     :items="grid.data"
     class="flex-grow-1"
+    :footer-props="{ itemsPerPageOptions: gridDefOpts.pageSizes }"
+    :height="gridDefOpts.height"
+    :items-per-page="gridDefOpts.pageSize"
+    :server-items-length="grid.total"
+    :options.sync="grid.options"
+    :sort-by="grid.options.sortBy"
+    :sort-desc="grid.options.sortDesc"
+    fixed-header
   >
     <template v-for="header in grid.columns" v-slot:[header.slot]="{ item }">
       <div v-if="header.copyLabel" :key="header.value">

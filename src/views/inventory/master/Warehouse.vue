@@ -33,7 +33,7 @@
                   @click="exportExcel"
                   @shortkey="exportExcel"
                 >
-                  <v-icon left>mdi-file-excel</v-icon>
+                  <v-icon left>mdi-file-excel-outline</v-icon>
                   Export Excel
                 </v-btn>
               </template>
