@@ -15,9 +15,32 @@
               single-line
               @keyup.enter="getList()"
             ></v-text-field>
+            
           </v-col>
           <v-spacer></v-spacer>
-          <v-col cols="12" md="6" class="text-right">
+          <v-col cols="12" md="1">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'e']"
+                  color="green darken-1"
+                  class="font-weight-regular"
+                  dark
+                  small
+                  tile
+                  @click="exportExcel"
+                  @shortkey="exportExcel"
+                >
+                  <v-icon left>mdi-file-excel</v-icon>
+                  Export Excel
+                </v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Alt + E)</span>
+            </v-tooltip>
+          </v-col>
+          <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -275,7 +298,7 @@ import { format, parseISO }  from 'date-fns'
 
 import api from '@/services/axios.service'
 import Confirm from '@/components/dialog/Confirm'
-
+import excelService from '@/services/excel.service.js'
 export default {
   components:{
     Confirm
@@ -443,6 +466,10 @@ export default {
         this.back()
         this.getList()
       }
+    },
+    async exportExcel() {
+      const title = 'Data Gudang'
+      excelService.export(title, this.grid, this.gridDefOpts)
     }
   }
 }
