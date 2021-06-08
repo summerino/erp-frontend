@@ -44,20 +44,16 @@
                 <v-btn
                   v-bind="attrs"
                   v-on="on"
-                  v-shortkey="['ctrl', 'alt', 'e']"
-                  color="green darken-1"
-                  class="font-weight-regular ml-1 mb-1"
-                  dark
-                  small
-                  tile
+                  v-shortkey="['ctrl', 'alt', 'p']"
+                  icon
+                  color="green"
                   @click="exportExcel"
                   @shortkey="exportExcel"
                 >
-                  <v-icon left>mdi-file-excel-outline</v-icon>
-                  Export Excel
+                  <v-icon>mdi-file-excel-outline</v-icon>
                 </v-btn>
               </template>
-              <span class="text-caption">(Ctrl + Alt + E)</span>
+              <span class="text-caption text-center">Export Excel<br/>(Ctrl + Alt + P)</span>
             </v-tooltip>
           </v-col> 
           <v-col cols="12" md="3" class="text-right">

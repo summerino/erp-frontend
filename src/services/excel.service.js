@@ -52,26 +52,6 @@ class ExcelService {
     }
     return result
   }
-  // getExcelDataSwift(grid, columns, strNumber) {
-  //   debugger
-  //   const result = []
-  //   let number = Number(strNumber)
-    
-  //   for (let i = 0; i < grid.data.length; i++) {
-  //     const temp = [] 
-  //     temp.push(number)
-  //     for (let j = 0; j < columns.length; j++) {
-
-  //       const value = grid.data[i][columns[j]]
-  //       if (value) {
-  //         temp.push(value)
-  //       }
-  //     }
-  //     result.push(temp)
-  //     number++
-  //   }
-  //   return result
-  // }
   getFirstNumber(currentPage, pageSize) {
     return `${Math.ceil((currentPage - 1) * pageSize) + 1}`
   }
@@ -162,6 +142,5 @@ class ExcelService {
     const buf = await workbook.xlsx.writeBuffer()
     saveAs(new Blob([buf]), `${title}.xlsx`)
   }
-
 }
 export default new ExcelService
