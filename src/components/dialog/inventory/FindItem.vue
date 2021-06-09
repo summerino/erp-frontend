@@ -43,6 +43,7 @@
                     hoverable
                     selectable
                     open-on-click
+                    selection-type="all"
                   ></v-treeview>
                 </v-row>
               </v-card-text>
