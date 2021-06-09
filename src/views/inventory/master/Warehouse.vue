@@ -277,12 +277,14 @@ import { mapState } from 'vuex'
 import { format, parseISO }  from 'date-fns'
 
 import api from '@/services/axios.service'
-import Confirm from '@/components/dialog/Confirm'
+
 import ExportExcel from '@/components/common/ExportExcel.vue'
+import Confirm from '@/components/dialog/Confirm'
+
 export default {
   components:{
-    Confirm,
-    ExportExcel
+    ExportExcel,
+    Confirm
   },
 
   data: () => ({

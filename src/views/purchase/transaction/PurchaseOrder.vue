@@ -868,23 +868,23 @@ import { sumBy as _sumBy } from 'lodash'
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 
+import AdvancedSearch from '@/components/common/AdvancedSearch'
+import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 import FindSupplier from '@/components/dialog/general/FindSupplier'
 import FindItem from '@/components/dialog/inventory/FindItem'
 import PoSaveReceive from '@/components/dialog/purchase/POSaveReceive'
 import PoSaveInvoice from '@/components/dialog/purchase/POSaveInvoice'
-import AdvancedSearch from '@/components/common/AdvancedSearch'
-import ExportExcel from '@/components/common/ExportExcel.vue'
 
 export default {
   components: {
+    AdvancedSearch,
+    ExportExcel,
     Confirm,
     FindSupplier,
     FindItem,
     PoSaveReceive,
-    PoSaveInvoice,
-    AdvancedSearch,
-    ExportExcel
+    PoSaveInvoice
   },
 
   data: () => ({

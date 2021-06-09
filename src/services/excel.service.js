@@ -57,7 +57,6 @@ class ExcelService {
     return `${firstNumber} - ${num} dari ${totalRow} data`    
   }
   async export(title, grid, gridDefOpts, fromSwift = false) {
-    debugger
     const company = 'Sahassa'    
     const currentPage = grid.options.page
     const pageSize = gridDefOpts.pageSize
