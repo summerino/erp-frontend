@@ -19,22 +19,6 @@
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" md="1">
-            <!-- <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  v-bind="attrs"
-                  v-on="on"
-                  v-shortkey="['ctrl', 'alt', 'p']"
-                   icon
-                  color="green"
-                  @click="exportExcel"
-                  @shortkey="exportExcel"
-                >
-                  <v-icon>mdi-file-excel-outline</v-icon>
-                </v-btn>
-              </template>
-              <span class="text-caption text-center">Export Excel<br/>(Ctrl + Alt + P)</span>
-            </v-tooltip> -->
             <export-excel title="Data Gudang" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
           </v-col>
           <v-col cols="12" md="5" class="text-right">
@@ -294,8 +278,7 @@ import { format, parseISO }  from 'date-fns'
 
 import api from '@/services/axios.service'
 import Confirm from '@/components/dialog/Confirm'
-import ExportExcel from '../../../components/common/ExportExcel.vue'
-// import excelService from '@/services/excel.service.js'
+import ExportExcel from '@/components/common/ExportExcel.vue'
 export default {
   components:{
     Confirm,
