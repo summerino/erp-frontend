@@ -17,7 +17,10 @@
             ></v-text-field>
           </v-col>
           <v-spacer></v-spacer>
-          <v-col cols="12" md="6" class="text-right">
+          <v-col cols="12" md="1">
+            <export-excel title="Data Kendaraan" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+          </v-col>
+          <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -247,22 +250,24 @@ import { format, parseISO }  from 'date-fns'
 import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
+import ExportExcel from '@/components/common/ExportExcel.vue'
 
 export default {
   components:{
-    Confirm
+    Confirm,
+    ExportExcel
   },
 
   data: () => ({
     main: true,
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'No. Kendaraan', value: 'vehicleNo', divider: true, width: '150' },
-        { text: 'Tipe', value: 'typeName', divider: true, width: '150' },
-        { text: 'Volume Beban Maksimal', value: 'maxLoadVolume', divider: true, width: '90' },
-        { text: 'Bobot Beban Maksimal', value: 'maxLoadWeight', divider: true, width: '90' },
-        { text: 'Supir', value: 'driverInitial', divider: true, width: '90' }
+        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { text: 'No. Kendaraan', value: 'vehicleNo', divider: true, width: '150', excelColWidth:'15' },
+        { text: 'Tipe', value: 'typeName', divider: true, width: '150', excelColWidth:'15' },
+        { text: 'Volume Beban Maksimal', value: 'maxLoadVolume', divider: true, width: '90', excelColWidth:'105' },
+        { text: 'Bobot Beban Maksimal', value: 'maxLoadWeight', divider: true, width: '90', excelColWidth:'10' },
+        { text: 'Supir', value: 'driverInitial', divider: true, width: '90', excelColWidth:'10'}
       ],
       data: [],
       options: {
@@ -462,6 +467,9 @@ export default {
         this.back()
         this.getList()
       }
+    },
+    async exportExcel() {
+      this.exportExcel.export()
     }
   }
 }

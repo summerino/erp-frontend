@@ -53,10 +53,12 @@ class ExcelService {
     return `${Math.ceil((currentPage - 1) * pageSize) + 1}`
   }
   getPageInfo(firstNumber, currentPage, pageSize, totalRow) {
-    return `${firstNumber} - ${Math.ceil(currentPage * pageSize)} dari ${totalRow} data`    
+    const num = totalRow < Math.ceil(currentPage * pageSize) ? totalRow : Math.ceil(currentPage * pageSize)
+    return `${firstNumber} - ${num} dari ${totalRow} data`    
   }
   async export(title, grid, gridDefOpts, fromSwift = false) {
-    const company = 'Sahassa'
+    debugger
+    const company = 'Sahassa'    
     const currentPage = grid.options.page
     const pageSize = gridDefOpts.pageSize
     const totalRow = !fromSwift ? grid.total : grid.rowCount  
