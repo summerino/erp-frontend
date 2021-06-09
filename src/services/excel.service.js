@@ -3,7 +3,6 @@ import { saveAs } from 'file-saver'
 
 class ExcelService {
   getExcelColumns(grid) {
-    debugger
     const result = []
     result.push({
       text: 'No',
@@ -21,7 +20,6 @@ class ExcelService {
     return result
   }
   getExcelField(grid) {
-    debugger
     const result = []
     result.push('No')
     for (let i = 0; i < grid.columns.length; i++) {
@@ -33,7 +31,6 @@ class ExcelService {
     return result
   }
   getExcelDatas(grid, columns, strNumber) {
-    debugger
     const result = []
     let number = Number(strNumber)
     
@@ -59,7 +56,6 @@ class ExcelService {
     return `${firstNumber} - ${Math.ceil(currentPage * pageSize)} dari ${totalRow} data`    
   }
   async export(title, grid, gridDefOpts, fromSwift = false) {
-    debugger
     const company = 'Sahassa'
     const currentPage = grid.options.page
     const pageSize = gridDefOpts.pageSize
@@ -133,12 +129,22 @@ class ExcelService {
       worksheet.getCell(5, i).font = headerColumnFontSettings
       worksheet.getCell(5, i).alignment = { vertical: 'middle', horizontal: 'center' }
     }
-    
+    const firstRow = 5
     // style align column number
-    for (let i = 5; i <= datas.length; i++) {
-      worksheet.getCell(i, 1).alignment = { vertical: 'middle', horizontal: 'center' }
+    for (let i = 0; i <= datas.length; i++) {
+      worksheet.getCell(i + firstRow, 1).alignment = { vertical: 'middle', horizontal: 'center' }
     }
-
+    
+    // apply col width
+    const col = grid.columns
+    for (let i = 0; i < col.length; i++) {
+      const colWidth = col[i].excelColWidth
+      if (colWidth) {
+        worksheet.columns[i].width = colWidth
+      } else {
+        worksheet.columns[i].width = 10 // default col
+      }
+    }
     const buf = await workbook.xlsx.writeBuffer()
     saveAs(new Blob([buf]), `${title}.xlsx`)
   }

@@ -306,13 +306,13 @@ export default {
     main: true,
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Kode', value: 'code', divider: true, width: '150' },
-        { text: 'Initial', value: 'initial', divider: true, width: '150' },
-        { text: 'Nama', value: 'name', divider: true, width: '200' },
-        { text: 'Alamat', value: 'address', divider: true, width: '200' },
-        { text: 'Telepon', value: 'phone', divider: true, width: '120' },
-        { text: 'Default', value: 'isDefault', divider: true, width: '120' }
+        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'10' },
+        { text: 'Initial', value: 'initial', divider: true, width: '150', excelColWidth:'15' },
+        { text: 'Nama', value: 'name', divider: true, width: '200', excelColWidth:'25' },
+        { text: 'Alamat', value: 'address', divider: true, width: '200', excelColWidth:'35' },
+        { text: 'Telepon', value: 'phone', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Default', value: 'isDefault', divider: true, width: '120', excelColWidth:'10' }
       ],
       data: [],
       options: {
