@@ -19,7 +19,7 @@
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" md="1">
-            <v-tooltip bottom>
+            <!-- <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   v-bind="attrs"
@@ -34,7 +34,8 @@
                 </v-btn>
               </template>
               <span class="text-caption text-center">Export Excel<br/>(Ctrl + Alt + P)</span>
-            </v-tooltip>
+            </v-tooltip> -->
+            <export-excel title="Data Gudang" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
           </v-col>
           <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
@@ -283,7 +284,6 @@
         </v-form>
       </v-card-text>
     </v-card>
-    
     <confirm ref="confirm"></confirm>
   </div>
 </template>
@@ -294,23 +294,25 @@ import { format, parseISO }  from 'date-fns'
 
 import api from '@/services/axios.service'
 import Confirm from '@/components/dialog/Confirm'
-import excelService from '@/services/excel.service.js'
+import ExportExcel from '../../../components/common/ExportExcel.vue'
+// import excelService from '@/services/excel.service.js'
 export default {
   components:{
-    Confirm
+    Confirm,
+    ExportExcel
   },
 
   data: () => ({
     main: true,
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Kode', value: 'code', divider: true, width: '150' },
-        { text: 'Initial', value: 'initial', divider: true, width: '150' },
-        { text: 'Nama', value: 'name', divider: true, width: '200' },
-        { text: 'Alamat', value: 'address', divider: true, width: '200' },
-        { text: 'Telepon', value: 'phone', divider: true, width: '120' },
-        { text: 'Default', value: 'isDefault', divider: true, width: '120' }
+        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'10' },
+        { text: 'Initial', value: 'initial', divider: true, width: '150', excelColWidth:'15' },
+        { text: 'Nama', value: 'name', divider: true, width: '200', excelColWidth:'25' },
+        { text: 'Alamat', value: 'address', divider: true, width: '200', excelColWidth:'35' },
+        { text: 'Telepon', value: 'phone', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Default', value: 'isDefault', divider: true, width: '120', excelColWidth:'10' }
       ],
       data: [],
       options: {
@@ -464,8 +466,7 @@ export default {
       }
     },
     async exportExcel() {
-      const title = 'Data Gudang'
-      excelService.export(title, this.grid, this.gridDefOpts)
+      this.exportExcel.export()
     }
   }
 }
