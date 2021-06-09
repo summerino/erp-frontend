@@ -17,7 +17,10 @@
             ></v-text-field>
           </v-col>
           <v-spacer></v-spacer>
-          <v-col cols="12" md="6" class="text-right">
+          <v-col cols="12" md="1">
+            <export-excel title="Data Penyesuaian" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+          </v-col>
+          <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -589,12 +592,14 @@ import api from '@/services/axios.service'
 import Confirm from '@/components/dialog/Confirm'
 import FindItemAdjustment from '@/components/dialog/inventory/FindItemAdjustment'
 import FindUnit from '@/components/dialog/inventory/FindUnit'
+import ExportExcel from '@/components/common/ExportExcel.vue'
 
 export default {
   components:{
     Confirm,
     FindItemAdjustment,
-    FindUnit
+    FindUnit,
+    ExportExcel
   },
 
   data: () => ({
@@ -609,12 +614,12 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Tanggal', value: 'date', divider: true, width: '150' },
-        { text: 'Kode', value: 'code', divider: true, width: '150' },
-        { text: 'Lokasi', value: 'warehouseInitial', divider: true, width: '150' },
-        { text: 'Catatan', value: 'notes', divider: true, width: '200' },
-        { text: 'Status', value: 'mark', divider: true, width: '200' }
+        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { text: 'Tanggal', value: 'date', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Lokasi', value: 'warehouseInitial', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Catatan', value: 'notes', divider: true, width: '200', excelColWidth:'25' },
+        { text: 'Status', value: 'mark', divider: true, width: '200', excelColWidth:'20' }
       ],
       data: [],
       options: {
@@ -1110,6 +1115,9 @@ export default {
     },
     showFindUnitDialog(item) {
       this.$refs.findUnit.open(item)
+    },
+    async exportExcel() {
+      this.exportExcel.export()
     }
   }
 }
