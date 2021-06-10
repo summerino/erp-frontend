@@ -1413,7 +1413,7 @@ export default {
       const customer = this.customers.find(s => s.code === this.data.custCode)
       if (customer) {
         this.data.custName = customer.name
-        this.data.custAddr = customer.address
+        this.data.custAddr = customer.address1
         this.data.custPhone = customer.phone1
         this.data.custFax = customer.fax
       }
