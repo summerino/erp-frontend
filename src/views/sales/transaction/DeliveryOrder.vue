@@ -6,7 +6,7 @@
           <v-col cols="12" md="2">
             Surat Jalan
           </v-col>
-          <v-col cols="12" md="4">
+          <!-- <v-col cols="12" md="4">
             <v-text-field
               v-model="grid.search"
               append-icon="mdi-magnify"
@@ -15,6 +15,40 @@
               single-line
               @keyup.enter="getList()"
             ></v-text-field>
+          </v-col> -->
+          <v-col cols="12" md="4" >
+            <v-row no-gutters>
+              <v-text-field
+                append-icon="mdi-magnify"
+                label="Cari..."
+                class="font-weight-regular mt-0 pt-0"
+                single-line
+                v-model="grid.search"
+                :readonly="filter.isAdvancedSearch"
+                @click:append-outer="advancedSearch"
+                @keyup.enter="getList(false)"
+              ></v-text-field>            
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    color="blue darken-2 ml-1"
+                    class="font-weight-regular"
+                    dark
+                    small
+                    tile
+                    @click="advancedSearch"
+                  >
+                    <v-icon>
+                      mdi-magnify-plus-outline
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <span class="text-caption">Pencarian lanjutan</span>
+              </v-tooltip>
+              <export-excel title="Data Surat Jalan" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+            </v-row>
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" md="6" class="text-right">
@@ -41,7 +75,9 @@
           </v-col>
         </v-row>
       </v-card-title>
-
+      <v-card-text v-if="true" class="pb-1">
+        <advanced-search @search="search"></advanced-search>
+      </v-card-text>
       <v-data-table
         :headers="grid.columns"
         :footer-props="{ itemsPerPageOptions: gridDefOpts.pageSizes }"
@@ -589,12 +625,16 @@ import api from '@/services/axios.service'
 import Confirm from '@/components/dialog/Confirm'
 import FindSo from '@/components/dialog/sales/FindSO'
 import FindReturn from '@/components/dialog/sales/FindReturn'
+import AdvancedSearch from '@/components/common/AdvancedSearch'
+import ExportExcel from '@/components/common/ExportExcel.vue'
 
 export default {
   components: {
     Confirm,
     FindSo,
-    FindReturn
+    FindReturn,
+    AdvancedSearch,
+    ExportExcel
   },
 
   data: () => ({
@@ -610,13 +650,13 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Kode', value: 'code', divider: true, width: '160' },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
-        { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
-        { text: 'Kode Trans.', value: 'transCode', width: '150' },
-        { text: 'Dikirim Oleh', value: 'shippedInitial', divider: true, width: '200' },
-        { text: 'Status', value: 'mark', width: '50' }
+        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Pelanggan', value: 'custName', divider: true, width: '200', excelColWidth:'22' },
+        { text: 'Kode Trans.', value: 'transCode', width: '150', excelColWidth:'17' },
+        { text: 'Dikirim Oleh', value: 'shippedInitial', divider: true, width: '200', excelColWidth:'22' },
+        { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
       ],
       data: [],
       options: {
@@ -647,6 +687,23 @@ export default {
       ],
       data: []
     },
+    filterfields: [
+      {
+        text: 'Kode', value: 'code', dataType: 'text'
+      },
+      {
+        text: 'Tanggal', value: 'date', dataType: 'dateTime'
+      },
+      {
+        text: 'Pelanggan', value: 'custName', dataType: 'text'
+      },
+      {
+        text: 'Kode Trans.', value: 'transCode', dataType: 'text'
+      },
+      {
+        text: 'Dikirim Oleh', value: 'shippedInitial', dataType: 'text'
+      }   
+    ],
     valid: false,
     employees: [],
     warehouses: [],
@@ -661,6 +718,7 @@ export default {
     this.getEmployeeLists()
     this.getWarehouseLists()
     this.getTaxLists()
+    this.$store.commit('app/setFilterFields', this.filterfields)
   },
 
   mounted: function () {
@@ -691,7 +749,8 @@ export default {
     ...mapState({
       gridDefOpts: state => state.app.grid,
       rules: state => state.app.rules,
-      endpoint: state => state.api.endpoint
+      endpoint: state => state.api.endpoint,
+      filter: state => state.app.filter
     }),
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'
@@ -743,21 +802,33 @@ export default {
         }, 0)
       }
     },
-    getList(bindToForm = false) {
+    advancedSearch() {
+      this.grid.search = null
+      this.$store.commit('app/advSearch')
+      if (this.filter.isAdvancedSearch) {
+        this.$store.commit('app/addSearch')
+      }
+    },
+    search(vm) {
+      this.grid.search = vm.search
+      this.getList(vm.bindToForm, vm.filters)
+    },
+    getList(bindToForm = false, filters = []) {
       const sorts = []
+
       for (let i = 0; i < this.grid.options.sortBy.length; i++) {
         sorts.push({
           field: this.grid.options.sortBy[i],
           direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
         })
       }
-
-      api.getAll(this.endpoint.sales.delivery, {
+      api.getAll(this.endpoint.purchase.order, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
           take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
-          sorts: JSON.stringify(sorts)
+          sorts: JSON.stringify(sorts),
+          filters: JSON.stringify(filters)
         }
       })
         .then(response => {
@@ -769,6 +840,32 @@ export default {
           }
         })
     },
+    // getList(bindToForm = false) {
+    //   const sorts = []
+    //   for (let i = 0; i < this.grid.options.sortBy.length; i++) {
+    //     sorts.push({
+    //       field: this.grid.options.sortBy[i],
+    //       direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
+    //     })
+    //   }
+
+    //   api.getAll(this.endpoint.sales.delivery, {
+    //     params: {
+    //       search: this.grid.search,
+    //       skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
+    //       take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
+    //       sorts: JSON.stringify(sorts)
+    //     }
+    //   })
+    //     .then(response => {
+    //       this.grid.data = response.data.tableData
+    //       this.grid.total = response.data.rowCount
+    //       if (bindToForm) {
+    //         const item = this.grid.data.find(h => h.code === this.data.code)
+    //         this.edit(item)
+    //       }
+    //     })
+    // },
     getEmployeeLists() {
       api.getAll(`${this.endpoint.general.employee}/lists`, {
         params: {
@@ -1164,7 +1261,10 @@ export default {
             item.custFax = response.data.fax
           }
         })
-    }    
+    },
+    async exportExcel() {
+      this.exportExcel.export()
+    }
   }
 }
 </script>
