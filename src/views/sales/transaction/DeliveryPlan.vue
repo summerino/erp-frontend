@@ -6,7 +6,7 @@
           <v-col cols="12" md="3">
             Rencana Pengiriman
           </v-col>
-          <v-col cols="12" md="4">
+          <!-- <v-col cols="12" md="4">
             <v-text-field
               v-model.trim="grid.search"
               append-icon="mdi-magnify"
@@ -15,6 +15,39 @@
               single-line
               @keyup.enter="getList()"
             ></v-text-field>
+          </v-col> -->
+          <v-col cols="12" md="4" >
+            <v-row no-gutters>
+              <v-text-field
+                append-icon="mdi-magnify"
+                label="Cari..."
+                class="font-weight-regular mt-0 pt-0"
+                single-line
+                v-model="grid.search"
+                :readonly="filter.isAdvancedSearch"
+                @click:append-outer="advancedSearch"
+                @keyup.enter="getList(false)"
+              ></v-text-field>            
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    color="blue darken-2 ml-1"
+                    class="font-weight-regular"
+                    dark
+                    small
+                    tile
+                    @click="advancedSearch"
+                  >
+                    <v-icon>
+                      mdi-magnify-plus-outline
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <span class="text-caption">Pencarian lanjutan</span>
+              </v-tooltip>
+            </v-row>
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" md="5" class="text-right">
@@ -41,7 +74,9 @@
           </v-col>
         </v-row>
       </v-card-title>
-
+      <v-card-text v-if="true" class="pb-1">
+        <advanced-search @search="search"></advanced-search>
+      </v-card-text>
       <v-data-table
         :headers="grid.columns"
         :footer-props="{ itemsPerPageOptions: gridDefOpts.pageSizes }"
@@ -653,12 +688,14 @@ import api from '@/services/axios.service'
 import Confirm from '@/components/dialog/Confirm'
 import DpFind from '@/components/dialog/sales/DPFind'
 import DpSendFailed from '@/components/dialog/sales/DPSendFailed'
+import AdvancedSearch from '@/components/common/AdvancedSearch'
 
 export default {
   components: {
     Confirm,
     DpFind,
-    DpSendFailed
+    DpSendFailed,
+    AdvancedSearch
   },
 
   data: () => ({
@@ -710,6 +747,20 @@ export default {
       ],
       data: []
     },
+    filterfields: [
+      {
+        text: 'Kode', value: 'code', dataType: 'text'
+      },
+      {
+        text: 'No. Kendaraan', value: 'vehicleNo', dataType: 'text'
+      },
+      {
+        text: 'Supir', value: 'driverInitial', dataType: 'text'
+      },
+      {
+        text: 'Gudang', value: 'warehouseInitial', dataType: 'text'
+      }     
+    ],
     valid: false,
     defWarehouseCode: '',
     types: [{ id: 1, name: 'Penjualan Langsung' }, { id: 2, name: 'Surat Jalan' }, { id: 3, name: 'Semua' }],

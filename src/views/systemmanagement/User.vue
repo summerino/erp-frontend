@@ -17,7 +17,10 @@
             ></v-text-field>
           </v-col>
           <v-spacer></v-spacer>
-          <v-col cols="12" md="6" class="text-right">
+          <v-col cols="12" md="1">
+            <export-excel title="Data Pengguna" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+          </v-col>
+          <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -273,25 +276,26 @@ import { mapState } from 'vuex'
 import { format, parseISO }  from 'date-fns'
 
 import api from '@/services/axios.service'
-
+import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 
 export default {
   components:{
-    Confirm
+    Confirm,
+    ExportExcel
   },
 
   data: () => ({
     main: true,
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Username', value: 'username', divider: true, width: '150' },
-        { text: 'Inisial', value: 'initial', divider: true, width: '150' },
-        { text: 'Nama', value: 'name', divider: true, width: '200' },
-        { text: 'Peran', value: 'roleName', divider: true, width: '150' },
-        { text: 'Karyawan', value: 'employeeInitial', divider: true, width: '150' },
-        { text: 'Status', value: 'isActive', width: '90' }
+        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { text: 'Username', value: 'username', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Inisial', value: 'initial', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Nama', value: 'name', divider: true, width: '200', excelColWidth:'23' },
+        { text: 'Peran', value: 'roleName', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Karyawan', value: 'employeeInitial', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Status', value: 'isActive', width: '90', excelColWidth:'10' }
       ],
       data: [],
       options: {
@@ -506,6 +510,9 @@ export default {
         this.back()
         this.getList()
       }
+    },
+    async exportExcel() {
+      this.exportExcel.export()
     }
   }
 }
