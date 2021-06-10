@@ -16,7 +16,10 @@
             ></v-text-field>
           </v-col>
           <v-spacer></v-spacer>
-          <v-col cols="12" md="6" class="text-right">
+          <v-col cols="12" md="1">
+            <export-excel title="Data Wilayah" :grid="excelSettings" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+          </v-col>
+          <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -295,12 +298,13 @@ import { mapState } from 'vuex'
 import { format, parseISO }  from 'date-fns'
 
 import api from '@/services/axios.service'
-
+import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 
 export default {
   components: {
-    Confirm
+    Confirm,
+    ExportExcel
   },
 
   data: () => ({
@@ -320,11 +324,28 @@ export default {
     valid: false,
     open: [],
     parentRef: [],
-    data: {}
+    data: {},
+    excelSettings: {
+      columns: [
+        { value: 'action', excelColWidth:'10' },
+        { text: 'Inisial', value: 'initial', excelColWidth:'18' },
+        { text: 'Nama', value: 'name', excelColWidth:'23' },
+        { text: 'Turunan', value: 'lineage', excelColWidth:'10' },
+        { text: 'Kedalaman', value: 'deep', excelColWidth:'10' },
+        { text: 'Id Induk', value: 'parentId', excelColWidth:'10' }
+      ],
+      data: [],
+      total: 0,
+      rowCount: 0,
+      options: {
+        page: 1
+      }
+    }
   }),
 
   created: function () {
     this.getList()
+    this.getListForExcel()
   },
 
   mounted: function () {
@@ -386,6 +407,14 @@ export default {
         .then(response => {
           this.hierarchy.data = [response.data]
           this.open = [0]
+        })
+    },
+    getListForExcel() {
+      api.getAll(`${this.endpoint.sales.area}/lists`, {})
+        .then(response => {
+          this.excelSettings.data = response.data.tableData
+          this.excelSettings.rowCount = response.data.rowCount
+          this.excelSettings.total = this.excelSettings.rowCount
         })
     },
     close() {

@@ -6,7 +6,42 @@
           <v-col cols="12" md="2">
             Nota Debit
           </v-col>
-          <v-col cols="12" md="4">
+          <v-col cols="12" md="6" >
+            <v-row no-gutters>
+              <v-text-field
+                append-icon="mdi-magnify"
+                label="Cari..."
+                class="font-weight-regular mt-0 pt-0"
+                single-line
+                v-model="grid.search"
+                :readonly="filter.isAdvancedSearch"
+                @click:append-outer="advancedSearch"
+                @keyup.enter="getList(false)"
+              ></v-text-field>            
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    color="blue darken-2 ml-1"
+                    class="font-weight-regular"
+                    dark
+                    small
+                    tile
+                    @click="advancedSearch"
+                  >
+                    <v-icon>
+                      mdi-magnify-plus-outline
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <span class="text-caption">Pencarian lanjutan</span>
+              </v-tooltip>
+              <export-excel title="Data Note Debit" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+
+            </v-row>
+          </v-col>
+          <!-- <v-col cols="12" md="4">
             <v-text-field
               v-model.trim="grid.search"
               append-icon="mdi-magnify"
@@ -15,10 +50,12 @@
               single-line
               @keyup.enter="getList()"
             ></v-text-field>
-          </v-col>
+          </v-col> -->
         </v-row>
       </v-card-title>
-
+      <v-card-text v-if="true" class="pb-1">
+        <advanced-search @search="search"></advanced-search>
+      </v-card-text>
       <v-data-table
         :headers="grid.columns"
         :footer-props="{ itemsPerPageOptions: gridDefOpts.pageSizes }"
@@ -317,8 +354,14 @@ import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
 
 import api from '@/services/axios.service'
+import AdvancedSearch from '@/components/common/AdvancedSearch'
+import ExportExcel from '@/components/common/ExportExcel.vue'
 
 export default {
+  components:{
+    AdvancedSearch,
+    ExportExcel
+  },
   data: () => ({
     dialog: {
       add: false
@@ -332,16 +375,16 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Kode Transaksi', value: 'code', divider: true, width: '160' },
-        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120' },
-        { text: 'Pemasok', value: 'supName', divider: true, width: '200' },
-        { text: 'Sumber Transksi.', value: 'srcTransName', divider: true, width: '100' },
-        { text: 'Kode Transaksi Sumber', value: 'transCode', divider: true, width: '100' },
-        { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120' },
-        { text: 'Digunakan', value: 'used', align: 'right', divider: true, width: '120' },
-        { text: 'Saldo', value: 'outstanding', align: 'right', divider: true, width: '120' },
-        { text: 'Status', value: 'mark', width: '50' }
+        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { text: 'Kode Transaksi', value: 'code', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
+        { text: 'Sumber Transksi.', value: 'srcTransName', divider: true, width: '100', excelColWidth:'13' },
+        { text: 'Kode Transaksi Sumber', value: 'transCode', divider: true, width: '100', excelColWidth:'13' },
+        { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Digunakan', value: 'used', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Saldo', value: 'outstanding', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
       ],
       data: [],
       options: {
@@ -359,6 +402,32 @@ export default {
       ],
       data: []
     },
+    filterfields: [
+      {
+        text: 'Kode Transaksi', value: 'code', dataType: 'text'
+      },
+      {
+        text: 'Tanggal Transaksi', value: 'date', dataType: 'dateTime'
+      },
+      {
+        text: 'Pemasok', value: 'supName', dataType: 'text'
+      },
+      {
+        text: 'Sumber Transksi', value: 'srcTransName', dataType: 'text'
+      },
+      {
+        text: 'Kode Transaksi Sumber', value: 'transCode', dataType: 'text'
+      },
+      {
+        text: 'Nilai', value: 'amount', dataType: 'text'
+      },
+      {
+        text: 'Digunakan', value: 'used', dataType: 'text'
+      },
+      {
+        text: 'Saldo', value: 'outstanding', dataType: 'text'
+      }
+    ],
     valid: false,
     sources: [{ id: 1, name: 'Deposit' }, { id: 2, name: 'Retur' }, { id: 2, name: 'Return (Same Item)' }],
     data: {}
@@ -366,6 +435,7 @@ export default {
 
   created: function () {
     this.getList()
+    this.$store.commit('app/setFilterFields', this.filterfields)
   },
 
   mounted: function () {
@@ -392,7 +462,8 @@ export default {
     ...mapState({
       gridDefOpts: state => state.app.grid,
       rules: state => state.app.rules,
-      endpoint: state => state.api.endpoint
+      endpoint: state => state.api.endpoint,
+      filter: state => state.app.filter
     }),
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'
@@ -430,21 +501,33 @@ export default {
         }, 0)
       }
     },
-    getList(bindToForm = false) {
+    advancedSearch() {
+      this.grid.search = null
+      this.$store.commit('app/advSearch')
+      if (this.filter.isAdvancedSearch) {
+        this.$store.commit('app/addSearch')
+      }
+    },
+    search(vm) {
+      this.grid.search = vm.search
+      this.getList(vm.bindToForm, vm.filters)
+    },
+    getList(bindToForm = false, filters = []) {
       const sorts = []
+
       for (let i = 0; i < this.grid.options.sortBy.length; i++) {
         sorts.push({
           field: this.grid.options.sortBy[i],
           direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
         })
       }
-
-      api.getAll(this.endpoint.purchase.debitMemo, {
+      api.getAll(this.endpoint.purchase.order, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
           take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
-          sorts: JSON.stringify(sorts)
+          sorts: JSON.stringify(sorts),
+          filters: JSON.stringify(filters)
         }
       })
         .then(response => {
@@ -456,6 +539,32 @@ export default {
           }
         })
     },
+    // getList(bindToForm = false) {
+    //   const sorts = []
+    //   for (let i = 0; i < this.grid.options.sortBy.length; i++) {
+    //     sorts.push({
+    //       field: this.grid.options.sortBy[i],
+    //       direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
+    //     })
+    //   }
+
+    //   api.getAll(this.endpoint.purchase.debitMemo, {
+    //     params: {
+    //       search: this.grid.search,
+    //       skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
+    //       take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
+    //       sorts: JSON.stringify(sorts)
+    //     }
+    //   })
+    //     .then(response => {
+    //       this.grid.data = response.data.tableData
+    //       this.grid.total = response.data.rowCount
+    //       if (bindToForm) {
+    //         const item = this.grid.data.find(h => h.code === this.data.code)
+    //         this.edit(item)
+    //       }
+    //     })
+    // },
     edit(item) {
       if (!item) return
 
@@ -492,6 +601,9 @@ export default {
             item.supFax = response.data.fax
           }
         })
+    },
+    async exportExcel() {
+      this.exportExcel.export()
     }
   }
 }
