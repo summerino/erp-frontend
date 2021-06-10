@@ -622,19 +622,19 @@ import { sumBy as _sumBy } from 'lodash'
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 
+import AdvancedSearch from '@/components/common/AdvancedSearch'
+import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 import FindSo from '@/components/dialog/sales/FindSO'
 import FindReturn from '@/components/dialog/sales/FindReturn'
-import AdvancedSearch from '@/components/common/AdvancedSearch'
-import ExportExcel from '@/components/common/ExportExcel.vue'
 
 export default {
   components: {
+    AdvancedSearch,
+    ExportExcel,
     Confirm,
     FindSo,
-    FindReturn,
-    AdvancedSearch,
-    ExportExcel
+    FindReturn
   },
 
   data: () => ({

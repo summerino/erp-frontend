@@ -671,19 +671,19 @@ import { format, parseISO } from 'date-fns'
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 
+import AdvancedSearch from '@/components/common/AdvancedSearch'
+import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 import FindItem from '@/components/dialog/inventory/FindItem'
 import FindTransferStock from '@/components/dialog/inventory/FindTransferStock'
-import AdvancedSearch from '@/components/common/AdvancedSearch'
-import ExportExcel from '@/components/common/ExportExcel.vue'
 
 export default {
   components: {
+    AdvancedSearch,
+    ExportExcel,
     Confirm,
     FindItem,
-    FindTransferStock,
-    AdvancedSearch,
-    ExportExcel
+    FindTransferStock
   },
 
   data: () => ({

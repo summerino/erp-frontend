@@ -622,28 +622,19 @@ import { format, parseISO }  from 'date-fns'
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 
+import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 import FindItemAdjustment from '@/components/dialog/inventory/FindItemAdjustment'
 import FindUnit from '@/components/dialog/inventory/FindUnit'
-<<<<<<< HEAD
-=======
-import ExportExcel from '@/components/common/ExportExcel.vue'
-import AdvancedSearch from '@/components/common/AdvancedSearch'
->>>>>>> b5d8e081b1c5b9e7dedb5e1f4807bc78a56b2542
 
 export default {
   components:{
+    AdvancedSearch,
     ExportExcel,
     Confirm,
     FindItemAdjustment,
-<<<<<<< HEAD
     FindUnit
-=======
-    FindUnit,
-    ExportExcel,
-    AdvancedSearch
->>>>>>> b5d8e081b1c5b9e7dedb5e1f4807bc78a56b2542
   },
 
   data: () => ({
