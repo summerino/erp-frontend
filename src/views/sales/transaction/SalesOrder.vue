@@ -47,6 +47,7 @@
                 </template>
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
+              <export-excel title="Data Order Penjualan" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
           <v-spacer></v-spacer>
@@ -939,6 +940,7 @@ import FindItem from '@/components/dialog/inventory/FindItem'
 import SoSaveDelivery from '@/components/dialog/sales/SOSaveDelivery'
 import SoSaveInvoice from '@/components/dialog/sales/SOSaveInvoice'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
+import ExportExcel from '@/components/common/ExportExcel.vue'
 
 export default {
   components: {
@@ -947,7 +949,8 @@ export default {
     FindItem,
     SoSaveDelivery,
     SoSaveInvoice,
-    AdvancedSearch
+    AdvancedSearch,
+    ExportExcel
   },
 
   data: () => ({
@@ -965,13 +968,13 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '120' },
-        { text: 'No. Ord. Penjualan', value: 'code', divider: true, width: '160' },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
-        { text: 'Penjual', value: 'salesInitial', divider: true, width: '200' },
-        { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
-        { text: 'Total', value: 'total', align: 'right', divider: true, width: '120' },
-        { text: 'Status', value: 'mark', width: '50' }
+        { value: 'action', sortable: false, divider: true, width: '120', excelColWidth:'10' },
+        { text: 'No. Ord. Penjualan', value: 'code', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Penjual', value: 'salesInitial', divider: true, width: '200', excelColWidth:'23' },
+        { text: 'Pelanggan', value: 'custName', divider: true, width: '200', excelColWidth:'23' },
+        { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
       ],
       data: [],
       options: {
@@ -1658,6 +1661,9 @@ export default {
     },
     bindItemData(rowItem) {
       this.itemIdChange(rowItem)
+    },
+    async exportExcel() {
+      this.exportExcel.export()
     }
   }
 }

@@ -47,6 +47,7 @@
                 </template>
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
+              <export-excel title="Data Faktur" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
           <v-spacer></v-spacer>
@@ -742,13 +743,15 @@ import Confirm from '@/components/dialog/Confirm'
 import FindSo from '@/components/dialog/sales/FindSO'
 import FindDo from '@/components/dialog/sales/FindDO'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
+import ExportExcel from '@/components/common/ExportExcel.vue'
 
 export default {
   components: {
     Confirm,
     FindSo,
     FindDo,
-    AdvancedSearch
+    AdvancedSearch,
+    ExportExcel
   },
 
   data: () => ({
@@ -1244,6 +1247,9 @@ export default {
     },
     bindDOData(rowItem) {
       this.doCodeChange(rowItem)
+    },
+    async exportExcel() {
+      this.exportExcel.export()
     }
   }
 }

@@ -47,6 +47,7 @@
                 </template>
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
+              <export-excel title="Data Nota Kredit" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
         </v-row>
@@ -353,10 +354,12 @@ import { format, parseISO } from 'date-fns'
 
 import api from '@/services/axios.service'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
+import ExportExcel from '@/components/common/ExportExcel.vue'
 
 export default {
   components:{
-    AdvancedSearch
+    AdvancedSearch,
+    ExportExcel
   },
   data: () => ({
     dialog: {
@@ -371,16 +374,16 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Kode Transaksi', value: 'code', divider: true, width: '160' },
-        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120' },
-        { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
-        { text: 'Sumber Transaksi', value: 'srcTransName', divider: true, width: '100' },
-        { text: 'Kode Transaksi Sumber', value: 'transCode', divider: true, width: '100' },
-        { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120' },
-        { text: 'Digunakan', value: 'used', align: 'right', divider: true, width: '120' },
-        { text: 'Nilai', value: 'outstanding', align: 'right', divider: true, width: '120' },
-        { text: 'Status', value: 'mark', width: '50' }
+        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { text: 'Kode Transaksi', value: 'code', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Pelanggan', value: 'custName', divider: true, width: '200', excelColWidth:'25' },
+        { text: 'Sumber Transaksi', value: 'srcTransName', divider: true, width: '100', excelColWidth:'12' },
+        { text: 'Kode Transaksi Sumber', value: 'transCode', divider: true, width: '100', excelColWidth:'12' },
+        { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'13' },
+        { text: 'Digunakan', value: 'used', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Nilai', value: 'outstanding', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
       ],
       data: [],
       options: {
@@ -597,6 +600,9 @@ export default {
             item.custFax = response.data.fax
           }
         })
+    },
+    async exportExcel() {
+      this.exportExcel.export()
     }
   }
 }

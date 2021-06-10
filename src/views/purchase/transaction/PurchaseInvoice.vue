@@ -37,6 +37,7 @@
                 </template>
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
+              <export-excel title="Data Faktur" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
           <!-- <v-col cols="12" md="4">
@@ -720,13 +721,15 @@ import Confirm from '@/components/dialog/Confirm'
 import FindPo from '@/components/dialog/purchase/FindPO'
 import FindRcv from '@/components/dialog/purchase/FindRcv'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
+import ExportExcel from '@/components/common/ExportExcel.vue'
 
 export default {
   components: {
     Confirm,
     FindPo,
     FindRcv,
-    AdvancedSearch
+    AdvancedSearch,
+    ExportExcel
   },
 
   data: () => ({
@@ -743,16 +746,16 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'No. Faktur', value: 'code', divider: true, width: '160' },
-        { text: 'Tgl. Trans.', value: 'date', align: 'right', divider: true, width: '120' },
-        { text: 'Pemasok', value: 'supName', divider: true, width: '200' },
-        { text: 'No. Ord. Pembelian', value: 'poCode', divider: true, width: '150' },
-        { text: 'Total', value: 'total', align: 'right', divider: true, width: '120' },
-        { text: 'Dikeluarkan Oleh', value: 'issuedInitial', divider: true, width: '200' },
-        { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120' },
-        { text: 'No. Ref.', value: 'refNo', width: '120' },
-        { text: 'Status', value: 'mark', width: '50' }
+        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { text: 'No. Faktur', value: 'code', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Tgl. Trans.', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
+        { text: 'No. Ord. Pembelian', value: 'poCode', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Dikeluarkan Oleh', value: 'issuedInitial', divider: true, width: '200', excelColWidth:'23' },
+        { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'No. Ref.', value: 'refNo', width: '120', excelColWidth:'15' },
+        { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
       ],
       data: [],
       options: {
@@ -1208,6 +1211,9 @@ export default {
     },
     bindRcvData(rowItem) {
       this.rcvCodeChange(rowItem)
+    },
+    async exportExcel() {
+      this.exportExcel.export()
     }
   }
 }

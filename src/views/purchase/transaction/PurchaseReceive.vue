@@ -47,7 +47,7 @@
                 </template>
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
-              <export-excel title="Data Order Pembelian" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+              <export-excel title="Data Penerimaan" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
           <v-spacer></v-spacer>
@@ -647,6 +647,7 @@ import FindPo from '@/components/dialog/purchase/FindPO'
 import FindReturn from '@/components/dialog/purchase/FindReturn'
 import FindItem from '@/components/dialog/inventory/FindItem'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
+import ExportExcel from '@/components/common/ExportExcel.vue'
 
 export default {
   components: {
@@ -654,7 +655,8 @@ export default {
     FindPo,
     FindReturn,
     FindItem,
-    AdvancedSearch
+    AdvancedSearch,
+    ExportExcel
   },
 
   data: () => ({
@@ -670,14 +672,14 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Kode', value: 'code', divider: true, width: '160' },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
-        { text: 'Pemasok', value: 'supName', divider: true, width: '200' },
-        { text: 'Kode Transaksi', value: 'transCode', divider: true, width: '150' },
-        { text: 'Diterima Oleh', value: 'receiveInitial', divider: true, width: '200' },
-        { text: 'No. Ref.', value: 'refNo', width: '150' },
-        { text: 'Status', value: 'mark', width: '50' }
+        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
+        { text: 'Kode Transaksi', value: 'transCode', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Diterima Oleh', value: 'receiveInitial', divider: true, width: '200', excelColWidth:'23' },
+        { text: 'No. Ref.', value: 'refNo', width: '150', excelColWidth:'18' },
+        { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
       ],
       data: [],
       options: {
@@ -1350,6 +1352,9 @@ export default {
     },
     bindItemData(rowItem) {
       this.itemIdChange(rowItem)
+    },
+    async exportExcel() {
+      this.exportExcel.export()
     }
   }
 }

@@ -47,6 +47,7 @@
                 </template>
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
+              <export-excel title="Data Retur Penjualan" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
           <v-spacer></v-spacer>
@@ -894,12 +895,14 @@ import api from '@/services/axios.service'
 import Confirm from '@/components/dialog/Confirm'
 import FindItem from '@/components/dialog/inventory/FindItem'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
+import ExportExcel from '@/components/common/ExportExcel.vue'
 
 export default {
   components: {
     Confirm,
     FindItem,
-    AdvancedSearch
+    AdvancedSearch,
+    ExportExcel
   },
 
   data: () => ({
@@ -918,13 +921,13 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Kode', value: 'code', divider: true, width: '160' },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
-        { text: 'Tipe', value: 'returnType', divider: true, width: '160' },
-        { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
-        { text: 'Gudang', value: 'warehouseCode', divider: true, width: '100' },
-        { text: 'Dijual Oleh', value: 'salesInitial', divider: true, width: '200' }
+        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Tipe', value: 'returnType', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Pelanggan', value: 'custName', divider: true, width: '200', excelColWidth:'23' },
+        { text: 'Gudang', value: 'warehouseCode', divider: true, width: '100', excelColWidth:'13' },
+        { text: 'Dijual Oleh', value: 'salesInitial', divider: true, width: '200', excelColWidth:'23' }
       ],
       data: [],
       options: {
@@ -1676,6 +1679,9 @@ export default {
         this.data.custPhone = customer.phone
         this.data.custFax = customer.fax
       }
+    },
+    async exportExcel() {
+      this.exportExcel.export()
     }
   }
 }

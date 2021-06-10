@@ -47,6 +47,7 @@
                 </template>
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
+              <export-excel title="Data Surat Jalan" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
           <v-spacer></v-spacer>
@@ -625,13 +626,15 @@ import Confirm from '@/components/dialog/Confirm'
 import FindSo from '@/components/dialog/sales/FindSO'
 import FindReturn from '@/components/dialog/sales/FindReturn'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
+import ExportExcel from '@/components/common/ExportExcel.vue'
 
 export default {
   components: {
     Confirm,
     FindSo,
     FindReturn,
-    AdvancedSearch
+    AdvancedSearch,
+    ExportExcel
   },
 
   data: () => ({
@@ -647,13 +650,13 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Kode', value: 'code', divider: true, width: '160' },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
-        { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
-        { text: 'Kode Trans.', value: 'transCode', width: '150' },
-        { text: 'Dikirim Oleh', value: 'shippedInitial', divider: true, width: '200' },
-        { text: 'Status', value: 'mark', width: '50' }
+        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Pelanggan', value: 'custName', divider: true, width: '200', excelColWidth:'22' },
+        { text: 'Kode Trans.', value: 'transCode', width: '150', excelColWidth:'17' },
+        { text: 'Dikirim Oleh', value: 'shippedInitial', divider: true, width: '200', excelColWidth:'22' },
+        { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
       ],
       data: [],
       options: {
@@ -1258,7 +1261,10 @@ export default {
             item.custFax = response.data.fax
           }
         })
-    }    
+    },
+    async exportExcel() {
+      this.exportExcel.export()
+    }
   }
 }
 </script>
