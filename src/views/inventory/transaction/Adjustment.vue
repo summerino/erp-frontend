@@ -793,7 +793,7 @@ export default {
     },
     addItem() {
       if (!this.data.warehouseCode) {
-        this.$store.dispatch('app/showInfo', 'Please choose location first.')
+        this.$store.dispatch('app/showInfo', 'Mohon pilih gudang terlebih dahulu.')
         return
       }
       if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemId ?? null)) {
