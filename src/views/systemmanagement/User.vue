@@ -316,7 +316,7 @@ export default {
   created: function () {
     this.getList()
     this.getEmployeeList()
-    //this.getRolesList()
+    this.getRolesList()
   },
 
   mounted: function () {
@@ -414,19 +414,19 @@ export default {
           this.employees = response.data.tableData
         })
     },
-    // getRolesList() {
-    //   api.getAll(`${this.endpoint.systemManagement.role}/lists`, {
-    //     params: {
-    //       sorts: JSON.stringify([{
-    //         field: 'initial',
-    //         direction: 'asc'
-    //       }])
-    //     }
-    //   })
-    //     .then(response => {
-    //       this.roles = response.data.tableData
-    //     })
-    // },
+    getRolesList() {
+      api.getAll(this.endpoint.systemManagement.role, {
+        params: {
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.roles = response.data.tableData
+        })
+    },
     back() {
       this.main = true
     },
