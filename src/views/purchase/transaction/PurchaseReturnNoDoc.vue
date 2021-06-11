@@ -1697,7 +1697,6 @@ export default {
       this.data.supFax = item.fax
     },
     bindItemData(rowItem) {
-      debugger
       this.itemIdChange(rowItem)
     },
     async exportExcel() {
