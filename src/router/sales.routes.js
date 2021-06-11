@@ -54,4 +54,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/sales/transaction/promo',
+  name: 'promo',
+  component: () => import(/* webpackChunkName: "promo" */ '@/views/sales/transaction/Promo.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
