@@ -855,30 +855,32 @@
                     <v-row dense>
                       <v-col cols="4" md="4">   
                         <v-currency-field
-                          v-model="data.totalOut"
+                          :value="data.totalOut"
                           class="text-right"
                           :readonly="true"
                           label="Harga Barang Keluar"
-                        ></v-currency-field>             
+                        ></v-currency-field>   
+                        {{ data.totalOut }}
                       </v-col>
                       <v-col cols="12" md="4">
                         <v-currency-field
-                          v-model="data.totalIn"
+                          :value="data.totalIn"
                           class="text-right"
                           :readonly="true"
                           label="Harga Barang Masuk"
                         ></v-currency-field>
+                        {{ data.totalIn }}
                       </v-col>
                       <v-col cols="12" md="4">
                         <v-currency-field
-                          v-model="data.difference"
+                          :value="data.difference"
                           :min="-Number.MAX_SAFE_INTEGER"
                           :max="Number.MAX_SAFE_INTEGER"
                           :allow-negative="true"
                           class="text-right"
-                          :readonly="true"
                           label="Selisih"
                         ></v-currency-field>
+                        {{ data.difference }}
                       </v-col>
                     </v-row>
                   </v-card-text>
@@ -1080,9 +1082,9 @@ export default {
         subTotal: 0,
         includeTax: this.defTaxInc,
         taxAmount: 0,
-        totalIn: 0,
-        totalOut: 0,
-        difference: 0,
+        totalIn: null,
+        totalOut: null,
+        difference: null,
         nonTax: this.defNonTax,
         taxIncluded: this.defTaxInc
       }
@@ -1099,7 +1101,7 @@ export default {
       }
 
       // Define column
-      this.typeChange()
+      this.bindColumn()
     },
     advancedSearch() {
       this.grid.search = null
@@ -1298,23 +1300,26 @@ export default {
 
       // Get supplier details
       this.supCodeChange()
+
+      setTimeout(() => {
+        // Get item details
+        api.getAll(`${this.endpoint.purchase.return}/item`, {
+          params: { code: item.code }
+        })
+          .then(response => {
+            this.gridItem.data = response.data.tableData
+            // Get item details
+            api.getAll(`${this.endpoint.purchase.return}/diff-item`, {
+              params: { code: item.code }
+            })
+              .then(response2 => {
+                this.gridDiffItem.data = response2.data.tableData  
+                this.calcPrice()  
+              })
+          })
+      }, 0)
       
-      // Get item details
-      api.getAll(`${this.endpoint.purchase.return}/item`, {
-        params: { code: item.code }
-      })
-        .then(response => {
-          this.gridItem.data = response.data.tableData
-          this.calcPrice()  
-        })
-      // Get item details
-      api.getAll(`${this.endpoint.purchase.return}/diff-item`, {
-        params: { code: item.code }
-      })
-        .then(response => {
-          this.gridDiffItem.data = response.data.tableData  
-          this.calcPrice()  
-        })
+      
       // Get related transaction details
       api.getAll(`${this.endpoint.purchase.return}/related-trans`, {
         params: { code: item.code }
@@ -1473,7 +1478,7 @@ export default {
         this.gridDiffItem.data.splice(idx, 1)
       }
     },
-    typeChange() {
+    bindColumn() {
       if (this.data.type === 1) {
         this.gridItem.columns = [
           { value: 'action', sortable: false, divider: true, width: '90' },
@@ -1512,13 +1517,16 @@ export default {
           { text: 'Total Harga', value: 'total', align: 'right', divider: true, width: '120' }
         ]
       }
+    },
+    typeChange() {
+      this.bindColumn()
       this.data.taxIncluded = this.defTaxInc
       this.data.nonTax = this.defNonTax
       this.gridItem.data = []
       this.gridDiffItem.data = []
-      this.data.difference = 0
-      this.data.totalIn = 0
-      this.data.totalOut = 0
+      this.data.difference = null
+      this.data.totalIn = null
+      this.data.totalOut = null
       this.calcPrice()
     },
     nonTaxChange() {
@@ -1681,6 +1689,9 @@ export default {
         this.data.totalIn = this.data.subTotalIn  + this.data.taxAmountIn
       }
       this.data.difference = this.data.totalOut - this.data.totalIn
+      console.log('this.data.difference', this.data.difference)
+      console.log('this.data.totalOut', this.data.totalOut)
+      console.log('this.data.totalIn', this.data.totalIn)
     },
     showFindSupDialog() {
       this.$refs.findSup.open()
