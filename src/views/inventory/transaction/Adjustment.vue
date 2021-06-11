@@ -650,7 +650,7 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
-        { text: 'Tanggal', value: 'date', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Tanggal', value: 'date', divider: true, width: '150', excelColWidth:'18', isDateTime: true },
         { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'18' },
         { text: 'Lokasi', value: 'warehouseInitial', divider: true, width: '150', excelColWidth:'18' },
         { text: 'Catatan', value: 'notes', divider: true, width: '200', excelColWidth:'25' },

@@ -117,7 +117,8 @@ import api from '@/services/axios.service'
 
 export default {
   props: {
-    warehouseCode: String
+    warehouseCode: String,
+    origin: String
   },
   data() {
     return {
@@ -152,6 +153,7 @@ export default {
   },
 
   mounted: function () {
+    this.bindConditionalColumn()
     this.getCategoryHierarchy()
   },
 
@@ -228,6 +230,15 @@ export default {
       this.rowItem.itemId = item.id
       this.$emit('dblclick:row', this.rowItem, item)
       this.dialog = false
+    },
+    bindConditionalColumn() {
+      if(this.origin === 'so') {
+        let column = this.grid.columns.find(x => x.value === 'qtyOnHand')
+        column.value = 'sellQtyAvailable'
+      } else if (this.origin === 'po') {
+        let column = this.grid.columns.find(x => x.value === 'qtyOnHand')
+        column.value = 'buyQtyAvailable'
+      }
     }
   }
 }

@@ -1,5 +1,6 @@
 import Excel from 'exceljs/dist/exceljs.min.js'
 import { saveAs } from 'file-saver'
+import { format, parseISO }  from 'date-fns'
 
 class ExcelService {
   getExcelColumns(grid) {
@@ -13,7 +14,8 @@ class ExcelService {
       if (column) {
         result.push({
           text: column,
-          value: grid.columns[i].value
+          value: grid.columns[i].value,
+          isDateTime: grid.columns[i].isDateTime
         })
       }
     }
@@ -31,6 +33,7 @@ class ExcelService {
     return result
   }
   getExcelDatas(grid, columns, strNumber) {
+    debugger
     const result = []
     let number = Number(strNumber)
     
@@ -38,10 +41,19 @@ class ExcelService {
       const temp = [] 
       temp.push(number)
       for (let j = 0; j < columns.length; j++) {
-
-        const value = grid.data[i][columns[j].value]
-        if (value) {
-          temp.push(value)
+        // ignore column no
+        if (j > 0) {
+          const value = grid.data[i][columns[j].value]
+          const isDateTime = columns[j].isDateTime
+          if (value) {
+            if(isDateTime){
+              temp.push(format(parseISO(value), 'dd-MMM-yyyy'))
+            } else {
+              temp.push(value)
+            } 
+          } else {
+            temp.push('')
+          }
         }
       }
       result.push(temp)
