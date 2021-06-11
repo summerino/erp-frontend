@@ -46,7 +46,7 @@ class ExcelService {
           const value = grid.data[i][columns[j].value]
           const isDateTime = columns[j].isDateTime
           if (value) {
-            if(isDateTime){
+            if (isDateTime) {
               temp.push(format(parseISO(value), 'dd-MMM-yyyy'))
             } else {
               temp.push(value)

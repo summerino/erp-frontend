@@ -1689,9 +1689,6 @@ export default {
         this.data.totalIn = this.data.subTotalIn  + this.data.taxAmountIn
       }
       this.data.difference = this.data.totalOut - this.data.totalIn
-      console.log('this.data.difference', this.data.difference)
-      console.log('this.data.totalOut', this.data.totalOut)
-      console.log('this.data.totalIn', this.data.totalIn)
     },
     showFindSupDialog() {
       this.$refs.findSup.open()

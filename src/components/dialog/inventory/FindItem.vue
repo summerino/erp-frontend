@@ -232,11 +232,11 @@ export default {
       this.dialog = false
     },
     bindConditionalColumn() {
-      if(this.origin === 'so') {
-        let column = this.grid.columns.find(x => x.value === 'qtyOnHand')
+      if (this.origin === 'so') {
+        const column = this.grid.columns.find(x => x.value === 'qtyOnHand')
         column.value = 'sellQtyAvailable'
       } else if (this.origin === 'po') {
-        let column = this.grid.columns.find(x => x.value === 'qtyOnHand')
+        const column = this.grid.columns.find(x => x.value === 'qtyOnHand')
         column.value = 'buyQtyAvailable'
       }
     }
