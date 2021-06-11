@@ -1121,7 +1121,7 @@ export default {
           direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
         })
       }
-      api.getAll(this.endpoint.purchase.order, {
+      api.getAll(this.endpoint.purchase.return, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -1697,6 +1697,7 @@ export default {
       this.data.supFax = item.fax
     },
     bindItemData(rowItem) {
+      debugger
       this.itemIdChange(rowItem)
     },
     async exportExcel() {
