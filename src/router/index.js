@@ -20,7 +20,10 @@ export const routes = [{
 }, {
   path: '/dashboard/analytics',
   name: 'dashboard',
-  component: () => import(/* webpackChunkName: "dashboard" */ '@/views/dashboard/Dashboard.vue')
+  component: () => import(/* webpackChunkName: "dashboard" */ '@/views/dashboard/Dashboard.vue'),
+  meta: {
+    authRequired: true
+  }
 },
 ...GeneralRoutes,
 ...InventoryRoutes,

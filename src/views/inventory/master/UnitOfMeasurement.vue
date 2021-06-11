@@ -17,7 +17,10 @@
             ></v-text-field>
           </v-col>
           <v-spacer></v-spacer>
-          <v-col cols="12" md="6" class="text-right">
+          <v-col cols="12" md="1">
+            <export-excel title="Data Satuan Ukuran" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+          </v-col>
+          <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -377,12 +380,16 @@
 <script>
 import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
+
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
+
+import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 
 export default {
   components: {
+    ExportExcel,
     Confirm
   },
 
@@ -395,10 +402,10 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Inisial', value: 'initial', divider: true },
-        { text: 'Nama', value: 'description', divider: true },
-        { text: 'Satuan Terkecil', value: 'baseUnit', divider: true }
+        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { text: 'Inisial', value: 'initial', divider: true, excelColWidth:'25' },
+        { text: 'Nama', value: 'description', divider: true, excelColWidth:'15' },
+        { text: 'Satuan Terkecil', value: 'baseUnit', divider: true, excelColWidth:'15' }
       ],
       data: [],
       options: {
@@ -722,6 +729,9 @@ export default {
         if (isExist) result = true
       }
       return result
+    },
+    async exportExcel() {
+      this.exportExcel.export()
     }
   }
 }

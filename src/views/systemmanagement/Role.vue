@@ -17,7 +17,10 @@
             ></v-text-field>
           </v-col>
           <v-spacer></v-spacer>
-          <v-col cols="12" md="6" class="text-right">
+          <v-col cols="12" md="1">
+            <export-excel title="Data Peran" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+          </v-col>
+          <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -272,7 +275,7 @@
 
             <v-row v-if="this.data.action === 'edit'" dense>
               <v-col cols="6">
-                <v-card style="overflow-y: scroll" height="320">
+                <v-card style="overflow-y: scroll" height="480">
                   <v-card-title>Menu Peran</v-card-title>
                   <v-card-text>
                     <v-row justify="space-between">
@@ -300,7 +303,7 @@
                   <v-card 
                     v-if="!selectedItem"
                     class="title grey--text text--lighten-1 font-weight-light text-center"
-                    height="320"
+                    height="480"
                   >
                     <v-row>
                       <v-col cols="12">
@@ -364,10 +367,12 @@ import { randomNumber } from '@/helpers/math-helpers'
 
 import api from '@/services/axios.service'
 
+import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 
 export default {
   components: {
+    ExportExcel,
     Confirm
   },
 
@@ -387,9 +392,9 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Inisial', value: 'initial', divider: true, width: '110' },
-        { text: 'Nama', value: 'name', divider: true, width: '270' }
+        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { text: 'Inisial', value: 'initial', divider: true, width: '110', excelColWidth:'13' },
+        { text: 'Nama', value: 'name', divider: true, width: '270', excelColWidth:'30' }
       ],
       data: [],
       options: {
@@ -407,6 +412,7 @@ export default {
     listAction: [],
     selection: [],
     selectionAction: [],
+    selectionParent: [],
     selectionTable: [],
     menuAction: [],
     menuList: [],
@@ -462,18 +468,6 @@ export default {
       } else {
         return this.active[0]
       }
-    },
-    target() {
-      const value = this.$refs.itemMenuName
-      if (!isNaN(value)) return Number(value)
-      else return value
-    },
-    options() {
-      return {
-        duration: 300,
-        offset: 0,
-        easing: 'easeInOutCubic'
-      }
     }
   },
 
@@ -491,6 +485,7 @@ export default {
       this.selectionAction = []
       this.listAction = []
       this.selectionTable = []
+      this.selectionParent = []
       this.itemBefore = 0
       this.menuName = ''
 
@@ -600,6 +595,7 @@ export default {
       } else if (data.action === 'edit') {
         // Just edit
         this.updateMenu(this.itemBefore)
+        this.getSelectionParent()
         this.createRoleMenuSave()
         data.roleMenus = this.selectionTable
         data.roleMenuActions = this.selectionAction
@@ -619,15 +615,26 @@ export default {
       }
     },
     createRoleMenuSave() {
-      for (let i = 0; i < this.selection.length; i++) {
-        const item = {
-          id: randomNumber(-1, -1000),
-          menuId: this.selection[i],
-          isActive: true,
-          updatedDate: format(new Date(), 'yyyy-MM-dd HH:mm:ss')
+      // Inserting parent
+      if (this.selectionParent.length) {
+        for (let j = 0; j < this.selectionParent.length; j++) {
+          this.addSelection(this.selectionParent[j])
         }
-        this.selectionTable.push(item)
       }
+
+      // Inserting child
+      for (let i = 0; i < this.selection.length; i++) {
+        this.addSelection(this.selection[i])
+      }
+    },
+    addSelection(id) {
+      const item = {
+        id: randomNumber(-1, -1000),
+        menuId: id,
+        isActive: true,
+        updatedDate: format(new Date(), 'yyyy-MM-dd HH:mm:ss')
+      }
+      this.selectionTable.push(item)
     },
     loadAction() {
       api.getAll(`${this.endpoint.systemManagement.menu}/menu/actions`, {})
@@ -766,6 +773,19 @@ export default {
         .then(response => {
           this.menuList = response.data.tableData
         })
+    },
+    getSelectionParent() {
+      for (let i = 0; i < this.selection.length; i++) {
+        this.lookParent(this.selection[i])
+      }
+    },
+    lookParent(id) {
+      const parentId = this.menuList.find(x => x.id === id).parentId
+
+      if (parentId && !this.selectionParent.find(x => x === parentId)) {
+        this.selectionParent.push(parentId)
+        this.lookParent(parentId)
+      }
     }
   }
 }

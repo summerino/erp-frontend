@@ -13,11 +13,7 @@ export default {
   },
 
   isAuthenticated() {
-    const accessToken = localStorage.getItem('accessToken')
-    if (accessToken) {
-      return true
-    } else {
-      return false
-    }
+    return new Date(Date.now()) < new Date(localStorage.getItem('expToken') * 1000) &&
+      localStorage.getItem('accessToken')
   }
 }

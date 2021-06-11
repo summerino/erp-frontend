@@ -37,8 +37,26 @@
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
             </v-row>
-          </v-col>     
-          <v-col cols="12" md="4" class="text-right">
+          </v-col>    
+          <v-col cols="12" md="1">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'p']"
+                  icon
+                  color="green"
+                  @click="exportExcel"
+                  @shortkey="exportExcel"
+                >
+                  <v-icon>mdi-file-excel-outline</v-icon>
+                </v-btn>
+              </template>
+              <span class="text-caption text-center">Export Excel<br/>(Ctrl + Alt + P)</span>
+            </v-tooltip>
+          </v-col> 
+          <v-col cols="12" md="3" class="text-right">
             <add-new-btn @add="add"></add-new-btn>
           </v-col>
         </v-row>
@@ -59,7 +77,7 @@ import Confirm from '@/components/dialog/Confirm'
 import MainGrid from '../../components/common/MainGrid.vue'
 import AdvancedSearch from '../../components/common/AdvancedSearch.vue'
 import AddNewBtn from '../../components/common/AddNewBtn.vue'
-
+import excelService from '@/services/excel.service'
 export default {
   components: {
     Confirm,
@@ -133,7 +151,7 @@ export default {
         this.grid.data = response.data.tableData
         this.grid.columns = response.data.metaData.filter(x => !x.isHidden)
         this.grid.primaryKey = response.data.pkColumnName        
-        this.grid.rowCount = response.data.RowCount
+        this.grid.rowCount = response.data.rowCount
       })
     },
     getView() {
@@ -147,7 +165,7 @@ export default {
         this.grid.data = response.data.tableData
         this.grid.columns = response.data.metaData.filter(x => !x.isHidden)
         this.grid.primaryKey = response.data.pkColumnName      
-        this.grid.rowCount = response.data.RowCount
+        this.grid.rowCount = response.data.rowCount
         this.generateField()
       })
     },
@@ -185,9 +203,11 @@ export default {
             }
           })
       }
+    },
+    async exportExcel() {
+      const title = `Data ${this.param}`
+      excelService.export(title, this.grid, this.gridDefOpts, true)
     }
   }
 }
-
 </script>
-

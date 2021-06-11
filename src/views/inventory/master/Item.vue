@@ -17,7 +17,10 @@
             ></v-text-field>
           </v-col>
           <v-spacer></v-spacer>
-          <v-col cols="12" md="6" class="text-right">
+          <v-col cols="12" md="1">
+            <export-excel title="Data Barang" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+          </v-col>
+          <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -690,10 +693,12 @@ import { format, parseISO }  from 'date-fns'
 
 import api from '@/services/axios.service'
 
+import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 
 export default {
   components: {
+    ExportExcel,
     Confirm
   },
 
@@ -709,16 +714,16 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Inisial', value: 'initial', divider: true, width: '110' },
-        { text: 'Nama', value: 'name', divider: true, width: '270' },
-        { text: 'Kategori', value: 'categoryName', divider: true, width: '270' },
-        { text: 'Satuan Ukuran', value: 'uomInitial', divider: true, width: '270' },
-        { text: 'Satuan Jual', value: 'uomSellName', divider: true, width: '60' },
-        { text: 'Harga Jual', value: 'sellPrice', align: 'right', divider: true, width: '150' },
-        { text: 'Satuan Beli', value: 'uomBuyName', divider: true, width: '60' },
-        { text: 'Harga Beli', value: 'buyPrice', align: 'right', divider: true, width: '150' },
-        { text: 'Status', value: 'isActive', align: 'center', width: '50' }
+        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { text: 'Inisial', value: 'initial', divider: true, width: '110', excelColWidth:'10' },
+        { text: 'Nama', value: 'name', divider: true, width: '270', excelColWidth:'30' },
+        { text: 'Kategori', value: 'categoryName', divider: true, width: '270', excelColWidth:'30' },
+        { text: 'Satuan Ukuran', value: 'uomInitial', divider: true, width: '270', excelColWidth:'30' },
+        { text: 'Satuan Jual', value: 'uomSellName', divider: true, width: '60', excelColWidth:'10' },
+        { text: 'Harga Jual', value: 'sellPrice', align: 'right', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Satuan Beli', value: 'uomBuyName', divider: true, width: '60', excelColWidth:'10' },
+        { text: 'Harga Beli', value: 'buyPrice', align: 'right', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Status', value: 'isActive', align: 'center', width: '50', excelColWidth:'10' }
       ],
       data: [],
       options: {
@@ -730,12 +735,12 @@ export default {
     },
     gridQuantity: {
       columns: [
-        { text: 'Lokasi Gudang', value: 'warehouseInitial', divider: true, width: '200' },
+        { text: 'Lokasi Gudang', value: 'warehouseInitial', divider: true, width: '200'  },
         { text: 'Qty Sistem', value: 'qtyOnHand', align: 'right', divider: true, width: '120' },
         { text: 'Qty Dipesan', value: 'qtyOnOrder', align: 'right', divider: true, width: '120' },
         { text: 'Qty Tersedia', value: 'qtyOnAvailable', align: 'right', divider: true, width: '120' },
         { text: 'Qty Indent', value: 'qtyOnIndent', align: 'right', divider: true, width: '120' },
-        { text: 'Qty Titik Pemesanan Kembali', value: 'qtyReorderPoint', align: 'right', divider: true, width: '120' },
+        { text: 'Qty Titik Pemesanan Kembali', value: 'qtyReorderPoint', align: 'right', divider: true, width: '120'},
         { text: 'Qty Transfer', value: 'qtyOnTransfer', align: 'right', divider: true, width: '120' },
         { text: 'Diperbarui Tgl.', value: 'updatedDate', divider: true, width: '60' }
       ],
@@ -1167,6 +1172,9 @@ export default {
       item.qtyOnIndent /= conversionValue
       item.qtyReorderPoint /= conversionValue
       item.qtyOnTransfer /= conversionValue
+    },
+    async exportExcel() {
+      this.exportExcel.export()
     }
   }
 }

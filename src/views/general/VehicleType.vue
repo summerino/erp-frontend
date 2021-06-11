@@ -17,7 +17,10 @@
             ></v-text-field>
           </v-col>
           <v-spacer></v-spacer>
-          <v-col cols="12" md="6" class="text-right">
+          <v-col cols="12" md="1">
+            <export-excel title="Data Jenis Kendaraan" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+          </v-col>
+          <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -194,10 +197,12 @@ import { format, parseISO }  from 'date-fns'
 
 import api from '@/services/axios.service'
 
+import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 
 export default {
   components:{
+    ExportExcel,
     Confirm
   },
 
@@ -205,9 +210,9 @@ export default {
     main: true,
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Inisial', value: 'initial', divider: true, width: '150' },
-        { text: 'Nama', value: 'name', divider: true, width: '200' }
+        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { text: 'Inisial', value: 'initial', divider: true, width: '150', excelColWidth:'15' },
+        { text: 'Nama', value: 'name', divider: true, width: '200', excelColWidth:'25' }
       ],
       data: [],
       options: {
@@ -373,6 +378,9 @@ export default {
         this.back()
         this.getList()
       }
+    },
+    async exportExcel() {
+      this.exportExcel.export()
     }
   }
 }

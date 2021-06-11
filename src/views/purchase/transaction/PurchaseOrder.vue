@@ -37,6 +37,7 @@
                 </template>
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
+              <export-excel title="Data Order Pembelian" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>           
           <v-col cols="12" md="4" class="text-right">
@@ -867,21 +868,23 @@ import { sumBy as _sumBy } from 'lodash'
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 
+import AdvancedSearch from '@/components/common/AdvancedSearch'
+import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 import FindSupplier from '@/components/dialog/general/FindSupplier'
 import FindItem from '@/components/dialog/inventory/FindItem'
 import PoSaveReceive from '@/components/dialog/purchase/POSaveReceive'
 import PoSaveInvoice from '@/components/dialog/purchase/POSaveInvoice'
-import AdvancedSearch from '@/components/common/AdvancedSearch'
 
 export default {
   components: {
+    AdvancedSearch,
+    ExportExcel,
     Confirm,
     FindSupplier,
     FindItem,
     PoSaveReceive,
-    PoSaveInvoice,
-    AdvancedSearch
+    PoSaveInvoice
   },
 
   data: () => ({
@@ -898,12 +901,12 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '120' },
-        { text: 'No. Ord. Pembelian', value: 'code', divider: true, width: '160' },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
-        { text: 'Diminta Oleh', value: 'requestInitial', divider: true, width: '200' },
-        { text: 'Pemasok', value: 'supName', divider: true, width: '200' },
-        { text: 'Total', value: 'total', align: 'right', divider: true, width: '120' },
+        { value: 'action', sortable: false, divider: true, width: '120', excelColWidth:'10' },
+        { text: 'No. Ord. Pembelian', value: 'code', divider: true, width: '160', excelColWidth:'18' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Diminta Oleh', value: 'requestInitial', divider: true, width: '200', excelColWidth:'23' },
+        { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
+        { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15' },
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
@@ -1588,6 +1591,9 @@ export default {
     },
     bindItemData(rowItem) {
       this.itemIdChange(rowItem)
+    },
+    async exportExcel() {
+      this.exportExcel.export()
     }
   }
 }

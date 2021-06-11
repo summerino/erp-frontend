@@ -17,7 +17,10 @@
             ></v-text-field>
           </v-col>
           <v-spacer></v-spacer>
-          <v-col cols="12" md="6" class="text-right">
+          <v-col cols="12" md="1">
+            <export-excel title="Data Grup Barang" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+          </v-col>
+          <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -380,10 +383,12 @@ import { randomNumber } from '@/helpers/math-helpers'
 
 import api from '@/services/axios.service'
 
+import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 
 export default {
   components: {
+    ExportExcel,
     Confirm
   },
 
@@ -399,9 +404,9 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Inisial', value: 'initial', divider: true, width: '110' },
-        { text: 'Nama', value: 'name', divider: true, width: '270' }
+        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { text: 'Inisial', value: 'initial', divider: true, width: '110', excelColWidth:'15' },
+        { text: 'Nama', value: 'name', divider: true, width: '270', excelColWidth:'30' }
       ],
       data: [],
       options: {
@@ -618,6 +623,9 @@ export default {
           this.gridItem.data.splice(idx, 1)
         }
       }
+    },
+    async exportExcel() {
+      this.exportExcel.export()
     }
   }
 }
