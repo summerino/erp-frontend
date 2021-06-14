@@ -769,16 +769,16 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'No. Faktur', value: 'code', divider: true, width: '160' },
-        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120' },
-        { text: 'Tipe', value: 'fromDirectInvoice', divider: true, width: '170' },
-        { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
-        { text: 'No. Ord. Penjualan', value: 'soCode', divider: true, width: '150' },
-        { text: 'Total', value: 'total', align: 'right', divider: true, width: '120' },
-        { text: 'Dikeluarkan Oleh', value: 'issuedInitial', divider: true, width: '200' },
-        { text: 'Tanggal Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120' },
-        { text: 'Status', value: 'mark', width: '50' }
+        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { text: 'No. Faktur', value: 'code', divider: true, width: '160', excelColWidth:'18' },
+        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'20', isDateTime: true },
+        { text: 'Tipe', value: 'fromDirectInvoice', divider: true, width: '170', excelColWidth:'20', isBool: true, customValues: [{state: true, value: 'Penjualan Langsung'}, {state: false, value: 'Faktur Penjualan'}] },
+        { text: 'Pelanggan', value: 'custName', divider: true, width: '200', excelColWidth:'23' },
+        { text: 'No. Ord. Penjualan', value: 'soCode', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
+        { text: 'Dikeluarkan Oleh', value: 'issuedInitial', divider: true, width: '200', excelColWidth:'23' },
+        { text: 'Tanggal Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'20', isDateTime: true },
+        { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
       ],
       data: [],
       options: {

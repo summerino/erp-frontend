@@ -748,12 +748,12 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
         { text: 'No. Faktur', value: 'code', divider: true, width: '160', excelColWidth:'19' },
-        { text: 'Tgl. Trans.', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Tgl. Trans.', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
-        { text: 'No. Ord. Pembelian', value: 'poCode', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'No. Ord. Pembelian', value: 'poCode', divider: true, width: '150', excelColWidth:'18', isNumber: true },
         { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15' },
         { text: 'Dikeluarkan Oleh', value: 'issuedInitial', divider: true, width: '200', excelColWidth:'23' },
-        { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'No. Ref.', value: 'refNo', width: '120', excelColWidth:'15' },
         { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
       ],

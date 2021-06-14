@@ -378,13 +378,13 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
         { text: 'Kode Transaksi', value: 'code', divider: true, width: '160', excelColWidth:'19' },
-        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
         { text: 'Sumber Transksi.', value: 'srcTransName', divider: true, width: '100', excelColWidth:'13' },
         { text: 'Kode Transaksi Sumber', value: 'transCode', divider: true, width: '100', excelColWidth:'13' },
-        { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15' },
-        { text: 'Digunakan', value: 'used', align: 'right', divider: true, width: '120', excelColWidth:'15' },
-        { text: 'Saldo', value: 'outstanding', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
+        { text: 'Digunakan', value: 'used', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
+        { text: 'Saldo', value: 'outstanding', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
         { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
       ],
       data: [],
