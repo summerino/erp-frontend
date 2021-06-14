@@ -674,7 +674,7 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
         { text: 'Kode Transaksi', value: 'transCode', divider: true, width: '150', excelColWidth:'18' },
         { text: 'Diterima Oleh', value: 'receiveInitial', divider: true, width: '200', excelColWidth:'23' },

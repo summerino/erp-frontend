@@ -296,7 +296,7 @@ export default {
         { text: 'Nama', value: 'name', divider: true, width: '200', excelColWidth:'23' },
         { text: 'Peran', value: 'roleName', divider: true, width: '150', excelColWidth:'18' },
         { text: 'Karyawan', value: 'employeeInitial', divider: true, width: '150', excelColWidth:'18' },
-        { text: 'Status', value: 'isActive', width: '90', excelColWidth:'10' }
+        { text: 'Status', value: 'isActive', width: '90', excelColWidth:'10', isBool: true }
       ],
       data: [],
       options: {

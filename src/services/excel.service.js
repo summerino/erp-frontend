@@ -7,7 +7,10 @@ class ExcelService {
     const result = []
     result.push({
       text: 'No',
-      value: 'no'
+      value: 'no',
+      isNumber: undefined,
+      isBool: false,
+      customValues: null
     })
     for (let i = 0; i < grid.columns.length; i++) {
       const column = grid.columns[i].text
@@ -15,7 +18,10 @@ class ExcelService {
         result.push({
           text: column,
           value: grid.columns[i].value,
-          isDateTime: grid.columns[i].isDateTime
+          isDateTime: grid.columns[i].isDateTime,
+          isNumber: grid.columns[i].isNumber,
+          isBool: grid.columns[i].isBool,
+          customValues: grid.columns[i].customValues
         })
       }
     }
@@ -33,7 +39,6 @@ class ExcelService {
     return result
   }
   getExcelDatas(grid, columns, strNumber) {
-    debugger
     const result = []
     let number = Number(strNumber)
     
@@ -45,15 +50,41 @@ class ExcelService {
         if (j > 0) {
           const value = grid.data[i][columns[j].value]
           const isDateTime = columns[j].isDateTime
-          if (value) {
-            if (isDateTime) {
-              temp.push(format(parseISO(value), 'dd-MMM-yyyy'))
-            } else {
-              temp.push(value)
+          const isBool = columns[j].isBool
+          const customValues = columns[j].customValues
+          if (isBool) {
+            if (customValues) {
+              if (value) {
+                temp.push(customValues[0].value)
+              } else {
+                temp.push(customValues[1].value)
+              }
             } 
-          } else {
-            temp.push('')
+
+            if (!customValues) {
+              if (value) {
+                temp.push('Aktif')
+              } else {
+                temp.push('Tidak Aktif')
+              }
+            }
           }
+
+          if (!isBool) {
+            if (value) {
+              if (isDateTime) {
+                temp.push(format(parseISO(value), 'dd-MMM-yyyy'))
+              } else {
+                temp.push(value)
+              } 
+            } else if (value === 0) {
+              temp.push(0)
+            } else {
+              temp.push('')
+            }
+          }
+
+          
         }
       }
       result.push(temp)
@@ -141,7 +172,16 @@ class ExcelService {
       worksheet.getCell(5, i).fill = pattern
       worksheet.getCell(5, i).font = headerColumnFontSettings
       worksheet.getCell(5, i).alignment = { vertical: 'middle', horizontal: 'center' }
+      
     }
+
+    // style align header column style
+    for (let c = 0; c < columns.length; c++) {
+      if (columns[c].isNumber) {
+        worksheet.getColumn(c + 1).numFmt = 'Rp. #,##0.00;'
+      } 
+    }
+
     const firstRow = 5
     // style align column number
     for (let i = 0; i <= datas.length; i++) {

@@ -701,7 +701,7 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
         { text: 'No. Transf. Persd.', value: 'code', divider: true, width: '160', excelColWidth:'20' },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Tipe', value: 'typeInitial', divider: true, width: '150', excelColWidth:'18' },
         { text: 'Gudang Asal', value: 'warehouseInitialFrom', divider: true, width: '180', excelColWidth:'20' },
         { text: 'Gudang Tujuan', value: 'warehouseInitialTo', divider: true, width: '180', excelColWidth:'20' },

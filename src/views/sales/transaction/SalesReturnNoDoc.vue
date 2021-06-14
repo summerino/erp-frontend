@@ -923,7 +923,7 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Tipe', value: 'returnType', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Pelanggan', value: 'custName', divider: true, width: '200', excelColWidth:'23' },
         { text: 'Gudang', value: 'warehouseCode', divider: true, width: '100', excelColWidth:'13' },

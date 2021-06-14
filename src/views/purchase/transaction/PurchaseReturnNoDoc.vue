@@ -942,7 +942,7 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'18' },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
         { text: 'Kode Penerimaan Barang', value: 'rcvCode', divider: true, width: '100', excelColWidth:'13' },
         { text: 'Dikirim Oleh', value: 'shippedInitial', divider: true, width: '200', excelColWidth:'23' }

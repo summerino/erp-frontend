@@ -343,10 +343,8 @@ export default {
       columns: [
         { value: 'action', excelColWidth:'10' },
         { text: 'Inisial', value: 'initial', excelColWidth:'18' },
-        { text: 'Nama', value: 'name', excelColWidth:'23' },
-        { text: 'Turunan', value: 'lineage', excelColWidth:'10' },
-        { text: 'Kedalaman', value: 'deep', excelColWidth:'10' },
-        { text: 'Id Induk', value: 'parentId', excelColWidth:'10' }
+        { text: 'Nama', value: 'name', excelColWidth:'40' },
+        { text: 'Turunan', value: 'lineage', excelColWidth:'45' }
       ],
       data: [],
       total: 0,
