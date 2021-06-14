@@ -245,7 +245,7 @@ export default {
         { value: 'action', sortable: false, divider: true, width: '50' },
         { text: 'Code', value: 'code', divider: true, width: '70' },
         { text: 'Name', value: 'name', divider: true, width: '200' },
-        { text: 'Status', value: 'isActive', width: '90' }
+        { text: 'Status', value: 'isActive', width: '90', isBool: true }
       ],
       data: [],
       options: {

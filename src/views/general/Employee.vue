@@ -410,7 +410,7 @@ export default {
         { text: 'Alamat', value: 'address1', divider: true, width: '250', excelColWidth:'25' },
         { text: 'Telepon', value: 'phone', divider: true, width: '120', excelColWidth:'15' },
         { text: 'Tipe', value: 'type', divider: true, width: '60', excelColWidth:'10' },
-        { text: 'Status', value: 'isActive', width: '90', excelColWidth:'10' }
+        { text: 'Status', value: 'isActive', width: '90', excelColWidth:'10', isBool: true }
       ],
       data: [],
       options: {

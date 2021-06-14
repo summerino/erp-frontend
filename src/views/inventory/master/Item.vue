@@ -721,10 +721,10 @@ export default {
         { text: 'Kategori', value: 'categoryName', divider: true, width: '270', excelColWidth:'30' },
         { text: 'Satuan Ukuran', value: 'uomInitial', divider: true, width: '270', excelColWidth:'30' },
         { text: 'Satuan Jual', value: 'uomSellName', divider: true, width: '60', excelColWidth:'10' },
-        { text: 'Harga Jual', value: 'sellPrice', align: 'right', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Harga Jual', value: 'sellPrice', align: 'right', divider: true, width: '150', excelColWidth:'18', isNumber: true },
         { text: 'Satuan Beli', value: 'uomBuyName', divider: true, width: '60', excelColWidth:'10' },
-        { text: 'Harga Beli', value: 'buyPrice', align: 'right', divider: true, width: '150', excelColWidth:'18' },
-        { text: 'Status', value: 'isActive', align: 'center', width: '50', excelColWidth:'10' }
+        { text: 'Harga Beli', value: 'buyPrice', align: 'right', divider: true, width: '150', excelColWidth:'18', isNumber: true },
+        { text: 'Status', value: 'isActive', align: 'center', width: '50', excelColWidth:'10', isBool: true }
       ],
       data: [],
       options: {

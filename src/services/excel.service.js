@@ -63,9 +63,9 @@ class ExcelService {
 
             if (!customValues) {
               if (value) {
-                temp.push('Ya')
+                temp.push('Aktif')
               } else {
-                temp.push('Tidak')
+                temp.push('Tidak Aktif')
               }
             }
           }

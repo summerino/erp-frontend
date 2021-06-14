@@ -297,7 +297,7 @@ export default {
         { text: 'Nama', value: 'name', divider: true, width: '200', excelColWidth:'25' },
         { text: 'Alamat', value: 'address', divider: true, width: '200', excelColWidth:'35' },
         { text: 'Telepon', value: 'phone', divider: true, width: '120', excelColWidth:'15' },
-        { text: 'Default', value: 'isDefault', divider: true, width: '120', excelColWidth:'10' }
+        { text: 'Default', value: 'isDefault', divider: true, width: '120', excelColWidth:'10', isBool: true }
       ],
       data: [],
       options: {
