@@ -1287,23 +1287,26 @@ export default {
 
       // get customer data
       this.custCodeChange()
-
-      // Get item details
-      api.getAll(`${this.endpoint.sales.return}/item`, {
-        params: { code: item.code }
-      })
-        .then(response => {
-          this.gridItem.data = response.data.tableData
-          this.calcPrice()  
+      setTimeout(() => {
+        // Get item details
+        api.getAll(`${this.endpoint.sales.return}/item`, {
+          params: { code: item.code }
         })
-      // Get item details
-      api.getAll(`${this.endpoint.sales.return}/diff-item`, {
-        params: { code: item.code }
-      })
-        .then(response => {
-          this.gridDiffItem.data = response.data.tableData  
-          this.calcPrice()  
-        })
+          .then(response => {
+            this.gridItem.data = response.data.tableData
+            //this.calcPrice()  
+            // Get item details
+            api.getAll(`${this.endpoint.sales.return}/diff-item`, {
+              params: { code: item.code }
+            })
+              .then(response => {
+                this.gridDiffItem.data = response.data.tableData  
+                this.calcPrice()  
+              })
+          })
+        
+      }, 0)
+      
       // Get related transaction details
       api.getAll(`${this.endpoint.sales.return}/related-trans`, {
         params: { code: item.code }

@@ -847,6 +847,7 @@
     ></find-supplier>
     <find-item
       ref="findItem"
+      origin="po"
       @dblclick:row="bindItemData"
     ></find-item>
     <po-save-receive
