@@ -117,8 +117,7 @@ import api from '@/services/axios.service'
 
 export default {
   props: {
-    warehouseCode: String,
-    origin: String
+    warehouseCode: String
   },
   data() {
     return {
@@ -142,8 +141,8 @@ export default {
           { text: 'Inisial', value: 'initial', divider: true, width: '120' },
           { text: 'Nama', value: 'name', divider: true, width: '300' },
           { text: 'Tipe', value: 'typeName', divider: true, width: '150' },
-          { text: 'Qty', value: 'qtyOnHand', align: 'right', divider: true, width: '100' },
-          { text: 'Satuan', value: 'uomBuyName', divider: true, width: '150' },
+          { text: 'Qty', value: 'sellQtyAvailable', align: 'right', divider: true, width: '100' },
+          { text: 'Satuan', value: 'uomSellName', divider: true, width: '150' },
           { text: 'Kategori', value: 'categoryName', width: '150' }
         ],
         data: [],
@@ -153,7 +152,6 @@ export default {
   },
 
   mounted: function () {
-    this.bindConditionalColumn()
     this.getCategoryHierarchy()
   },
 
@@ -201,13 +199,6 @@ export default {
         operator: 'eq',
         keyword: true
       }]
-      if (this.warehouseCode) {
-        filters.push({
-          field: 'warehouseCode',
-          operator: 'eq',
-          keyword: this.warehouseCode
-        })
-      }
       api.getAll(this.endpoint.inventory.item.item, {
         params: {
           category: JSON.stringify(
@@ -219,7 +210,8 @@ export default {
           sorts: JSON.stringify([{
             field: this.data.by,
             direction: 'asc'
-          }])
+          }]),
+          warehouseCode: this.warehouseCode
         }
       })
         .then(response => {
@@ -230,15 +222,6 @@ export default {
       this.rowItem.itemId = item.id
       this.$emit('dblclick:row', this.rowItem, item)
       this.dialog = false
-    },
-    bindConditionalColumn() {
-      if (this.origin === 'so') {
-        const column = this.grid.columns.find(x => x.value === 'qtyOnHand')
-        column.value = 'sellQtyAvailable'
-      } else if (this.origin === 'po') {
-        const column = this.grid.columns.find(x => x.value === 'qtyOnHand')
-        column.value = 'buyQtyAvailable'
-      }
     }
   }
 }

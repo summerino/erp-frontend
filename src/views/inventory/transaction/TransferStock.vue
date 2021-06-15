@@ -90,6 +90,7 @@
         :sort-by="grid.options.sortBy"
         :sort-desc="grid.options.sortDesc"
         class="elevation-1"
+        fixed-header
       >
         <template v-slot:[`item.action`]="{ item }">
           <v-tooltip bottom>
@@ -654,6 +655,7 @@
     <confirm ref="confirm"></confirm>
     <find-item
       ref="findItem"
+      :warehouseCode="data.warehouseCodeFrom"
       @dblclick:row="bindItemData"
     ></find-item>
     <find-transfer-stock
