@@ -138,6 +138,7 @@
         :sort-by="grid.options.sortBy"
         :sort-desc="grid.options.sortDesc"
         class="elevation-1"
+        fixed-header
       >
         <template v-slot:[`item.action`]="{ item }">
           <v-tooltip bottom>

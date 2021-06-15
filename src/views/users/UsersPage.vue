@@ -69,6 +69,7 @@
         :items="users"
         :search="searchQuery"
         class="flex-grow-1"
+        fixed-header
       >
         <template v-slot:[`item.id`]="{ item }">
           <div class="font-weight-bold"># <copy-label :text="item.id + ''" /></div>
