@@ -847,7 +847,7 @@
     ></find-supplier>
     <find-item
       ref="findItem"
-      origin="po"
+      :warehouseCode="data.warehouseCode"
       @dblclick:row="bindItemData"
     ></find-item>
     <po-save-receive

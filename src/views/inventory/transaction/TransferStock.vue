@@ -654,6 +654,7 @@
     <confirm ref="confirm"></confirm>
     <find-item
       ref="findItem"
+      :warehouseCode="data.warehouseCodeFrom"
       @dblclick:row="bindItemData"
     ></find-item>
     <find-transfer-stock

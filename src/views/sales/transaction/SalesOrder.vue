@@ -913,7 +913,7 @@
     ></find-customer>
     <find-item
       ref="findItem"
-      origin="so"
+      :warehouseCode="data.warehouseCode"
       @dblclick:row="bindItemData"
     ></find-item>
     <so-save-delivery
