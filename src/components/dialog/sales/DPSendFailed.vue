@@ -185,7 +185,8 @@ export default {
         height: 100
       },
       notes : null,
-      data: []
+      data: [],
+      valid: false
     }
   },
 

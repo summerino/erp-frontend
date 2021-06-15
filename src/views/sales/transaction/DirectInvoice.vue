@@ -726,6 +726,7 @@
     ></find-customer>
     <find-item
       ref="findItem"
+      :warehouseCode="data.warehouseCode"
       @dblclick:row="bindItemData"
     ></find-item>
   </div>

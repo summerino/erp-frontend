@@ -3,7 +3,7 @@
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
-          <v-col cols="12" md="3">
+          <v-col cols="12" md="2">
             Rencana Pengiriman
           </v-col>
           <!-- <v-col cols="12" md="4">
@@ -51,7 +51,7 @@
             </v-row>
           </v-col>
           <v-spacer></v-spacer>
-          <v-col cols="12" md="5" class="text-right">
+          <v-col cols="12" md="6" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -781,6 +781,7 @@ export default {
     this.getEmployeeLists()
     this.getVehicleLists()
     this.getWarehouseLists()
+    this.$store.commit('app/setFilterFields', this.filterfields)
   },
 
   mounted: function () {
@@ -851,21 +852,33 @@ export default {
         }, 0)
       }
     },
-    getList(bindToForm = false) {
+    advancedSearch() {
+      this.grid.search = null
+      this.$store.commit('app/advSearch')
+      if (this.filter.isAdvancedSearch) {
+        this.$store.commit('app/addSearch')
+      }
+    },
+    search(vm) {
+      this.grid.search = vm.search
+      this.getList(vm.bindToForm, vm.filters)
+    },
+    getList(bindToForm = false, filters = []) {
       const sorts = []
+
       for (let i = 0; i < this.grid.options.sortBy.length; i++) {
         sorts.push({
           field: this.grid.options.sortBy[i],
           direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
         })
       }
-
       api.getAll(this.endpoint.sales.plan, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
           take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
-          sorts: JSON.stringify(sorts)
+          sorts: JSON.stringify(sorts),
+          filters: JSON.stringify(filters)
         }
       })
         .then(response => {
@@ -877,6 +890,32 @@ export default {
           }
         })
     },
+    // getList(bindToForm = false) {
+    //   const sorts = []
+    //   for (let i = 0; i < this.grid.options.sortBy.length; i++) {
+    //     sorts.push({
+    //       field: this.grid.options.sortBy[i],
+    //       direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
+    //     })
+    //   }
+
+    //   api.getAll(this.endpoint.sales.plan, {
+    //     params: {
+    //       search: this.grid.search,
+    //       skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
+    //       take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
+    //       sorts: JSON.stringify(sorts)
+    //     }
+    //   })
+    //     .then(response => {
+    //       this.grid.data = response.data.tableData
+    //       this.grid.total = response.data.rowCount
+    //       if (bindToForm) {
+    //         const item = this.grid.data.find(h => h.code === this.data.code)
+    //         this.edit(item)
+    //       }
+    //     })
+    // },
     getDriverLists() {
       api.getAll(`${this.endpoint.general.employee}/lists`, {
         params: {
