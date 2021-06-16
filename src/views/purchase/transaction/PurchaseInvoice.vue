@@ -792,9 +792,6 @@ export default {
         text: 'No. Ord. Pembelian', value: 'poCode', dataType: 'text'
       },
       {
-        text: 'Total', value: 'total', dataType: 'text'
-      },
-      {
         text: 'Dikeluarkan Oleh', value: 'issuedInitial', dataType: 'text'
       },
       {
