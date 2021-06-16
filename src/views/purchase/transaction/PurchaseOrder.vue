@@ -947,13 +947,13 @@ export default {
         text: 'No Order', value: 'code', dataType: 'text'
       },
       {
-        text: 'Pemasok', value: 'supName', dataType: 'text'
+        text: 'Tanggal', value: 'date', dataType: 'datetime'
       },
       {
         text: 'Diminta Oleh', value: 'requestInitial', dataType: 'text'
       },
       {
-        text: 'Tanggal', value: 'date', dataType: 'datetime'
+        text: 'Pemasok', value: 'supName', dataType: 'text'
       }
     ],
     valid: false,
