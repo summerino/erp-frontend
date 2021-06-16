@@ -176,6 +176,9 @@
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
+        <template v-slot:[`item.custName`]="{ item }">
+          {{ item.custCode }} - {{ item.custName }}
+        </template>
         <template v-slot:[`item.fromDirectInvoice`]="{ item }">
           {{ item.fromDirectInvoice ? 'Penjualan Langsung' : 'Faktur Penjualan' }}
         </template>
