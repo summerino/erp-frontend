@@ -344,7 +344,6 @@ export default {
 
   created: function () {
     this.getList()
-    this.getListForExcel()
   },
 
   mounted: function () {
@@ -407,6 +406,7 @@ export default {
           this.hierarchy.data = [response.data]
           this.open = [0]
         })
+      this.getListForExcel()
     },
     getListForExcel() {
       api.getAll(`${this.endpoint.sales.area}/lists`, {})
