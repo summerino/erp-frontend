@@ -1017,7 +1017,7 @@ export default {
         text: 'No. Ord. Penjualan', value: 'code', dataType: 'text'
       },
       {
-        text: 'Tanggal', value: 'date', dataType: 'dateTime'
+        text: 'Tanggal', value: 'date', dataType: 'datetime'
       },
       {
         text: 'Penjual', value: 'salesInitial', dataType: 'text'

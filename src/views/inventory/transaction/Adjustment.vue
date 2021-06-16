@@ -674,7 +674,7 @@ export default {
     },
     filterfields: [
       {
-        text: 'Tanggal', value: 'date', dataType: 'dateTime'
+        text: 'Tanggal', value: 'date', dataType: 'datetime'
       },
       {
         text: 'Kode', value: 'code', dataType: 'text'

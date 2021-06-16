@@ -968,7 +968,7 @@ export default {
         text: 'Kode', value: 'code', dataType: 'text'
       },
       {
-        text: 'Tanggal', value: 'date', dataType: 'dateTime'
+        text: 'Tanggal', value: 'date', dataType: 'datetime'
       },
       {
         text: 'Tipe', value: 'returnType', dataType: 'text'

@@ -783,7 +783,7 @@ export default {
         text: 'No. Faktur', value: 'code', dataType: 'text'
       },
       {
-        text: 'Tgl. Trans.', value: 'date', dataType: 'dateTime'
+        text: 'Tgl. Trans.', value: 'date', dataType: 'datetime'
       },
       {
         text: 'Pemasok', value: 'supName', dataType: 'text'
@@ -798,7 +798,7 @@ export default {
         text: 'Dikeluarkan Oleh', value: 'issuedInitial', dataType: 'text'
       },
       {
-        text: 'Tgl. Jatuh Tempo', value: 'dueDate', dataType: 'dateTime'
+        text: 'Tgl. Jatuh Tempo', value: 'dueDate', dataType: 'datetime'
       },
       {
         text: 'No. Ref', value: 'refNo', dataType: 'text'
