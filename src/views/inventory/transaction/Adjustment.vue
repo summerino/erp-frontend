@@ -1193,7 +1193,6 @@ export default {
         }
       })
         .then(response => {
-          debugger
           this.items = response.data.tableData
           this.bindGridItems()
           for (let i = 0; i < this.items.length; i++) {
