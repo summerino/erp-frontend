@@ -357,7 +357,6 @@ export default {
 
   created: function () {
     this.getList()
-    this.getListForExcel()
   },
 
   mounted: function () {
@@ -420,6 +419,7 @@ export default {
       }
     },
     getList() {
+      this.getListForExcel()
       api.getAll(`${this.endpoint.inventory.item.category}/hierarchy`, {
         params: { search: this.hierarchy.search }
       })
