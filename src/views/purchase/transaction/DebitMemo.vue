@@ -408,7 +408,7 @@ export default {
         text: 'Kode Transaksi', value: 'code', dataType: 'text'
       },
       {
-        text: 'Tanggal Transaksi', value: 'date', dataType: 'dateTime'
+        text: 'Tanggal Transaksi', value: 'date', dataType: 'datetime'
       },
       {
         text: 'Pemasok', value: 'supName', dataType: 'text'

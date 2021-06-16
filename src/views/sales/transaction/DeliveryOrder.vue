@@ -127,6 +127,9 @@
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
+        <template v-slot:[`item.custName`]="{ item }">
+          {{ item.custCode }} - {{ item.custName }}
+        </template>
         <template v-slot:[`item.mark`]="{ item }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -693,7 +696,7 @@ export default {
         text: 'Kode', value: 'code', dataType: 'text'
       },
       {
-        text: 'Tanggal', value: 'date', dataType: 'dateTime'
+        text: 'Tanggal', value: 'date', dataType: 'datetime'
       },
       {
         text: 'Pelanggan', value: 'custName', dataType: 'text'
