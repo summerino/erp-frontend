@@ -26,7 +26,7 @@
                 v-model="grid.search"
                 :readonly="filter.isAdvancedSearch"
                 @click:append-outer="advancedSearch"
-                @keyup.enter="getList(false)"
+                @keyup.enter="getList()"
               ></v-text-field>            
               <v-tooltip bottom>
                 <template v-slot:activator="{ on, attrs }">
@@ -554,7 +554,7 @@
                             v-model="item.qtyOpname"
                             class="text-body-2 text-right mt-0"
                             dense
-                            @change="qtyAdjustChange(item)"
+                            @change="qtyAdjustChange(item, true)"
                         ></v-currency-field>
                     </template>
                     <template v-slot:[`item.differentUnit`]="{ item }">
@@ -601,13 +601,18 @@
       
     </v-dialog>
     <confirm ref="confirm"></confirm>
-    <find-item-adjustment
+    <!-- <find-item-adjustment
       ref="findItem"
       :warehouseCode="data.warehouseCode"
       :fromAdjustment="true"
       @dblclick:row="bindItemData"
       
-    ></find-item-adjustment>
+    ></find-item-adjustment> -->
+    <find-item
+      ref="findItem"
+      :warehouseCode="data.warehouseCode"
+      @dblclick:row="bindItemData"
+    ></find-item>
     <find-unit
       ref="findUnit"
       @save="bindDifferentUnit"      
@@ -625,15 +630,14 @@ import api from '@/services/axios.service'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
-import FindItemAdjustment from '@/components/dialog/inventory/FindItemAdjustment'
+import FindItem from '@/components/dialog/inventory/FindItem'
 import FindUnit from '@/components/dialog/inventory/FindUnit'
-
 export default {
   components:{
     AdvancedSearch,
     ExportExcel,
     Confirm,
-    FindItemAdjustment,
+    FindItem,
     FindUnit
   },
 
@@ -745,6 +749,7 @@ export default {
       item.units = units
       const baseUnit = units.find(x => x.seq === 1)
       item.oldUnitId = baseUnit.id
+      item.baseUnitId = item.oldUnitId
       this.unitItemChange(item)
     },
     reset(resetValidation = true) {
@@ -828,20 +833,30 @@ export default {
     //       this.grid.total = response.data.rowCount 
     //     })
     // },
-    getItemLists() {
-      const filters = [{
-        field: 'warehouseCode',
-        operator: 'eq',
-        keyword: this.data.warehouseCode
-      }]
-      api.getAll(`${this.endpoint.inventory.adjustment}/item-list`, {
+    // getItemLists() {
+    //   const filters = [{
+    //     field: 'warehouseCode',
+    //     operator: 'eq',
+    //     keyword: this.data.warehouseCode
+    //   }]
+    //   api.getAll(`${this.endpoint.inventory.adjustment}/item-list`, {
+    //     params: {
+    //       filters: JSON.stringify(filters)         
+    //     }
+    //   })  
+    //     .then(response => {
+    //       this.items = response.data.tableData
+    //     })
+    // },
+    getItemLists() {      
+      api.getAll(this.endpoint.inventory.item.item, {
         params: {
-          filters: JSON.stringify(filters)         
+          warehouseCode: this.data.warehouseCode
         }
-      })  
+      })
         .then(response => {
           this.items = response.data.tableData
-        })
+        })      
     },
     getUomLists() {
       api.getAll(`${this.endpoint.inventory.uom}/item`, {})  
@@ -1007,7 +1022,7 @@ export default {
         } else {
           this.data.code = result.data
         }
-        this.getList(!closeDialog)
+        this.getList()
       }
     },
     close() {
@@ -1037,13 +1052,16 @@ export default {
         this.convertUOM(item, oldUnit.seq, unit.seq)
       }
     },
-    qtyAdjustChange(item) {
+    qtyAdjustChange(item, clearDiffUnits = false) {
       item.different = item.qtyOpname - item.qtyOnHand 
       item.qtyAdjust = item.different
-      // if (item.qtyAdjust > 0) {
-      //   item.differentUnit = null
-      //   item.differentUnits = []
-      // }
+      if (clearDiffUnits) {
+        if (item.qtyAdjust > 0) {
+          item.differentUnit = null
+          item.differentUnits = []
+        }
+      }
+      
     },
     itemIdChange(item) {
 
@@ -1054,9 +1072,10 @@ export default {
         item.itemName = data_i.name
         item.oldUomId = item.uomId
         item.unitId = data_i.uomBuyId
+        item.baseUnitId = data_i.uomBuyId // base unit will be set on sp
         item.unitName = data_i.uomBuyName
         item.qtyOnHand = data_i.qtyOnHand            
-        item.baseQtyOnHand = item.qtyOnHand
+        item.baseQtyOnHand = data_i.qtyOnHand // base qty will be set on sp
         item.notes = null
         item.qtyAdjust = 0
         item.qtyOpname = 0
@@ -1091,6 +1110,7 @@ export default {
       } else {
         item.qtyOnHand = item.qtyOnHand * different
       }
+      item.baseQtyOnHand = 0 // base qty will be set on stored procedure
     },
     checkIfHasDifferentUnit(item) {
       return item.differentUnits.length > 0
@@ -1167,36 +1187,46 @@ export default {
         this.$store.dispatch('app/showInfo', 'Mohon pilih gudang terlebih dahulu.')
         return
       }
-      this.bindGridItems()
-      for (let i = 0; i < this.items.length; i++) {
-        const item = this.items[i]
-        const units = this.uoms.filter(x => x.uomId === item.uomId)
-        const defaultUnitId = units[0].id
-        const buyUnit = item.uomBuyId
-        const temp = {
-          id: randomNumber(-1, -1000),
-          itemId: item.id,
-          itemName: item.name,
-          unitName: null,
-          units: units,
-          uomId: item.uomId,
-          unitId: buyUnit,
-          oldUnitId: defaultUnitId,
-          qtyOnHand: item.qtyOnHand,
-          baseQtyOnHand: item.qtyOnHand,
-          qtyOnTransit: 0,
-          qtyOpname: 0,
-          differentUnit: null,
-          differentUnits: [],
-          different: 0,
-          cogs: 0,
-          totalCogs: 0,
-          notes: ''
+      api.getAll(this.endpoint.inventory.item.item, {
+        params: {
+          warehouseCode: this.data.warehouseCode
         }
-        this.unitItemChange(temp)
-        this.gridItem.data.push(temp)
-      }
-      this.isButtonShowItemDisabled()
+      })
+        .then(response => {
+          debugger
+          this.items = response.data.tableData
+          this.bindGridItems()
+          for (let i = 0; i < this.items.length; i++) {
+            const item = this.items[i]
+            const units = this.uoms.filter(x => x.uomId === item.uomId)
+            //const defaultUnitId = units[0].id
+            const buyUnit = item.uomBuyId
+            const temp = {
+              id: randomNumber(-1, -1000),
+              itemId: item.id,
+              itemName: item.name,
+              unitName: null,
+              units: units,
+              uomId: item.uomId,
+              unitId: buyUnit,
+              //oldUnitId: defaultUnitId,
+              qtyOnHand: item.qtyOnHand,
+              baseQtyOnHand: item.qtyOnHand,
+              baseUnit: buyUnit,
+              qtyOnTransit: 0,
+              qtyOpname: 0,
+              differentUnit: null,
+              differentUnits: [],
+              different: 0,
+              cogs: 0,
+              totalCogs: 0,
+              notes: ''
+            }
+            this.unitItemChange(temp)
+            this.gridItem.data.push(temp)
+          }
+          this.isButtonShowItemDisabled()
+        })  
     },
     showFindItemDialog(item) {
       this.$refs.findItem.open(item, this.data.warehouseCode)

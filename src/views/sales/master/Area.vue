@@ -343,6 +343,7 @@ export default {
   }),
 
   created: function () {
+    this.getList()
     this.getListForExcel()
   },
 
