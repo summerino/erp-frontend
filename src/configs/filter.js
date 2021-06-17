@@ -15,7 +15,7 @@ export default {
     },
     { 
       text: 'Dimulai dgn.', 
-      value: 'startwith', 
+      value: 'startswith', 
       swiftValue: '3', 
       allowedCategoryTypes: ['text'] 
     },
