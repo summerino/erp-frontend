@@ -491,6 +491,7 @@
                 <v-card>
                   <v-tabs v-model="tab.item">
                     <v-tab key="item">Barang</v-tab>
+                    <v-tab key="bonus">Bonus</v-tab>
                     <v-tab key="related-trans">Transaksi Terkait</v-tab>
 
                     <v-tab-item
@@ -569,6 +570,31 @@
                           </template>
                         </v-data-table>
                       </v-card>
+                    </v-tab-item>
+                    
+                    <v-tab-item
+                      key="bonus"
+                      transition="false"
+                    >
+                      <v-data-table
+                        :headers="gridBonus.columns"
+                        :items="gridBonus.data"
+                        :items-per-page="-1"
+                        height="300"
+                        class="elevation-1"
+                        dense
+                        disable-sort
+                        fixed-header
+                        hide-default-footer
+                      >
+                      <template v-slot:[`item.qty`]="{ item }">
+                        <v-currency-field
+                          v-model="item.qty"
+                          :decimal-length="0"
+                          class="text-body-2 text-right mt-0"
+                        ></v-currency-field>
+                      </template>
+                      </v-data-table>
                     </v-tab-item>
 
                     <v-tab-item
@@ -669,6 +695,17 @@ export default {
       },
       total: 0,
       search: null
+    },
+    gridBonus: {
+      data:[],
+      columns: [
+        { value: 'action', sortable: false, divider: true, width: '1%' },
+        { text: 'Inisial', value: 'initial', divider: true, width: '120' },
+        { text: 'Nama', value: 'name', divider: true, width: '300' },
+        { text: 'Qty Tersedia', value: 'outstandingQty', align: 'right', divider: true, width: '90' },
+        { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
+        { text: 'Satuan', value: 'unitName', divider: true, width: '90' }
+      ]
     },
     gridItem: {
       columns: [
@@ -1001,8 +1038,21 @@ export default {
         this.$store.dispatch('app/showInfo', 'Jumalah pengiriman tidak boleh 0.')
         return
       }
-  
+
+      for (let i = 0; i < this.gridBonus.data.length; i++)  {
+        if (this.gridBonus.data[i].qty > this.gridBonus.data[i].outstandingQty) {
+          this.$store.dispatch('app/showInfo', 'Terdapat barang bonus yang qty-nya melebihi qty tersedia')
+          return
+        }
+      }
+
       const data = this.data
+      for (let i = 0; i < this.gridItem.data.length; i++) {
+        const listFreeItem = this.gridBonus.data.filter(x => x.orderDetailId === this.gridItem.data[i].soDetailId)
+        if (listFreeItem) {
+          this.gridItem.data[i].freeItemDetails = listFreeItem
+        }
+      }
       data.itemDetails = this.gridItem.data
 
       let result = { success: false, message: '' }
@@ -1217,6 +1267,17 @@ export default {
                   this.calcItemPrice(this.gridItem.data[i], false)
                 }
                 this.calcPrice()
+              })
+
+            api.getAll(`${this.endpoint.sales.order}/free-item`, {
+              params: { code: item.code }
+            })
+              .then(response => {
+                this.gridBonus.data = response.data.tableData
+                for (let i = 0; i < this.gridBonus.data.length; i++) {
+                  this.gridBonus.data[i].bonusQty = this.gridBonus.data[i].qty 
+                  this.gridBonus.data[i].outstandingQty = this.gridBonus.data[i].qty - this.gridBonus.data[i].qtyClosed 
+                }
               })
           } else {
             // Get sales return item details
