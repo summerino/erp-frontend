@@ -1,10 +1,11 @@
 import configs from '../../configs'
-
-const { endpoint } = configs
+const { endpoint, actions, menus } = configs
 
 // state initial values
 const state = {
-  endpoint
+  endpoint,
+  actions,
+  menus
 }
 
 export default {
