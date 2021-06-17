@@ -302,40 +302,9 @@
           <br/>
           <v-card>
             <v-tabs v-model="tab.advancedItem">
-              <v-tab key="default" @click="bindAddress">Default</v-tab>
               <v-tab key="address">Alamat</v-tab>
               <v-tab key="area">Wilayah</v-tab>
-              <v-tab-item
-                key="default"
-                transition="false"
-              >
-                <v-card>
-                  <v-container fluid grid-list-md>
-                    <v-row no-gutters>
-                      <v-col cols="12" md="6" class="pr-md-3">
-                        <v-autocomplete
-                          v-model="data.billingAddressId"
-                          :items="billingAddressRef"
-                          :item-text="item => `${item.text}`"
-                          item-value="id"
-                          label="Alamat Tagihan"
-                          class="mt-0"
-                        ></v-autocomplete>
-                      </v-col>
-                      <v-col cols="12" md="6" class="pl-md-3">
-                        <v-autocomplete
-                          v-model="data.shippingAddressId"
-                          :items="shippingAddressRef"
-                          :item-text="item => `${item.text}`"
-                          item-value="id"
-                          label="Alamat Pengiriman"
-                          class="mt-0"
-                        ></v-autocomplete>
-                      </v-col>
-                    </v-row>
-                  </v-container>
-                </v-card>
-              </v-tab-item>
+              <v-tab key="default" @click="bindAddress">Default</v-tab>
               <v-tab-item
                 key="address"
                 transition="false"
@@ -537,6 +506,37 @@
                       </v-col>
                       <v-col cols="12" md="6" class="pl-md-3">
                         &nbsp;
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                </v-card>
+              </v-tab-item>
+              <v-tab-item
+                key="default"
+                transition="false"
+              >
+                <v-card>
+                  <v-container fluid grid-list-md>
+                    <v-row no-gutters>
+                      <v-col cols="12" md="6" class="pr-md-3">
+                        <v-autocomplete
+                          v-model="data.billingAddressId"
+                          :items="billingAddressRef"
+                          :item-text="item => `${item.text}`"
+                          item-value="id"
+                          label="Alamat Tagihan"
+                          class="mt-0"
+                        ></v-autocomplete>
+                      </v-col>
+                      <v-col cols="12" md="6" class="pl-md-3">
+                        <v-autocomplete
+                          v-model="data.shippingAddressId"
+                          :items="shippingAddressRef"
+                          :item-text="item => `${item.text}`"
+                          item-value="id"
+                          label="Alamat Pengiriman"
+                          class="mt-0"
+                        ></v-autocomplete>
                       </v-col>
                     </v-row>
                   </v-container>
@@ -848,7 +848,7 @@ export default {
       let defaultValue = false
       if (this.gridItem.data.length > 0) {
         if (!this.gridItem.data[this.gridItem.data.length - 1].initial) {
-          this.$store.dispatch('app/showInfo', 'Tidak bisa tambah barang karena inisial kosong')
+          this.$store.dispatch('app/showInfo', 'Tidak bisa tambah alamat karena inisial kosong')
           return
         }
         defaultValue = false
@@ -869,6 +869,11 @@ export default {
         state: 'A'
       }
       this.gridItem.data.push(item)
+
+      if (defaultValue) {
+        this.data.billingAddressId = item.id
+        this.data.shippingAddressId = item.id
+      }
 
       setTimeout(() => {
         // Set focus to initial address field
@@ -903,7 +908,9 @@ export default {
           address2: item.address2,
           contactPerson: item.contactPerson,
           phone: item.phone,
-          fax: item.fax
+          fax: item.fax,
+          billingAddressId: item.id,
+          shippingAddressId: item.id
         }
       }
     },
