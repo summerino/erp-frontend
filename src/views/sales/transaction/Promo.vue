@@ -209,11 +209,10 @@
                       <v-col cols="12" md="6">
                         <v-text-field
                           ref="code"
-                          v-model.trim="data.code"
-                          :rules="rules.required"
-                          :counter="17"
+                          v-model.trim="data.code"                          
                           label="Id Promo"
                           class="mt-0"
+                          readonly
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12" md="6" class="pl-md-1">
@@ -509,6 +508,7 @@
                                   v-model="item.valuePercentage"
                                   :decimal-length="2"
                                   :min="0"
+                                  :disabled="item.promoType !== 1"
                                   class="text-body-2 text-right mt-0"
                                   dense
                                   @change="changeValuePercentage(item)"
@@ -519,6 +519,7 @@
                                   v-model="item.valueAmount"
                                   :decimal-length="2"
                                   :min="0"
+                                  :disabled="item.promoType !== 1"
                                   class="text-body-2 text-right mt-0"
                                   dense
                                   @change="changeValueAmount(item)"
@@ -677,6 +678,15 @@ export default {
     }
   },
 
+  watch: {
+    'grid.options': {
+      handler() {
+        this.getList()
+      },
+      deep: true
+    }
+  },
+  
   methods: {
     reset(resetValidation = true) {
       this.data = {
