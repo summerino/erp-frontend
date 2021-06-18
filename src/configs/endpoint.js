@@ -50,7 +50,10 @@ export default {
     return: 'sales-return',
     plan: 'delivery-plan',
     creditMemo: 'credit-memo',
-    promo: 'promo'
+    promo: 'promo',
+    visitPlan: 'visit-plan',
+    visitOrder: 'visit-order',
+    salesman: 'salesman'
   },
 
   accounting: {

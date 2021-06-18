@@ -61,4 +61,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/sales/transaction/visit-plan',
+  name: 'visit-plan',
+  component: () => import(/* webpackChunkName: "visit-plan" */ '@/views/sales/transaction/VisitPlan.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
