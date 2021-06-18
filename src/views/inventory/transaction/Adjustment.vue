@@ -554,7 +554,8 @@
                             v-model="item.qtyOpname"
                             class="text-body-2 text-right mt-0"
                             dense
-                            @change="qtyAdjustChange(item, true)"
+                            @keyup="qtyAdjustChange(item, true)"
+                            @focus="qtyAdjustChange(item, true)"
                         ></v-currency-field>
                     </template>
                     <template v-slot:[`item.differentUnit`]="{ item }">
@@ -1198,7 +1199,7 @@ export default {
           for (let i = 0; i < this.items.length; i++) {
             const item = this.items[i]
             const units = this.uoms.filter(x => x.uomId === item.uomId)
-            //const defaultUnitId = units[0].id
+            const baseUnitId = units[0].id
             const buyUnit = item.uomBuyId
             const temp = {
               id: randomNumber(-1, -1000),
@@ -1208,7 +1209,7 @@ export default {
               units: units,
               uomId: item.uomId,
               unitId: buyUnit,
-              //oldUnitId: defaultUnitId,
+              oldUnitId: baseUnitId,
               qtyOnHand: item.qtyOnHand,
               baseQtyOnHand: item.qtyOnHand,
               baseUnit: buyUnit,
