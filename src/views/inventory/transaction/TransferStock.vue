@@ -571,13 +571,13 @@
                           </template>
                           <template v-slot:[`item.qty`]="{ item }">
                             <v-currency-field
+                              ref="qty"
                               v-model="item.qty"
                               :decimal-length="0"
                               :min="1"
                               :readonly="data.type === 2 || data.mark === 'CMP'"
                               class="text-body-2 text-right mt-0"
                               dense
-                              @change="calcItemPrice(item)"
                             ></v-currency-field>
                           </template>
                           <template v-slot:[`item.unitName`]="{ item }">
@@ -1027,10 +1027,6 @@ export default {
           state: 'A'
         }
         this.gridDet.data.push(item)
-
-        setTimeout(() => {
-          this.$refs.qty.focus()
-        }, 0)
       }
     },
     async removeItem(item) {
