@@ -882,8 +882,6 @@ export default {
         invoiceDetails: []
       }
 
-      console.log(this.visitOrderData)
-
       let result = { success: false, message: '' }
       const resp = await api.create(this.endpoint.sales.visitOrder, this.visitOrderData)
       result = resp.data
