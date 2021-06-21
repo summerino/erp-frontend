@@ -22,7 +22,7 @@
       </v-toolbar>
 
       <v-card-text class="px-2 pt-1">
-        <v-row no-gutters>
+        <v-row v-if="fromOrder" no-gutters>
           <v-col cols="12" md="6">
             <v-text-field
               ref="refNo"
@@ -164,7 +164,8 @@ export default {
       rcvDate: false,
       invDate: false,
       invDueDate: false
-    }
+    },
+    fromOrder: false
   }),
   computed: {
     ...mapState({ 
@@ -211,11 +212,12 @@ export default {
         isPoInv: false
       }
     },
-    open(POdata) {
+    open(item, fromOrder) {
       this.reset()
       this.dialog = true
-      this.data = POdata
+      this.data = item
       this.data.isPoInv = true
+      this.fromOrder = fromOrder
       setTimeout(() => {
         this.$refs.refNo.focus()
       }, 0)
@@ -225,13 +227,24 @@ export default {
     },
     async save() {
       let result = { success: false, message: '' }
-      if (this.data.action === 'add') {
-        const resp = await api.create(this.endpoint.purchase.order, this.data)
-        result = resp.data
-      } else if (this.data.action === 'edit') {
-        const resp = await api.update(this.endpoint.purchase.order, this.data.code, this.data)
-        result = resp.data
+      if (this.fromOrder) {
+        if (this.data.action === 'add') {
+          const resp = await api.create(this.endpoint.purchase.order, this.data)
+          result = resp.data
+        } else if (this.data.action === 'edit') {
+          const resp = await api.update(this.endpoint.purchase.order, this.data.code, this.data)
+          result = resp.data
+        }
+      } else if (!this.fromOrder) {
+        if (this.data.action === 'add') {
+          const resp = await api.create(this.endpoint.purchase.receive, this.data)
+          result = resp.data
+        } else if (this.data.action === 'edit') {
+          const resp = await api.update(this.endpoint.purchase.receive, this.data.code, this.data)
+          result = resp.data
+        }
       }
+      
 
       if (result.success) {
         this.$store.dispatch('app/showSuccess', result.message)

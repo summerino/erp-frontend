@@ -531,7 +531,7 @@
                                     <v-btn
                                       v-bind="attrs"
                                       v-on="on"
-                                      :disabled="item.promoType === 1 || item.promoType === 0"
+                                      :disabled="(item.promoType === 1 || item.promoType === 0) || ( item.itemId === null && item.applyTo !== 2)"
                                       color="blue"
                                       icon
                                       x-small
