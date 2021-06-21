@@ -1849,6 +1849,9 @@ export default {
     },
     bindItemData(rowItem) {
       this.itemIdChange(rowItem)
+
+      //find Promo
+      await this.findPromo()
     },
     async exportExcel() {
       this.exportExcel.export()
