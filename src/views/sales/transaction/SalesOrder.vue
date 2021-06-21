@@ -1851,7 +1851,7 @@ export default {
       this.itemIdChange(rowItem)
 
       //find Promo
-      await this.findPromo()
+      this.findPromo()
     },
     async exportExcel() {
       this.exportExcel.export()
