@@ -29,6 +29,7 @@
                   v-shortkey="['ctrl', 'enter']"
                   dark
                   text
+                  :disabled="(data.action === 'edit' && !auth.allowUpdate)"
                   @click="save(true)"
                   @shortkey="save(true)"
                 >Simpan & Tutup</v-btn>
@@ -57,6 +58,7 @@
                   v-shortkey="['ctrl', 's']"
                   @click="save(false)"
                   @shortkey="save(false)"
+                  :disabled="(data.action === 'edit' && !auth.allowUpdate)"
                 >
                   <v-list-item-title>
                     <v-tooltip bottom>
@@ -830,6 +832,7 @@ import { sumBy as _sumBy, cloneDeep as _cloneDeep } from 'lodash'
 
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
+import auth from '@/services/authorization.service'
 
 import Confirm from '@/components/dialog/Confirm'
 import FindCustomer from '@/components/dialog/general/FindCustomer'
@@ -941,15 +944,23 @@ export default {
     this.getTaxLists()
     this.getItemLists()
     this.defineAction()
+    auth.getAction(this.endpoint, this.menuId.directinvoice, [this.action.insert, this.action.update, this.action.void])
+      .then((response) => {
+        this.$store.commit('api/setAuth', response.data)
+      })
     this.getPromoLists()
     this.getPaymentTermLists()
     this.getAccountLists()
+
   },
 
   computed: {
     ...mapState({
       rules: state => state.app.rules,
-      endpoint: state => state.api.endpoint
+      endpoint: state => state.api.endpoint,
+      auth: state => state.api.authorization,
+      action: state => state.api.action,
+      menuId: state => state.api.menus
     }),
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'

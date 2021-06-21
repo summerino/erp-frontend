@@ -65,6 +65,7 @@
                   tile
                   @click="add"
                   @shortkey="add"
+                  :disabled="!auth.allowInsert"
                 >
                   <v-icon left>mdi-plus</v-icon>
                   Data Baru
@@ -112,7 +113,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="item.mark.toUpperCase() !== 'A'"
+                :disabled="item.mark.toUpperCase() !== 'A' || !auth.allowVoid"
                 color="red"
                 icon
                 small
@@ -174,7 +175,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="isVoid"
+                  :disabled="isVoid || (data.action === 'edit' && !auth.allowUpdate)"
                   dark
                   text
                   @click="save(true)"
@@ -203,7 +204,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="isVoid"
+                  :disabled="isVoid || (data.action === 'edit' && !auth.allowUpdate)"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -668,6 +669,7 @@ import { sumBy as _sumBy } from 'lodash'
 
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
+import auth from '@/services/authorization.service'
 
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
@@ -776,6 +778,10 @@ export default {
     this.getTaxLists()
     this.getItemLists()
     this.getWarehouseLists()
+    auth.getAction(this.endpoint, this.menuId.purchasereceive, [this.action.insert, this.action.update, this.action.void])
+      .then((response) => {
+        this.$store.commit('api/setAuth', response.data)
+      })
     this.$store.commit('app/setFilterFields', this.filterfields)
   },
 
@@ -808,7 +814,10 @@ export default {
       gridDefOpts: state => state.app.grid,
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
-      filter: state => state.app.filter
+      filter: state => state.app.filter,
+      auth: state => state.api.authorization,
+      action: state => state.api.action,
+      menuId: state => state.api.menus
     }),
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'

@@ -31,6 +31,7 @@
                   tile
                   @click="add"
                   @shortkey="add"
+                  :disabled="!auth.allowInsert"
                 >
                   <v-icon left>mdi-plus</v-icon>
                   New
@@ -141,7 +142,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="isVoid"
+                  :disabled="isVoid || (data.action === 'edit' && !auth.allowUpdate)"
                   dark
                   text
                   @click="save(true)"
@@ -170,7 +171,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="isVoid"
+                  :disabled="isVoid || (data.action === 'edit' && !auth.allowUpdate)"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -497,7 +498,7 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
-                                  :disabled="isVoid || hasRelatedTrans"
+                                  :disabled="isVoid || hasRelatedTrans || !auth.allowVoid"
                                   color="red"
                                   icon
                                   small
@@ -652,6 +653,7 @@ import { sumBy as _sumBy } from 'lodash'
 
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
+import auth from '@/services/authorization.service'
 
 import Confirm from '@/components/dialog/Confirm'
 import FindRcv from '@/components/dialog/purchase/FindRcv'
@@ -718,6 +720,10 @@ export default {
     this.getEmployeeLists()
     this.getTaxLists()
     this.getWarehouseLists()
+    auth.getAction(this.endpoint, this.menuId.purchasereturn, [this.action.insert, this.action.update, this.action.void])
+      .then((response) => {
+        this.$store.commit('api/setAuth', response.data)
+      })
   },
 
   mounted: function () {
@@ -737,7 +743,10 @@ export default {
     ...mapState({
       gridDefOpts: state => state.app.grid,
       rules: state => state.app.rules,
-      endpoint: state => state.api.endpoint
+      endpoint: state => state.api.endpoint,
+      auth: state => state.api.authorization,
+      action: state => state.api.action,
+      menuId: state => state.api.menus
     }),
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'

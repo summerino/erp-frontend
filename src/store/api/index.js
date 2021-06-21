@@ -10,7 +10,8 @@ const state = {
     update: 2,
     delete: 3,
     void: 4,
-    changeWarehouse: 5
+    changeWarehouse: 5,
+    close: 6
   },
   menus,
   authorization: {

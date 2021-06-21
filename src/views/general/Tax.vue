@@ -34,6 +34,7 @@
                   tile
                   @click="add"
                   @shortkey="add"
+                  :disabled="!auth.allowInsert"
                 >
                   <v-icon left>mdi-plus</v-icon>
                   Data Baru
@@ -82,6 +83,7 @@
                 small
                 color="red"
                 @click="remove(item)"
+                :disabled="!auth.allowDelete"
               >
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
@@ -121,12 +123,13 @@
                   v-shortkey="['ctrl', 'enter']"
                   color="blue darken-2"
                   class="font-weight-regular"
-                  :disabled="isActive"
+                  :disabled="isActive || (data.action === 'edit' && !auth.allowUpdate)"
                   dark
                   small
                   tile
                   @click="save"
                   @shortkey="save"
+
                 >
                   <v-icon left>
                     mdi-content-save
@@ -235,6 +238,7 @@ import { mapState } from 'vuex'
 import { format, parseISO }  from 'date-fns'
 
 import api from '@/services/axios.service'
+import auth from '@/services/authorization.service'
 
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
@@ -277,6 +281,10 @@ export default {
   created: function () {
     this.getList()
     this.getTypesList()
+    auth.getAction(this.endpoint, this.menuId.tax, [this.action.insert, this.action.update, this.action.delete])
+      .then((response) => {
+        this.$store.commit('api/setAuth', response.data)
+      })
   },
 
   mounted: function () {
@@ -305,7 +313,10 @@ export default {
     ...mapState({
       gridDefOpts: state => state.app.grid,
       rules: state => state.app.rules,
-      endpoint: state => state.api.endpoint
+      endpoint: state => state.api.endpoint,
+      auth: state => state.api.authorization,
+      action: state => state.api.action,
+      menuId: state => state.api.menus
     }),
     isActive() {
       return (!this.data.isActive)

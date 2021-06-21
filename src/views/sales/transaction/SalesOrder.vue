@@ -65,6 +65,7 @@
                   tile
                   @click="add"
                   @shortkey="add"
+                  :disabled="!auth.allowInsert"
                 >
                   <v-icon left>mdi-plus</v-icon>
                   Data Baru
@@ -112,7 +113,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="item.mark.toUpperCase() !== 'A'"
+                :disabled="item.mark.toUpperCase() !== 'A' && !auth.allowDelete"
                 color="red"
                 icon
                 small
@@ -128,7 +129,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="item.mark.toUpperCase() !== 'PR' && item.mark.toUpperCase() !== 'A'"
+                :disabled="item.mark.toUpperCase() !== 'PR' && item.mark.toUpperCase() !== 'A' && !auth.allowClose"
                 color="blue darken-2"
                 icon
                 small
@@ -200,6 +201,7 @@
                   text
                   @click="save(true)"
                   @shortkey="save(true)"
+                  :disabled="(data.action === 'edit' && !auth.allowUpdate)"
                 >Simpan & Tutup</v-btn>
               </template>
               <span class="text-caption">(Ctrl + Enter)</span>
@@ -226,6 +228,7 @@
                   v-shortkey="['ctrl', 's']"
                   @click="save(false)"
                   @shortkey="save(false)"
+                  :disabled="(data.action === 'edit' && !auth.allowUpdate)"
                 >
                   <v-list-item-title>
                     <v-tooltip bottom>
@@ -625,7 +628,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid || hasRelatedTrans"
+                                :disabled="isVoid || hasRelatedTrans || !auth.allowVoid"
                                 class="blue--text"
                                 small
                                 tile
@@ -1011,6 +1014,7 @@ import { sumBy as _sumBy, cloneDeep as _cloneDeep} from 'lodash'
 
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
+import auth from '@/services/authorization.service'
 
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
@@ -1142,6 +1146,10 @@ export default {
     this.getWarehouseLists()
     this.getTaxLists()
     this.getItemLists()
+    auth.getAction(this.endpoint, this.menuId.salesorder, [this.action.insert, this.action.update, this.action.void])
+      .then((response) => {
+        this.$store.commit('api/setAuth', response.data)
+      })
     this.getPromoLists()
     this.getPaymentTermLists()
     this.getAccountLists()
@@ -1175,7 +1183,10 @@ export default {
       gridDefOpts: state => state.app.grid,
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
-      filter: state => state.app.filter
+      filter: state => state.app.filter,
+      auth: state => state.api.authorization,
+      action: state => state.api.action,
+      menuId: state => state.api.menus
     }),
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'

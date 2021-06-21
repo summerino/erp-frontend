@@ -8,7 +8,7 @@ export default {
   uom: 31,
   currency: 8,
   customer: 17,
-  customerType: 18,
+  customertype: 18,
   employee: 22,
   supplier: 20,
   suppliertype: 21,
