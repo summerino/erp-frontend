@@ -222,6 +222,28 @@
                   </v-list-item-title>
                 </v-list-item>
               </v-list>
+              <v-list class="cursor-pointer">
+                <v-list-item
+                  v-shortkey="['ctrl', 'alt', 'i']"
+                  :disabled="isSaveNInvoiceAble"
+                  @click="saveInv()"
+                  @shortkey="saveInv()"
+                >
+                  <v-list-item-title>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <span
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          Simpan & Faktur
+                        </span>
+                      </template>
+                      <span class="text-caption">(Ctrl + Alt + I)</span>
+                    </v-tooltip>
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
             </v-menu>
             <v-divider vertical></v-divider>
           </v-toolbar-items>
@@ -632,6 +654,10 @@
       ref="findItem"
       @dblclick:row="bindItemData"
     ></find-item>
+    <po-save-invoice
+     ref="poSi"
+     @closeParent="closeInv"
+     ></po-save-invoice>  
   </div>
 </template>
 
@@ -649,6 +675,7 @@ import Confirm from '@/components/dialog/Confirm'
 import FindPo from '@/components/dialog/purchase/FindPO'
 import FindReturn from '@/components/dialog/purchase/FindReturn'
 import FindItem from '@/components/dialog/inventory/FindItem'
+import PoSaveInvoice from '@/components/dialog/purchase/POSaveInvoice'
 
 export default {
   components: {
@@ -657,7 +684,8 @@ export default {
     Confirm,
     FindPo,
     FindReturn,
-    FindItem
+    FindItem,
+    PoSaveInvoice
   },
 
   data: () => ({
@@ -796,6 +824,16 @@ export default {
     },
     isPurchaseReturn() {
       return (this.data.srcTrans === 2)
+    },
+    isSaveNInvoiceAble() {
+      if (this.data.action === 'add') {
+        return false
+      } if (this.data.mark === 'A') {
+        if (this.data.action === 'edit') {
+          return false
+        }
+      }
+      return true
     }
   },
 
@@ -1060,6 +1098,19 @@ export default {
         }
         this.getList(!closeDialog)
       }
+    },
+    saveInv() {
+      if (!this.$refs.form.validate()) {
+        this.$store.dispatch('app/showInfo', 'Silahkan periksa kembali data yang wajib diisi.')
+        return
+      }
+      const data = this.data
+      data.itemDetails = this.gridItem.data
+      this.$refs.poSi.open(data, false)
+    },
+    closeInv() {
+      this.dialog.add = false
+      this.getList()
     },
     addItem() {
       if (!this.data.transCode) {

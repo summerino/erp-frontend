@@ -1376,7 +1376,7 @@ export default {
       }
       const data = this.data
       data.itemDetails = this.gridItem.data
-      this.$refs.poSi.open(data)
+      this.$refs.poSi.open(data, true)
     },
     closeInv() {
       this.dialog.add = false
