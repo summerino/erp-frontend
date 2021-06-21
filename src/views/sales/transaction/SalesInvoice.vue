@@ -179,6 +179,9 @@
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
+        <template v-slot:[`item.custName`]="{ item }">
+          {{ item.custCode }} - {{ item.custName }}
+        </template>
         <template v-slot:[`item.fromDirectInvoice`]="{ item }">
           {{ item.fromDirectInvoice ? 'Penjualan Langsung' : 'Faktur Penjualan' }}
         </template>
@@ -827,7 +830,7 @@ export default {
         text: 'Dikeluarkan Oleh', value: 'issuedInitial', dataType: 'text'
       },
       {
-        text: 'Tanggal Jatuh Tempo', value: 'dueDate', dataType: 'dateTime'
+        text: 'Tanggal Jatuh Tempo', value: 'dueDate', dataType: 'datetime'
       }     
     ], 
     valid: false,

@@ -88,6 +88,9 @@
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
+        <template v-slot:[`item.custName`]="{ item }">
+          {{ item.custCode }} - {{ item.custName }}
+        </template>
         <template v-slot:[`item.amount`]="{ item }">
           {{ item.amount | formatCurrency }}
         </template>
@@ -407,7 +410,7 @@ export default {
         text: 'Kode Transaksi', value: 'code', dataType: 'text'
       },
       {
-        text: 'Tanggal Transaksi', value: 'date', dataType: 'dateTime'
+        text: 'Tanggal Transaksi', value: 'date', dataType: 'datetime'
       },
       {
         text: 'Pelanggan', value: 'custName', dataType: 'text'

@@ -43,7 +43,7 @@
                 </v-autocomplete>
               </v-col>
             </v-row>
-            <v-row v-if="data.promoType === 2 || data.promoType === 3" no-gutters>
+            <v-row v-if="data.applyTo !== 3 && (data.promoType === 2 || data.promoType === 3)" no-gutters>
               <v-col cols="12">
                 <v-autocomplete
                 v-model="data.saleUnit"
@@ -58,7 +58,7 @@
                 </v-autocomplete>
               </v-col>
             </v-row>
-            <v-row v-if="data.promoType === 2" no-gutters>
+            <v-row v-if="data.applyTo !== 3 && data.promoType === 2" no-gutters>
               <v-col cols="12">
                 <v-checkbox
                   v-model="data.applyToAllUnit"
@@ -398,11 +398,15 @@ export default {
         this.promoMethod = [{ id: 3, name: 'Mendapatkan' }]
         this.data.saleUnit = item.promoTierList.length === 0 ? null : item.promoTierList[0].saleUnit
         this.data.freeGoodItemId = item.promoTierList.length === 0 ? null : item.promoTierList[0].freeGoodItemId
-        this.freeItemIdChange(this.data.freeGoodItemId)
+        if (this.data.freeGoodItemId) {
+          this.freeItemIdChange(this.data.freeGoodItemId)
+        }
         this.data.unitFreeGood = item.promoTierList.length === 0 ? 0 : Number(item.promoTierList[0].unitFreeGood)
         this.data.isMultiple = item.promoTierList.length === 0 ? false : item.promoTierList[0].isMultiple
         this.data.promoMethod = 3
-        this.getItemUnitLists(item.itemId)
+        if (this.data.applyTo !== 3) {
+          this.getItemUnitLists(item.itemId)
+        }
       } else if (this.data.promoType === 4) {
         this.gridPayment.data = item.promoTierList
         this.promoMethod = [{ id: 1, name: 'Persen' }, { id: 2, name: 'Nominal' }]
@@ -420,7 +424,9 @@ export default {
         this.data.saleUnit = item.promoTierList.length === 0 ? null : item.promoTierList[0].saleUnit
         this.promoMethod = [{ id: 1, name: 'Persen' }, { id: 2, name: 'Nominal' }]
         this.data.promoMethod = item.isPercentage === false ? 2 : 1
-        this.getItemUnitLists(item.itemId)
+        if (this.data.applyTo !== 3) {
+          this.getItemUnitLists(item.itemId)
+        }
       }
     },
     close() {

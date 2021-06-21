@@ -983,19 +983,19 @@ export default {
     },
     filterfields: [
       {
-        text: 'Kode', value: 'itemId', dataType: 'text'
+        text: 'Kode', value: 'code', dataType: 'text'
       },
       {
-        text: 'Nama', value: 'itemName', dataType: 'text'
+        text: 'Tanggal', value: 'date', dataType: 'datetime'
       },
       {
-        text: 'Qty', value: 'qty', dataType: 'text'
+        text: 'Pemasok', value: 'supName', dataType: 'text'
       },
       {
-        text: 'Satuan', value: 'unitName', dataType: 'text'
+        text: 'Kode Penerimaan Barang', value: 'rcvCode', dataType: 'text'
       },
       {
-        text: 'Harga Satuan', value: 'unitPrice', dataType: 'text'
+        text: 'Dikirim Oleh', value: 'shippedInitial', dataType: 'text'
       }
     ],
     valid: false,

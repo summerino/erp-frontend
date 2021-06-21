@@ -184,6 +184,8 @@
                 <v-card>
                   <v-tabs v-model="tab.cust">
                     <v-tab key="cust">Pelanggan</v-tab>
+                    <v-tab key="promo">Promo</v-tab>
+                    <v-tab key="payment">Syarat Pembayaran</v-tab>
                     <v-tab key="others">Lainnya</v-tab>
                     <!-- <v-tab key="cust-payment">Payment</v-tab> -->
                   </v-tabs>
@@ -261,6 +263,52 @@
                             class="mt-0"
                             readonly
                           ></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-tab-item>
+
+                    <v-tab-item
+                      key="promo"
+                      transition="false"
+                    >
+                      <v-data-table
+                        :headers="gridPromo.columns"
+                        :items="gridPromo.data"
+                        :items-per-page="-1"
+                        height="300"
+                        class="elevation-1"
+                        dense
+                        disable-sort
+                        fixed-header
+                        hide-default-footer
+                      >
+                        <template v-slot:[`item.action`]="{ item }">
+                          <v-checkbox
+                            v-model="item.usePromo"
+                            @change="calcPromo()"
+                          >
+                          </v-checkbox>
+                        </template>
+                      </v-data-table>
+                    </v-tab-item>
+
+                    <v-tab-item
+                      key="payment"
+                      transition="false"
+                    >
+                      <v-row no-gutters>
+                        <v-col cols="12">
+                          <v-autocomplete
+                          v-model="data.paymentTermId"
+                          :items="paymentTerms"
+                          :item-text="item => `${item.initial} - ${item.name}`"
+                          :rules="rules.required"
+                          label="Syarat Pembayaran"
+                          item-value="id"
+                          class="mt-0"
+                          @change="findPromo()"
+                          >
+                          </v-autocomplete>
                         </v-col>
                       </v-row>
                     </v-tab-item>
@@ -380,6 +428,14 @@
                 <v-card>
                   <v-tabs v-model="tab.item">
                     <v-tab key="item">Barang</v-tab>
+                    <v-tab key="bonus"><v-badge
+                      :content="gridBonus.data.length"
+                      :value="gridBonus.data.length"
+                      color="red"
+                    >
+                    Bonus
+                    </v-badge>
+                    </v-tab>
                     <v-tab key="related-trans">Transaksi Terkait</v-tab>
 
                     <v-tab-item
@@ -450,7 +506,7 @@
                               class="text-body-2 mt-0"
                               dense
                               required
-                              @change="itemIdChange(item)"
+                              @change="itemIdChange(item); findPromo(); calcPromo();"
                             >
                               <template v-slot:append>
                                 <v-btn
@@ -474,7 +530,7 @@
                               :readonly="hasRelatedTrans"
                               class="text-body-2 text-right mt-0"
                               dense
-                              @change="calcItemPrice(item)"
+                              @change="calcItemPrice(item); calcPromo();"
                             ></v-currency-field>
                           </template>
                           <template v-slot:[`item.unitName`]="{ item }">
@@ -488,7 +544,7 @@
                               class="text-body-2 text-right mt-0"
                               dense
                               required
-                              @change="unitItemChange(item)"
+                              @change="unitItemChange(item); calcPromo();"
                             ></v-autocomplete>
                           </template>
                           <template v-slot:[`item.unitPrice`]="{ item }">
@@ -504,11 +560,25 @@
                           <template v-slot:[`item.disc`]="{ item }">
                             <v-currency-field
                               v-model="item.disc"
-                              :readonly="hasRelatedTrans"
                               class="text-body-2 text-right mt-0"
                               dense
                               @change="calcItemPrice(item)"
-                            ></v-currency-field>
+                              readonly
+                            >
+                              <template v-slot:append>
+                                <v-btn
+                                  :readonly="hasRelatedTrans"
+                                  color="primary"
+                                  icon
+                                  x-small
+                                  @click="showPromoDialog(item)"
+                                >
+                                  <v-icon>
+                                    mdi-settings-helper
+                                  </v-icon>
+                                </v-btn>
+                              </template>
+                            </v-currency-field>
                           </template>
                           <template v-slot:[`item.taxAmount`]="{ item }">
                             {{ item.taxAmount | formatCurrency }}
@@ -529,6 +599,24 @@
                           </template>
                         </v-data-table>
                       </v-card>
+                    </v-tab-item>
+
+                    <v-tab-item
+                      key="bonus"
+                      transition="false"
+                    >
+                      <v-data-table
+                        :headers="gridBonus.columns"
+                        :items="gridBonus.data"
+                        :items-per-page="-1"
+                        height="300"
+                        class="elevation-1"
+                        dense
+                        disable-sort
+                        fixed-header
+                        hide-default-footer
+                      >
+                      </v-data-table>
                     </v-tab-item>
 
                     <v-tab-item
@@ -680,7 +768,7 @@
                           label="Persen Diskon"
                           suffix="%"
                           class="text-right mt-0"
-                          @change="discPercentChange"
+                          readonly
                         ></v-currency-field>
                       </v-col>
                       <v-col cols="8" class="pl-1">
@@ -689,7 +777,7 @@
                           :allow-negative="false"
                           label="Diskon Final"
                           class="text-right mt-0"
-                          @change="discChange"
+                          readonly
                         ></v-currency-field>
                       </v-col>
                     </v-row>
@@ -731,13 +819,16 @@
       :warehouseCode="data.warehouseCode"
       @dblclick:row="bindItemData"
     ></find-item>
+    <so-promo
+      ref="soPr"
+    ></so-promo>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
-import { sumBy as _sumBy } from 'lodash'
+import { sumBy as _sumBy, cloneDeep as _cloneDeep } from 'lodash'
 
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
@@ -746,12 +837,14 @@ import auth from '@/services/authorization.service'
 import Confirm from '@/components/dialog/Confirm'
 import FindCustomer from '@/components/dialog/general/FindCustomer'
 import FindItem from '@/components/dialog/inventory/FindItem'
+import SoPromo from '@/components/dialog/sales/SOPromo'
 
 export default {
   components: {
     Confirm,
     FindCustomer,
-    FindItem
+    FindItem,
+    SoPromo
   },
 
   data: () => ({
@@ -763,6 +856,16 @@ export default {
       cust: null,
       item: null,
       foot: null
+    },
+    gridBonus: {
+      data:[],
+      columns: [
+        { value: 'action', sortable: false, divider: true, width: '1%' },
+        { text: 'Inisial', value: 'initial', divider: true, width: '120' },
+        { text: 'Nama', value: 'name', divider: true, width: '300' },
+        { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
+        { text: 'Satuan', value: 'unitName', divider: true, width: '90' }
+      ]
     },
     gridItem: {
       data: [],
@@ -780,6 +883,13 @@ export default {
         { text: 'Catatan', value: 'notes', width: '200' }
       ]
     },
+    gridPromo: {
+      columns: [
+        { text: 'Gunakan Promo', value: 'action', sortable: false, divider: true, width: '1%' },
+        { text: 'Nama Promo', value: 'name', divider: true, width: '120' }
+      ],
+      data: []
+    },
     gridRelated: {
       columns: [
         { text: 'Kode Trans.', value: 'code', divider: true },
@@ -796,6 +906,10 @@ export default {
     warehouses: [],
     taxes: [],
     items: [],
+    promos: [],
+    paymentTerms: [],
+    accounts: [],
+    invPromos: [],
     data: {
       action: '',
       code: null,
@@ -834,6 +948,10 @@ export default {
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
+    this.getPromoLists()
+    this.getPaymentTermLists()
+    this.getAccountLists()
+
   },
 
   computed: {
@@ -878,9 +996,12 @@ export default {
         taxAmount: 0,
         total: 0,
         dlvDate : format(new Date(), 'yyyy-MM-dd'),
-        isSoDlv : false
+        isSoDlv : false,
+        paymentTermId: null
       }
       this.gridItem.data = []
+      this.gridPromo.data = []
+      this.gridBonus.data = []
       this.tab.cust = 0
       this.tab.item = 0
       this.tab.foot = 0
@@ -979,12 +1100,71 @@ export default {
           this.items = response.data.tableData
         })
     },
-    getUnitItemLists(item) {
-      api.getAll(`${this.endpoint.inventory.uom}/item`, {
+    async getUnitItemLists(item) {
+      const response = await api.getAll(`${this.endpoint.inventory.uom}/item`, {
         params: { uomId: item.uomId }
       })
+      item.units = response.data.tableData
+      return item.units
+      // .then(response => {
+      //   item.units = response.data.tableData
+      // })
+    },
+    getPromoLists() {
+      api.getAll(this.endpoint.sales.promo, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'mark',
+            operator: 'eq',
+            keyword: 'A'
+          // }, {
+          //   field: 'startDate',
+          //   operator: 'gte',
+          //   keyword: new Date().toISOString().slice(0, 10)
+          // }, {
+          //   field: 'endDate',
+          //   operator: 'lte',
+          //   keyword: new Date().toISOString().slice(0, 10)
+          }])
+        }
+      })
         .then(response => {
-          item.units = response.data.tableData
+          this.promos = response.data.tableData
+          for (let i = 0; i < this.promos.length; i++) {
+            this.getPromoDetail(this.promos[i])
+          }
+        })
+    },
+    getPromoDetail(item) {
+      api.getAll(`${this.endpoint.sales.promo}/item`, {
+        params: { code: item.code }
+      })
+        .then(response => {
+          item.itemDetails = response.data.tableData
+        })
+    },
+    getPaymentTermLists() {
+      api.getAll('payment-term/lists')
+        .then(response => {
+          this.paymentTerms = response.data.tableData
+        })
+    },
+    getAccountLists() {
+      api.getAll(`${this.endpoint.accounting.coa}/lists`, {
+        params: {
+          // filters: JSON.stringify([{
+          //   field: 'type',
+          //   operator: 'eq',
+          //   keyword: 3
+          // }]),
+          sorts: JSON.stringify([{
+            field: 'code',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.accounts = response.data.tableData
         })
     },
     async defineAction() {
@@ -1011,6 +1191,16 @@ export default {
         })
           .then(response => {
             this.gridItem.data = response.data.tableData
+            // Find Promo
+            this.findPromo()
+          })
+
+        // Get bonus item details
+        api.getAll(`${this.endpoint.sales.order}/free-item`, {
+          params: { code: resp.data.code }
+        })
+          .then(response => {
+            this.gridBonus.data = response.data.tableData
           })
 
         // Get related transaction details
@@ -1058,6 +1248,11 @@ export default {
       }
       
       const data = this.data
+      for (let i = 0; i < this.gridItem.data.length; i++) {
+        const bonusData = this.gridBonus.data.filter(x => x.orderDetailId === this.gridItem.data[i].id)
+        this.gridItem.data[i].freeItemDetails = bonusData
+        this.gridItem.data[i].discountItemDetails = this.gridItem.data[i].discPromo
+      }
       data.itemDetails = this.gridItem.data
 
       let result = { success: false, message: '' }
@@ -1129,6 +1324,12 @@ export default {
         const idx = this.gridItem.data.findIndex(i => i.id === item.id)
         this.gridItem.data.splice(idx, 1)
         
+        // Find Promo
+        await this.findPromo()
+
+        // Calc Promo
+        await this.calcPromo()
+
         // Calc price
         this.calcPrice()
       }
@@ -1147,6 +1348,7 @@ export default {
       if (data_i) {
         item.itemId = data_i.id
         item.itemName = data_i.name
+        item.categoryId = data_i.categoryId
         item.qty = 1
         item.length = data_i.length
         item.width = data_i.width
@@ -1282,6 +1484,9 @@ export default {
     showFindItemDialog(item) {
       this.$refs.findItem.open(item)
     },
+    showPromoDialog(item) {
+      this.$refs.soPr.open(item, this.accounts)
+    },
     bindCustData(item) {
       this.data.custCode = item.code
       this.data.custName = item.name
@@ -1291,6 +1496,446 @@ export default {
     },
     bindItemData(rowItem) {
       this.itemIdChange(rowItem)
+
+      //find Promo
+      this.findPromo()
+    },
+    async findPromo() {
+      const gridData = this.gridItem.data
+      this.gridPromo.data = []
+      for (let k = 0; k < gridData.length; k++) {
+        for (let i = 0; i < this.promos.length; i++) {
+          const applied = this.promos[i].itemDetails.find(x => x.itemId === gridData[k].itemId || x.itemId === gridData[k].categoryId || x.applyTo === 2)
+          if (applied) {
+            if (!this.gridPromo.data.includes(this.promos[i])) {
+              this.gridPromo.data.push(this.promos[i])
+            }
+          }
+        }
+      }
+    },
+    async calcPromo() {
+      const dataPromo = this.gridPromo.data.filter(x => x.usePromo === true)
+      const gridData = this.gridItem.data
+      const mainData = this.data
+      mainData.finalDisc = 0
+      mainData.finalDiscPercent = 0
+      const bonusPromo = [] 
+      for (let k = 0; k < gridData.length; k++) {
+        let totalDisc = 0 
+        const discPromo = []
+        for (let i = 0; i < dataPromo.length; i++) {
+          for (let j = 0; j < dataPromo[i].itemDetails.length; j++) {
+            const applyTo = dataPromo[i].itemDetails[j].applyTo
+            if (applyTo === 1) {
+              if (dataPromo[i].itemDetails[j].itemId === gridData[k].itemId) {
+                if (dataPromo[i].itemDetails[j].promoType === 1) {
+                  // Apply to Barang - Promo Method Reguler
+                  if (dataPromo[i].itemDetails[j].isPercentage) {
+                    totalDisc += gridData[k].unitPrice * (dataPromo[i].itemDetails[j].valuePercentage / 100)
+                    discPromo.push({
+                      id: randomNumber(-1, -1000),
+                      promoDetailId: dataPromo[i].itemDetails[j].id,
+                      promoCode: dataPromo[i].code,
+                      name: dataPromo[i].name, 
+                      promoMethod: 1, 
+                      value: dataPromo[i].itemDetails[j].valuePercentage, 
+                      nettPrice: 0, 
+                      coaCode: dataPromo[i].coaCost, 
+                      amount: totalDisc, 
+                      fromPromo: true, 
+                      isPercentage: dataPromo[i].itemDetails[j].isPercentage
+                    })
+                  } else {
+                    totalDisc += dataPromo[i].itemDetails[j].valueAmount
+                    discPromo.push({
+                      id: randomNumber(-1, -1000),
+                      promoDetailId: dataPromo[i].itemDetails[j].id,
+                      promoCode: dataPromo[i].code,
+                      name: dataPromo[i].name, 
+                      promoMethod: 2, 
+                      value: dataPromo[i].itemDetails[j].valueAmount,  
+                      nettPrice: 0, 
+                      coaCode: dataPromo[i].coaCost, 
+                      amount: totalDisc, 
+                      fromPromo: true, 
+                      isPercentage: dataPromo[i].itemDetails[j].isPercentage
+                    })
+                  }
+                } else if (dataPromo[i].itemDetails[j].promoType === 2) {
+                  // Apply to Barang - Promo Method Qty Barang
+                  const tierData = dataPromo[i].itemDetails[j].promoTierList.find(x => gridData[k].qty >= x.fromQty && gridData[k].qty <= x.toQty)
+                  if (dataPromo[i].itemDetails[j].isPercentage) {
+                    if (tierData.applyToAllunit) {
+                      const promoUnit = gridData[k].units.find(x => x.id === tierData.saleUnit)
+                      const itemUnit = gridData[k].units.find(x => x.id === gridData[k].unitId)
+                      if (itemUnit.seq >= promoUnit.seq) {
+                        totalDisc += gridData[k].unitPrice * (tierData.value / 100)
+                        discPromo.push({
+                          id: randomNumber(-1, -1000),
+                          promoDetailId: dataPromo[i].itemDetails[j].id,
+                          promoCode: dataPromo[i].code,
+                          name: dataPromo[i].name, 
+                          promoMethod: 1, 
+                          value: tierData.value, 
+                          nettPrice: 0, 
+                          coaCode: dataPromo[i].coaCost, 
+                          amount: totalDisc, 
+                          fromPromo: true, 
+                          isPercentage: dataPromo[i].itemDetails[j].isPercentage
+                        })
+                      }
+                    } else if (gridData[k].unitId === tierData.saleUnit) {
+                      totalDisc += gridData[k].unitPrice * (tierData.value / 100)
+                      discPromo.push({
+                        id: randomNumber(-1, -1000),
+                        promoDetailId: dataPromo[i].itemDetails[j].id,
+                        promoCode: dataPromo[i].code,
+                        name: dataPromo[i].name, 
+                        promoMethod: 1, 
+                        value: tierData.value, 
+                        nettPrice: 0, 
+                        coaCode: dataPromo[i].coaCost, 
+                        amount: totalDisc, 
+                        fromPromo: true, 
+                        isPercentage: dataPromo[i].itemDetails[j].isPercentage
+                      })
+                    }
+                  } else if (tierData.applyToAllunit) {
+                    const promoUnit = gridData[k].units.find(x => x.id === tierData.saleUnit)
+                    const itemUnit = gridData[k].units.find(x => x.id === gridData[k].unitId)
+                    if (itemUnit.seq >= promoUnit.seq) {
+                      totalDisc += tierData.value
+                      discPromo.push({
+                        id: randomNumber(-1, -1000),
+                        promoDetailId: dataPromo[i].itemDetails[j].id,
+                        promoCode: dataPromo[i].code,
+                        name: dataPromo[i].name, 
+                        promoMethod: 2, 
+                        value: tierData.value, 
+                        nettPrice: 0, 
+                        coaCode: dataPromo[i].coaCost, 
+                        amount: totalDisc, 
+                        fromPromo: true, 
+                        isPercentage: dataPromo[i].itemDetails[j].isPercentage
+                      })
+                    }
+                  } else if (gridData[k].unitId === tierData.saleUnit) {
+                    totalDisc += tierData.value
+                    discPromo.push({
+                      id: randomNumber(-1, -1000),
+                      promoDetailId: dataPromo[i].itemDetails[j].id,
+                      promoCode: dataPromo[i].code,
+                      name: dataPromo[i].name, 
+                      promoMethod: 2, 
+                      value: tierData.value, 
+                      nettPrice: 0, 
+                      coaCode: dataPromo[i].coaCost, 
+                      amount: totalDisc, 
+                      fromPromo: true, 
+                      isPercentage: dataPromo[i].itemDetails[j].isPercentage
+                    })
+                  }
+                } else if (dataPromo[i].itemDetails[j].promoType === 3) {
+                  // Apply to Barang - Promo Method Bonus
+                  const tierData = dataPromo[i].itemDetails[j].promoTierList.find(x => gridData[k].qty >= x.fromQty && gridData[k].qty <= x.toQty)
+                  if (tierData) {
+                    if (tierData.isMultiple) {
+                      if (gridData[k].unitId === tierData.saleUnit) {
+                        const freeItem = _cloneDeep(this.items.find(x => x.id === tierData.freeGoodItemId))
+                        freeItem.units = await this.getUnitItemLists(freeItem)
+                        freeItem.itemId = freeItem.id
+                        this.itemIdChange(freeItem)
+                        freeItem.unitId = parseInt(tierData.unitFreeGood)
+                        this.unitItemChange(freeItem)
+                        freeItem.unitName = freeItem.units.find(x => x.id === parseInt(tierData.unitFreeGood)).unitEquivalent
+                        const multipleValue = Math.floor(gridData[k].qty / tierData.fromQty)
+                        const item = {
+                          id: randomNumber(-1, -1000),
+                          initial: freeItem.initial,
+                          name: freeItem.name,
+                          orderDetailId: gridData[k].id,
+                          promoCode: dataPromo[i].code,
+                          uomId: freeItem.uomId,
+                          itemId: tierData.freeGoodItemId,
+                          unitId: tierData.unitFreeGood,
+                          unitName: freeItem.unitName,
+                          qty: tierData.value * multipleValue,
+                          qtyClosed: 0,
+                          unitPrice: freeItem.unitPrice,
+                          coaCode: dataPromo[i].coaCost
+                        }
+                        bonusPromo.push(item)
+                      }
+                    } else if (gridData[k].unitId === tierData.saleUnit) {
+                      const freeItem = _cloneDeep(this.items.find(x => x.id === tierData.freeGoodItemId))
+                      freeItem.units = await this.getUnitItemLists(freeItem)
+                      freeItem.itemId = freeItem.id
+                      this.itemIdChange(freeItem)
+                      freeItem.unitId = parseInt(tierData.unitFreeGood)
+                      this.unitItemChange(freeItem)
+                      freeItem.unitName = freeItem.units.find(x => x.id === parseInt(tierData.unitFreeGood)).unitEquivalent
+                      const item = {
+                        id: randomNumber(-1, -1000),
+                        initial: freeItem.initial,
+                        name: freeItem.name,
+                        orderDetailId: gridData[k].id,
+                        promoCode: dataPromo[i].code,
+                        uomId: freeItem.uomId,
+                        itemId: tierData.freeGoodItemId,
+                        unitId: tierData.unitFreeGood,
+                        unitName: freeItem.unitName,
+                        qty: tierData.value,
+                        qtyClosed: 0,
+                        unitPrice: freeItem.unitPrice,
+                        coaCode: dataPromo[i].coaCost
+                      }
+                      bonusPromo.push(item)
+                    }
+                  }
+                } else if (dataPromo[i].itemDetails[j].promoType === 4) {
+                  // Apply to Barang - Promo Method Payment Term
+                  const tierData = dataPromo[i].itemDetails[j].promoTierList.find(x => x.paymentTermId === this.data.paymentTermId)
+                  if (tierData) {
+                    if (tierData.isPercentage) {
+                      totalDisc += gridData[k].unitPrice * (tierData.value / 100)
+                      discPromo.push({
+                        id: randomNumber(-1, -1000),
+                        promoDetailId: dataPromo[i].itemDetails[j].id,
+                        promoCode: dataPromo[i].code,
+                        name: dataPromo[i].name, 
+                        promoMethod: 1, 
+                        value: tierData.value, 
+                        nettPrice: 0, 
+                        coaCode: dataPromo[i].coaCost, 
+                        amount: totalDisc, 
+                        fromPromo: true, 
+                        isPercentage: dataPromo[i].itemDetails[j].isPercentage
+                      })
+                    } else {
+                      totalDisc += tierData.value
+                      discPromo.push({
+                        id: randomNumber(-1, -1000),
+                        promoDetailId: dataPromo[i].itemDetails[j].id,
+                        promoCode: dataPromo[i].code, 
+                        name: dataPromo[i].name, 
+                        promoMethod: 2, 
+                        value: tierData.value, 
+                        nettPrice: 0, 
+                        coaCode: dataPromo[i].coaCost, 
+                        amount: totalDisc, 
+                        fromPromo: true, 
+                        isPercentage: dataPromo[i].itemDetails[j].isPercentage
+                      })
+                    }
+                  }
+                }
+              }
+            } else if (applyTo === 3) {
+              const dtItem = this.items.find(i => i.id === gridData[k].itemId)
+              if (dtItem.categoryId === dataPromo[i].itemDetails[j].itemId) {
+                if (dataPromo[i].itemDetails[j].promoType === 1) {
+                  // Apply to Kategori Barang - Promo Method Reguler
+                  if (dataPromo[i].itemDetails[j].isPercentage) {
+                    totalDisc += gridData[k].unitPrice * (dataPromo[i].itemDetails[j].valuePercentage / 100)
+                    discPromo.push({
+                      id: randomNumber(-1, -1000),
+                      promoDetailId: dataPromo[i].itemDetails[j].id,
+                      promoCode: dataPromo[i].code,
+                      name: dataPromo[i].name, 
+                      promoMethod: 1, 
+                      value: dataPromo[i].itemDetails[j].valuePercentage, 
+                      nettPrice: 0, 
+                      coaCode: dataPromo[i].coaCost, 
+                      amount: totalDisc, 
+                      fromPromo: true, 
+                      isPercentage: dataPromo[i].itemDetails[j].isPercentage
+                    })
+                  } else {
+                    totalDisc += dataPromo[i].itemDetails[j].valueAmount
+                    discPromo.push({
+                      id: randomNumber(-1, -1000),
+                      promoDetailId: dataPromo[i].itemDetails[j].id,
+                      promoCode: dataPromo[i].code, 
+                      name: dataPromo[i].name, 
+                      promoMethod: 2, 
+                      value: dataPromo[i].itemDetails[j].valueAmount, 
+                      nettPrice: 0, 
+                      coaCode: dataPromo[i].coaCost, 
+                      amount: totalDisc, 
+                      fromPromo: true, 
+                      isPercentage: dataPromo[i].itemDetails[j].isPercentage
+                    })
+                  }
+                } else if (dataPromo[i].itemDetails[j].promoType === 2) {
+                  // Apply to Kategori Barang - Promo Method Qty Barang
+                  const tierData = dataPromo[i].itemDetails[j].promoTierList.find(x => gridData[k].qty >= x.fromQty && gridData[k].qty <= x.toQty)
+                  if (dataPromo[i].itemDetails[j].isPercentage) {
+                    totalDisc += gridData[k].unitPrice * (tierData.value / 100)
+                    discPromo.push({
+                      id: randomNumber(-1, -1000),
+                      promoDetailId: dataPromo[i].itemDetails[j].id,
+                      promoCode: dataPromo[i].code, 
+                      name: dataPromo[i].name, 
+                      promoMethod: 1, 
+                      value: tierData.value, 
+                      nettPrice: 0, 
+                      coaCode: dataPromo[i].coaCost, 
+                      amount: totalDisc, 
+                      fromPromo: true, 
+                      isPercentage: dataPromo[i].itemDetails[j].isPercentage
+                    })
+                  } else {
+                    totalDisc += tierData.value
+                    discPromo.push({
+                      id: randomNumber(-1, -1000),
+                      promoDetailId: dataPromo[i].itemDetails[j].id,
+                      promoCode: dataPromo[i].code,
+                      name: dataPromo[i].name, 
+                      promoMethod: 2, 
+                      value: tierData.value, 
+                      nettPrice: 0, 
+                      coaCode: dataPromo[i].coaCost, 
+                      amount: totalDisc, 
+                      fromPromo: true, 
+                      isPercentage: dataPromo[i].itemDetails[j].isPercentage
+                    })
+                  }
+                } else if (dataPromo[i].itemDetails[j].promoType === 3) {
+                  // Apply to Kategori Barang - Promo Method Bonus
+                  const tierData = dataPromo[i].itemDetails[j].promoTierList.find(x => gridData[k].qty >= x.fromQty && gridData[k].qty <= x.toQty)
+                  if (tierData) {
+                    if (tierData.isMultiple) {
+                      if (gridData[k].unitId === tierData.saleUnit) {
+                        const freeItem = _cloneDeep(this.items.find(x => x.id === tierData.freeGoodItemId))
+                        freeItem.units = await this.getUnitItemLists(freeItem)
+                        freeItem.itemId = freeItem.id
+                        this.itemIdChange(freeItem)
+                        freeItem.unitId = parseInt(tierData.unitFreeGood)
+                        this.unitItemChange(freeItem)
+                        freeItem.unitName = freeItem.units.find(x => x.id === parseInt(tierData.unitFreeGood)).unitEquivalent
+                        const multipleValue = Math.floor(gridData[k].qty / tierData.fromQty)
+                        const item = {
+                          id: randomNumber(-1, -1000),
+                          initial: freeItem.initial,
+                          name: freeItem.name,
+                          orderDetailId: gridData[k].id,
+                          promoCode: dataPromo[i].code,
+                          uomId: freeItem.uomId,
+                          itemId: tierData.freeGoodItemId,
+                          unitId: tierData.unitFreeGood,
+                          unitName: freeItem.unitName,
+                          qty: tierData.value * multipleValue,
+                          qtyClosed: 0,
+                          unitPrice: freeItem.unitPrice,
+                          coaCode: dataPromo[i].coaCost
+                        }
+                        bonusPromo.push(item)
+                      }
+                    } else if (gridData[k].unitId === tierData.saleUnit) {
+                      const freeItem = _cloneDeep(this.items.find(x => x.id === tierData.freeGoodItemId))
+                      freeItem.units = await this.getUnitItemLists(freeItem)
+                      freeItem.itemId = freeItem.id
+                      this.itemIdChange(freeItem)
+                      freeItem.unitId = parseInt(tierData.unitFreeGood)
+                      this.unitItemChange(freeItem)
+                      freeItem.unitName = freeItem.units.find(x => x.id === parseInt(tierData.unitFreeGood)).unitEquivalent
+                      const item = {
+                        id: randomNumber(-1, -1000),
+                        initial: freeItem.initial,
+                        name: freeItem.name,
+                        orderDetailId: gridData[k].id,
+                        promoCode: dataPromo[i].code,
+                        uomId: freeItem.uomId,
+                        itemId: tierData.freeGoodItemId,
+                        unitId: tierData.unitFreeGood,
+                        unitName: freeItem.unitName,
+                        qty: tierData.value,
+                        qtyClosed: 0,
+                        unitPrice: freeItem.unitPrice,
+                        coaCode: dataPromo[i].coaCost
+                      }
+                      bonusPromo.push(item)
+                    }
+                  }
+                } else if (dataPromo[i].itemDetails[j].promoType === 4) {
+                  // Apply to Kategori Barang - Promo Method Payment Term
+                  const tierData = dataPromo[i].itemDetails[j].promoTierList.find(x => x.paymentTermId === this.data.paymentTermId)
+                  if (tierData) {
+                    if (tierData.isPercentage) {
+                      totalDisc += gridData[k].unitPrice * (tierData.value / 100)
+                      discPromo.push({
+                        id: randomNumber(-1, -1000),
+                        promoDetailId: dataPromo[i].itemDetails[j].id,
+                        promoCode: dataPromo[i].code,
+                        name: dataPromo[i].name, 
+                        promoMethod: 1, 
+                        value: tierData.value, 
+                        nettPrice: 0, 
+                        coaCode: dataPromo[i].coaCost, 
+                        amount: totalDisc, 
+                        fromPromo: true, 
+                        isPercentage: dataPromo[i].itemDetails[j].isPercentage
+                      })
+                    } else {
+                      totalDisc += tierData.value
+                      discPromo.push({
+                        id: randomNumber(-1, -1000),
+                        promoDetailId: dataPromo[i].itemDetails[j].id,
+                        promoCode: dataPromo[i].code, 
+                        name: dataPromo[i].name, 
+                        promoMethod: 2, 
+                        value: tierData.value, 
+                        nettPrice: 0, 
+                        coaCode: dataPromo[i].coaCost, 
+                        amount: totalDisc, 
+                        fromPromo: true, 
+                        isPercentage: dataPromo[i].itemDetails[j].isPercentage
+                      })
+                    }
+                  }
+                }
+              }
+            } else if (applyTo === 2) { 
+              if (dataPromo[i].itemDetails[j].promoType === 5) {     
+                // Apply to Faktur - Nilai Trans           
+                const tierData = dataPromo[i].itemDetails[j].promoTierList.find(x => mainData.subTotal >= x.fromQty && mainData.subTotal <= x.toQty)
+                if (tierData) {
+                  if (tierData.isPercentage) {
+                    mainData.finalDiscPercent += tierData.value
+                  } else {
+                    mainData.finalDisc += tierData.value
+                  }
+                }
+              } else {
+                // Apply to Faktur - Promo Method Payment Term
+                const tierData = dataPromo[i].itemDetails[j].promoTierList.find(x => x.paymentTermId === this.data.paymentTermId)
+                if (tierData) {
+                  if (tierData.isPercentage) {
+                    mainData.finalDiscPercent += tierData.value
+                  } else {
+                    mainData.finalDisc += tierData.value
+                  }
+                }
+              }
+            }
+          }
+        }
+        gridData[k].discPromo = discPromo
+        gridData[k].disc = totalDisc 
+        gridData[k].nettPrice = gridData[k].unitPrice - totalDisc 
+        gridData[k].total =  gridData[k].nettPrice * gridData[k].qty
+      }
+      this.gridBonus.data = bonusPromo
+      mainData.subTotal = _sumBy(this.gridItem.data, 'total')
+      mainData.finalDisc += mainData.subTotal * (mainData.finalDiscPercent / 100)
+      mainData.finalDiscPercent = mainData.finalDisc / mainData.subTotal * 100
+      if (mainData.includeTax) {
+        mainData.total = mainData.subTotal - mainData.finalDisc
+      } else {
+        mainData.total = mainData.subTotal - mainData.finalDisc + mainData.taxAmount
+      }
+      this.data = mainData    
     }
   }
 }
