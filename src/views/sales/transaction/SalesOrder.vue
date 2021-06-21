@@ -1622,7 +1622,7 @@ export default {
       }
       const data = this.data
       data.itemDetails = this.gridItem.data
-      this.$refs.soSi.open(data)
+      this.$refs.soSi.open(data, true)
     },
     closeInv() {
       this.dialog.add = false

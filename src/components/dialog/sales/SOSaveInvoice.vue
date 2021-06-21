@@ -147,7 +147,8 @@ export default {
       dlvDate: false,
       invDate: false,
       invDueDate: false
-    }
+    },
+    fromOrder: false
   }),
   computed: {
     ...mapState({ 
@@ -192,11 +193,12 @@ export default {
         isSoInv : false
       }
     },
-    open(SOdata) {
+    open(item, fromOrder) {
       this.reset()
       this.dialog = true
-      this.data = SOdata
+      this.data = item
       this.data.isSoInv = true
+      this.fromOrder = fromOrder
       setTimeout(() => {
         this.$refs.dlvDate.focus()
       }, 0)
@@ -206,13 +208,24 @@ export default {
     },
     async save() {
       let result = { success: false, message: '' }
-      if (this.data.action === 'add') {
-        const resp = await api.create(this.endpoint.sales.order, this.data)
-        result = resp.data
-      } else if (this.data.action === 'edit') {
-        const resp = await api.update(this.endpoint.sales.order, this.data.code, this.data)
-        result = resp.data
+      if (this.fromOrder) {
+        if (this.data.action === 'add') {
+          const resp = await api.create(this.endpoint.sales.order, this.data)
+          result = resp.data
+        } else if (this.data.action === 'edit') {
+          const resp = await api.update(this.endpoint.sales.order, this.data.code, this.data)
+          result = resp.data
+        }
+      } else if (!this.fromOrder) {
+        if (this.data.action === 'add') {
+          const resp = await api.create(this.endpoint.sales.delivery, this.data)
+          result = resp.data
+        } else if (this.data.action === 'edit') {
+          const resp = await api.update(this.endpoint.sales.delivery, this.data.code, this.data)
+          result = resp.data
+        }
       }
+      
 
       if (result.success) {
         this.$store.dispatch('app/showSuccess', result.message)
