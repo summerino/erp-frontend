@@ -874,7 +874,7 @@ export default {
       }
     },
     addDetail() {
-      if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemId ?? null)) {
+      if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.applyTo ?? null)) {
         const item = {
           id: randomNumber(-1, -1000),
           applyTo: null,
