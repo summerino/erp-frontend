@@ -33,7 +33,9 @@ export default {
   },
   mounted() {
     let count = 0
-
+    this.$store.commit('app/setBreadcrumbs', [{
+      text: 'Dashboard'
+    }])
     // DEMO delay for loading graphics
     this.loadingInterval = setInterval(() => {
       this[`isLoading${count++}`] = false
