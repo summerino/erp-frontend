@@ -80,7 +80,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="item.isActive === false || !auth.allowDelete"
+                :disabled="!auth.allowDelete"
                 color="red"
                 icon
                 small
@@ -262,6 +262,15 @@
                           label="Deskripsi"
                           class="mt-0"
                         ></v-text-field>
+                      </v-col>
+                    </v-row>
+
+                    <v-row no-gutters>
+                      <v-col cols="12" md="6" class="pr-md-3">
+                        <v-checkbox
+                          v-model="data.isActive"
+                          label="Aktif"
+                        ></v-checkbox>
                       </v-col>
                     </v-row>
                   </v-card-text>
@@ -1081,8 +1090,8 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Hapus?',
-          'Apakah anda yakin ingin menghapus data ini?')
+          'Hapus Data?',
+          'Apakah anda yakin untuk menghapus data ini?')
       ) {
         api.delete(this.endpoint.inventory.item.item, item.id)
           .then(response => {

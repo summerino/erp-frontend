@@ -80,7 +80,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="item.isActive === false || !auth.allowDelete"
+                :disabled="!auth.allowDelete"
                 color="red"
                 icon
                 small
@@ -122,7 +122,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="data.isActive === false || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="data.action === 'edit' && !auth.allowUpdate"
                   dark
                   text
                   @click="save(true)"
@@ -151,7 +151,6 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="data.isActive === false"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -213,6 +212,15 @@
                           class="mt-0"
                           required
                         ></v-text-field>
+                      </v-col>
+                    </v-row>
+
+                    <v-row no-gutters>
+                      <v-col cols="12" md="6" class="pr-md-3">
+                        <v-checkbox
+                          v-model="data.isActive"
+                          label="Aktif"
+                        ></v-checkbox>
                       </v-col>
                     </v-row>
                   </v-card-text>
@@ -579,8 +587,8 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Non-Aktif?',
-          'Apakah anda yakin ingin me-non-aktifkan data ini?')
+          'Hapus Data?',
+          'Apakah anda yakin untuk menghapus data ini?')
       ) {
         api.delete(this.endpoint.systemManagement.role, item.id)
           .then(response => {
