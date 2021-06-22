@@ -47,12 +47,13 @@
                       <v-text-field
                           v-bind="attrs"
                           v-on="on"
-                          v-model="item.keyword"
+                          :value="formatDate(item.keyword)"
                           label="Tanggal"
                           class="mt-0 ml-1 font-weight-regular"
                           readonly
                       ></v-text-field>
                       </template>
+
                       <v-date-picker
                           v-model="item.keyword"
                           no-title
@@ -122,7 +123,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { isValid } from 'date-fns'
+import { format, isValid } from 'date-fns'
 
 export default {
   props: ['source'],
@@ -133,9 +134,12 @@ export default {
   computed: {
     ...mapState({
       filter: state => state.app.filter
-    })    
+    })
   },
   methods: {
+    formatDate(date) {
+      return format(new Date(date), 'dd-MMM-yyyy')
+    },
     addSearch() {
       this.$store.commit('app/addSearch')
     },
@@ -165,6 +169,7 @@ export default {
       this.$store.commit('app/onChangeField', vm)
     },
     getCategoryFromDataField(field) {
+      debugger
       if (field === '') return ''
       const selectedField = this.filter.fields.find(x => x.value === field)
       const temp = this.filter.mapDataTypeToCategory.find(x => x.dataTypes.includes(selectedField.dataType))
