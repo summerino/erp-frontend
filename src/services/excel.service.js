@@ -117,7 +117,6 @@ class ExcelService {
     worksheet.addRow([title])
 
     if (filter.searches.length > 0) {
-      debugger
       let filterRow = 3
       for (let i = 0; i < filter.searches.length; i++) {
         const filterFontSetting = { 
@@ -137,7 +136,6 @@ class ExcelService {
 
         worksheet.addRow([`${criteria} ${operator} ${keyword}`])
         worksheet.getCell(`A&${filterRow}`).font = filterFontSetting
-        console.log('filters', filter.searches[i])
         filterRow++
       }
     }
