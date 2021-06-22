@@ -8,7 +8,7 @@
               <v-select
                 v-model="item.field"
                 :items="filter.fields"
-                @change="onChangeField(index, item.field)"
+                @change="onChangeField(index, item)"
                 label="Kolom"
                 class="mt-0 ml-1 font-weight-regular"
               ></v-select>
@@ -34,16 +34,25 @@
               <div v-if="getCategoryFromDataField(item.field) === 'number' || getCategoryFromDataField(item.field) === 'text' || getCategoryFromDataField(item.field) === ''">  
                 <v-text-field class="mt-0 ml-1 font-weight-regular" v-model="item.keyword" label="Kata Kunci" @keyup.enter="advancedSearch()"></v-text-field>                
               </div>
-              <div v-else-if="getCategoryFromDataField(item.field) === 'bit'"> bit </div>
+              <div v-else-if="getCategoryFromDataField(item.field) === 'bit'">  
+                <v-autocomplete
+                  v-model="item.keyword"
+                  :items="item.options"
+                  label="Pilih"
+                  item-value="value"
+                  item-text="text"
+                  class="mt-0"
+                  required
+                ></v-autocomplete>
+              </div>
               <div v-else-if="getCategoryFromDataField(item.field) === 'datetime'"> 
                 <v-menu
-                      v-model="item.show"
-                      :close-on-content-click="false"
-                      transition="scale-transition"
-                      min-width="290px"
-                      offset-y
-                  >
-                      <template v-slot:activator="{ on, attrs }">
+                  v-model="item.show"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  min-width="290px"
+                  offset-y>
+                    <template v-slot:activator="{ on, attrs }">
                       <v-text-field
                           v-bind="attrs"
                           v-on="on"
@@ -52,14 +61,13 @@
                           class="mt-0 ml-1 font-weight-regular"
                           readonly
                       ></v-text-field>
-                      </template>
-
-                      <v-date-picker
-                          v-model="item.keyword"
-                          no-title
-                          scrollable
-                          @change="item.show = false"
-                      ></v-date-picker>
+                    </template>
+                    <v-date-picker
+                        v-model="item.keyword"
+                        no-title
+                        scrollable
+                        @change="item.show = false"
+                    ></v-date-picker>
                   </v-menu>
               </div>
 
@@ -159,12 +167,21 @@ export default {
     removeSearch(index) {
       this.$store.commit('app/removeSearch', index)
     },
-    onChangeField(index, field) {
+    onChangeField(index, filter) {
+      debugger
       this.filter.searches[index].operator = null
-      const category = this.getCategoryFromDataField(field)
+      const category = this.getCategoryFromDataField(filter.field)
+      let options = []
+      if (category === 'bit') {
+        const tempOpt = this.filter.fields.find(x => x.dataType === 'bit')
+        if (tempOpt) {
+          options = tempOpt.options
+        }
+      }
       const vm = {
         index: index,
-        category: category
+        category: category,
+        options: options
       }
       this.$store.commit('app/onChangeField', vm)
     },

@@ -101,5 +101,6 @@ export default {
       state.filter.searches[vm.index].keyword = ''
     }
     state.filter.searches[vm.index].operators = state.filter.operator.filter(x => x.allowedCategoryTypes.includes(vm.category))
+    state.filter.searches[vm.index].options = vm.options
   }
 }

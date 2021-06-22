@@ -818,7 +818,19 @@ export default {
         text: 'Tanggal Transaksi', value: 'date', dataType: 'datetime'
       },
       {
-        text: 'Tipe', value: 'fromDirectInvoice', dataType: 'text'
+        text: 'Tipe', 
+        value: 'fromDirectInvoice', 
+        dataType: 'bit', 
+        options: [
+          { 
+            text: 'Penjualan Langsung',
+            value: true
+          },
+          { 
+            text: 'Faktur Penjualan',
+            value: false
+          }
+        ]
       },
       {
         text: 'Pelanggan', value: 'custName', dataType: 'text'
