@@ -185,7 +185,7 @@
                   <v-tabs v-model="tab.cust">
                     <v-tab key="cust">Pelanggan</v-tab>
                     <v-tab key="promo">Promo</v-tab>
-                    <v-tab key="payment">Syarat Pembayaran</v-tab>
+                    <v-tab key="payment">Pembayaran</v-tab>
                     <v-tab key="others">Lainnya</v-tab>
                     <!-- <v-tab key="cust-payment">Payment</v-tab> -->
                   </v-tabs>
@@ -303,7 +303,7 @@
                           :items="paymentTerms"
                           :item-text="item => `${item.initial} - ${item.name}`"
                           :rules="rules.required"
-                          label="Syarat Pembayaran"
+                          label="Pembayaran"
                           item-value="id"
                           class="mt-0"
                           @change="findPromo()"
