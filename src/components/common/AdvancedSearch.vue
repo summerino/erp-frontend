@@ -152,6 +152,8 @@ export default {
       this.$store.commit('app/addSearch')
     },
     initAdvancedSearch() {
+      this.search = null
+      this.searches = []
       this.$store.commit('app/initAdvancedSearch')
     },
     advancedSearch() {
@@ -243,6 +245,9 @@ export default {
     }
   },
   created: function () {
+    this.initAdvancedSearch()
+  },
+  mounted: function () {
     this.initAdvancedSearch()
   }
 }

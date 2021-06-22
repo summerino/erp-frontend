@@ -248,7 +248,7 @@
                <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 'alt', 'r']"
-                  :disabled="isSaveNDeliveryAble"
+                  :disabled="isSaveNDeliveryAble || !allowInsertSalesDelivery || (data.action === 'edit' && !auth.allowUpdate) "
                   @click="saveDlv()"
                   @shortkey="saveDlv()"
                 >
@@ -270,7 +270,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 'alt', 'i']"
-                  :disabled="isSaveNInvoiceAble"
+                  :disabled="isSaveNInvoiceAble || !allowInsertSalesInvoice || (data.action === 'edit' && !auth.allowUpdate)"
                   @click="saveInv()"
                   @shortkey="saveInv()"
                 >
@@ -1149,7 +1149,9 @@ export default {
     paymentTerms: [],
     accounts: [],
     customerAddresses: [],
-    data: {}
+    data: {},
+    allowInsertSalesInvoice: false,
+    allowInsertSalesDelivery: false
   }),
 
   created: function () {
@@ -1164,6 +1166,14 @@ export default {
     auth.getAction(this.endpoint, this.menuId.salesorder, [this.action.insert, this.action.update, this.action.void])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
+      })
+    auth.getAction(this.endpoint, this.menuId.salesdelivery, [this.action.insert])
+      .then((response) => {
+        this.allowInsertSalesDelivery = response.data.find(x => x === this.action.insert) !== undefined 
+      })
+    auth.getAction(this.endpoint, this.menuId.salesinvoice, [this.action.insert])
+      .then((response) => {
+        this.allowInsertSalesInvoice = response.data.find(x => x === this.action.insert) !== undefined 
       })
     this.getPromoLists()
     this.getPaymentTermLists()

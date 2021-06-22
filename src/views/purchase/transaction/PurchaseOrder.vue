@@ -236,7 +236,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 'alt', 'r']"
-                  :disabled="isSaveNReceiveAble"
+                  :disabled="isSaveNReceiveAble || !allowInsertPurchaseReceive || !auth.allowInsert || (data.action === 'edit' && !auth.allowUpdate)"
                   @click="saveRcv()"
                   @shortkey="saveRcv()"
                 >
@@ -258,7 +258,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 'alt', 'i']"
-                  :disabled="isSaveNInvoiceAble"
+                  :disabled="isSaveNInvoiceAble || !allowInsertPurchaseInvoice || !auth.allowInsert || (data.action === 'edit' && !auth.allowUpdate)"
                   @click="saveInv()"
                   @shortkey="saveInv()"
                 >
@@ -966,7 +966,9 @@ export default {
     warehouses: [],
     taxes: [],
     items: [],
-    data: {}
+    data: {},
+    allowInsertPurchaseReceive: false,
+    allowInsertPurchaseInvoice: false
   }),
 
   created: function () {
@@ -981,6 +983,14 @@ export default {
     auth.getAction(this.endpoint, this.menuId.purchaseorder, [this.action.insert, this.action.update, this.action.void, this.action.close])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
+      })
+    auth.getAction(this.endpoint, this.menuId.purchasereceive, [this.action.insert])
+      .then((response) => {
+        this.allowInsertPurchaseReceive = response.data.find(x => x === this.action.insert) !== undefined 
+      })
+    auth.getAction(this.endpoint, this.menuId.purchaseinvoice, [this.action.insert])
+      .then((response) => {
+        this.allowInsertPurchaseInvoice = response.data.find(x => x === this.action.insert) !== undefined 
       })
     this.$store.commit('app/setFilterFields', this.filterfields)
   },
