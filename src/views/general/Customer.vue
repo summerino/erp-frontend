@@ -76,7 +76,7 @@
             <span>Ubah</span>
           </v-tooltip>
           <v-tooltip bottom>
-            <template v-if="item.isActive" v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ on, attrs }">
               <v-btn
                 v-bind="attrs"
                 v-on="on"
@@ -89,21 +89,7 @@
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <template v-else v-slot:activator="{ on, attrs }">
-              <v-btn
-                v-bind="attrs"
-                v-on="on"
-                icon
-                small
-                color="green"
-                :disabled="(!auth.allowUpdate)"
-                @click="reactivate(item)"
-              >
-                <v-icon small>mdi-check</v-icon>
-              </v-btn>
-            </template>
-            <span v-if="item.isActive">Nonaktifkan</span>
-            <span v-else>Aktifkan Kembali</span>
+            <span>Hapus</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.isActive`]="{ item }">
@@ -146,7 +132,7 @@
                   v-shortkey="['ctrl', 's']"
                   color="blue darken-2"
                   class="font-weight-regular"
-                  :disabled="isActive || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="data.action === 'edit' && !auth.allowUpdate"
                   dark
                   small
                   tile
@@ -299,6 +285,15 @@
                     class="mt-0"
                     label="Catatan"
                   ></v-text-field>
+                </v-col>
+              </v-row>
+
+              <v-row no-gutters>
+                <v-col cols="12" md="6" class="pr-md-3">
+                  <v-checkbox
+                    v-model="data.isActive"
+                    label="Aktif"
+                  ></v-checkbox>
                 </v-col>
               </v-row>
             </v-container>
@@ -798,31 +793,10 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Nontaktifkan?',
-          'Apakah anda yakin untuk menonaktifkan data ini?')
+          'Hapus Data?',
+          'Apakah anda yakin untuk menghapus data ini?')
       ) {
         api.delete(this.endpoint.general.customer.customer, item.code)
-          .then(response => {
-            if (response.data.success) {
-              this.$store.dispatch('app/showSuccess', response.data.message)
-              this.getList()
-            }
-          })
-      }
-    },
-    async reactivate(item) {
-      if (
-        await this.$refs.confirm.open(
-          'Aktifkan Kembali?',
-          'Apakah anda yakin untuk mengaktifkan kembali data ini?')
-      ) {
-        this.data = {
-          ...item,
-          action: 'edit',
-          isActive: true
-        }
-
-        api.update(this.endpoint.general.customer.customer, this.data.code, this.data)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)

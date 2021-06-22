@@ -429,31 +429,10 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Nontaktifkan?',
-          'Apakah anda yakin untuk menonaktifkan data ini?')
+          'Hapus Data?',
+          'Apakah anda yakin untuk menghapus data ini?')
       ) {
         api.delete(this.endpoint.general.tax, item.id)
-          .then(response => {
-            if (response.data.success) {
-              this.$store.dispatch('app/showSuccess', response.data.message)
-              this.getList()
-            }
-          })
-      }
-    },
-    async reactivate(item) {
-      if (
-        await this.$refs.confirm.open(
-          'Aktifkan Kembali?',
-          'Apakah anda yakin untuk mengaktifkan kembali data ini?')
-      ) {
-        this.data = {
-          ...item,
-          action: 'edit',
-          isActive: true
-        }
-
-        api.update(this.endpoint.general.tax, this.data.id, this.data)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
