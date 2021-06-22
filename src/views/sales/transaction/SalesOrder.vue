@@ -523,6 +523,7 @@
                           v-model="data.paymentTermId"
                           :items="paymentTerms"
                           :item-text="item => `${item.initial} - ${item.name}`"
+                          :rules="rules.required"
                           label="Pembayaran"
                           item-value="id"
                           class="mt-0"
@@ -537,6 +538,7 @@
                           <v-autocomplete
                           v-model="data.billingAddressId"
                           :items="customerAddresses"
+                          :rules="rules.required"
                           item-text="initial"
                           label="Alamat Tagih"
                           item-value="id"
