@@ -116,25 +116,33 @@ class ExcelService {
     worksheet.addRow([company])
     worksheet.addRow([title])
 
-    if (filter.searches.length > 0) {
+    let count = 0
+    if (filter !== null) {
+
       let filterRow = 3
-      for (let i = 0; i < filter.searches.length; i++) {
+      count = Math.ceil(filter.searches.length / 5)
+      const maxLength = filter.searches.length >= 5 ? 5 : filter.searches.length
+      for (let i = 0; i < count; i++) {
         const filterFontSetting = { 
           size: 9
         }
-        let criteria = ''
-        let operator = ''
-        const keyword = filter.searches[i].keyword
-        const searchCriteria = filter.fields.find(x => x.value === filter.searches[i].field)
-        if (searchCriteria) {
-          criteria = searchCriteria.text
+        let rowText = ''
+        for (let j = 0; j < maxLength; j++) {
+          const index = j + (i * maxLength)
+          let criteria = ''
+          let operator = ''
+          const keyword = filter.searches[index].keyword
+          const searchCriteria = filter.fields.find(x => x.value === filter.searches[index].field)
+          if (searchCriteria) {
+            criteria = searchCriteria.text
+          }
+          const searchOp = filter.operator.find(x => x.value === filter.searches[index].operator)
+          if (searchOp) {
+            operator = searchOp.text
+          }
+          rowText += `${criteria} ${operator} ${keyword};`
         }
-        const searchOp = filter.operator.find(x => x.value === filter.searches[i].operator)
-        if (searchOp) {
-          operator = searchOp.text
-        }
-
-        worksheet.addRow([`${criteria} ${operator} ${keyword}`])
+        worksheet.addRow([`${rowText}`])
         worksheet.getCell(`A&${filterRow}`).font = filterFontSetting
         filterRow++
       }
@@ -175,7 +183,7 @@ class ExcelService {
     const pageInfoFontSetting = { 
       size: 8
     }
-    const infoRow = 4 + filter.searches.length
+    const infoRow = filter === null ? 4 : 4 + count    
     const infoRowStr = `A${infoRow}`
     worksheet.getCell(infoRowStr).font = pageInfoFontSetting
 
@@ -186,7 +194,7 @@ class ExcelService {
     //   bgColor:{argb:'999999'}
     // }
 
-    const firstRow = filter.searches.length === 0 ? 5 : 5 + filter.searches.length
+    const firstRow = filter === null ? 5 : 5 + count
 
     //style tulisan
     const headerColumnFontSettings = { 
@@ -206,7 +214,7 @@ class ExcelService {
       worksheet.getCell(firstRow, i).alignment = { vertical: 'middle', horizontal: 'center' }
     }
 
-    worksheet.getRows(5).height = 50
+    worksheet.getRow(firstRow).height = 27
     // style align header column style
     for (let c = 0; c < columns.length; c++) {
       if (columns[c].isNumber) {
