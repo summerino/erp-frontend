@@ -7,9 +7,9 @@
       </transition>
     </component>
 
-    <v-snackbar v-model="toast.show" :timeout="toast.timeout" :color="toast.color" bottom right>
-      <v-icon v-if="toast.icon" color="white" style="margin-right:4px">{{ toast.icon }}</v-icon>
-      {{ toast.message }}
+    <v-snackbar v-model="toast.show" :timeout="toast.timeout" :color="toast.color" :multi-line="multiLine" bottom right>
+      <v-icon v-if="toast.icon" color="white" class="float-left" style="margin-right:4px">{{ toast.icon }}</v-icon>
+      <p class="float-left" v-html="toast.message"></p>
       <v-btn v-if="toast.timeout === 0" color="white" text @click="toast.show = false">{{ $t('common.close') }}</v-btn>
     </v-snackbar>
 

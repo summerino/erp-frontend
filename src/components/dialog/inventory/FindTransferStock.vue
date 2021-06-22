@@ -198,8 +198,8 @@ export default {
             keyword: this.MarkExclude
           }, {
             field: 'type',
-            operator: 'doesnotcontain',
-            keyword: [2, 3]
+            operator: 'eq',
+            keyword: 1
           }, {
             field: 'origintransfercode',
             operator: 'eq',
