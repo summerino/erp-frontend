@@ -1038,7 +1038,7 @@ export default {
         } else {
           this.data.code = result.data
         }
-        this.getList()
+        this.getList(!closeDialog)
       }
     },
     close() {
