@@ -118,23 +118,29 @@ class ExcelService {
 
     if (filter !== null) {
       let filterRow = 3
-      for (let i = 0; i < filter.searches.length; i++) {
+      const count = Math.ceil(filter.searches.length / 5)
+      const maxLength = filter.searches.length >= 5 ? 5 : filter.searches.length
+      for (let i = 0; i < count; i++) {
         const filterFontSetting = { 
           size: 9
         }
-        let criteria = ''
-        let operator = ''
-        const keyword = filter.searches[i].keyword
-        const searchCriteria = filter.fields.find(x => x.value === filter.searches[i].field)
-        if (searchCriteria) {
-          criteria = searchCriteria.text
+        let rowText = ''
+        for (let j = 0; j < maxLength; j++) {
+          const index = j + (i * maxLength)
+          let criteria = ''
+          let operator = ''
+          const keyword = filter.searches[index].keyword
+          const searchCriteria = filter.fields.find(x => x.value === filter.searches[index].field)
+          if (searchCriteria) {
+            criteria = searchCriteria.text
+          }
+          const searchOp = filter.operator.find(x => x.value === filter.searches[index].operator)
+          if (searchOp) {
+            operator = searchOp.text
+          }
+          rowText += `${criteria} ${operator} ${keyword};`
         }
-        const searchOp = filter.operator.find(x => x.value === filter.searches[i].operator)
-        if (searchOp) {
-          operator = searchOp.text
-        }
-
-        worksheet.addRow([`${criteria} ${operator} ${keyword}`])
+        worksheet.addRow([`${rowText}`])
         worksheet.getCell(`A&${filterRow}`).font = filterFontSetting
         filterRow++
       }
