@@ -116,8 +116,7 @@ class ExcelService {
     worksheet.addRow([company])
     worksheet.addRow([title])
 
-    if (filter.searches.length > 0) {
-      debugger
+    if (filter !== null) {
       let filterRow = 3
       for (let i = 0; i < filter.searches.length; i++) {
         const filterFontSetting = { 
@@ -137,7 +136,6 @@ class ExcelService {
 
         worksheet.addRow([`${criteria} ${operator} ${keyword}`])
         worksheet.getCell(`A&${filterRow}`).font = filterFontSetting
-        console.log('filters', filter.searches[i])
         filterRow++
       }
     }
@@ -177,7 +175,7 @@ class ExcelService {
     const pageInfoFontSetting = { 
       size: 8
     }
-    const infoRow = 4 + filter.searches.length
+    const infoRow = filter === null ? 4 : 4 + filter.searches.length    
     const infoRowStr = `A${infoRow}`
     worksheet.getCell(infoRowStr).font = pageInfoFontSetting
 
@@ -188,7 +186,7 @@ class ExcelService {
     //   bgColor:{argb:'999999'}
     // }
 
-    const firstRow = filter.searches.length === 0 ? 5 : 5 + filter.searches.length
+    const firstRow = filter === null ? 5 : 5 + filter.searches.length
 
     //style tulisan
     const headerColumnFontSettings = { 
@@ -208,7 +206,7 @@ class ExcelService {
       worksheet.getCell(firstRow, i).alignment = { vertical: 'middle', horizontal: 'center' }
     }
 
-    worksheet.getRows(5).height = 50
+    worksheet.getRow(firstRow).height = 27
     // style align header column style
     for (let c = 0; c < columns.length; c++) {
       if (columns[c].isNumber) {

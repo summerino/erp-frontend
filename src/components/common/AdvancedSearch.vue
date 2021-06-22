@@ -168,7 +168,6 @@ export default {
       this.$store.commit('app/removeSearch', index)
     },
     onChangeField(index, filter) {
-      debugger
       this.filter.searches[index].operator = null
       const category = this.getCategoryFromDataField(filter.field)
       let options = []
@@ -186,7 +185,6 @@ export default {
       this.$store.commit('app/onChangeField', vm)
     },
     getCategoryFromDataField(field) {
-      debugger
       if (field === '') return ''
       const selectedField = this.filter.fields.find(x => x.value === field)
       const temp = this.filter.mapDataTypeToCategory.find(x => x.dataTypes.includes(selectedField.dataType))
