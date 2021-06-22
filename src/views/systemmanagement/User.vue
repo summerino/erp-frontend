@@ -244,11 +244,10 @@
                   v-model="data.roleId"
                   :items="roles"
                   :item-text="item => `${item.initial} - ${item.name}`"
-                  
+                  :rules="rules.required"
                   label="Peran"
                   item-value="id"
                   class="mt-0"
-                  
                 ></v-autocomplete>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
@@ -256,11 +255,10 @@
                   v-model="data.employeeId"
                   :items="employees"
                   :item-text="item => `${item.initial} - ${item.firstName}`"
-                  
+                  :rules="rules.required"
                   label="Karyawan"
                   item-value="id"
                   class="mt-0"
-                  
                 ></v-autocomplete>
               </v-col>
             </v-row>

@@ -396,7 +396,7 @@
                   <v-tabs v-model="tab.cust">
                     <v-tab key="cust">Pelanggan</v-tab>
                     <v-tab key="promo">Promo</v-tab>
-                    <v-tab key="payment">Syarat Pembayaran</v-tab>
+                    <v-tab key="payment">Pembayaran</v-tab>
                     <v-tab key="others">Lainnya</v-tab>
                   </v-tabs>
 
@@ -523,11 +523,24 @@
                           v-model="data.paymentTermId"
                           :items="paymentTerms"
                           :item-text="item => `${item.initial} - ${item.name}`"
-                          :rules="rules.required"
-                          label="Syarat Pembayaran"
+                          label="Pembayaran"
                           item-value="id"
                           class="mt-0"
                           @change="findPromo()"
+                          >
+                          </v-autocomplete>
+                        </v-col>
+                      </v-row>
+
+                      <v-row no-gutters>
+                        <v-col cols="12">
+                          <v-autocomplete
+                          v-model="data.billingAddressId"
+                          :items="customerAddresses"
+                          item-text="initial"
+                          label="Alamat Tagih"
+                          item-value="id"
+                          class="mt-0"
                           >
                           </v-autocomplete>
                         </v-col>
@@ -545,6 +558,7 @@
                             v-model="data.warehouseCode"
                             :items="warehouses"
                             :item-text="item => `${item.initial} - ${item.name}`"
+                            :rules="rules.required"
                             label="Gudang"
                             item-value="code"
                             class="mt-0"
@@ -1134,6 +1148,7 @@ export default {
     promos: [],
     paymentTerms: [],
     accounts: [],
+    customerAddresses: [],
     data: {}
   }),
 
@@ -1499,6 +1514,18 @@ export default {
           this.accounts = response.data.tableData
         })
     },
+    getCustomerAddressesLists(item) {
+      api.getAll(`${this.endpoint.general.customer.customer}/addresses`, {
+        params: { code: item.code }
+      })
+        .then(response => {
+          this.customerAddresses = response.data.tableData
+          const data_c = this.customerAddresses.find(x => x.isDefault === true)
+          if (data_c) {
+            this.data.billingAddressId = data_c.id
+          }
+        })
+    },
     close() {
       this.dialog.add = false
     },
@@ -1633,7 +1660,7 @@ export default {
       }
       const data = this.data
       data.itemDetails = this.gridItem.data
-      this.$refs.soSi.open(data)
+      this.$refs.soSi.open(data, true)
     },
     closeInv() {
       this.dialog.add = false
@@ -1706,6 +1733,8 @@ export default {
         this.data.custAddr = customer.address1
         this.data.custPhone = customer.phone1
         this.data.custFax = customer.fax
+
+        this.getCustomerAddressesLists(customer)
       }
     },
     itemIdChange(item) {

@@ -117,8 +117,8 @@ class ExcelService {
     worksheet.addRow([title])
 
     let count = 0
-
     if (filter !== null) {
+
       let filterRow = 3
       count = Math.ceil(filter.searches.length / 5)
       const maxLength = filter.searches.length >= 5 ? 5 : filter.searches.length

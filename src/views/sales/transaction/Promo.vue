@@ -532,7 +532,7 @@
                                     <v-btn
                                       v-bind="attrs"
                                       v-on="on"
-                                      :disabled="item.promoType === 1 || item.promoType === 0"
+                                      :disabled="(item.promoType === 1 || item.promoType === 0) || ( item.itemId === null && item.applyTo !== 2)"
                                       color="blue"
                                       icon
                                       x-small
@@ -603,7 +603,7 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Id Promo', value: 'code', divider: true, width: '100' },
+        { text: 'Kode', value: 'code', divider: true, width: '100' },
         { text: 'Nama Promo', value: 'name', divider: true, width: '100' },
         { text: 'Tanggal Mulai', value: 'startDate', align: 'right', divider: true, width: '100' },
         { text: 'Tanggal Akhir', value: 'endDate', align: 'right', divider: true, width: '100' },

@@ -226,6 +226,28 @@
                   </v-list-item-title>
                 </v-list-item>
               </v-list>
+              <v-list class="cursor-pointer">
+                <v-list-item
+                  v-shortkey="['ctrl', 'alt', 'i']"
+                  :disabled="isSaveNInvoiceAble"
+                  @click="saveInv()"
+                  @shortkey="saveInv()"
+                >
+                  <v-list-item-title>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <span
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          Simpan & Faktur
+                        </span>
+                      </template>
+                      <span class="text-caption">(Ctrl + Alt + I)</span>
+                    </v-tooltip>
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
             </v-menu>
             <v-divider vertical></v-divider>
           </v-toolbar-items>
@@ -643,6 +665,10 @@
       :mark-exclude="['V', 'CLS', 'CMP']"
       @dblclick:row="bindTransData"
     ></find-return>
+    <so-save-Invoice
+      ref="soSi"
+     @closeParent="closeInv"
+    ></so-save-Invoice>
   </div>
 </template>
 
@@ -660,6 +686,7 @@ import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 import FindSo from '@/components/dialog/sales/FindSO'
 import FindReturn from '@/components/dialog/sales/FindReturn'
+import SoSaveInvoice from '@/components/dialog/sales/SOSaveInvoice'
 
 export default {
   components: {
@@ -667,7 +694,8 @@ export default {
     ExportExcel,
     Confirm,
     FindSo,
-    FindReturn
+    FindReturn,
+    SoSaveInvoice
   },
 
   data: () => ({
@@ -814,6 +842,16 @@ export default {
     },
     isVoid() {
       return (this.data?.mark?.toUpperCase() === 'V')
+    },
+    isSaveNInvoiceAble() {
+      if (this.data.action === 'add') {
+        return false
+      } if (this.data.mark === 'CMP' || this.data.mark === 'A') {
+        if (this.data.action === 'edit') {
+          return false
+        }
+      }
+      return true
     }
   },
 
@@ -873,7 +911,7 @@ export default {
           direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
         })
       }
-      api.getAll(this.endpoint.sales.invoice, {
+      api.getAll(this.endpoint.sales.delivery, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -1083,6 +1121,19 @@ export default {
         }
         this.getList(!closeDialog)
       }
+    },
+    saveInv() {
+      if (!this.$refs.form.validate()) {
+        this.$store.dispatch('app/showInfo', 'Silahkan periksa kembali data yang wajib diisi.')
+        return
+      }
+      const data = this.data
+      data.itemDetails = this.gridItem.data
+      this.$refs.soSi.open(data, false)
+    },
+    closeInv() {
+      this.dialog.add = false
+      this.getList()
     },
     addItem() {
       if (!this.data.transCode) {
