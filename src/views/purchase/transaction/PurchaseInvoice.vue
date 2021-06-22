@@ -37,7 +37,7 @@
                 </template>
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
-              <export-excel title="Data Faktur" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+              <export-excel title="Daftar Faktur" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
           <!-- <v-col cols="12" md="4">

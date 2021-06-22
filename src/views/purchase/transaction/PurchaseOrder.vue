@@ -37,7 +37,7 @@
                 </template>
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
-              <export-excel title="Data Order Pembelian" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+              <export-excel title="Daftar Order Pembelian" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>           
           <v-col cols="12" md="4" class="text-right">
@@ -1109,7 +1109,6 @@ export default {
     },
     getList(bindToForm = false, filters = []) {
       const sorts = []
-
       for (let i = 0; i < this.grid.options.sortBy.length; i++) {
         sorts.push({
           field: this.grid.options.sortBy[i],

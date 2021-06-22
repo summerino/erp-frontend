@@ -99,7 +99,7 @@ class ExcelService {
     const num = totalRow < Math.ceil(currentPage * pageSize) ? totalRow : Math.ceil(currentPage * pageSize)
     return `${firstNumber} - ${num} dari ${totalRow} data`    
   }
-  async export(title, grid, gridDefOpts, fromSwift = false) {
+  async export(title, grid, gridDefOpts, filter = null, fromSwift = false) {
     const company = 'Sahassa'    
     const currentPage = grid.options.page
     const pageSize = gridDefOpts.pageSize
@@ -115,6 +115,32 @@ class ExcelService {
     // render title
     worksheet.addRow([company])
     worksheet.addRow([title])
+
+    if (filter.searches.length > 0) {
+      debugger
+      let filterRow = 3
+      for (let i = 0; i < filter.searches.length; i++) {
+        const filterFontSetting = { 
+          size: 9
+        }
+        let criteria = ''
+        let operator = ''
+        const keyword = filter.searches[i].keyword
+        const searchCriteria = filter.fields.find(x => x.value === filter.searches[i].field)
+        if (searchCriteria) {
+          criteria = searchCriteria.text
+        }
+        const searchOp = filter.operator.find(x => x.value === filter.searches[i].operator)
+        if (searchOp) {
+          operator = searchOp.text
+        }
+
+        worksheet.addRow([`${criteria} ${operator} ${keyword}`])
+        worksheet.getCell(`A&${filterRow}`).font = filterFontSetting
+        console.log('filters', filter.searches[i])
+        filterRow++
+      }
+    }
     worksheet.addRow([''])
     worksheet.addRow([pageInfo])
     const columnOnly = columns.map(x => {
@@ -128,7 +154,7 @@ class ExcelService {
     worksheet.views = [
       {
         state: 'frozen', 
-        xSplit: columns.length, 
+        // xSplit: columns.length, 
         ySplit: 5 
         //topLeftCell: 'G10', 
         //activeCell: 'A1'
@@ -143,46 +169,53 @@ class ExcelService {
 
     const subTitleFontSetting = { 
       //name: 'Arial', 
-      size: 14,
+      size: 13,
       bold: true 
     }
     worksheet.getCell('A2').font = subTitleFontSetting
 
     const pageInfoFontSetting = { 
-      size: 9
+      size: 8
     }
-    worksheet.getCell('A4').font = pageInfoFontSetting
+    const infoRow = 4 + filter.searches.length
+    const infoRowStr = `A${infoRow}`
+    worksheet.getCell(infoRowStr).font = pageInfoFontSetting
 
-    const pattern = {
-      type: 'pattern',
-      pattern:'solid',
-      fgColor:{argb:'FFFFFF00'},
-      bgColor:{argb:'6e6e6e'}
-    }
+    // const pattern = {
+    //   type: 'pattern',
+    //   pattern:'solid',
+    //   fgColor:{argb:'FFFFFF00'},
+    //   bgColor:{argb:'999999'}
+    // }
+
+    const firstRow = filter.searches.length === 0 ? 5 : 5 + filter.searches.length
 
     //style tulisan
     const headerColumnFontSettings = { 
       //name: 'Arial', 
       //size: 16
-      bold: true 
+      bold: true,
+      color: {argb:'FFFFFF'}
     }
-
     // style align header column
     for (let i = 1; i <= columns.length; i++) {
-      worksheet.getCell(5, i).fill = pattern
-      worksheet.getCell(5, i).font = headerColumnFontSettings
-      worksheet.getCell(5, i).alignment = { vertical: 'middle', horizontal: 'center' }
-      
+      worksheet.getCell(firstRow, i).fill = {
+        type: 'pattern',
+        pattern:'solid',
+        fgColor:  {argb:'787878'}
+      }
+      worksheet.getCell(firstRow, i).font = headerColumnFontSettings
+      worksheet.getCell(firstRow, i).alignment = { vertical: 'middle', horizontal: 'center' }
     }
 
+    worksheet.getRows(5).height = 50
     // style align header column style
     for (let c = 0; c < columns.length; c++) {
       if (columns[c].isNumber) {
-        worksheet.getColumn(c + 1).numFmt = 'Rp. #,##0.00;'
+        worksheet.getColumn(c + 1).numFmt = '_ * #,##0_ ;_ * -#,##0_ ;_ * "-"_ ;_ @_ '
       } 
     }
 
-    const firstRow = 5
     // style align column number
     for (let i = 0; i <= datas.length; i++) {
       worksheet.getCell(i + firstRow, 1).alignment = { vertical: 'middle', horizontal: 'center' }

@@ -51,7 +51,7 @@
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" md="1">
-            <export-excel title="Data Penyesuaian" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+            <export-excel title="Daftar Penyesuaian" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
           </v-col>
           <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
@@ -800,7 +800,7 @@ export default {
       this.grid.search = vm.search
       this.getList(vm.filters)
     },
-    getList(filters = []) {
+    getList(bindToForm = false, filters = []) {
       const sorts = []
 
       for (let i = 0; i < this.grid.options.sortBy.length; i++) {
@@ -821,6 +821,10 @@ export default {
         .then(response => {
           this.grid.data = response.data.tableData
           this.grid.total = response.data.rowCount
+          if (bindToForm) {
+            const item = this.grid.data.find(h => h.code === this.data.code)
+            this.edit(item)
+          }
         })
     },
     // getList() {
@@ -1034,7 +1038,7 @@ export default {
         } else {
           this.data.code = result.data
         }
-        this.getList()
+        this.getList(!closeDialog)
       }
     },
     close() {

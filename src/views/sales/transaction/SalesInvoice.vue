@@ -47,7 +47,7 @@
                 </template>
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
-              <export-excel title="Data Faktur" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+              <export-excel title="Daftar Faktur" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
           <v-spacer></v-spacer>
@@ -818,7 +818,19 @@ export default {
         text: 'Tanggal Transaksi', value: 'date', dataType: 'datetime'
       },
       {
-        text: 'Tipe', value: 'fromDirectInvoice', dataType: 'text'
+        text: 'Tipe', 
+        value: 'fromDirectInvoice', 
+        dataType: 'bit', 
+        options: [
+          { 
+            text: 'Penjualan Langsung',
+            value: true
+          },
+          { 
+            text: 'Faktur Penjualan',
+            value: false
+          }
+        ]
       },
       {
         text: 'Pelanggan', value: 'custName', dataType: 'text'

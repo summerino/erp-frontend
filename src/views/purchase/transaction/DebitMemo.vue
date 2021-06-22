@@ -37,7 +37,7 @@
                 </template>
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
-              <export-excel title="Data Note Debit" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+              <export-excel title="Daftar Note Debit" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
 
             </v-row>
           </v-col>

@@ -22,11 +22,11 @@
 import excelService from '@/services/excel.service.js'
 
 export default {
-  props: ['title', 'grid', 'gridDefOpts'],
+  props: ['title', 'grid', 'gridDefOpts', 'filters'],
   
   methods: {
     async exportExcel() {
-      excelService.export(this.title, this.grid, this.gridDefOpts)
+      excelService.export(this.title, this.grid, this.gridDefOpts, this.filters)
     }
   }  
 }

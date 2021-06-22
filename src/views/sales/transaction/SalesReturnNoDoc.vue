@@ -47,7 +47,7 @@
                 </template>
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
-              <export-excel title="Data Retur Penjualan" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+              <export-excel title="Daftar Retur Penjualan" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
           <v-spacer></v-spacer>
