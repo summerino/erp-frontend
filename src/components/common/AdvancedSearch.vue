@@ -199,9 +199,18 @@ export default {
       return temp.category
     },
     getList(bindToForm, filters = []) {
+      debugger
+      const filterLite = []
+      for (let i = 0; i < filters.length; i++) {
+        filterLite.push({
+          field: filters[i].field,
+          operator: filters[i].operator,
+          keyword: filters[i].keyword
+        })
+      }
       const vm = {
         bindToForm: bindToForm,
-        filters: filters,
+        filters: filterLite,
         search: this.search,
         isAdvancedSearch: this.filter.isAdvancedSearch
       }
