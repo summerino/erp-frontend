@@ -249,13 +249,16 @@
 
               <v-row no-gutters>
                 <v-col cols="12" md="6" class="pr-md-3">
-                  <v-currency-field
-                    v-model="data.creditTerm"
-                    :decimal-length="0"
-                    class="mt-0"
-                    label="Jangka Waktu Kredit"
-                    :max="32767"
-                  ></v-currency-field>
+                  <v-autocomplete
+                  v-model="data.paymentTermId"
+                  :items="paymentTerms"
+                  :item-text="item => `${item.initial} - ${item.name}`"
+                  :rules="rules.required"
+                  label="Pembayaran"
+                  item-value="id"
+                  class="mt-0"
+                  >
+                  </v-autocomplete>
                 </v-col>
                 <v-col cols="12" md="6" class="pl-md-3">
                   <v-currency-field
@@ -611,6 +614,7 @@ export default {
     billingAddressRef: [],
     shippingAddressRef: [],
     areaRef: [],
+    paymentTerms: [],
     data: {}
   }),
 
@@ -618,6 +622,7 @@ export default {
     this.getList()
     this.getTypesList()
     this.getAreaList()
+    this.getPaymentTermLists()
     auth.getAction(this.endpoint, this.menuId.customer, [this.action.insert, this.action.update, this.action.delete])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -748,6 +753,12 @@ export default {
       api.getAll(`${this.endpoint.sales.area}/lists`, {})
         .then(response => {
           this.areaRef = response.data.tableData
+        })
+    },
+    getPaymentTermLists() {
+      api.getAll('payment-term/lists')
+        .then(response => {
+          this.paymentTerms = response.data.tableData
         })
     },
     back() {

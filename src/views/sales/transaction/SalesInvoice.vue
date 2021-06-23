@@ -742,7 +742,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { format, parseISO } from 'date-fns'
+import { format, parseISO, addDays } from 'date-fns'
 import { sumBy as _sumBy } from 'lodash'
 
 import { randomNumber } from '@/helpers/math-helpers'
@@ -847,13 +847,15 @@ export default {
     ], 
     valid: false,
     employees: [],
-    dlvOrders:[],
+    dlvOrders: [],
+    paymentTerms: [],
     data: {}
   }),
 
   created: function () {
     this.getList()
     this.getEmployeeLists()
+    this.getPaymentTermLists()
     auth.getAction(this.endpoint, this.menuId.salesinvoice, [this.action.insert, this.action.update, this.action.void])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -1109,6 +1111,12 @@ export default {
         this.$refs.code.focus()
       }, 0)
     },
+    getPaymentTermLists() {
+      api.getAll('payment-term/lists')
+        .then(response => {
+          this.paymentTerms = response.data.tableData
+        })
+    },
     async remove(item) {
       if (
         await this.$refs.confirm.open(
@@ -1271,6 +1279,13 @@ export default {
             item.custAddr = response.data.address1
             item.custPhone = response.data.phone
             item.custFax = response.data.fax
+
+            const paymentData = this.paymentTerms.find(x => x.id === response.data.paymentTermId)
+            if (paymentData) {
+              const date = addDays(parseISO(this.data.date), paymentData.due)
+              this.data.dueDate = format(date, 'yyyy-MM-dd')
+            }
+
           }
         })
     },
