@@ -414,6 +414,33 @@
                                   <template v-slot:[`item.qtyOnAvailable`]="{ item }">
                                     {{ item.qtyOnHand - item.qtyOnOrder }}
                                   </template>
+                                  <template v-slot:[`item.qtyOnOrder`]="{ item }">
+                                    <v-chip
+                                    label
+                                    link
+                                    small
+                                    @click="detailQty(item, 1)"
+                                    >
+                                    {{ item.qtyOnOrder }}</v-chip>
+                                  </template>
+                                  <template v-slot:[`item.qtyOnIndent`]="{ item }">
+                                    <v-chip
+                                    label
+                                    link
+                                    small
+                                    @click="detailQty(item, 2)"
+                                    >
+                                    {{ item.qtyOnIndent }}</v-chip>
+                                  </template>
+                                  <template v-slot:[`item.qtyOnTransfer`]="{ item }">
+                                    <v-chip
+                                    label
+                                    link
+                                    small
+                                    @click="detailQty(item, 3)"
+                                    >
+                                    {{ item.qtyOnTransfer }}</v-chip>
+                                  </template>
                                   <template v-slot:[`item.updatedDate`]="{ item }">
                                     {{ item.updatedDate | formatDate('dd-MMM-yyyy') }}
                                   </template>                                
@@ -696,6 +723,7 @@
     </v-dialog>
 
     <confirm ref="confirm"></confirm>
+    <related-trans ref="relatedTrans"></related-trans>
   </div>
 </template>
 
@@ -708,11 +736,13 @@ import auth from '@/services/authorization.service'
 
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
+import RelatedTrans from '@/components/dialog/inventory/RelatedTrans'
 
 export default {
   components: {
     ExportExcel,
-    Confirm
+    Confirm,
+    RelatedTrans
   },
 
   data: () => ({
@@ -1195,6 +1225,9 @@ export default {
     },
     async exportExcel() {
       this.exportExcel.export()
+    },
+    detailQty(item, from) {
+      this.$refs.relatedTrans.open(item, from)
     }
   }
 }
