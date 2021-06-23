@@ -4,7 +4,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="2">
-            Gudang
+            Tipe Aktiva
           </v-col>
           <v-col cols="12" md="4">
             <v-text-field
@@ -24,7 +24,7 @@
           <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
+                <!-- <v-btn
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'alt', 'n']"
@@ -36,6 +36,18 @@
                   @click="add"
                   @shortkey="add"
                   :disabled="!auth.allowInsert"
+                > -->
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'n']"
+                  color="green darken-1"
+                  class="font-weight-regular"
+                  dark
+                  small
+                  tile
+                  @click="add"
+                  @shortkey="add"
                 >
                   <v-icon left>mdi-plus</v-icon>
                   Data Baru
@@ -78,7 +90,7 @@
           </v-tooltip>
           <v-tooltip bottom>
             <template v-if="item.isActive" v-slot:activator="{ on, attrs }">
-              <v-btn
+              <!-- <v-btn
                 v-bind="attrs"
                 v-on="on"
                 icon
@@ -86,6 +98,14 @@
                 color="red"
                 @click="remove(item)"
                 :disabled="!auth.allowDelete"
+              > -->
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                icon
+                small
+                color="red"
+                @click="remove(item)"
               >
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
@@ -111,23 +131,6 @@
             <span v-else class="text-caption">Inactive</span>
           </v-tooltip>
         </template>
-        <template v-slot:[`item.isDefault`]="{ item }">
-          <v-tooltip bottom>
-            <template v-if="item.isDefault === true" v-slot:activator="{ on, attrs }">
-              <v-icon 
-                v-bind="attrs" 
-                v-on="on" 
-                color="blue darken-2">mdi-checkbox-marked-outline</v-icon>
-            </template>
-            <template v-else v-slot:activator="{ on, attrs }">
-              <v-icon
-                v-bind="attrs" 
-                v-on="on">mdi-checkbox-blank-outline</v-icon>
-            </template>
-            <span v-if="item.isDefault === true" class="text-caption">Ya</span>
-            <span v-else class="text-caption">Tidak</span>
-          </v-tooltip>
-        </template>
       </v-data-table>
     </v-card>
 
@@ -135,7 +138,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="6">
-            <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' | capitalize }} Gudang</span>
+            <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' | capitalize }} Tipe Aktiva</span>
           </v-col>
           <v-col cols="12" md="6" class="text-right">
             <label
@@ -146,7 +149,7 @@
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
-                <v-btn
+                <!-- <v-btn
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 's']"
@@ -158,6 +161,18 @@
                   @click="save"
                   @shortkey="save"
                   :disabled="data.action === 'edit' && !auth.allowUpdate"
+                > -->
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 's']"
+                  color="blue darken-2"
+                  class="font-weight-regular"
+                  dark
+                  small
+                  tile
+                  @click="save"
+                  @shortkey="save"
                 >
                   <v-icon left>
                     mdi-content-save
@@ -196,78 +211,88 @@
           ref="form"
           v-model="valid"
         >
-          <v-container class="px-1 pt-0 pb-1">
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
-                <v-text-field
-                  v-model="data.code"
-                  label="Kode"
-                  class="mt-0"
-                  readonly
-                  required
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-text-field
-                  ref="initial"
-                  v-model="data.initial"
-                  :rules="[rules.required[0], rules.max20chars[0]]"
-                  :counter="20"
-                  label="Inisial"
-                  class="mt-0"
-                  required
-                ></v-text-field>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="data.name"
-                  :rules="[rules.required[0], rules.max50chars[0]]"
-                  :counter="50"
-                  label="Nama"
-                  class="mt-0"
-                  required
-                ></v-text-field>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="data.address"
-                  :rules="[rules.required[0], rules.max100chars[0]]"
-                  :counter="100"
-                  label="Alamat"
-                  class="mt-0"
-                  required
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row no-gutters>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="data.phone"
-                  :rules="[rules.required[0], rules.max30chars[0]]"
-                  :counter="30"
-                  label="Telepon"
-                  class="mt-0"
-                  type="number"
-                  required
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row no-gutters>
-              <v-col cols="12" class="pr-md-3">
-                <v-checkbox
-                  v-model="data.isDefault"
-                  label="Default"
-                  class="mt-0"
-                ></v-checkbox>
-              </v-col>
-            </v-row>
-          </v-container>
+          <v-card>
+            <v-card-title>Tipe Aktiva</v-card-title>
+            <v-card-text>
+              <v-row no-gutters>
+                <v-col cols="12" md="6" class="pr-md-3">
+                  <v-text-field
+                    ref="initial"
+                    v-model="data.initial"
+                    :rules="[rules.required[0], rules.max20chars[0]]"
+                    :counter="20"
+                    label="Inisial"
+                    class="mt-0"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" md="6" class="pl-md-3">
+                  <v-text-field
+                    v-model="data.name"
+                    :rules="[rules.required[0], rules.max50chars[0]]"
+                    :counter="50"
+                    label="Nama"
+                    class="mt-0"
+                    required
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+          <v-card>
+            <v-card-title>Akun Jurnal</v-card-title>
+            <v-card-text>
+              <v-row no-gutters>
+                <v-col cols="12" md="6" class="pr-md-3">
+                  <v-autocomplete
+                    v-model="data.coaDeprecExpense"
+                    :items="coas"
+                    :item-text="item => `${item.code} - ${item.name}`"
+                    label="Beban Depreasi"
+                    item-value="code"
+                    class="mt-0"
+                    :rules="rules.required"
+                    required
+                  ></v-autocomplete>
+                </v-col>
+                <v-col cols="12" md="6" class="pl-md-3">
+                  <v-autocomplete
+                    v-model="data.coaAccumDeprec"
+                    :items="coas"
+                    :item-text="item => `${item.code} - ${item.name}`"
+                    label="Akumulasi Depreasi"
+                    item-value="code"
+                    class="mt-0"
+                    :rules="rules.required"
+                    required
+                  ></v-autocomplete>
+                </v-col>
+              </v-row>
+              <v-row no-gutters>
+                <v-col cols="12" md="6" class="pr-md-3">
+                  <v-autocomplete
+                    v-model="data.coaAsset"
+                    :items="coas"
+                    :item-text="item => `${item.code} - ${item.name}`"
+                    label="Aktiva"
+                    item-value="code"
+                    class="mt-0"
+                    :rules="rules.required"
+                    required
+                  ></v-autocomplete>
+                </v-col>
+                <v-col cols="12" md="6" class="pl-md-3">
+                  <v-autocomplete
+                    v-model="data.coaExpense"
+                    :items="coas"
+                    :item-text="item => `${item.code} - ${item.name}`"
+                    label="Biaya"
+                    item-value="code"
+                    class="mt-0"
+                  ></v-autocomplete>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
         </v-form>
       </v-card-text>
     </v-card>
@@ -280,7 +305,7 @@ import { mapState } from 'vuex'
 import { format, parseISO }  from 'date-fns'
 
 import api from '@/services/axios.service'
-import auth from '@/services/authorization.service'
+// import auth from '@/services/authorization.service'
 
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
@@ -296,16 +321,15 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
-        { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'10' },
-        { text: 'Initial', value: 'initial', divider: true, width: '150', excelColWidth:'15' },
+        { text: 'Inisial', value: 'initial', divider: true, width: '150', excelColWidth:'15' },
         { text: 'Nama', value: 'name', divider: true, width: '200', excelColWidth:'25' },
-        { text: 'Alamat', value: 'address', divider: true, width: '200', excelColWidth:'35' },
-        { text: 'Telepon', value: 'phone', divider: true, width: '120', excelColWidth:'15' },
-        { text: 'Default', value: 'isDefault', divider: true, width: '120', excelColWidth:'10', isBool: true }
+        { text: 'Beban Depresiasi', value: 'coaDeprecExpense', divider: true, width: '200', excelColWidth:'35' },
+        { text: 'Akumulasi Depresiasi', value: 'coaAccumDeprec', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Aktiva', value: 'coaAsset', divider: true, width: '120', excelColWidth:'15' }
       ],
       data: [],
       options: {
-        sortBy: ['code'],
+        sortBy: ['id'],
         sortDesc: [false]
       },
       total: 0,
@@ -313,12 +337,14 @@ export default {
     },
     valid: false,
     types: [],
+    coas: [],
     data: {}
   }),
 
   created: function () {
     this.getList()
-    auth.getAction(this.endpoint, this.menuId.warehouse, [this.action.insert, this.action.update, this.action.delete])
+    this.getCOAList()
+    auth.getAction(this.endpoint, this.menuId.assetType, [this.action.insert, this.action.update, this.action.delete])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -327,11 +353,9 @@ export default {
   mounted: function () {
     setTimeout(() => {
       this.$store.commit('app/setBreadcrumbs', [{
-        text: 'Persediaan'
+        text: 'Aktiva'
       }, {
-        text: 'Data Master'
-      }, {
-        text: 'Gudang'
+        text: 'Tipe Aktiva'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
@@ -361,12 +385,12 @@ export default {
     reset(resetValidation = true) {
       this.data = {
         action: '',
-        code: null,
         initial: null,
         name: null,
-        address: null,
-        phone: null,
-        isDefault: false
+        coaDeprecExpense: null,
+        coaAccumDeprec: null,
+        coaExpense: null,
+        coaAsset: null
       }
 
       // Reset form validation
@@ -385,7 +409,7 @@ export default {
         })
       }
       
-      api.getAll(this.endpoint.inventory.warehouse, {
+      api.getAll(this.endpoint.assetManagement.asset.type, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -396,6 +420,29 @@ export default {
         .then(response => {
           this.grid.data = response.data.tableData
           this.grid.total = response.data.rowCount 
+        })
+    },
+    getCOAList() {
+      api.getAll(`${this.endpoint.accounting.coa}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'typeId',
+            operator: 'neq',
+            keyword: '2'
+          },
+          {
+            field: 'lod',
+            operator: 'eq',
+            keyword: 5
+          }]),
+          sorts: JSON.stringify([{
+            field: 'code',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.coas = response.data.tableData
         })
     },
     back() {
@@ -414,6 +461,7 @@ export default {
       }, 0)
     },
     edit(item) {
+      debugger
       if (!item) return
 
       this.main = false
@@ -431,7 +479,7 @@ export default {
           'Hapus?',
           'Apakah anda yakin ingin menghapus data ini?')
       ) {
-        api.delete(this.endpoint.inventory.warehouse, item.code)
+        api.delete(this.endpoint.assetManagement.asset.type, item.id)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -448,10 +496,10 @@ export default {
 
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
-        const resp = await api.create(this.endpoint.inventory.warehouse, this.data)
+        const resp = await api.create(this.endpoint.assetManagement.asset.type, this.data)
         result = resp.data
       } else if (this.data.action === 'edit') {
-        const resp = await api.update(this.endpoint.inventory.warehouse, this.data.code, this.data)
+        const resp = await api.update(this.endpoint.assetManagement.asset.type, this.data.code, this.data)
         result = resp.data
       }
 
@@ -468,6 +516,3 @@ export default {
 }
 
 </script>
-
-<style>
-</style>
