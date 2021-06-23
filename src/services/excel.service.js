@@ -220,6 +220,10 @@ class ExcelService {
       if (columns[c].isNumber) {
         worksheet.getColumn(c + 1).numFmt = '_ * #,##0_ ;_ * -#,##0_ ;_ * "-"_ ;_ @_ '
       } 
+      if (columns[c].isDateTime) {
+        worksheet.getColumn(c + 1).numFmt = 'dd-MMM-yyyy' 
+        worksheet.getColumn(c + 1).alignment = { vertical: 'middle', horizontal: 'right' }
+      } 
     }
 
     // style align column number
