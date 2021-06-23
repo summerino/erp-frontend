@@ -1042,6 +1042,13 @@ export default {
               this.gridDet.data[i].state = 'A'
             }
             this.calcPrice()
+            
+            const paymentData = this.paymentTerms.find(x => x.id === this.data.paymentTermId)
+            console.log(paymentData)
+            if (paymentData) {
+              const date = addDays(parseISO(this.gridDet.data[0].date), paymentData.due)
+              this.data.dueDate = format(date, 'yyyy-MM-dd')
+            }
           }
         })
     },
@@ -1279,13 +1286,7 @@ export default {
             item.custAddr = response.data.address1
             item.custPhone = response.data.phone
             item.custFax = response.data.fax
-
-            const paymentData = this.paymentTerms.find(x => x.id === response.data.paymentTermId)
-            if (paymentData) {
-              const date = addDays(parseISO(this.data.date), paymentData.due)
-              this.data.dueDate = format(date, 'yyyy-MM-dd')
-            }
-
+            item.paymentTermId = response.data.paymentTermId
           }
         })
     },
