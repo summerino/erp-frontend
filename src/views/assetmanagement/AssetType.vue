@@ -461,7 +461,6 @@ export default {
       }, 0)
     },
     edit(item) {
-      debugger
       if (!item) return
 
       this.main = false
