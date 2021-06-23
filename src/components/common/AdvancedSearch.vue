@@ -199,7 +199,6 @@ export default {
       return temp.category
     },
     getList(bindToForm, filters = []) {
-      debugger
       const filterLite = []
       for (let i = 0; i < filters.length; i++) {
         filterLite.push({
