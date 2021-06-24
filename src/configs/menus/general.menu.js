@@ -20,7 +20,8 @@ export default [
           { text: 'Tipe', link: 'vehicle-type' }
         ]
       },
-      { text: 'Pajak', link: 'tax' }
+      { text: 'Pajak', link: 'tax' },
+      { text: 'Pembayaran', link: 'payment-term' }
     ]
   }
 ]
