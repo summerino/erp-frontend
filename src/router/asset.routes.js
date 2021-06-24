@@ -1,9 +1,17 @@
-export default [{
-  path: '/asset/asset-type',
-  name: 'asset-type',
-  component: () => import(/* webpackChunkName: "assets-type" */ '@/views/assetmanagement/AssetType.vue'),
-  meta: {
-    authRequired: true
+export default [
+  {
+    path: '/asset-management/asset-type',
+    name: 'asset-type',
+    component: () => import(/* webpackChunkName: "asset-type" */ '@/views/assetmanagement/AssetType.vue'),
+    meta: {
+      authRequired: true
+    },
+    path: '/asset-management/asset',
+    name: 'asset',
+    component: () => import(/* webpackChunkName: "asset" */ '@/views/assetmanagement/Asset.vue'),
+    meta: {
+      authRequired: true
+    }
   }
-}]
+]
   
