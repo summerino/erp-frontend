@@ -798,7 +798,7 @@ export default {
     },
     search(vm) {
       this.grid.search = vm.search
-      this.getList(vm.filters)
+      this.getList(vm.bindToForm, vm.filters)
     },
     getList(bindToForm = false, filters = []) {
       const sorts = []
