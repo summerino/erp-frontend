@@ -17,7 +17,8 @@ export default {
       type: 'vehicle-type'
     },
     tax: 'tax',
-    master: 'master'
+    master: 'master',
+    paymentTerm: 'payment-term'
   },
 
   inventory: {
