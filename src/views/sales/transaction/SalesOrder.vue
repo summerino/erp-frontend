@@ -1745,7 +1745,7 @@ export default {
         this.data.custAddr = customer.address1
         this.data.custPhone = customer.phone1
         this.data.custFax = customer.fax
-
+        this.data.paymentTermId = customer.paymentTermId
         this.getCustomerAddressesLists(customer)
       }
     },
