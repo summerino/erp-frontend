@@ -1044,7 +1044,6 @@ export default {
             this.calcPrice()
             
             const paymentData = this.paymentTerms.find(x => x.id === this.data.paymentTermId)
-            console.log(paymentData)
             if (paymentData) {
               const date = addDays(parseISO(this.gridDet.data[0].date), paymentData.due)
               this.data.dueDate = format(date, 'yyyy-MM-dd')
