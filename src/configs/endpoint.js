@@ -66,5 +66,12 @@ export default {
     parameter: 'system-parameter',
     role: 'role',
     menu: 'menu'
+  },
+
+  assetManagement: {
+    asset: {
+      type: 'asset-type',
+      asset: 'asset'
+    }
   }
 }

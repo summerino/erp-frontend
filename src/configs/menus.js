@@ -32,5 +32,6 @@ export default {
   salesorder: 44,
   salesreturn: 47,
   role: 52,
-  user: 51
+  user: 51,
+  assetType: 32 //masih disamain kaya warehouse
 }
