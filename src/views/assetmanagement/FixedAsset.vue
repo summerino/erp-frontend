@@ -839,7 +839,7 @@ export default {
     this.getSupplierLists()
     this.getAssetType()
     this.getCOAList()
-    auth.getAction(this.endpoint, this.menuId.purchaseorder, [this.action.insert, this.action.update, this.action.void, this.action.close])
+    auth.getAction(this.endpoint, this.menuId.fixedAsset, [this.action.insert, this.action.update, this.action.void, this.action.close])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
