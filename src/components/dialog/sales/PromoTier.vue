@@ -387,27 +387,27 @@ export default {
       this.grid.data = []
       this.gridPayment.data = []
       this.tab.tier = 0
+      this.unitName = 'satuan'
     },
-    open(item, listItem) {
+    async open(item, listItem) {
       this.reset()
       this.dialog = true
       this.items = listItem
       this.data = item
-      if (this.data.promoType === 3) {
+      if (this.data.promoType === 3) {        
         this.grid.data = item.promoTierList
         this.promoMethod = [{ id: 3, name: 'Mendapatkan' }]
-        this.data.freeGoodItemId = item.promoTierList.length === 0 ? null : item.freeGoodItemId
+        this.data.freeGoodItemId = item.freeGoodItemId === undefined || item.freeGoodItemId === null ? item.promoTierList.length === 0 ? null : item.promoTierList[0].freeGoodItemId : item.freeGoodItemId 
         if (this.data.freeGoodItemId) {
           this.freeItemIdChange(this.data.freeGoodItemId)
         }
-        this.data.unitFreeGood = item.promoTierList.length === 0 ? 0 : item.unitFreeGood
-        this.data.isMultiple = item.promoTierList.length === 0 ? false : item.isMultiple
+        this.data.unitFreeGood = item.unitFreeGood === undefined || item.unitFreeGood === null ? item.promoTierList.length === 0 ? null : Number(item.promoTierList[0].unitFreeGood) : item.unitFreeGood 
+        this.data.isMultiple = item.isMultiple === undefined || item.isMultiple === null ? item.promoTierList.length === 0 ? false : item.promoTierList[0].isMultiple : item.isMultiple 
         this.data.promoMethod = 3
         if (this.data.applyTo !== 3) {
-          this.getItemUnitLists(item.itemId)
+          this.itemUnits = await this.getItemUnitLists(item.itemId)
         }
-        this.data.saleUnit = item.promoTierList.length === 0 ? null : item.saleUnit
-        this.changeUnit()
+        this.data.saleUnit = item.saleUnit === undefined || item.saleUnit === null ? item.promoTierList.length === 0 ? this.itemUnits[0].id : item.promoTierList[0].saleUnit : item.saleUnit 
       } else if (this.data.promoType === 4) {
         this.gridPayment.data = item.promoTierList
         this.promoMethod = [{ id: 1, name: 'Persen' }, { id: 2, name: 'Nominal' }]
@@ -421,14 +421,17 @@ export default {
         this.grid.columns[3].text = 'Nilai Sampai'
       } else {
         this.grid.data = item.promoTierList
-        this.data.applyToAllUnit = item.promoTierList.length === 0 ? false : item.applyToAllUnit
+        this.data.applyToAllUnit = item.applyToAllUnit === undefined || item.applyToAllUnit === null ? item.promoTierList.length === 0 ? false : item.promoTierList[0].applyToAllUnit : item.applyToAllUnit 
         this.promoMethod = [{ id: 1, name: 'Persen' }, { id: 2, name: 'Nominal' }]
         this.data.promoMethod = item.isPercentage === false ? 2 : 1
         if (this.data.applyTo !== 3) {
-          this.getItemUnitLists(item.itemId)
+          this.itemUnits = await this.getItemUnitLists(item.itemId)
         }
-        this.data.saleUnit = item.promoTierList.length === 0 ? null : item.saleUnit
-        this.changeUnit()
+        console.log(this.itemUnits[0].id)
+        console.log(item.saleUnit)
+        this.data.saleUnit = item.saleUnit === undefined || item.saleUnit === null ? item.promoTierList.length === 0 ? this.itemUnits[0].id : item.promoTierList[0].saleUnit : item.saleUnit        
+        const data_u = await this.itemUnits.find(i => i.id === this.data.saleUnit)
+        this.unitName = data_u.unitEquivalent
       }
     },
     close() {
@@ -483,14 +486,12 @@ export default {
         this.grid.data.splice(idx, 1)
       }
     },
-    getItemUnitLists(item) {
+    async getItemUnitLists(item) {
       const data_i = this.items.find(i => i.id === item)
-      api.getAll('uom-conversion', {
+      const response = await api.getAll('uom-conversion', {
         params: { uomId: data_i.uomId }
       })
-        .then(response => {
-          this.itemUnits = response.data.tableData
-        })
+      return response.data.tableData
     },
     getPaymentTermLists() {
       api.getAll('payment-term/lists')
