@@ -344,10 +344,10 @@ export default {
   created: function () {
     this.getList()
     this.getCOAList()
-    auth.getAction(this.endpoint, this.menuId.assetType, [this.action.insert, this.action.update, this.action.delete])
-      .then((response) => {
-        this.$store.commit('api/setAuth', response.data)
-      })
+    // auth.getAction(this.endpoint, this.menuId.assetType, [this.action.insert, this.action.update, this.action.delete])
+    //   .then((response) => {
+    //     this.$store.commit('api/setAuth', response.data)
+    //   })
   },
 
   mounted: function () {
