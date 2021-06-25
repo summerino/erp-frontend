@@ -2,7 +2,7 @@ export default [
   {
     path: '/asset-management/fixed-asset',
     name: 'fixed-asset',
-    component: () => import(/* webpackChunkName: "fixed-asset" */ '@/views/assetmanagement/Asset.vue'),
+    component: () => import(/* webpackChunkName: "fixed-asset" */ '@/views/assetmanagement/FixedAsset.vue'),
     meta: {
       authRequired: true
     }
