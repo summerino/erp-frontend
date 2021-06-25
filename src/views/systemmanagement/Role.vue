@@ -151,6 +151,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
+                  :disabled="data.action === 'edit' && !auth.allowUpdate"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >

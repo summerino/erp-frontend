@@ -115,22 +115,6 @@
             </template>
             <span class="text-caption">Void</span>
           </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                v-bind="attrs"
-                v-on="on"
-                :disabled="item.mark.toUpperCase() !== 'PR' && item.mark.toUpperCase() !== 'A'  || !auth.allowClose"
-                color="blue darken-2"
-                icon
-                small
-                @click="closeOrder(item)"
-              >
-                <v-icon small>mdi-lock</v-icon>
-              </v-btn>
-            </template>
-            <span class="text-caption">Tutup</span>
-          </v-tooltip>
         </template>
         <template v-slot:[`item.purchaseDate`]="{ item }">
           {{ item.purchaseDate | formatDate('dd-MMM-yyyy') }}
@@ -717,8 +701,10 @@
                         fixed-header
                         hide-default-footer
                       >
+                        <template v-slot:[`item.depreciateDate`]="{ item }">
+                          {{ item.depreciateDate | formatDate('dd-MMM-yyyy') }}
+                        </template>
                       </v-data-table>
-                        
                     </v-tab-item>
                   </v-tabs>
                 </v-card>
@@ -1028,8 +1014,7 @@ export default {
         .then(response => {
           this.coas = response.data.tableData
         })
-    },
-    
+    }, 
     close() {
       this.dialog.add = false
     },
