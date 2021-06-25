@@ -827,7 +827,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { format, parseISO } from 'date-fns'
+import { format, parseISO, addDays } from 'date-fns'
 import { sumBy as _sumBy, cloneDeep as _cloneDeep } from 'lodash'
 
 import { randomNumber } from '@/helpers/math-helpers'
@@ -1338,9 +1338,15 @@ export default {
       const customer = this.customers.find(s => s.code === this.data.custCode)
       if (customer) {
         this.data.custName = customer.name
-        this.data.custAddr = customer.address
+        this.data.custAddr = customer.address1
         this.data.custPhone = customer.phone1
         this.data.custFax = customer.fax
+        this.data.paymentTermId = customer.paymentTermId
+        const paymentData = this.paymentTerms.find(x => x.id === customer.paymentTermId)
+        if (paymentData) {
+          const date = addDays(parseISO(this.data.date), paymentData.due)
+          this.data.dueDate = format(date, 'yyyy-MM-dd')
+        }
       }
     },
     itemIdChange(item) {

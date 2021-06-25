@@ -4,7 +4,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="2">
-            Tipe Pelanggan
+            Grup Penjual
           </v-col>
           <v-col cols="12" md="4">
             <v-text-field
@@ -18,7 +18,7 @@
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" md="1">
-            <export-excel title="Daftar Jenis Pelanggan" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+            <export-excel title="Daftar Grup Penjual" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
           </v-col>
           <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
@@ -98,7 +98,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="6">
-            <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' }} Tipe Pelanggan</span>
+            <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' }} Grup Penjual</span>
           </v-col>
           <v-col cols="12" md="6" class="text-right">
             <label
@@ -178,13 +178,26 @@
                   v-model="data.name"
                   :rules="[rules.required[0], rules.max50chars[0]]"
                   :counter="50"
-                  label="Nama"
+                  label="Nama Grup"
                   class="mt-0"
                   required
                 ></v-text-field>
               </v-col>
             </v-row>
-
+            <v-row no-gutters>
+              <v-col cols="12">
+                <v-autocomplete
+                  v-model="data.supervisorId"
+                  :items="employees"
+                  :item-text="item => `${item.initial} - ${item.firstName}`"
+                  :rules="rules.required"
+                  label="Nama Pemimpin Grup"
+                  item-value="id"
+                  class="mt-0"
+                  required
+                ></v-autocomplete>
+              </v-col>
+            </v-row>
           </v-container>
         </v-form>
       </v-card-text>
@@ -216,7 +229,8 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
         { text: 'Inisial', value: 'initial', divider: true, width: '150', excelColWidth:'20' },
-        { text: 'Nama', value: 'name', divider: true, width: '200', excelColWidth:'20' }
+        { text: 'Nama', value: 'name', divider: true, width: '200', excelColWidth:'20' },
+        { text: 'Inisial Pemimpin Grup', value: 'supervisorInitial', divider: true, width: '150', excelColWidth:'20' }
       ],
       data: [],
       options: {
@@ -227,13 +241,14 @@ export default {
       search: null
     },
     valid: false,
-    types: [],
+    employees: [],
     data: {}
   }),
 
   created: function () {
     this.getList()
-    auth.getAction(this.endpoint, this.menuId.customertype, [this.action.insert, this.action.update, this.action.delete])
+    this.getSalesmanLists()
+    auth.getAction(this.endpoint, this.menuId.salesmanGroup, [this.action.insert, this.action.update, this.action.delete])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -242,13 +257,11 @@ export default {
   mounted: function () {
     setTimeout(() => {
       this.$store.commit('app/setBreadcrumbs', [{
-        text: 'Umum'
+        text: 'Penjualan'
       }, {
         text: 'Data Master'
       }, {
-        text: 'Pelanggan'
-      }, {
-        text: 'Tipe'
+        text: 'Grup Penjual'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
@@ -283,6 +296,7 @@ export default {
         action: '',
         initial: null,
         name: null,
+        supervisorId: null,
         isActive: true
       }
 
@@ -302,7 +316,7 @@ export default {
         })
       }
       
-      api.getAll(this.endpoint.general.customer.type, {
+      api.getAll(this.endpoint.sales.salesman, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -360,7 +374,7 @@ export default {
           'Hapus Data?',
           'Apakah anda yakin untuk menghapus data ini?')
       ) {
-        api.delete(this.endpoint.general.customer.type, item.id)
+        api.delete(this.endpoint.sales.salesman, item.id)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -377,10 +391,10 @@ export default {
 
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
-        const resp = await api.create(this.endpoint.general.customer.type, this.data)
+        const resp = await api.create(this.endpoint.sales.salesman, this.data)
         result = resp.data
       } else if (this.data.action === 'edit') {
-        const resp = await api.update(this.endpoint.general.customer.type, this.data.id, this.data)
+        const resp = await api.update(this.endpoint.sales.salesman, this.data.id, this.data)
         result = resp.data
       }
 
@@ -392,6 +406,24 @@ export default {
     },
     async exportExcel() {
       this.exportExcel.export()
+    },
+    getSalesmanLists() {
+      api.getAll(`${this.endpoint.general.employee}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'type',
+            operator: 'eq',
+            keyword: 2
+          }]),
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.employees = response.data.tableData
+        })
     }
   }
 }

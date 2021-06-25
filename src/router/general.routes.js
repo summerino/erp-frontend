@@ -61,4 +61,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/general/payment-term',
+  name: 'payment-term',
+  component: () => import(/* webpackChunkName: "general-payment-term" */ '@/views/general/PaymentTerm.vue'),
+  meta: {
+    authRequired: true
+  }
 }]

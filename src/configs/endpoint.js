@@ -17,7 +17,8 @@ export default {
       type: 'vehicle-type'
     },
     tax: 'tax',
-    master: 'master'
+    master: 'master',
+    paymentTerm: 'payment-term'
   },
 
   inventory: {
@@ -53,7 +54,7 @@ export default {
     promo: 'promo',
     visitPlan: 'visit-plan',
     visitOrder: 'visit-order',
-    salesman: 'salesman'
+    salesman: 'salesman-group'
   },
 
   accounting: {

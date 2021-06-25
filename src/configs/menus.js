@@ -34,5 +34,6 @@ export default {
   role: 52,
   user: 51,
   assetType: 32, //masih disamain kaya warehouse
-  asset: 32 //masih disamain kaya warehouse
+  asset: 32, //masih disamain kaya warehouse
+  salesmanGroup: 58
 }

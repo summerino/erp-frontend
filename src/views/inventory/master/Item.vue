@@ -287,10 +287,12 @@
                         <v-autocomplete
                             v-model="data.uomId"
                             :items="uom"
+                            :rules="rules.required"
                             label="Satuan Ukuran"
                             item-text="initial"
                             item-value="id"
                             class="mt-0"
+                            required
                             @change="categoryChanged"
                           ></v-autocomplete>
                       </v-col>
@@ -301,10 +303,12 @@
                         <v-autocomplete
                             v-model="data.uomSellId"
                             :items="unitUomSell"
+                            :rules="rules.required"
                             label="Satuan Jual"
                             item-text="unitEquivalent"
                             item-value="id"
                             class="mt-0"
+                            required
                             @change="loadUnitQuantity"
                           ></v-autocomplete>
                       </v-col>
@@ -312,8 +316,10 @@
                         <v-currency-field
                           ref="SellPrice"
                           v-model="data.sellPrice"
+                          :rules="rules.required"
                           label="Harga Jual"
                           class="mt-0"
+                          required
                         ></v-currency-field>
                       </v-col>
                     </v-row>
@@ -322,11 +328,13 @@
                       <v-col cols="3">
                         <v-autocomplete
                             v-model="data.uomBuyId"
+                            :rules="rules.required"
                             :items="unitUomBuy"
                             label="Satuan Beli"
                             item-text="unitEquivalent"
                             item-value="id"
                             class="mt-0"
+                            required
                             @change="loadUnitQuantity"
                           ></v-autocomplete>
                       </v-col>
@@ -334,8 +342,10 @@
                         <v-currency-field
                           ref="BuyPrice"
                           v-model="data.buyPrice"
+                          :rules="rules.required"
                           label="Harga Beli"
                           class="mt-0"
+                          required
                         ></v-currency-field>
                       </v-col>
                     </v-row>
@@ -346,9 +356,11 @@
                             v-model="data.salesTaxId"
                             :items="slsTaxes"
                             :item-text="item => `${item.initial} - ${item.name}`"
+                            :rules="rules.required"
                             label="Pajak Penjualan"
                             item-value="id"
                             class="mt-0"
+                            required
                           ></v-autocomplete>
                       </v-col>
                       <v-col cols="12" md="6" class="pl-md-3">
@@ -356,9 +368,11 @@
                             v-model="data.purchaseTaxId"
                             :items="purcTaxes"
                             :item-text="item => `${item.initial} - ${item.name}`"
+                            :rules="rules.required"
                             label="Pajak Pembelian"
                             item-value="id"
                             class="mt-0"
+                            required
                           ></v-autocomplete>
                       </v-col>
                     </v-row>
@@ -412,7 +426,34 @@
                                   hide-default-footer
                                 >
                                   <template v-slot:[`item.qtyOnAvailable`]="{ item }">
-                                    {{ item.qtyOnHand - item.qtyOnOrder }}
+                                    {{ calcQtyAvailable(item.qtyOnHand, item.qtyOnOrder) }}
+                                  </template>
+                                  <template v-slot:[`item.qtyOnOrder`]="{ item }">
+                                    <v-chip
+                                    label
+                                    link
+                                    small
+                                    @click="detailQty(item, 1)"
+                                    >
+                                    {{ item.qtyOnOrder }}</v-chip>
+                                  </template>
+                                  <template v-slot:[`item.qtyOnIndent`]="{ item }">
+                                    <v-chip
+                                    label
+                                    link
+                                    small
+                                    @click="detailQty(item, 2)"
+                                    >
+                                    {{ item.qtyOnIndent }}</v-chip>
+                                  </template>
+                                  <template v-slot:[`item.qtyOnTransfer`]="{ item }">
+                                    <v-chip
+                                    label
+                                    link
+                                    small
+                                    @click="detailQty(item, 3)"
+                                    >
+                                    {{ item.qtyOnTransfer }}</v-chip>
                                   </template>
                                   <template v-slot:[`item.updatedDate`]="{ item }">
                                     {{ item.updatedDate | formatDate('dd-MMM-yyyy') }}
@@ -696,6 +737,7 @@
     </v-dialog>
 
     <confirm ref="confirm"></confirm>
+    <related-trans ref="relatedTrans"></related-trans>
   </div>
 </template>
 
@@ -708,11 +750,13 @@ import auth from '@/services/authorization.service'
 
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
+import RelatedTrans from '@/components/dialog/inventory/RelatedTrans'
 
 export default {
   components: {
     ExportExcel,
-    Confirm
+    Confirm,
+    RelatedTrans
   },
 
   data: () => ({
@@ -957,7 +1001,7 @@ export default {
         })
     },
     getUnitSellingOrBuying() {
-      api.getAll(`${this.endpoint.inventory.uom}/item`, {
+      return api.getAll(`${this.endpoint.inventory.uom}/item`, {
         params: {
           uomId: (this.data.uomId === null) ? 0 : this.data.uomId
         }
@@ -1065,7 +1109,7 @@ export default {
         this.$refs.form.validate()
       }, 0)
     },
-    edit(item) {
+    async edit(item) {
       if (!item) return
 
       this.dialog.add = true
@@ -1078,7 +1122,7 @@ export default {
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
 
-      this.getUnitSellingOrBuying()
+      await this.getUnitSellingOrBuying()
       this.loadSubGroup()
       this.getQuantity()
 
@@ -1193,8 +1237,14 @@ export default {
       item.qtyReorderPoint /= conversionValue
       item.qtyOnTransfer /= conversionValue
     },
+    calcQtyAvailable(qtySystem, qtyOrder) {
+      return (qtySystem - qtyOrder < 0) ? 0 : qtySystem - qtyOrder
+    },
     async exportExcel() {
       this.exportExcel.export()
+    },
+    detailQty(item, from) {
+      this.$refs.relatedTrans.open(item, from)
     }
   }
 }
