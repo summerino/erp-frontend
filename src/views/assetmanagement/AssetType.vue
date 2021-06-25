@@ -24,19 +24,6 @@
           <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
-                <!-- <v-btn
-                  v-bind="attrs"
-                  v-on="on"
-                  v-shortkey="['ctrl', 'alt', 'n']"
-                  color="green darken-1"
-                  class="font-weight-regular"
-                  dark
-                  small
-                  tile
-                  @click="add"
-                  @shortkey="add"
-                  :disabled="!auth.allowInsert"
-                > -->
                 <v-btn
                   v-bind="attrs"
                   v-on="on"
@@ -48,8 +35,9 @@
                   tile
                   @click="add"
                   @shortkey="add"
+                  :disabled="!auth.allowInsert"
                 >
-                  <v-icon left>mdi-plus</v-icon>
+                <v-icon left>mdi-plus</v-icon>
                   Data Baru
                 </v-btn>
               </template>
@@ -90,15 +78,6 @@
           </v-tooltip>
           <v-tooltip bottom>
             <template v-if="item.isActive" v-slot:activator="{ on, attrs }">
-              <!-- <v-btn
-                v-bind="attrs"
-                v-on="on"
-                icon
-                small
-                color="red"
-                @click="remove(item)"
-                :disabled="!auth.allowDelete"
-              > -->
               <v-btn
                 v-bind="attrs"
                 v-on="on"
@@ -106,6 +85,7 @@
                 small
                 color="red"
                 @click="remove(item)"
+                :disabled="!auth.allowDelete"
               >
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
@@ -149,19 +129,6 @@
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
-                <!-- <v-btn
-                  v-bind="attrs"
-                  v-on="on"
-                  v-shortkey="['ctrl', 's']"
-                  color="blue darken-2"
-                  class="font-weight-regular"
-                  dark
-                  small
-                  tile
-                  @click="save"
-                  @shortkey="save"
-                  :disabled="data.action === 'edit' && !auth.allowUpdate"
-                > -->
                 <v-btn
                   v-bind="attrs"
                   v-on="on"
@@ -173,6 +140,7 @@
                   tile
                   @click="save"
                   @shortkey="save"
+                  :disabled="data.action === 'edit' && !auth.allowUpdate"
                 >
                   <v-icon left>
                     mdi-content-save
@@ -305,7 +273,7 @@ import { mapState } from 'vuex'
 import { format, parseISO }  from 'date-fns'
 
 import api from '@/services/axios.service'
-// import auth from '@/services/authorization.service'
+import auth from '@/services/authorization.service'
 
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
