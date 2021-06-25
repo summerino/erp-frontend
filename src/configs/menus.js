@@ -35,5 +35,6 @@ export default {
   user: 51,
   assetType: 32, //masih disamain kaya warehouse
   asset: 32, //masih disamain kaya warehouse
-  salesmanGroup: 58
+  salesmanGroup: 58,
+  coaType: 67
 }

@@ -59,6 +59,7 @@ export default {
 
   accounting: {
     coa: 'coa',
+    coaType: 'coa-type',
     currencyRate: 'currency-rate'
   },
 
