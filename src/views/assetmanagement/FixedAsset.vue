@@ -777,7 +777,7 @@ export default {
         { text: 'Tipe', value: 'assetType', divider: true, width: '160', excelColWidth:'18' },
         { text: 'Tgl. Perolehan', value: 'purchaseDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Mulai Depresiasi Pada', value: 'startDepreciateOn', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
-        { text: 'Nilai Perolehan', value: 'purchasedValue', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+        { text: 'Nilai Perolehan', value: 'purchaseValue', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
         { text: 'No. Order Pembelian', value: 'purchaseOrderNo', align: 'right', width: '50' },
         { text: 'No. Faktur', value: 'invoiceNo', align: 'right', width: '50' },
@@ -805,16 +805,31 @@ export default {
     },
     filterfields: [
       {
-        text: 'No Order', value: 'code', dataType: 'text'
+        text: 'Kode', value: 'code', dataType: 'text'
       },
       {
-        text: 'Tanggal', value: 'date', dataType: 'datetime'
+        text: 'Nama', value: 'name', dataType: 'text'
       },
       {
-        text: 'Diminta Oleh', value: 'requestInitial', dataType: 'text'
+        text: 'Tipe', value: 'assetType', dataType: 'text'
+      },
+      {
+        text: 'Tgl. Perolehan', value: 'purchaseDate', dataType: 'datetime'
+      },
+      {
+        text: 'Mulai Depresiasi Pada', value: 'startDepreciateOn', dataType: 'datetime'
       },
       {
         text: 'Pemasok', value: 'supName', dataType: 'text'
+      },
+      {
+        text: 'No. Order', value: 'purchaseOrderNo', dataType: 'text'
+      },
+      {
+        text: 'No. Faktur', value: 'invoiceNo', dataType: 'text'
+      },
+      {
+        text: 'No. Bukti Pembayaran', value: 'paymentVoucherNo', dataType: 'text'
       }
     ],
     valid: false,
