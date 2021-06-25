@@ -1078,7 +1078,6 @@ export default {
       }
 
       const data = this.data
-      console.log('data', data)
       let result = { success: false, message: '' }
       if (data.action === 'add') {
         const resp = await api.create(this.endpoint.assetManagement.asset.fixedAsset, data)
