@@ -289,11 +289,11 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
-        { text: 'Inisial', value: 'initial', divider: true, width: '150', excelColWidth:'15' },
-        { text: 'Nama', value: 'name', divider: true, width: '200', excelColWidth:'25' },
-        { text: 'Beban Depresiasi', value: 'coaDeprecExpense', divider: true, width: '200', excelColWidth:'35' },
-        { text: 'Akumulasi Depresiasi', value: 'coaAccumDeprec', divider: true, width: '120', excelColWidth:'15' },
-        { text: 'Aktiva', value: 'coaAsset', divider: true, width: '120', excelColWidth:'15' }
+        { text: 'Inisial', value: 'initial', divider: true, width: '150', excelColWidth:'30' },
+        { text: 'Nama', value: 'name', divider: true, width: '200', excelColWidth:'35' },
+        { text: 'Beban Depresiasi', value: 'coaDeprecExpense', divider: true, width: '200', excelColWidth:'20' },
+        { text: 'Akumulasi Depresiasi', value: 'coaAccumDeprec', divider: true, width: '120', excelColWidth:'20' },
+        { text: 'Aktiva', value: 'coaAsset', divider: true, width: '120', excelColWidth:'20' }
       ],
       data: [],
       options: {
