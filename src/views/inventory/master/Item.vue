@@ -287,6 +287,7 @@
                         <v-autocomplete
                             v-model="data.uomId"
                             :items="uom"
+                            :rules="rules.required"
                             label="Satuan Ukuran"
                             item-text="initial"
                             item-value="id"
@@ -302,6 +303,7 @@
                         <v-autocomplete
                             v-model="data.uomSellId"
                             :items="unitUomSell"
+                            :rules="rules.required"
                             label="Satuan Jual"
                             item-text="unitEquivalent"
                             item-value="id"
@@ -314,6 +316,7 @@
                         <v-currency-field
                           ref="SellPrice"
                           v-model="data.sellPrice"
+                          :rules="rules.required"
                           label="Harga Jual"
                           class="mt-0"
                           required
@@ -325,6 +328,7 @@
                       <v-col cols="3">
                         <v-autocomplete
                             v-model="data.uomBuyId"
+                            :rules="rules.required"
                             :items="unitUomBuy"
                             label="Satuan Beli"
                             item-text="unitEquivalent"
@@ -338,6 +342,7 @@
                         <v-currency-field
                           ref="BuyPrice"
                           v-model="data.buyPrice"
+                          :rules="rules.required"
                           label="Harga Beli"
                           class="mt-0"
                           required
@@ -351,6 +356,7 @@
                             v-model="data.salesTaxId"
                             :items="slsTaxes"
                             :item-text="item => `${item.initial} - ${item.name}`"
+                            :rules="rules.required"
                             label="Pajak Penjualan"
                             item-value="id"
                             class="mt-0"
@@ -362,6 +368,7 @@
                             v-model="data.purchaseTaxId"
                             :items="purcTaxes"
                             :item-text="item => `${item.initial} - ${item.name}`"
+                            :rules="rules.required"
                             label="Pajak Pembelian"
                             item-value="id"
                             class="mt-0"
