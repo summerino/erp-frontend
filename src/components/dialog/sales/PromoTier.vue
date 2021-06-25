@@ -224,7 +224,7 @@
                           v-model="item.value"
                           :decimal-length="2"
                           :min="0"
-                          :rules="[rules.required[0],rules.cannot0[0]]"
+                          :rules="rules.required"
                           class="text-body-2 text-right mt-0"
                           dense
                           required
