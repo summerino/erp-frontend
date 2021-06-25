@@ -855,7 +855,6 @@ export default {
     },
     showVisitScheduleDialog(item) {
       this.$refs.schedule.open(item)
-      console.log(item)
     }
   }
 }
