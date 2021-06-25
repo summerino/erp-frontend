@@ -33,7 +33,7 @@
                   tile
                   @click="add"
                   @shortkey="add"
-                  :disabled="!data.allowInsert"
+                  :disabled="!auth.allowInsert"
                 >
                   <v-icon left>mdi-plus</v-icon>
                   Data Baru
@@ -359,7 +359,7 @@ export default {
 
   created: function () {
     this.getList()
-    auth.getAction(this.endpoint, this.menuId.itemCategory, [this.action.insert, this.action.update, this.action.delete])
+    auth.getAction(this.endpoint, this.menuId.itemcategory, [this.action.insert, this.action.update, this.action.delete])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })

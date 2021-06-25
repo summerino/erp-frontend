@@ -115,22 +115,6 @@
             </template>
             <span class="text-caption">Void</span>
           </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                v-bind="attrs"
-                v-on="on"
-                :disabled="item.mark.toUpperCase() !== 'PR' && item.mark.toUpperCase() !== 'A'  || !auth.allowClose"
-                color="blue darken-2"
-                icon
-                small
-                @click="closeOrder(item)"
-              >
-                <v-icon small>mdi-lock</v-icon>
-              </v-btn>
-            </template>
-            <span class="text-caption">Tutup</span>
-          </v-tooltip>
         </template>
         <template v-slot:[`item.purchaseDate`]="{ item }">
           {{ item.purchaseDate | formatDate('dd-MMM-yyyy') }}
@@ -717,8 +701,10 @@
                         fixed-header
                         hide-default-footer
                       >
+                        <template v-slot:[`item.depreciateDate`]="{ item }">
+                          {{ item.depreciateDate | formatDate('dd-MMM-yyyy') }}
+                        </template>
                       </v-data-table>
-                        
                     </v-tab-item>
                   </v-tabs>
                 </v-card>
@@ -777,11 +763,11 @@ export default {
         { text: 'Tipe', value: 'assetType', divider: true, width: '160', excelColWidth:'18' },
         { text: 'Tgl. Perolehan', value: 'purchaseDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Mulai Depresiasi Pada', value: 'startDepreciateOn', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
-        { text: 'Nilai Perolehan', value: 'purchasedValue', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+        { text: 'Nilai Perolehan', value: 'purchaseValue', align: 'right', divider: true, width: '120', excelColWidth:'15' },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
-        { text: 'No. Order Pembelian', value: 'purchaseOrderNo', align: 'right', width: '50' },
-        { text: 'No. Faktur', value: 'invoiceNo', align: 'right', width: '50' },
-        { text: 'No. Bukti Pembayaran', value: 'paymentVoucherNo', align: 'right', width: '50' },
+        { text: 'No. Order Pembelian', value: 'purchaseOrderNo', align: 'right', width: '50', excelColWidth:'25' },
+        { text: 'No. Faktur', value: 'invoiceNo', align: 'right', width: '50', excelColWidth:'25' },
+        { text: 'No. Bukti Pembayaran', value: 'paymentVoucherNo', align: 'right', width: '50', excelColWidth:'25' },
         { text: 'Catatan', value: 'notes', width: '50' }
       ],
       data: [],
@@ -805,16 +791,31 @@ export default {
     },
     filterfields: [
       {
-        text: 'No Order', value: 'code', dataType: 'text'
+        text: 'Kode', value: 'code', dataType: 'text'
       },
       {
-        text: 'Tanggal', value: 'date', dataType: 'datetime'
+        text: 'Nama', value: 'name', dataType: 'text'
       },
       {
-        text: 'Diminta Oleh', value: 'requestInitial', dataType: 'text'
+        text: 'Tipe', value: 'assetType', dataType: 'text'
+      },
+      {
+        text: 'Tgl. Perolehan', value: 'purchaseDate', dataType: 'datetime'
+      },
+      {
+        text: 'Mulai Depresiasi Pada', value: 'startDepreciateOn', dataType: 'datetime'
       },
       {
         text: 'Pemasok', value: 'supName', dataType: 'text'
+      },
+      {
+        text: 'No. Order', value: 'purchaseOrderNo', dataType: 'text'
+      },
+      {
+        text: 'No. Faktur', value: 'invoiceNo', dataType: 'text'
+      },
+      {
+        text: 'No. Bukti Pembayaran', value: 'paymentVoucherNo', dataType: 'text'
       }
     ],
     valid: false,
@@ -839,7 +840,7 @@ export default {
     this.getSupplierLists()
     this.getAssetType()
     this.getCOAList()
-    auth.getAction(this.endpoint, this.menuId.purchaseorder, [this.action.insert, this.action.update, this.action.void, this.action.close])
+    auth.getAction(this.endpoint, this.menuId.fixedAsset, [this.action.insert, this.action.update, this.action.void, this.action.close])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -1013,8 +1014,7 @@ export default {
         .then(response => {
           this.coas = response.data.tableData
         })
-    },
-    
+    }, 
     close() {
       this.dialog.add = false
     },
