@@ -54,7 +54,7 @@ export default {
     promo: 'promo',
     visitPlan: 'visit-plan',
     visitOrder: 'visit-order',
-    salesman: 'salesman'
+    salesman: 'salesman-group'
   },
 
   accounting: {
