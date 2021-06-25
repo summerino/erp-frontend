@@ -68,4 +68,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/sales/master/salesman-group',
+  name: 'salesman-group',
+  component: () => import(/* webpackChunkName: "salesman-group" */ '@/views/sales/master/SalesmanGroup.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
