@@ -291,6 +291,7 @@
                             item-text="initial"
                             item-value="id"
                             class="mt-0"
+                            required
                             @change="categoryChanged"
                           ></v-autocomplete>
                       </v-col>
@@ -305,6 +306,7 @@
                             item-text="unitEquivalent"
                             item-value="id"
                             class="mt-0"
+                            required
                             @change="loadUnitQuantity"
                           ></v-autocomplete>
                       </v-col>
@@ -314,6 +316,7 @@
                           v-model="data.sellPrice"
                           label="Harga Jual"
                           class="mt-0"
+                          required
                         ></v-currency-field>
                       </v-col>
                     </v-row>
@@ -327,6 +330,7 @@
                             item-text="unitEquivalent"
                             item-value="id"
                             class="mt-0"
+                            required
                             @change="loadUnitQuantity"
                           ></v-autocomplete>
                       </v-col>
@@ -336,6 +340,7 @@
                           v-model="data.buyPrice"
                           label="Harga Beli"
                           class="mt-0"
+                          required
                         ></v-currency-field>
                       </v-col>
                     </v-row>
@@ -349,6 +354,7 @@
                             label="Pajak Penjualan"
                             item-value="id"
                             class="mt-0"
+                            required
                           ></v-autocomplete>
                       </v-col>
                       <v-col cols="12" md="6" class="pl-md-3">
@@ -359,6 +365,7 @@
                             label="Pajak Pembelian"
                             item-value="id"
                             class="mt-0"
+                            required
                           ></v-autocomplete>
                       </v-col>
                     </v-row>
@@ -412,7 +419,7 @@
                                   hide-default-footer
                                 >
                                   <template v-slot:[`item.qtyOnAvailable`]="{ item }">
-                                    {{ item.qtyOnHand - item.qtyOnOrder }}
+                                    {{ calcQtyAvailable(item.qtyOnHand, item.qtyOnOrder) }}
                                   </template>
                                   <template v-slot:[`item.qtyOnOrder`]="{ item }">
                                     <v-chip
@@ -987,7 +994,7 @@ export default {
         })
     },
     getUnitSellingOrBuying() {
-      api.getAll(`${this.endpoint.inventory.uom}/item`, {
+      return api.getAll(`${this.endpoint.inventory.uom}/item`, {
         params: {
           uomId: (this.data.uomId === null) ? 0 : this.data.uomId
         }
@@ -1095,7 +1102,7 @@ export default {
         this.$refs.form.validate()
       }, 0)
     },
-    edit(item) {
+    async edit(item) {
       if (!item) return
 
       this.dialog.add = true
@@ -1108,7 +1115,7 @@ export default {
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
 
-      this.getUnitSellingOrBuying()
+      await this.getUnitSellingOrBuying()
       this.loadSubGroup()
       this.getQuantity()
 
@@ -1222,6 +1229,9 @@ export default {
       item.qtyOnIndent /= conversionValue
       item.qtyReorderPoint /= conversionValue
       item.qtyOnTransfer /= conversionValue
+    },
+    calcQtyAvailable(qtySystem, qtyOrder) {
+      return (qtySystem - qtyOrder < 0) ? 0 : qtySystem - qtyOrder
     },
     async exportExcel() {
       this.exportExcel.export()
