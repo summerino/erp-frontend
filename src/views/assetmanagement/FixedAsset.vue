@@ -132,12 +132,13 @@
             <span class="text-caption">Tutup</span>
           </v-tooltip>
         </template>
-        <template v-slot:[`item.date`]="{ item }">
-          {{ item.date | formatDate('dd-MMM-yyyy') }}
+        <template v-slot:[`item.purchaseDate`]="{ item }">
+          {{ item.purchaseDate | formatDate('dd-MMM-yyyy') }}
         </template>
-        <template v-slot:[`item.total`]="{ item }">
-          {{ item.total | formatCurrency }}
+        <template v-slot:[`item.startDepreciateOn`]="{ item }">
+          {{ item.startDepreciateOn | formatDate('dd-MMM-yyyy') }}
         </template>
+        
         <template v-slot:[`item.mark`]="{ item }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -185,7 +186,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="isVoid || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="(data.action === 'edit' && !auth.allowUpdate)"
                   dark
                   text
                   @click="save(true)"
@@ -214,7 +215,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="isVoid || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="(data.action === 'edit' && !auth.allowUpdate)"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -256,8 +257,7 @@
                           v-model="data.code"
                           label="Kode Aktiva"
                           class="mt-0"
-                          :rules="rules.required"
-                          :counter="17"
+                          readonly
                         ></v-text-field>
                       </v-col>
                       <v-col cols="6" class="pl-1">
@@ -281,6 +281,7 @@
                           item-value="id"
                           class="mt-0"
                           required
+                          @change="typeIdChange"
                         ></v-autocomplete>
                       </v-col>
                       <v-col cols="6" class="pl-1">
@@ -357,12 +358,13 @@
                     <v-row no-gutters>
                       <v-col cols="6">
                         <v-currency-field
-                          v-model="data.purchasedValue"
+                          v-model="data.purchaseValue"
                           :rules="rules.required"
                           :allow-negative="true"
                           label="Nilai Perolehan"
                           class="text-right mt-0"
                           required
+                          @change="calculateBookValue"
                         ></v-currency-field>
                       </v-col>
                       <v-col cols="6" class="pl-1">
@@ -400,7 +402,6 @@
                             v-model="data.supCode"
                             :items="suppliers"
                             :item-text="item => `${item.code} - ${item.initial}`"
-                            :readonly="hasRelatedTrans"
                             :rules="rules.required"
                             label="Kode"
                             item-value="code"
@@ -420,7 +421,6 @@
                           >
                             <template v-slot:append-outer>
                               <v-btn
-                                :disabled="hasRelatedTrans"
                                 color="primary"
                                 icon
                                 @click="showFindSupDialog"
@@ -475,7 +475,6 @@
                             v-model="data.purchaseOrderNo"
                             label="No. Order Pembelian"
                             class="mt-0"
-                            readonly
                           ></v-text-field>
                         </v-col>
                       </v-row>
@@ -486,7 +485,6 @@
                             v-model="data.invoiceNo"
                             label="No. Faktur"
                             class="mt-0"
-                            readonly
                           ></v-text-field>
                         </v-col>
                       </v-row>
@@ -497,7 +495,6 @@
                             v-model="data.paymentVoucherNo"
                             label="No. Bukti Pembayaran"
                             class="mt-0"
-                            readonly
                           ></v-text-field>
                         </v-col>
                       </v-row>
@@ -508,15 +505,13 @@
                             v-model="data.yearWarranty"
                             label="Masa Garansi"
                             class="mt-0"
-                            readonly
                           ></v-text-field>
                         </v-col>
                         <v-col cols="6" class="pl-1">
                           <v-text-field
-                            v-model="data.codeWaranty"
+                            v-model="data.codeWarranty"
                             label="Kode Garansi"
                             class="mt-0"
-                            readonly
                           ></v-text-field>
                         </v-col>
                       </v-row>
@@ -649,11 +644,12 @@
                                 label="Beban Depresiasi Awal"
                                 class="text-right mt-0"
                                 required
+                                @change="calculateBookValue"
                               ></v-currency-field>
                             </v-col>
                             <v-col cols="6" class="pl-1">
                               <v-currency-field
-                                v-model="data.temp4"
+                                v-model="data.initDepreciationExpense"
                                 label="Akumulasi Depresiasi"
                                 class="text-right mt-0"
                                 required
@@ -671,11 +667,11 @@
                             </v-col>
                             <v-col cols="6" class="pl-1">
                               <v-autocomplete
-                                v-model="data.temp3"
-                                :items="depretiationMethods"
-                                item-text="text"
+                                v-model="data.coaAsset"
+                                :items="coas"
+                                :item-text="item => `${item.code} - ${item.name}`"
                                 label="Akun Beban Depresiasi"
-                                item-value="value"
+                                item-value="code"
                                 class="mt-0"
                               ></v-autocomplete>
                             </v-col>
@@ -683,21 +679,21 @@
                           <v-row no-gutters>
                             <v-col cols="6">
                               <v-autocomplete
-                                v-model="data.temp2"
-                                :items="depretiationMethods"
-                                item-text="text"
+                                v-model="data.coaAccumDeprec"
+                                :items="coas"
+                                :item-text="item => `${item.code} - ${item.name}`"
                                 label="Akun Akumulasi Depresiasi"
-                                item-value="value"
+                                item-value="code"
                                 class="mt-0"
                               ></v-autocomplete>
                             </v-col>
                             <v-col cols="6" class="pl-1">
                               <v-autocomplete
-                                v-model="data.temp1"
-                                :items="depretiationMethods"
-                                item-text="text"
+                                v-model="data.coaDeprecExpense"
+                                :items="coas"
+                                :item-text="item => `${item.code} - ${item.name}`"
                                 label="Akun Biaya"
-                                item-value="value"
+                                item-value="code"
                                 class="mt-0"
                               ></v-autocomplete>
                             </v-col>
@@ -721,10 +717,8 @@
                         fixed-header
                         hide-default-footer
                       >
-                        <template v-slot:[`item.date`]="{ item }">
-                          {{ item.date | formatDate('dd-MMM-yyyy') }}
-                        </template>
                       </v-data-table>
+                        
                     </v-tab-item>
                   </v-tabs>
                 </v-card>
@@ -740,19 +734,6 @@
       ref="findSup"
       @dblclick:row="bindSupData"
     ></find-supplier>
-    <find-item
-      ref="findItem"
-      :warehouseCode="data.warehouseCode"
-      @dblclick:row="bindItemData"
-    ></find-item>
-    <po-save-receive
-     ref="poSr"
-     @closeParent="closeRcv"
-     ></po-save-receive>
-     <po-save-invoice
-     ref="poSi"
-     @closeParent="closeRcv"
-     ></po-save-invoice>      
   </div>
 </template>
 
@@ -767,19 +748,13 @@ import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 import FindSupplier from '@/components/dialog/general/FindSupplier'
-import FindItem from '@/components/dialog/inventory/FindItem'
-import PoSaveReceive from '@/components/dialog/purchase/POSaveReceive'
-import PoSaveInvoice from '@/components/dialog/purchase/POSaveInvoice'
 
 export default {
   components: {
     AdvancedSearch,
     ExportExcel,
     Confirm,
-    FindSupplier,
-    FindItem,
-    PoSaveReceive,
-    PoSaveInvoice
+    FindSupplier
   },
 
   data: () => ({
@@ -787,22 +762,27 @@ export default {
       add: false
     },
     menu: {
-      orderDate: false
+      purchaseDate: false,
+      startDepreciateOn: false
     },
     tab: {
       sup: null,
-      item: null,
-      foot: null
+      item: null
     },
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '120', excelColWidth:'10' },
-        { text: 'No. Ord. Pembelian', value: 'code', divider: true, width: '160', excelColWidth:'18' },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
-        { text: 'Diminta Oleh', value: 'requestInitial', divider: true, width: '200', excelColWidth:'23' },
+        { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'18' },
+        { text: 'Nama', value: 'name', divider: true, width: '160', excelColWidth:'18' },
+        { text: 'Tipe', value: 'assetType', divider: true, width: '160', excelColWidth:'18' },
+        { text: 'Tgl. Perolehan', value: 'purchaseDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+        { text: 'Mulai Depresiasi Pada', value: 'startDepreciateOn', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+        { text: 'Nilai Perolehan', value: 'purchasedValue', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
-        { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
-        { text: 'Status', value: 'mark', width: '50' }
+        { text: 'No. Order Pembelian', value: 'purchaseOrderNo', align: 'right', width: '50' },
+        { text: 'No. Faktur', value: 'invoiceNo', align: 'right', width: '50' },
+        { text: 'No. Bukti Pembayaran', value: 'paymentVoucherNo', align: 'right', width: '50' },
+        { text: 'Catatan', value: 'notes', width: '50' }
       ],
       data: [],
       options: {
@@ -838,22 +818,27 @@ export default {
       }
     ],
     valid: false,
-    defTaxInc: false,
-    employees: [],
-    currencies: [],
     suppliers: [],
-    warehouses: [],
-    taxes: [],
-    items: [],
     data: {},
-    allowInsertPurchaseReceive: false,
-    allowInsertPurchaseInvoice: false,
-    assetTypes: []
+    assetTypes: [],
+    coas: [],
+    depretiationMethods: [
+      {
+        text: 'NonDepreciable',
+        value: 1
+      },
+      {
+        text: 'StraightLine',
+        value: 2
+      }
+    ]
   }),
 
   created: function () {
     this.getList()
     this.getSupplierLists()
+    this.getAssetType()
+    this.getCOAList()
     auth.getAction(this.endpoint, this.menuId.purchaseorder, [this.action.insert, this.action.update, this.action.void, this.action.close])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -894,11 +879,11 @@ export default {
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'
     },
-    formatPurchaseDate() {
-      return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
-    },
     formatStartDepreciateOn() {
-      return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
+      return this.data.startDepreciateOn ? format(parseISO(this.data.startDepreciateOn), 'dd-MMM-yyyy') : ''
+    },
+    formatPurchaseDate() {
+      return this.data.purchaseDate ? format(parseISO(this.data.purchaseDate), 'dd-MMM-yyyy') : ''
     }
   },
 
@@ -916,20 +901,24 @@ export default {
         supAddr: null,
         supPhone: null,
         supFax: null,
-        purchasedValue: 0,
+        depreciationMethod:2, // default value 2
+        purchaseValue: 0,
         acquiredValue: 0,
         salvageValue: 0,
         purchaseOrderNo: 0,
         invoiceNo: 0,
         paymentVoucherNo: 0,
         yearWarranty: 0,
-        codeWaranty: 0,
-        bookValue:0
+        codeWarranty: 0,
+        bookValue:0,
+        coaAccumDeprec: '',
+        coaAsset: '',
+        coaDeprecExpense: ''
+
       }
       this.gridHistory.data = []
       this.tab.sup = 0
       this.tab.item = 0
-      this.tab.foot = 0
       
       // Reset form validation
       if (resetValidation) {
@@ -937,7 +926,6 @@ export default {
           this.$refs.form.resetValidation()
         }, 0)
       }
-
      
     },
     advancedSearch() {
@@ -959,7 +947,7 @@ export default {
           direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
         })
       }
-      api.getAll(this.endpoint.purchase.order, {
+      api.getAll(this.endpoint.assetManagement.asset.fixedAsset, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -977,6 +965,19 @@ export default {
           }
         })
     },
+    getAssetType() {
+      api.getAll(`${this.endpoint.assetManagement.asset.type}/lists`, {
+        params: {
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.assetTypes = response.data.tableData
+        })
+    },
     getSupplierLists() {
       api.getAll(`${this.endpoint.general.supplier.supplier}/lists`, {
         params: {
@@ -990,6 +991,30 @@ export default {
           this.suppliers = response.data.tableData
         })
     },
+    getCOAList() {
+      api.getAll(`${this.endpoint.accounting.coa}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'typeId',
+            operator: 'neq',
+            keyword: '2'
+          },
+          {
+            field: 'lod',
+            operator: 'eq',
+            keyword: 5
+          }]),
+          sorts: JSON.stringify([{
+            field: 'code',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.coas = response.data.tableData
+        })
+    },
+    
     close() {
       this.dialog.add = false
     },
@@ -1024,14 +1049,7 @@ export default {
       // Get supplier details
       this.supCodeChange()
 
-      // Get related transaction details
-      api.getAll(`${this.endpoint.purchase.order}/related-trans`, {
-        params: { code: item.code }
-      })
-        .then(response => {
-          this.gridHistory.data = response.data.tableData
-        })
-
+      this.typeIdChange()
       // Set focus to order code field
       setTimeout(() => {
         this.$refs.code.focus()
@@ -1043,7 +1061,7 @@ export default {
           'Void?',
           'Apakah anda yakin ingin membuat void data ini?')
       ) {
-        api.delete(this.endpoint.purchase.order, item.code)
+        api.delete(this.endpoint.assetManagement.asset.fixedAsset, item.code)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -1060,14 +1078,13 @@ export default {
       }
 
       const data = this.data
-      data.itemDetails = this.gridItem.data
-      
+      console.log('data', data)
       let result = { success: false, message: '' }
       if (data.action === 'add') {
-        const resp = await api.create(this.endpoint.purchase.order, data)
+        const resp = await api.create(this.endpoint.assetManagement.asset.fixedAsset, data)
         result = resp.data
       } else if (data.action === 'edit') {
-        const resp = await api.update(this.endpoint.purchase.order, data.code, data)
+        const resp = await api.update(this.endpoint.assetManagement.asset.fixedAsset, data.code, data)
         result = resp.data
       }
 
@@ -1089,6 +1106,17 @@ export default {
         this.data.supPhone = supplier.phone
         this.data.supFax = supplier.fax
       }
+    },
+    typeIdChange() {
+      const temp = this.assetTypes.find(x => x.id === this.data.typeId)
+      if (temp) {
+        this.data.coaAccumDeprec = temp.coaAccumDeprec
+        this.data.coaAsset = temp.coaAsset
+        this.data.coaDeprecExpense = temp.coaDeprecExpense
+      }
+    },
+    calculateBookValue() {
+      this.data.bookValue = this.data.purchaseValue - this.data.initDepreciationExpense
     },
     showFindSupDialog() {
       this.$refs.findSup.open()

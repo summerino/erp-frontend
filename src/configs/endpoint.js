@@ -72,7 +72,7 @@ export default {
   assetManagement: {
     asset: {
       type: 'asset-type',
-      asset: 'asset'
+      fixedAsset: 'fixed-asset'
     }
   }
 }

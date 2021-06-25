@@ -11,7 +11,7 @@ import UsersRoutes from './users.routes'
 import AccountingRoutes from './accounting.routes'
 import SystemManagementRoutes from './systemmanagement.routes'
 import ParameterRoutes from './parameter.routes'
-import AssetRoutes from './asset.routes'
+import AssetManagementRoutes from './assetmanagement.routes'
 
 Vue.use(Router)
 
@@ -34,7 +34,7 @@ export const routes = [{
 ...AccountingRoutes,
 ...SystemManagementRoutes,
 ...ParameterRoutes,
-...AssetRoutes,
+...AssetManagementRoutes,
 {
   path: '/login',
   name: 'login',
