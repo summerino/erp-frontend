@@ -35,5 +35,6 @@ export default {
   user: 51,
   assetType: 62,
   fixedAsset: 63, 
-  salesmanGroup: 58
+  salesmanGroup: 58,
+  coaType: 67
 }

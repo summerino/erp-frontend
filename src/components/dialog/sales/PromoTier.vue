@@ -396,17 +396,18 @@ export default {
       if (this.data.promoType === 3) {
         this.grid.data = item.promoTierList
         this.promoMethod = [{ id: 3, name: 'Mendapatkan' }]
-        this.data.saleUnit = item.promoTierList.length === 0 ? null : item.promoTierList[0].saleUnit
-        this.data.freeGoodItemId = item.promoTierList.length === 0 ? null : item.promoTierList[0].freeGoodItemId
+        this.data.freeGoodItemId = item.promoTierList.length === 0 ? null : item.freeGoodItemId
         if (this.data.freeGoodItemId) {
           this.freeItemIdChange(this.data.freeGoodItemId)
         }
-        this.data.unitFreeGood = item.promoTierList.length === 0 ? 0 : Number(item.promoTierList[0].unitFreeGood)
-        this.data.isMultiple = item.promoTierList.length === 0 ? false : item.promoTierList[0].isMultiple
+        this.data.unitFreeGood = item.promoTierList.length === 0 ? 0 : item.unitFreeGood
+        this.data.isMultiple = item.promoTierList.length === 0 ? false : item.isMultiple
         this.data.promoMethod = 3
         if (this.data.applyTo !== 3) {
           this.getItemUnitLists(item.itemId)
         }
+        this.data.saleUnit = item.promoTierList.length === 0 ? null : item.saleUnit
+        this.changeUnit()
       } else if (this.data.promoType === 4) {
         this.gridPayment.data = item.promoTierList
         this.promoMethod = [{ id: 1, name: 'Persen' }, { id: 2, name: 'Nominal' }]
@@ -420,13 +421,14 @@ export default {
         this.grid.columns[3].text = 'Nilai Sampai'
       } else {
         this.grid.data = item.promoTierList
-        this.data.applyToAllUnit = item.promoTierList.length === 0 ? false : item.promoTierList[0].applyToAllUnit
-        this.data.saleUnit = item.promoTierList.length === 0 ? null : item.promoTierList[0].saleUnit
+        this.data.applyToAllUnit = item.promoTierList.length === 0 ? false : item.applyToAllUnit
         this.promoMethod = [{ id: 1, name: 'Persen' }, { id: 2, name: 'Nominal' }]
         this.data.promoMethod = item.isPercentage === false ? 2 : 1
         if (this.data.applyTo !== 3) {
           this.getItemUnitLists(item.itemId)
         }
+        this.data.saleUnit = item.promoTierList.length === 0 ? null : item.saleUnit
+        this.changeUnit()
       }
     },
     close() {
@@ -488,8 +490,6 @@ export default {
       })
         .then(response => {
           this.itemUnits = response.data.tableData
-          this.data.saleUnit = null ?? this.itemUnits[0].id
-          this.unitName = null ?? this.itemUnits[0].unitEquivalent
         })
     },
     getPaymentTermLists() {
