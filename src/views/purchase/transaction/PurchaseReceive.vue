@@ -365,7 +365,7 @@
                 <v-card>
                   <v-tabs v-model="tab.sup">
                     <v-tab key="sup">Pemasok</v-tab>
-                    <v-tab key="user">Pelanggan</v-tab>
+                    <v-tab key="user">Pengguna</v-tab>
                   </v-tabs>
 
                   <v-tabs-items v-model="tab.sup" class="pa-2">
