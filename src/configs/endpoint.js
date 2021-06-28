@@ -75,5 +75,9 @@ export default {
       type: 'asset-type',
       fixedAsset: 'fixed-asset'
     }
+  },
+
+  expedition: {
+    invoice: 'expedition-invoice'
   }
 }
