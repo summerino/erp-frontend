@@ -3,5 +3,6 @@ export default {
   update: 2,
   delete: 3,
   void: 4,
-  changeWarehouse: 5
+  changeWarehouse: 5,
+  changeDate: 8
 }

@@ -111,6 +111,7 @@
                           transition="scale-transition"
                           min-width="290px"
                           offset-y
+                          :disabled="!auth.allowChangeDate"
                         >
                           <template v-slot:activator="{ on, attrs }">
                             <v-text-field
@@ -329,6 +330,7 @@
                             item-value="code"
                             class="mt-0"
                             required
+                            :disabled="!auth.allowChangeWarehouse"
                           ></v-autocomplete>
                         </v-col>
                       </v-row>
@@ -944,7 +946,7 @@ export default {
     this.getTaxLists()
     this.getItemLists()
     this.defineAction()
-    auth.getAction(this.endpoint, this.menuId.directinvoice, [this.action.insert, this.action.update, this.action.void])
+    auth.getAction(this.endpoint, this.menuId.directinvoice, [this.action.insert, this.action.update, this.action.void, this.action.changeWarehouse, this.action.changeDate])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -1013,11 +1015,15 @@ export default {
         }, 0)
       }
 
-      // Set default warehouse
-      const defWarehouse = this.warehouses.find(w => w.isDefault)
-      if (defWarehouse) {
-        this.data.warehouseCode = defWarehouse.code
-      }
+      // // Set default warehouse
+      // const defWarehouse = this.warehouses.find(w => w.isDefault)
+      // if (defWarehouse) {
+      //   this.data.warehouseCode = defWarehouse.code
+      // }
+
+      // set default warehouse
+      this.setDefaultWarehouse()
+
     },
     formatDate(date) {
       return date ? format(parseISO(date), 'dd-MMM-yyyy') : ''
@@ -1942,6 +1948,18 @@ export default {
         mainData.total = mainData.subTotal - mainData.finalDisc + mainData.taxAmount
       }
       this.data = mainData    
+    },
+    setDefaultWarehouse() {
+      const userInfo = this.userInfo = auth.getUserInfo()
+      const defWarehouse = this.warehouses.find(w => w.isDefault)
+      if (userInfo) {
+        const userDefaultWarehouse = userInfo.WarehouseCode
+        if (userDefaultWarehouse) {
+          this.data.warehouseCode = userDefaultWarehouse
+        } else if (defWarehouse) {
+          this.data.warehouseCode = defWarehouse.code
+        }
+      }
     }
   }
 }

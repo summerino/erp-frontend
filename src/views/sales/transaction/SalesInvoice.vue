@@ -322,6 +322,7 @@
                           transition="scale-transition"
                           min-width="290px"
                           offset-y
+                          :disabled="!auth.allowChangeDate"
                         >
                           <template v-slot:activator="{ on, attrs }">
                             <v-text-field
@@ -856,7 +857,7 @@ export default {
     this.getList()
     this.getEmployeeLists()
     this.getPaymentTermLists()
-    auth.getAction(this.endpoint, this.menuId.salesinvoice, [this.action.insert, this.action.update, this.action.void])
+    auth.getAction(this.endpoint, this.menuId.salesinvoice, [this.action.insert, this.action.update, this.action.void, this.action.changeDate])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
