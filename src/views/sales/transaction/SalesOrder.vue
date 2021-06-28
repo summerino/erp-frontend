@@ -1072,7 +1072,7 @@ export default {
         { text: 'No. Ord. Penjualan', value: 'code', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Penjual', value: 'salesInitial', divider: true, width: '200', excelColWidth:'23' },
-        { text: 'Pelanggan', value: 'custName', divider: true, width: '200', excelColWidth:'23' },
+        { text: 'Pelanggan', value: 'custName', divider: true, width: '200', excelColWidth:'35', customValues: ['custCode', 'custName'] },
         { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
         { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
       ],

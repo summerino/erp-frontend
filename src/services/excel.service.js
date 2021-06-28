@@ -74,12 +74,14 @@ class ExcelService {
             if (value) {
               if (isDateTime) {
                 temp.push(format(parseISO(value), 'dd-MMM-yyyy'))
+              } else if (customValues) {
+                temp.push(`${grid.data[i][customValues[0]]} - ${grid.data[i][customValues[1]]}`)
               } else {
                 temp.push(value)
               } 
             } else if (value === 0) {
               temp.push(0)
-            } else {
+            }  else {
               temp.push('')
             }
           }

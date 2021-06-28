@@ -381,7 +381,7 @@ export default {
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
         { text: 'Kode Transaksi', value: 'code', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
-        { text: 'Pelanggan', value: 'custName', divider: true, width: '200', excelColWidth:'25' },
+        { text: 'Pelanggan', value: 'custName', divider: true, width: '200', excelColWidth:'35', customValues: ['custCode', 'custName'] },
         { text: 'Sumber Transaksi', value: 'srcTransName', divider: true, width: '100', excelColWidth:'12' },
         { text: 'Kode Transaksi Sumber', value: 'transCode', divider: true, width: '100', excelColWidth:'12' },
         { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'13', isNumber: true },

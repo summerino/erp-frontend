@@ -96,6 +96,9 @@
             <template v-slot:[`item.date`]="{ item }">
               {{ item.date | formatDate('dd-MMM-yyyy') }}
             </template>
+            <template v-slot:[`item.custName`]="{ item }">
+              {{ item.custCode }}- {{ item.custName }}
+            </template>
             <template v-slot:[`item.total`]="{ item }">
               {{ item.total | formatCurrency }}
             </template>
