@@ -11,6 +11,7 @@ const state = {
     delete: 3,
     void: 4,
     changeWarehouse: 5,
+    changeDate: 8,
     close: 6
   },
   menus,
@@ -19,7 +20,8 @@ const state = {
     allowUpdate: false,
     allowDelete: false,
     allowVoid: false,
-    allowChangeWarehouse: false
+    allowChangeWarehouse: false,
+    allowChangeDate: false
   }
 }
 
