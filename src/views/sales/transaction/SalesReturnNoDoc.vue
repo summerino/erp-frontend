@@ -408,7 +408,7 @@
                           <v-autocomplete
                             v-model="data.warehouseCode"
                             :items="warehouses"
-                            :disabled="hasRelatedTrans"
+                            :disabled="hasRelatedTrans || !auth.allowChangeWarehouse"
                             :item-text="item => `${item.initial} - ${item.name}`"
                             :rules="rules.required"
                             item-value="code"
@@ -1005,7 +1005,7 @@ export default {
     this.getWarehouseLists()
     this.getTaxLists()
     this.getItemLists()
-    auth.getAction(this.endpoint, this.menuId.salesreturn, [this.action.insert, this.action.update, this.action.void])
+    auth.getAction(this.endpoint, this.menuId.salesreturn, [this.action.insert, this.action.update, this.action.void, this.action.changeWarehouse])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -1232,11 +1232,15 @@ export default {
         .then(response => {
           this.warehouses = response.data.tableData
           
-          // Set default warehouse
-          const defWarehouse = this.warehouses.find(w => w.isDefault)
-          if (defWarehouse) {
-            this.defWarehouseCode = defWarehouse.code
-          }
+          // // Set default warehouse
+          // const defWarehouse = this.warehouses.find(w => w.isDefault)
+          // if (defWarehouse) {
+          //   this.defWarehouseCode = defWarehouse.code
+          // }
+
+          // set default warehouse
+          this.setDefaultWarehouse()
+
         })
     },
     getTaxLists() {
@@ -1697,6 +1701,18 @@ export default {
     },
     async exportExcel() {
       this.exportExcel.export()
+    },
+    setDefaultWarehouse() {
+      const userInfo = this.userInfo = auth.getUserInfo()
+      const defWarehouse = this.warehouses.find(w => w.isDefault)
+      if (userInfo) {
+        const userDefaultWarehouse = userInfo.WarehouseCode
+        if (userDefaultWarehouse) {
+          this.data.warehouseCode = userDefaultWarehouse
+        } else if (defWarehouse) {
+          this.data.warehouseCode = defWarehouse.code
+        }
+      }
     }
   }
 }

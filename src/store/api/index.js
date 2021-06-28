@@ -18,7 +18,8 @@ const state = {
     allowInsert: false,
     allowUpdate: false,
     allowDelete: false,
-    allowVoid: false
+    allowVoid: false,
+    allowChangeWarehouse: false
   }
 }
 

@@ -475,6 +475,7 @@
                             label="Gudang"
                             item-value="code"
                             class="mt-0"
+                            :disabled="!auth.allowChangeWarehouse"
                           ></v-autocomplete>
                         </v-col>
                       </v-row>
@@ -980,7 +981,7 @@ export default {
     this.getWarehouseLists()
     this.getTaxLists()
     this.getItemLists()
-    auth.getAction(this.endpoint, this.menuId.purchaseorder, [this.action.insert, this.action.update, this.action.void, this.action.close])
+    auth.getAction(this.endpoint, this.menuId.purchaseorder, [this.action.insert, this.action.update, this.action.void, this.action.close, this.action.changeWarehouse])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -1100,11 +1101,15 @@ export default {
         }, 0)
       }
 
-      // Set default warehouse
-      const defWarehouse = this.warehouses.find(w => w.isDefault)
-      if (defWarehouse) {
-        this.data.warehouseCode = defWarehouse.code
-      }
+      // // Set default warehouse
+      // const defWarehouse = this.warehouses.find(w => w.isDefault)
+      // if (defWarehouse) {
+      //   this.data.warehouseCode = defWarehouse.code
+      // }
+
+      // set default warehouse
+      this.setDefaultWarehouse()
+
     },
     advancedSearch() {
       this.grid.search = null
@@ -1614,6 +1619,18 @@ export default {
     },
     async exportExcel() {
       this.exportExcel.export()
+    },
+    setDefaultWarehouse() {
+      const userInfo = this.userInfo = auth.getUserInfo()
+      const defWarehouse = this.warehouses.find(w => w.isDefault)
+      if (userInfo) {
+        const userDefaultWarehouse = userInfo.WarehouseCode
+        if (userDefaultWarehouse) {
+          this.data.warehouseCode = userDefaultWarehouse
+        } else if (defWarehouse) {
+          this.data.warehouseCode = defWarehouse.code
+        }
+      }
     }
   }
 }

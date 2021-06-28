@@ -432,6 +432,7 @@
                             item-value="code"
                             label="Gudang"
                             class="mt-0"
+                            :disabled="!auth.allowChangeWarehouse"
                           ></v-autocomplete>
                         </v-col>
                       </v-row>
@@ -791,7 +792,7 @@ export default {
     this.getEmployeeLists()
     this.getWarehouseLists()
     this.getTaxLists()
-    auth.getAction(this.endpoint, this.menuId.salesdelivery, [this.action.insert, this.action.update, this.action.void])
+    auth.getAction(this.endpoint, this.menuId.salesdelivery, [this.action.insert, this.action.update, this.action.void, this.action.changeWarehouse])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -888,6 +889,9 @@ export default {
       this.gridRelated.data = []
       this.tab.cust = 0
       this.tab.item = 0
+      
+      // set default warehouse
+      this.setDefaultWarehouse()
 
       // Reset form validation
       if (resetValidation) {
@@ -1395,6 +1399,18 @@ export default {
     },
     async exportExcel() {
       this.exportExcel.export()
+    },
+    setDefaultWarehouse() {
+      const userInfo = this.userInfo = auth.getUserInfo()
+      const defWarehouse = this.warehouses.find(w => w.isDefault)
+      if (userInfo) {
+        const userDefaultWarehouse = userInfo.WarehouseCode
+        if (userDefaultWarehouse) {
+          this.data.warehouseCode = userDefaultWarehouse
+        } else if (defWarehouse) {
+          this.data.warehouseCode = defWarehouse.code
+        }
+      }
     }
   }
 }
