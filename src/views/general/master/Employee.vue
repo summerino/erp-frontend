@@ -1,6 +1,6 @@
 <template>
   <div class="w-full">
-    <v-card v-if="main">
+    <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="2">
@@ -121,386 +121,420 @@
       </v-data-table>
     </v-card>
 
-    <v-card v-else :style="{ background: $vuetify.theme.themes[theme].surface }">
-      <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row dense>
-          <v-col cols="12" md="6">
-            <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' }} Karyawan</span>
-          </v-col>
-          <v-col cols="12" md="6" class="text-right">
-            <label
-              v-if="data.action == 'edit'"
-              class="text-caption mr-1"
-            >
-              Tanggal Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
-            </label>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  v-bind="attrs"
-                  v-on="on"
-                  v-shortkey="['ctrl', 's']"
-                  color="blue darken-2"
-                  class="font-weight-regular"
-                  dark
-                  small
-                  tile
-                  @click="save"
-                  @shortkey="save"
-                  :disabled="(data.action === 'edit' && !auth.allowUpdate)"
-                >
-                  <v-icon left>
-                    mdi-content-save
-                  </v-icon>
-                  Simpan
-                </v-btn>
-              </template>
-              <span class="text-caption">(Ctrl + S)</span>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  v-bind="attrs"
-                  v-on="on"
-                  v-shortkey="['esc']"
-                  class="font-weight-regular ml-1"
-                  small
-                  tile
-                  @click="back"
-                  @shortkey="back"
-                >
-                  <v-icon left>
-                    mdi-undo-variant
-                  </v-icon>
-                  Kembali
-                </v-btn>
-              </template>
-              <span class="text-caption">(Esc)</span>
-            </v-tooltip>
-          </v-col>
-        </v-row>
-      </v-card-title>
-
-      <v-card-text>
-        <v-form
-          ref="form"
-          v-model="valid"
+    <v-dialog
+      v-model="dialog.add"
+      transition="dialog-bottom-transition"
+      fullscreen
+      hide-overlay
+      persistent
+      scrollable
+      @keydown.esc="back"
+    >
+      <v-card :style="{ background: $vuetify.theme.themes[theme].surface }">
+        <v-toolbar
+          color="primary"
+          max-height="64"
+          dark
         >
-          <v-card>
-            <v-container fluid grid-list-md>
-              <v-row no-gutters>
-                <v-col cols="12" md="6" class="pr-md-3">
-                  <v-text-field
-                    ref="initial"
-                    v-model="data.initial"
-                    :rules="[rules.required[0], rules.max20chars[0]]"
-                    :counter="20"
-                    label="Inisial"
-                    class="mt-0"
-                    required
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" md="6" class="pl-md-3">
-                  <v-row no-gutters>
-                    <v-col cols="12">
-                      <span>Jenis Kelamin</span>
-                    </v-col>
-                  </v-row>
-                  <v-row no-gutters>
-                    <v-col cols="3">
-                      <input 
-                       type="radio" 
-                       id="male" 
-                       value="true" 
-                       v-model="data.sex">
-                      <label for="male">&nbsp;Laki-laki</label>
-                    </v-col>
-                    <v-col cols="9">
-                      <input 
-                       type="radio" 
-                       id="female" 
-                       value="false" 
-                       v-model="data.sex">
-                      <label for="female">&nbsp;Perempuan</label>
-                    </v-col>
-                  </v-row>
-                </v-col>
-              </v-row>
+          <v-btn icon dark @click="back">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <v-toolbar-title><span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' }} Karyawan</span></v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-toolbar-items>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'enter']"
+                  :disabled="isActive || (data.action === 'edit' && !auth.allowUpdate)"
+                  dark
+                  text
+                  @click="save(true)"
+                  @shortkey="save(true)"
 
-              <v-row no-gutters>
-                <v-col cols="12" md="6" class="pr-md-3">
-                  <v-text-field
-                    v-model="data.firstName"
-                    :rules="rules.required"
-                    :counter="50"
-                    label="Nama Depan"
-                    class="mt-0"
-                    required
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" md="6" class="pl-md-3">
-                  <v-text-field
-                    v-model="data.lastName"
-                    :counter="50"
-                    label="Nama Belakang"
-                    class="mt-0"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-
-              <v-row no-gutters>
-                <v-col cols="12" md="6" class="pr-md-3">
-                  <v-menu
-                    v-model="menu.calBirthDate"
-                    :close-on-content-click="false"
-                    transition="scale-transition"
-                    min-width="290px"
-                    offset-y
-                  >
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-text-field
-                        v-bind="attrs"
-                        v-on="on"
-                        :rules="rules.required"
-                        :value="formatBirthDate"
-                        label="Tanggal Lahir"
-                        class="mt-0"
-                        readonly
-                        required
-                      ></v-text-field>
-                    </template>
-                    <v-date-picker
-                      v-model="data.birthDate"
-                      no-title
-                      scrollable
-                      @change="menu.calBirthDate = false"
-                    ></v-date-picker>
-                  </v-menu>
-                </v-col>
-                <v-col cols="12" md="6" class="pl-md-3">
-                  <v-text-field
-                    v-model="data.birthPlace"
-                    :counter="50"
-                    label="Tempat Lahir"
-                    class="mt-0"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-
-              <v-row no-gutters>
-                <v-col cols="12">
-                  <v-text-field
-                    v-model="data.address1"
-                    :rules="rules.required"
-                    :counter="50"
-                    label="Alamat 1"
-                    class="mt-0"
-                    required
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-
-              <v-row no-gutters>
-                <v-col cols="12">
-                  <v-text-field
-                    v-model="data.address2"
-                    :counter="50"
-                    label="Alamat 2"
-                    class="mt-0"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-
-              <v-row no-gutters>
-                <v-col cols="12" md="6" class="pr-md-3">
-                  <v-text-field
-                    v-model="data.phone"
-                    :counter="30"
-                    label="Telepon"
-                    class="mt-0"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" md="6" class="pl-md-3">
-                  <v-text-field
-                    v-model="data.identityCardNo"
-                    :counter="20"
-                    label="Nomor Identitas"
-                    class="mt-0"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-
-              <v-row no-gutters>
-                <v-col cols="12" md="6" class="pr-md-3">
-                  <v-autocomplete
-                    v-model="data.maritalStatus"
-                    :items="maritalStatusRef"
-                    :item-text="item => `${item.text}`"
-                    :rules="rules.required"
-                    label="Status Pernikahan"
-                    item-value="value"
-                    class="mt-0"
-                    required
-                  ></v-autocomplete>
-                </v-col>
-                <v-col cols="12" md="6" class="pl-md-3">
-                  <v-autocomplete
-                    v-model="data.religion"
-                    :items="religionRef"
-                    :item-text="item => `${item.text}`"
-                    :rules="rules.required"
-                    label="Agama"
-                    item-value="value"
-                    class="mt-0"
-                    required
-                  ></v-autocomplete>
-                </v-col>
-              </v-row>
-
-              <v-row no-gutters>
-                <v-col cols="12" md="6" class="pr-md-3">
-                  <v-autocomplete
-                    v-model="data.type"
-                    :items="employeeTypeRef"
-                    :item-text="item => `${item.text}`"
-                    :rules="rules.required"
-                    label="Tipe"
-                    item-value="value"
-                    class="mt-0"
-                    required
-                  ></v-autocomplete>
-                </v-col>
-                <v-col cols="12" md="6" class="pl-md-3">
-                  <v-autocomplete
-                    v-model="data.warehouseCode"
-                    :items="warehouseRef"
-                    :item-text="item => `${item.initial} - ${item.name}`"
-                    label="Gudang"
-                    item-value="code"
-                    class="mt-0"
-                  ></v-autocomplete>
-                </v-col>
-              </v-row>
-
-              <v-row no-gutters>
-                <v-col cols="12" md="6" class="pr-md-3">
-                  <v-autocomplete
-                    v-model="data.salesGroupId"
-                    :items="salesmanGroupRef"
-                    :item-text="item => `${item.name}`"
-                    :rules="data.type === 2 ? rules.required : []"
-                    :readonly="data.type !== 2"
-                    label="Sales Grup"
-                    item-value="id"
-                    class="mt-0"
-                    required
-                  ></v-autocomplete>
-                </v-col>
-                <v-col cols="12" md="6" class="pl-md-3">
-                  &nbsp;
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-card>
-          <br/>
-          <v-card v-if="data.type === 2">
-            <v-tabs v-model="tab.advancedItem">
-              <v-tab key="visitOrder">Jadwal Kunjungan</v-tab>
-              
-              <v-tab-item
-                key="visitOrder"
-                transition="false"
-              >
-                <v-card>
-                  <v-app-bar dense flat>
-                    <v-spacer></v-spacer>
+                >Simpan & Tutup</v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Enter)</span>
+            </v-tooltip>
+            <v-divider vertical></v-divider>
+            <v-menu
+              bottom
+              eager
+              left
+              open-on-hover
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  dark
+                  icon
+                >
+                  <v-icon>mdi-menu-down</v-icon>
+                </v-btn>
+              </template>
+              <v-list class="cursor-pointer">
+                <v-list-item
+                  v-shortkey="['ctrl', 's']"
+                  :disabled="isActive || (data.action === 'edit' && !auth.allowUpdate)"
+                  @click="save(false)"
+                  @shortkey="save(false)"
+                >
+                  <v-list-item-title>
                     <v-tooltip bottom>
                       <template v-slot:activator="{ on, attrs }">
-                        <v-btn
+                        <span
                           v-bind="attrs"
                           v-on="on"
-                          v-shortkey="['ctrl', 'i']"
-                          :disabled="data.isActive === false"
-                          class="blue--text"
-                          small
-                          tile
-                          @click="showVisitScheduleDialog"
-                          @shortkey="showVisitScheduleDialog"
                         >
-                          <v-icon left>mdi-plus</v-icon>
-                          Tambah
-                        </v-btn>
+                          Simpan
+                        </span>
                       </template>
-                      <span class="text-caption">(Ctrl + I)</span>
+                      <span class="text-caption">(Ctrl + S)</span>
                     </v-tooltip>
-                  </v-app-bar>
-                  <v-container fluid grid-list-md>
-                    <v-data-table
-                      :headers="gridItem.columns"
-                      :items="gridItem.data"
-                      :items-per-page="-1"
-                      height="300"
-                      class="elevation-1"
-                      dense
-                      disable-sort
-                      fixed-header
-                      hide-default-footer
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+            <v-divider vertical></v-divider>
+          </v-toolbar-items>
+        </v-toolbar>
+
+        <v-card-text>
+          <v-form
+            ref="form"
+            v-model="valid"
+          >
+            <v-card>
+              <v-container fluid grid-list-md>
+                <v-row no-gutters>
+                  <v-col cols="12" class="text-right">
+                    <label
+                      v-if="data.action == 'edit'"
+                      class="text-caption mr-1"
                     >
-                      <template v-slot:[`item.action`]="{ item }">
-                        <v-tooltip bottom>
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-btn
-                              v-bind="attrs"
-                              v-on="on"
-                              icon
-                              small
-                              color="orange lighten-1"
-                              @click="showVisitScheduleDialog(item)"
-                            >
-                              <v-icon small>mdi-pencil</v-icon>
-                            </v-btn>
-                          </template>
-                          <span>Ubah</span>
-                        </v-tooltip>
-                        <v-tooltip bottom>
-                          <template v-slot:activator="{ on, attrs }">
-                            <v-btn
-                              v-bind="attrs"
-                              v-on="on"
-                              :disabled="data.isActive === false || item.isDefault === true"
-                              color="red"
-                              icon
-                              small
-                              @click="removeItem(item)"
-                            >
-                              <v-icon small>mdi-close-thick</v-icon>
-                            </v-btn>
-                          </template>
-                          <span class="text-caption">Hapus</span>
-                        </v-tooltip>
+                      Tanggal Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
+                    </label>
+                  </v-col>
+                </v-row>
+
+                <v-row no-gutters>
+                  <v-col cols="12" md="6" class="pr-md-3">
+                    <v-text-field
+                      ref="initial"
+                      v-model="data.initial"
+                      :rules="[rules.required[0], rules.max20chars[0]]"
+                      :counter="20"
+                      label="Inisial"
+                      class="mt-0"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="6" class="pl-md-3">
+                    <v-row no-gutters>
+                      <v-col cols="12">
+                        <span>Jenis Kelamin</span>
+                      </v-col>
+                    </v-row>
+                    <v-row no-gutters>
+                      <v-col cols="3">
+                        <input 
+                         type="radio" 
+                         id="male" 
+                         value="true" 
+                         v-model="data.sex">
+                        <label for="male">&nbsp;Laki-laki</label>
+                      </v-col>
+                      <v-col cols="9">
+                        <input 
+                         type="radio" 
+                         id="female" 
+                         value="false" 
+                         v-model="data.sex">
+                        <label for="female">&nbsp;Perempuan</label>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                </v-row>
+
+                <v-row no-gutters>
+                  <v-col cols="12" md="6" class="pr-md-3">
+                    <v-text-field
+                      v-model="data.firstName"
+                      :rules="rules.required"
+                      :counter="50"
+                      label="Nama Depan"
+                      class="mt-0"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="6" class="pl-md-3">
+                    <v-text-field
+                      v-model="data.lastName"
+                      :counter="50"
+                      label="Nama Belakang"
+                      class="mt-0"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+
+                <v-row no-gutters>
+                  <v-col cols="12" md="6" class="pr-md-3">
+                    <v-menu
+                      v-model="menu.calBirthDate"
+                      :close-on-content-click="false"
+                      transition="scale-transition"
+                      min-width="290px"
+                      offset-y
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          v-bind="attrs"
+                          v-on="on"
+                          :rules="rules.required"
+                          :value="formatBirthDate"
+                          label="Tanggal Lahir"
+                          class="mt-0"
+                          readonly
+                          required
+                        ></v-text-field>
                       </template>
-                      <template v-slot:[`item.startDate`]="{ item }">
-                        {{ item.startDate | formatDate('dd-MMM-yyyy') }}
-                      </template>
-                      <template v-slot:[`item.endDate`]="{ item }">
-                        {{ item.endDate | formatDate('dd-MMM-yyyy') }}
-                      </template>
-                      <template v-slot:[`item.visitDay`]="{ item }">
-                        {{ getDayName(item.visitDay) }}
-                      </template>
-                    </v-data-table>
-                  </v-container>
-                </v-card>
-              </v-tab-item>
-            </v-tabs>
-          </v-card>
-        </v-form>
-      </v-card-text>
-    </v-card>
-    
+                      <v-date-picker
+                        v-model="data.birthDate"
+                        no-title
+                        scrollable
+                        @change="menu.calBirthDate = false"
+                      ></v-date-picker>
+                    </v-menu>
+                  </v-col>
+                  <v-col cols="12" md="6" class="pl-md-3">
+                    <v-text-field
+                      v-model="data.birthPlace"
+                      :counter="50"
+                      label="Tempat Lahir"
+                      class="mt-0"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+
+                <v-row no-gutters>
+                  <v-col cols="12">
+                    <v-text-field
+                      v-model="data.address1"
+                      :rules="rules.required"
+                      :counter="50"
+                      label="Alamat 1"
+                      class="mt-0"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+
+                <v-row no-gutters>
+                  <v-col cols="12">
+                    <v-text-field
+                      v-model="data.address2"
+                      :counter="50"
+                      label="Alamat 2"
+                      class="mt-0"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+
+                <v-row no-gutters>
+                  <v-col cols="12" md="6" class="pr-md-3">
+                    <v-text-field
+                      v-model="data.phone"
+                      :counter="30"
+                      label="Telepon"
+                      class="mt-0"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="6" class="pl-md-3">
+                    <v-text-field
+                      v-model="data.identityCardNo"
+                      :counter="20"
+                      label="Nomor Identitas"
+                      class="mt-0"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+
+                <v-row no-gutters>
+                  <v-col cols="12" md="6" class="pr-md-3">
+                    <v-autocomplete
+                      v-model="data.maritalStatus"
+                      :items="maritalStatusRef"
+                      :item-text="item => `${item.text}`"
+                      :rules="rules.required"
+                      label="Status Pernikahan"
+                      item-value="value"
+                      class="mt-0"
+                      required
+                    ></v-autocomplete>
+                  </v-col>
+                  <v-col cols="12" md="6" class="pl-md-3">
+                    <v-autocomplete
+                      v-model="data.religion"
+                      :items="religionRef"
+                      :item-text="item => `${item.text}`"
+                      :rules="rules.required"
+                      label="Agama"
+                      item-value="value"
+                      class="mt-0"
+                      required
+                    ></v-autocomplete>
+                  </v-col>
+                </v-row>
+
+                <v-row no-gutters>
+                  <v-col cols="12" md="6" class="pr-md-3">
+                    <v-autocomplete
+                      v-model="data.type"
+                      :items="employeeTypeRef"
+                      :item-text="item => `${item.text}`"
+                      :rules="rules.required"
+                      label="Tipe"
+                      item-value="value"
+                      class="mt-0"
+                      required
+                    ></v-autocomplete>
+                  </v-col>
+                  <v-col cols="12" md="6" class="pl-md-3">
+                    <v-autocomplete
+                      v-model="data.warehouseCode"
+                      :items="warehouseRef"
+                      :item-text="item => `${item.initial} - ${item.name}`"
+                      label="Gudang"
+                      item-value="code"
+                      class="mt-0"
+                    ></v-autocomplete>
+                  </v-col>
+                </v-row>
+
+                <v-row no-gutters>
+                  <v-col cols="12" md="6" class="pr-md-3">
+                    <v-autocomplete
+                      v-model="data.salesGroupId"
+                      :items="salesmanGroupRef"
+                      :item-text="item => `${item.name}`"
+                      :rules="data.type === 2 ? rules.required : []"
+                      :readonly="data.type !== 2"
+                      label="Sales Grup"
+                      item-value="id"
+                      class="mt-0"
+                      required
+                    ></v-autocomplete>
+                  </v-col>
+                  <v-col cols="12" md="6" class="pl-md-3">
+                    &nbsp;
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card>
+            <br/>
+            <v-card v-if="data.type === 2">
+              <v-tabs v-model="tab.advancedItem">
+                <v-tab key="visitOrder">Jadwal Kunjungan</v-tab>
+
+                <v-tab-item
+                  key="visitOrder"
+                  transition="false"
+                >
+                  <v-card>
+                    <v-app-bar dense flat>
+                      <v-spacer></v-spacer>
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn
+                            v-bind="attrs"
+                            v-on="on"
+                            v-shortkey="['ctrl', 'i']"
+                            :disabled="data.isActive === false"
+                            class="blue--text"
+                            small
+                            tile
+                            @click="showVisitScheduleDialog('add', [])"
+                            @shortkey="showVisitScheduleDialog('add', [])"
+                          >
+                            <v-icon left>mdi-plus</v-icon>
+                            Tambah
+                          </v-btn>
+                        </template>
+                        <span class="text-caption">(Ctrl + I)</span>
+                      </v-tooltip>
+                    </v-app-bar>
+                    <v-container fluid grid-list-md>
+                      <v-data-table
+                        :headers="gridItem.columns"
+                        :items="gridItem.data"
+                        :items-per-page="-1"
+                        item-key="salesmanScheduleId"
+                        height="300"
+                        class="elevation-1"
+                        dense
+                        disable-sort
+                        fixed-header
+                        hide-default-footer
+                      >
+                        <template v-slot:[`item.action`]="{ item }">
+                          <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                v-bind="attrs"
+                                v-on="on"
+                                icon
+                                small
+                                color="orange lighten-1"
+                                @click="showVisitScheduleDialog('edit', item)"
+                              >
+                                <v-icon small>mdi-pencil</v-icon>
+                              </v-btn>
+                            </template>
+                            <span>Ubah</span>
+                          </v-tooltip>
+                          <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                v-bind="attrs"
+                                v-on="on"
+                                :disabled="data.isActive === false || item.isDefault === true"
+                                color="red"
+                                icon
+                                small
+                                @click="removeItem(item)"
+                              >
+                                <v-icon small>mdi-close-thick</v-icon>
+                              </v-btn>
+                            </template>
+                            <span class="text-caption">Hapus</span>
+                          </v-tooltip>
+                        </template>
+                        <template v-slot:[`item.startDate`]="{ item }">
+                          {{ item.startDate | formatDate('dd-MMM-yyyy') }}
+                        </template>
+                        <template v-slot:[`item.endDate`]="{ item }">
+                          {{ item.endDate | formatDate('dd-MMM-yyyy') }}
+                        </template>
+                        <template v-slot:[`item.visitDay`]="{ item }">
+                          {{ getDayName(item.visitDay) }}
+                        </template>
+                      </v-data-table>
+                    </v-container>
+                  </v-card>
+                </v-tab-item>
+              </v-tabs>
+            </v-card>
+          </v-form>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
     <confirm ref="confirm"></confirm>
     <visit-schedule
       ref="schedule"
+      @click:save="bindCustomerData"
     ></visit-schedule>
   </div>
 </template>
@@ -525,7 +559,10 @@ export default {
   },
 
   data: () => ({
-    main: true,
+    dialog: {
+      add: false
+    },
+    scheduleDialog: false,
     tab: {
       advancedItem: null
     },
@@ -568,11 +605,14 @@ export default {
       data: []
     },
     valid: false,
+    areaReference: [],
+    customerList: [],
     daysOfWeek: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
     employeeTypeRef: [{text: 'Karyawan', value: 1}, {text: 'Penjual', value: 2}, {text: 'Supir', value: 3}],
     maritalStatusRef: [{text: 'Lajang', value: 1}, {text: 'Menikah', value: 2}, {text: 'Bercerai', value: 3}],
     religionRef: [{text: 'Islam', value: 1}, {text: 'Protestant', value: 2}, {text: 'Catholic', value: 3}, {text: 'Buddha', value: 4}, {text: 'Hindu', value: 5}, {text: 'Konghucu', value: 6}, {text: 'Lainnya', value: 7}],
     salesmanGroupRef: [],
+    schedule: [],
     warehouseRef: [],
     data: {}
   }),
@@ -621,6 +661,9 @@ export default {
     },
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'
+    },
+    isActive() {
+      return (this.data?.IsActive?.IsActive === true)
     }
   },
   
@@ -645,6 +688,7 @@ export default {
       }
       this.tab.advancedItem = 0
       this.salesmanGroupRef = []
+      this.areaReference = []
 
       // Reset form validation
       if (resetValidation) {
@@ -680,15 +724,16 @@ export default {
         })
     },
     back() {
-      this.main = true
+      this.dialog.add = false
     },
     add() {
-      this.main = false
+      this.dialog.add = true
       this.reset(false)
       this.data.action = 'add'
 
       this.getSalesmanGroup()
       this.getWarehouse()
+      this.getArea()
 
       setTimeout(() => {
         // Set focus to initial field
@@ -701,7 +746,7 @@ export default {
     edit(item) {
       if (!item) return
 
-      this.main = false
+      this.dialog.add = true
       this.reset()
 
       this.data = {
@@ -712,6 +757,7 @@ export default {
 
       this.getSalesmanGroup()
       this.getWarehouse()
+      this.getArea()
 
       if (this.data.type === 2) {
         this.getSalesmanSchedule()
@@ -720,7 +766,7 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Nontaktifkan?',
+          'Non-aktifkan?',
           'Apakah anda yakin untuk menonaktifkan data ini?')
       ) {
         api.delete(this.endpoint.general.employee, item.id)
@@ -753,49 +799,128 @@ export default {
           })
       }
     },
-    async save() {
+    async save(closeDialog) {
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
 
+      const data = this.data
+      this.createSchedule(this.gridItem.data)
+      data.scheduleDetails = this.schedule
+      data.customerListDetails = this.customerList
+
+      if (data.type !== 2) {
+        data.salesGroupId = null
+      }
+
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
-        const resp = await api.create(this.endpoint.general.employee, this.data)
+        const resp = await api.create(this.endpoint.general.employee, data)
         result = resp.data
       } else if (this.data.action === 'edit') {
-        const resp = await api.update(this.endpoint.general.employee, this.data.initial, this.data)
+        const resp = await api.update(this.endpoint.general.employee, data.initial, data)
         result = resp.data
       }
 
       if (result.success) {
         this.$store.dispatch('app/showSuccess', result.message)
-        this.back()
-        this.getList()
+        if (closeDialog) {
+          this.dialog.add = false
+        } else {
+          this.data.initial = result.data
+        }
+        this.getList(!closeDialog)
       }
     },
     async exportExcel() {
       this.exportExcel.export()
     },
-    addItem() {
+    createSchedule(data) {
+      this.schedule = []
+      this.customerList = []
+
+      if (data) {
+        for (let i = 0; i < data.length; i++) {
+          const keyId = randomNumber(-1, -1000)
+          const newItem = {
+            id: keyId,
+            salesmanId: data[i].salesmanId,
+            areaId1: data[i].areaId1,
+            areaId2: data[i].areaId2,
+            areaId3: data[i].areaId3,
+            areaId4: data[i].areaId4,
+            areaId5: data[i].areaId5,
+            startDate: data[i].startDate,
+            endDate: data[i].endDate,
+            recurrence: data[i].recurrence,
+            visitDay: data[i].visitDay
+          }
+          this.schedule.push(newItem)
+
+          if (data[i].customerList) {
+            const lstCustomer = data[i].customerList
+            for (let j = 0; j < lstCustomer.length; j++) {
+              const newCustomer = {
+                id: randomNumber(-1, -1000),
+                salesmanScheduleId: keyId,
+                custCode: lstCustomer[j].code
+              }
+              this.customerList.push(newCustomer)
+            }
+          }
+        }
+      }
+    },
+    addItem(newItem) {
       const item = {
-        id: randomNumber(-1, -1000),
-        code: this.data.code,
-        initial: '',
-        address1: '',
-        address2: null,
-        contactPerson: '',
-        phone: '',
-        fax: null,
-        isDefault: true,
+        ...newItem,
+        salesmanScheduleId: randomNumber(-1, -1000),
+        id: this.data.id,
+        areaName1: this.getAreaName(newItem.areaId1 === null ? 0 : newItem.areaId1),
+        areaName2: this.getAreaName(newItem.areaId2 === null ? 0 : newItem.areaId2),
+        areaName3: this.getAreaName(newItem.areaId3 === null ? 0 : newItem.areaId3),
+        areaName4: this.getAreaName(newItem.areaId4 === null ? 0 : newItem.areaId4),
+        areaName5: this.getAreaName(newItem.areaId5 === null ? 0 : newItem.areaId5),
         state: 'A'
       }
       this.gridItem.data.push(item)
+    },
+    editItem(item) {
+      const filter = this.gridItem.data.find(x => x.salesmanScheduleId === item.salesmanScheduleId)
 
-      // setTimeout(() => {
-      //   // Set focus to initial address field
-      //   this.$refs.InitialAddress.focus()
-      // }, 0)
+      if (filter) {
+        filter.id = item.id
+        filter.initial = item.initial
+        filter.type = item.type
+        filter.salesGroupId = item.salesGroupId
+        filter.firstName = item.firstName
+        filter.lastName = item.lastName
+        filter.sex = item.sex
+        filter.birthDate = item.birthDate
+        filter.birthPlace = item.birthPlace
+        filter.maritalStatus = item.maritalStatus
+        filter.identityCardNo = item.identityCardNo
+        filter.religion = item.religion
+        filter.address1 = item.address1
+        filter.address2 = item.address2
+        filter.phone = item.phone
+        filter.warehouseCode = item.warehouseCode
+        filter.areaId1 = item.areaId1
+        filter.areaId2 = item.areaId2
+        filter.areaId3 = item.areaId3
+        filter.areaId4 = item.areaId4
+        filter.areaId5 = item.areaId5
+        filter.areaName1 = this.getAreaName(item.areaId1 === null ? 0 : item.areaId1)
+        filter.areaName2 = this.getAreaName(item.areaId2 === null ? 0 : item.areaId2)
+        filter.areaName3 = this.getAreaName(item.areaId3 === null ? 0 : item.areaId3)
+        filter.areaName4 = this.getAreaName(item.areaId4 === null ? 0 : item.areaId4)
+        filter.areaName5 = this.getAreaName(item.areaId5 === null ? 0 : item.areaId5)
+        filter.startDate = item.startDate
+        filter.endDate = item.endDate
+        filter.recurrence = item.recurrence
+        filter.visitDay = item.visitDay
+      }
     },
     async removeItem(item) {
       if (
@@ -810,13 +935,36 @@ export default {
       }
     },
     getSalesmanSchedule() {
-      api.getAll(`${this.endpoint.sales.salesman}/salesman-schedule-by-id`, {
+      api.getAll(`${this.endpoint.general.employee}/salesman-schedule-by-id`, {
         params: {
           id: this.data.id
         }
       })
         .then(response => {
-          this.gridItem.data = response.data.tableData
+          const data = response.data.tableData
+          this.getSalesmanScheduleCustomer(data)
+          this.gridItem.data = data
+        })
+    },
+    getSalesmanScheduleCustomer(data) {
+      const arrId = []
+      if (data.length) {
+        for (let i = 0; i < data.length; i++) {
+          arrId.push(data[i].salesmanScheduleId)
+        }
+      }
+
+      api.getAll(`${this.endpoint.general.employee}/salesman-schedule-customer`, {
+        params: {
+          ids: JSON.stringify(arrId)
+        }
+      })
+        .then(response => {
+          this.customerList = response.data.tableData
+
+          for (let j = 0; j < data.length; j++) {
+            data[j].customerList = this.customerList.filter(x => x.salesmanScheduleId === data[j].salesmanScheduleId)
+          }
         })
     },
     getSalesmanGroup() {
@@ -853,8 +1001,45 @@ export default {
           this.warehouseRef = response.data.tableData
         })
     },
-    showVisitScheduleDialog(item) {
-      this.$refs.schedule.open(item)
+    showVisitScheduleDialog(action, item) {
+      this.scheduleDialog = true
+      this.$refs.schedule.open(action, item)
+    },
+    bindCustomerData(item) {
+      if (item) {
+        if (item.action === 'edit') {
+          this.editItem(item)
+        } else {
+          this.addItem(item)
+        }
+      }
+    },
+    getArea() {
+      api.getAll(this.endpoint.sales.area, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'isActive',
+            operator: 'eq',
+            keyword: true
+          }]),
+          sorts: JSON.stringify([{
+            field: 'id',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.areaReference = response.data.tableData
+        })
+    },
+    getAreaName(id) {
+      const item = this.areaReference.find(x => x.id === id)
+
+      if (item) {
+        return item.name
+      } else {
+        return ''
+      }
     }
   }
 }
