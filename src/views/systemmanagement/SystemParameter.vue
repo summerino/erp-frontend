@@ -1,0 +1,162 @@
+<template>
+  <div class="w-full">
+    <v-card>
+      <v-card-title>
+        <v-row>
+          <v-col>
+            Sistem Parameter
+          </v-col>
+          <v-col class="text-right">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 's']"
+                  color="blue darken-2"
+                  class="font-weight-regular"
+                  dark
+                  small
+                  tile
+                  @click="save"
+                  @shortkey="save"
+                  :disabled="!auth.allowUpdate"
+                >
+                  <v-icon left>
+                    mdi-content-save
+                  </v-icon>
+                  Simpan
+                </v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + S)</span>
+            </v-tooltip>
+          </v-col>
+        </v-row>
+      </v-card-title>
+      <v-card-text>
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-treeview
+              activatable
+              :items="items"
+              @click="onChangeParam"
+            >
+              <template slot="label" slot-scope="{ item }">
+                <div @click="onChangeParam(item)">{{ item.name }}</div>
+              </template>
+            </v-treeview>
+          </v-col>
+          <v-col cols="12" md="8">
+            <v-form ref="form">
+              <v-row v-for="item in data" :key="item.id">
+                <template v-if="item.dataType === 'bool'">
+                  <v-checkbox  v-model="item.value" :label="item.description" v-if="item.dataType === 'bool'"></v-checkbox>
+                </template>
+                <template v-else>
+                  <v-text-field  
+                    v-model="item.value"
+                    :label="item.description"
+                    class="mt-0 mr-5"
+                  ></v-text-field>
+                </template>
+              </v-row>
+              
+            </v-form>
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
+    <confirm ref="confirm"></confirm>
+  </div>
+</template>
+
+<script>
+import { mapState } from 'vuex'
+
+import api from '@/services/axios.service'
+import auth from '@/services/authorization.service'
+import Confirm from '@/components/dialog/Confirm'
+
+export default {
+  components: {
+    Confirm
+  },
+
+  data: () => ({   
+    valid: false,
+    data: [],
+    items: []      
+  }),
+
+  created: function () {
+    this.getHierarchy(true)
+    auth.getAction(this.endpoint, this.menuId.parameter, [this.action.update])
+      .then((response) => {
+        this.$store.commit('api/setAuth', response.data)
+      })
+  },
+
+  mounted: function () {
+    setTimeout(() => {
+      this.$store.commit('app/setBreadcrumbs', [{
+        text: 'Manajemen Sistem'
+      }, {
+        text: 'Data Master'
+      }, {
+        text: 'Peran'
+      }])
+      this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
+    }, 0)
+  },
+
+  computed: {
+    ...mapState({
+      rules: state => state.app.rules,
+      endpoint: state => state.api.endpoint,
+      auth: state => state.api.authorization,
+      action: state => state.api.action,
+      menuId: state => state.api.menus
+    })
+  },
+
+  methods: {    
+    getHierarchy(setDefaultValue = false) {
+      api.getAll(this.endpoint.systemManagement.parameter)
+        .then(response => {
+          this.items = response.data
+          if (setDefaultValue) {
+            const defaultValue = this.items[0].children[0]
+            this.bindForm(defaultValue)
+          }
+          
+        })
+
+    },
+    onChangeParam(data) {
+      debugger
+      if (data.depth === 1) {
+        this.bindForm(data)
+      }
+    }, 
+    bindForm(data) {
+      this.data = data.listParameters
+    }, 
+    async save() {
+      debugger
+      if (!this.$refs.form.validate()) {
+        this.$store.dispatch('app/showInfo', 'Silahkan periksa kembali data yang wajib diisi.')
+        return
+      }
+
+      const data = this.items
+      let result = { success: false, message: '' }
+      const resp = await api.create(this.endpoint.systemManagement.parameter, data)
+      result = resp.data
+      if (result.success) {
+        this.$store.dispatch('app/showSuccess', result.message)
+        this.getHierarchy()
+      }
+    }    
+  }
+}
+</script>

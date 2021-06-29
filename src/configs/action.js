@@ -4,5 +4,8 @@ export default {
   delete: 3,
   void: 4,
   changeWarehouse: 5,
-  changeDate: 8
+  viewRelatedTrans: 6,
+  close: 7,
+  changeDate: 8,
+  approve: 9
 }
