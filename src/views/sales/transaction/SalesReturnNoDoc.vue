@@ -306,7 +306,7 @@
                       <v-col cols="6" >
                         <v-checkbox
                           v-model="data.nonTax"
-                          label="Bukan Pajak"
+                          label="Tidak Ada Pajak"
                           class="shrink ml-1"
                           @change="nonTaxChange"
                           :disabled="data.type !== 1"

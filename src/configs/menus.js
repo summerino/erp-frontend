@@ -36,5 +36,6 @@ export default {
   assetType: 62,
   fixedAsset: 63, 
   salesmanGroup: 58,
-  coaType: 67
+  coaType: 67,
+  parameter: 73
 }

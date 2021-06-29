@@ -12,4 +12,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/systemmanagement/system-parameter',
+  name: 'system-parameter',
+  component: () => import(/* webpackChunkName: "systemmanagement-parameter" */ '@/views/systemmanagement/SystemParameter.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
