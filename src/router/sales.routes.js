@@ -6,6 +6,20 @@ export default [{
     authRequired: true
   }
 }, {
+  path: '/sales/master/salesman-group',
+  name: 'salesman-group',
+  component: () => import(/* webpackChunkName: "sales-master-salesman-group" */ '@/views/sales/master/SalesmanGroup.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/sales/master/promo',
+  name: 'promo',
+  component: () => import(/* webpackChunkName: "sales-master-promo" */ '@/views/sales/master/Promo.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
   path: '/sales/transaction/sales-order',
   name: 'sales-order',
   component: () => import(/* webpackChunkName: "sales-trans-order" */ '@/views/sales/transaction/SalesOrder.vue'),
@@ -41,13 +55,6 @@ export default [{
     authRequired: true
   }
 }, {
-  path: '/sales/transaction/credit-memo',
-  name: 'credit-memo',
-  component: () => import(/* webpackChunkName: "credit-memo" */ '@/views/sales/transaction/CreditMemo.vue'),
-  meta: {
-    authRequired: true
-  }
-}, {
   path: '/sales/transaction/delivery-plan',
   name: 'delivery-plan',
   component: () => import(/* webpackChunkName: "delivery-plan" */ '@/views/sales/transaction/DeliveryPlan.vue'),
@@ -55,9 +62,9 @@ export default [{
     authRequired: true
   }
 }, {
-  path: '/sales/transaction/promo',
-  name: 'promo',
-  component: () => import(/* webpackChunkName: "promo" */ '@/views/sales/transaction/Promo.vue'),
+  path: '/sales/transaction/credit-memo',
+  name: 'credit-memo',
+  component: () => import(/* webpackChunkName: "credit-memo" */ '@/views/sales/transaction/CreditMemo.vue'),
   meta: {
     authRequired: true
   }
@@ -65,13 +72,6 @@ export default [{
   path: '/sales/transaction/visit-plan',
   name: 'visit-plan',
   component: () => import(/* webpackChunkName: "visit-plan" */ '@/views/sales/transaction/VisitPlan.vue'),
-  meta: {
-    authRequired: true
-  }
-}, {
-  path: '/sales/master/salesman-group',
-  name: 'salesman-group',
-  component: () => import(/* webpackChunkName: "salesman-group" */ '@/views/sales/master/SalesmanGroup.vue'),
   meta: {
     authRequired: true
   }
