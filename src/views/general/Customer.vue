@@ -68,7 +68,6 @@
                 small
                 color="orange lighten-1"
                 @click="edit(item)"
-                :disabled="(data.action === 'edit' && !auth.allowUpdate)"
               >
                 <v-icon small>mdi-pencil</v-icon>
               </v-btn>
