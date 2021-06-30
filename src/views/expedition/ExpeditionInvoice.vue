@@ -4,7 +4,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="2">
-            Faktur Ekspedisi
+            Faktur
           </v-col>
           <v-col cols="12" md="6" >
             <v-row no-gutters>
@@ -55,7 +55,7 @@
                   tile
                   @click="add"
                   @shortkey="add"
-                  
+                  :disabled="!auth.allowInsert"
                 >
                   <v-icon left>mdi-plus</v-icon>
                   Data Baru
@@ -88,7 +88,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="item.mark.toUpperCase() === 'V'"
+                :disabled="(item.mark.toUpperCase() === 'V') || (!auth.allowUpdate)"
                 color="orange lighten-1"
                 icon
                 small
@@ -104,7 +104,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="item.mark.toUpperCase() !== 'A'"
+                :disabled="(item.mark.toUpperCase() !== 'A') || (!auth.allowVoid)"
                 color="red"
                 icon
                 small
@@ -160,7 +160,7 @@
           <v-btn icon dark @click="close">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Faktur Ekspedisi</v-toolbar-title>
+          <v-toolbar-title>Faktur</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-tooltip bottom>
@@ -169,7 +169,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="isVoid"
+                  :disabled="isVoid || !auth.allowUpdate"
                   dark
                   text
                   @click="save(true)"
@@ -198,7 +198,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="isVoid"
+                  :disabled="isVoid || !auth.allowUpdate"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -267,6 +267,7 @@
                             <v-text-field
                               v-bind="attrs"
                               v-on="on"
+                              :disabled="!auth.allowChangeDate"
                               :rules="rules.required"
                               :value="formatDate"
                               label="Tanggal"
@@ -295,6 +296,7 @@
                             <v-text-field
                               v-bind="attrs"
                               v-on="on"
+                              :disabled="!auth.allowChangeDate"
                               :rules="rules.required"
                               :value="formatDueDate"
                               label="Tanggal Jatuh Tempo"
@@ -593,6 +595,8 @@ import { format, parseISO } from 'date-fns'
 import { randomNumber } from '@/helpers/math-helpers'
 
 import api from '@/services/axios.service'
+import auth from '@/services/authorization.service'
+
 
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
@@ -642,32 +646,23 @@ export default {
       ],
       data: []
     },
-    // filterfields: [
-    //   {
-    //     text: 'Kode Transaksi', value: 'code', dataType: 'text'
-    //   },
-    //   {
-    //     text: 'Tanggal Transaksi', value: 'date', dataType: 'datetime'
-    //   },
-    //   {
-    //     text: 'Pemasok', value: 'supName', dataType: 'text'
-    //   },
-    //   {
-    //     text: 'Sumber Transksi', value: 'srcTransName', dataType: 'text'
-    //   },
-    //   {
-    //     text: 'Kode Transaksi Sumber', value: 'transCode', dataType: 'text'
-    //   },
-    //   {
-    //     text: 'Nilai', value: 'amount', dataType: 'text'
-    //   },
-    //   {
-    //     text: 'Digunakan', value: 'used', dataType: 'text'
-    //   },
-    //   {
-    //     text: 'Saldo', value: 'outstanding', dataType: 'text'
-    //   }
-    // ],
+    filterfields: [
+      {
+        text: 'Kode Transaksi', value: 'code', dataType: 'text'
+      },
+      {
+        text: 'Tanggal Transaksi', value: 'date', dataType: 'datetime'
+      },
+      {
+        text: 'Tanggal Jatuh Tempo', value: 'dueDate', dataType: 'datetime'
+      },
+      {
+        text: 'Pemasok', value: 'supplierInitial', dataType: 'text'
+      },
+      {
+        text: 'Nilai', value: 'amount', dataType: 'text'
+      }
+    ],
     valid: false,
     sources: [{ id: 1, name: 'Penerimaan Pembelian' }, { id: 2, name: 'Surat Jalan' }],
     deliveries: [],
@@ -681,6 +676,10 @@ export default {
     this.getDeliveryLists()
     this.getReceiveLists()
     this.getSupplierLists()
+    auth.getAction(this.endpoint, this.menuId.expeditionInvoice, [this.action.insert, this.action.update, this.action.void, this.action.changeDate])
+      .then((response) => {
+        this.$store.commit('api/setAuth', response.data)
+      })
     this.$store.commit('app/setFilterFields', this.filterfields)
   },
 
@@ -689,7 +688,9 @@ export default {
       this.$store.commit('app/setBreadcrumbs', [{
         text: 'Ekspedisi'
       }, {
-        text: 'Faktur Ekspedisi'
+        text: 'Transaksi'
+      }, {
+        text: 'Faktur'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
@@ -707,7 +708,10 @@ export default {
       gridDefOpts: state => state.app.grid,
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
-      filter: state => state.app.filter
+      filter: state => state.app.filter,
+      auth: state => state.api.authorization,
+      action: state => state.api.action,
+      menuId: state => state.api.menus
     }),
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'

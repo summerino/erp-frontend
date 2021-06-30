@@ -68,7 +68,8 @@ export default {
     user: 'user',
     parameter: 'system-parameter',
     role: 'role',
-    menu: 'menu'
+    menu: 'menu',
+    companyProfile: 'company-profile'
   },
 
   assetManagement: {

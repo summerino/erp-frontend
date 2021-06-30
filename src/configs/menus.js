@@ -38,5 +38,7 @@ export default {
   salesmanGroup: 58,
   coaType: 67,
   parameter: 73,
-  approval:72
+  approval:72,
+  expeditionInvoice: 70,
+  companyProfile: 75
 }

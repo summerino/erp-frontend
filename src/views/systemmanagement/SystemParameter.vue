@@ -133,7 +133,6 @@ export default {
 
     },
     onChangeParam(data) {
-      debugger
       if (data.depth === 1) {
         this.bindForm(data)
       }
@@ -142,7 +141,6 @@ export default {
       this.data = data.listParameters
     }, 
     async save() {
-      debugger
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Silahkan periksa kembali data yang wajib diisi.')
         return
