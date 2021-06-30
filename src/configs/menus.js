@@ -37,5 +37,6 @@ export default {
   fixedAsset: 63, 
   salesmanGroup: 58,
   coaType: 67,
-  parameter: 73
+  parameter: 73,
+  approval:72
 }

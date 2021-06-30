@@ -18,7 +18,8 @@ export default {
     },
     tax: 'tax',
     master: 'master',
-    paymentTerm: 'payment-term'
+    paymentTerm: 'payment-term',
+    approval: 'approval'
   },
 
   inventory: {
