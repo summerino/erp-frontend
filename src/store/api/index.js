@@ -11,8 +11,10 @@ const state = {
     delete: 3,
     void: 4,
     changeWarehouse: 5,
+    viewRelatedTrans: 6,
+    close: 6,
     changeDate: 8,
-    close: 6
+    approve: 9
   },
   menus,
   authorization: {

@@ -35,7 +35,7 @@
                   tile
                   @click="save"
                   @shortkey="save"
-                  :disabled="selected.length === 0"
+                  :disabled="selected.length === 0 || !auth.allowApprove"
                 >
                   Approval
                 </v-btn>
@@ -90,12 +90,12 @@ export default {
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
         { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'10' },
         { text: 'Nama', value: 'name', divider: true, width: '200', excelColWidth:'25' },
-        { text: 'Tipe', value: 'type', divider: true, width: '200', excelColWidth:'25' }
+        { text: 'Sumber Transaksi', value: 'sourceTrans', divider: true, width: '200', excelColWidth:'25' }
       ],
       data: [],
       options: {
-        sortBy: ['code'],
-        sortDesc: [false]
+        sortBy: ['seq', 'updatedDate'],
+        sortDesc: [false, true]
       },
       total: 0,
       search: null
@@ -112,11 +112,11 @@ export default {
   mounted: function () {
     setTimeout(() => {
       this.$store.commit('app/setBreadcrumbs', [{
-        text: 'Persediaan'
+        text: 'Umum'
       }, {
-        text: 'Data Transaksi'
+        text: 'Transaksi'
       }, {
-        text: 'Approval'
+        text: 'Persetujuan'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
