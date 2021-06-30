@@ -311,7 +311,7 @@ export default {
         { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'20' },
         { text: 'Nama', value: 'name', divider: true, width: '200', excelColWidth:'20' },
         { text: 'Tipe', value: 'typeName', divider: true, width: '200', excelColWidth:'20' },
-        { text: 'Kurensi', value: 'currName', divider: true, width: '200', excelColWidth:'20' },
+        { text: 'Mata Uang', value: 'currCode', divider: true, width: '120', excelColWidth:'20' },
         { text: 'Tipe Kas & Bank', value: 'cbType', divider: true, width: '100', excelColWidth:'20' },
         { text: 'Kode Voucher', value: 'vouCode', divider: true, width: '100', excelColWidth:'20' }
       ],
