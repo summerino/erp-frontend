@@ -1,4 +1,11 @@
 export default [{
+  path: '/systemmanagement/company-profile',
+  name: 'company-profile',
+  component: () => import(/* webpackChunkName: "systemmanagement-company-profile" */ '@/views/systemmanagement/CompanyProfile.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
   path: '/system-management/user',
   name: 'user',
   component: () => import(/* webpackChunkName: "systemmanagement-user" */ '@/views/systemmanagement/User.vue'),
@@ -16,13 +23,6 @@ export default [{
   path: '/systemmanagement/system-parameter',
   name: 'system-parameter',
   component: () => import(/* webpackChunkName: "systemmanagement-parameter" */ '@/views/systemmanagement/SystemParameter.vue'),
-  meta: {
-    authRequired: true
-  }
-}, {
-  path: '/systemmanagement/company-profile',
-  name: 'company-profile',
-  component: () => import(/* webpackChunkName: "systemmanagement-company-profile" */ '@/views/systemmanagement/CompanyProfile.vue'),
   meta: {
     authRequired: true
   }
