@@ -41,6 +41,12 @@ const state = {
     cannot0: [
       (v) => parseFloat((v || '0').toString().replace(/,/g, '')) !== 0 || 'Nilai tidak boleh 0 (nol)'
     ],
+    max4chars: [
+      (v) => (v || '').length <= 4 || 'Maksimal 4 karakter'
+    ],
+    max6chars: [
+      (v) => (v || '').length <= 6 || 'Maksimal 6 karakter'
+    ],
     max15chars: [
       (v) => (v || '').length <= 15 || 'Maksimal 15 karakter'
     ],
