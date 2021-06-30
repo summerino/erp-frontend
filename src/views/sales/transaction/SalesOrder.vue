@@ -113,7 +113,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="item.mark.toUpperCase() !== 'A' && !auth.allowDelete"
+                :disabled="item.mark.toUpperCase() !== 'A' || !auth.allowDelete"
                 color="red"
                 icon
                 small

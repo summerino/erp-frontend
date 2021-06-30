@@ -68,4 +68,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/general/approval',
+  name: 'approval',
+  component: () => import(/* webpackChunkName: "general-approval" */ '@/views/general/transaction/Approval.vue'),
+  meta: {
+    authRequired: true
+  }
 }]

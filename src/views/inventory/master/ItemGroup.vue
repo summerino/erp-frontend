@@ -294,7 +294,7 @@
                             v-bind="attrs"
                             v-on="on"
                             v-shortkey="['ctrl', 'i']"
-                            :disabled="data.isActive === false"
+                            :disabled="data.isActive === false || !auth.allowInsert || (data.action === 'edit' && !auth.allowUpdate)"
                             class="blue--text"
                             small
                             tile
