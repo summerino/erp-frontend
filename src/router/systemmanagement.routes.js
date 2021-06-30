@@ -19,4 +19,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/systemmanagement/company-profile',
+  name: 'company-profile',
+  component: () => import(/* webpackChunkName: "systemmanagement-company-profile" */ '@/views/systemmanagement/CompanyProfile.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
