@@ -6,6 +6,13 @@ export default [{
     authRequired: true
   }
 }, {
+  path: '/accounting/master/coa',
+  name: 'coa',
+  component: () => import(/* webpackChunkName: "coa" */ '@/views/accounting/master/Coa.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
   path: '/accounting/master/coa-type',
   name: 'coa-type',
   component: () => import(/* webpackChunkName: "coa-type" */ '@/views/accounting/master/CoaType.vue'),
