@@ -300,6 +300,12 @@
                     label="Aktif"
                   ></v-checkbox>
                 </v-col>
+                <v-col cols="12" md="6" class="pl-md-3">
+                  <v-checkbox
+                    v-model="data.isConsignee"
+                    label="Menerima titipan barang (Konsinyi)"
+                  ></v-checkbox>
+                </v-col>
               </v-row>
             </v-container>
           </v-card>
