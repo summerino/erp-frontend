@@ -319,7 +319,7 @@
                           v-bind="attrs"
                           v-on="on"
                           v-shortkey="['ctrl', 'i']"
-                          :disabled="data.isActive === false"
+                          :disabled="data.isActive === false || ((data.action === 'edit' && !auth.allowUpdate) && !auth.allowInsert)"
                           class="blue--text"
                           small
                           tile
@@ -351,7 +351,7 @@
                             <v-btn
                               v-bind="attrs"
                               v-on="on"
-                              :disabled="data.isActive === false || item.isDefault === true"
+                              :disabled="data.isActive === false || item.isDefault === true || ((data.action === 'edit' && !auth.allowUpdate) && !auth.allowInsert)"
                               color="red"
                               icon
                               small

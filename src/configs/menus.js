@@ -24,7 +24,7 @@ export default {
   purchasereceive: 37,
   purchasereturn: 39,
   area: 42,
-  deliveryplan: 25,
+  deliveryplan: 48,
   directinvoice: 26,
   promo: 56,
   salesdelivery: 45,

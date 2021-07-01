@@ -500,7 +500,7 @@
                               <v-btn
                                 v-bind="attrs"
                                 v-on="on"
-                                :disabled="data.isActive === false || item.isDefault === true"
+                                :disabled="data.isActive === false || item.isDefault === true || ((data.action === 'edit' && !auth.allowUpdate) && !auth.allowInsert)"
                                 color="red"
                                 icon
                                 small

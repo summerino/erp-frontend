@@ -86,7 +86,7 @@
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <span class="text-caption">Hapus</span>
+            <span class="text-caption">Void</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.startDate`]="{ item }">
@@ -405,7 +405,7 @@
                                     v-bind="attrs"
                                     v-on="on"
                                     v-shortkey="['ctrl', 'i']"
-                                    :disabled="isVoid"
+                                    :disabled="isVoid || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
                                     class="blue--text"
                                     small
                                     tile
@@ -437,7 +437,7 @@
                                     <v-btn
                                       v-bind="attrs"
                                       v-on="on"
-                                      :disabled="isVoid"
+                                      :disabled="isVoid || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
                                       color="red"
                                       icon
                                       small

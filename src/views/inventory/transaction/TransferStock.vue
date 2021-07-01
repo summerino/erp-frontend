@@ -498,7 +498,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid || data.type === 2 || data.mark === 'CMP' || hasRelatedTrans"
+                                :disabled="isVoid || data.type === 2 || data.mark === 'CMP' || hasRelatedTrans || ((data.action === 'edit' && !auth.allowUpdate) && !auth.allowInsert)"
                                 class="blue--text"
                                 small
                                 tile
@@ -530,7 +530,7 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
-                                  :disabled="isVoid || data.type === 2 || data.mark === 'CMP' || hasRelatedTrans"
+                                  :disabled="isVoid || data.type === 2 || data.mark === 'CMP' || hasRelatedTrans || ((data.action === 'edit' && !auth.allowUpdate) && !auth.allowInsert)"
                                   color="red"
                                   icon
                                   small
