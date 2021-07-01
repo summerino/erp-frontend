@@ -350,8 +350,6 @@ export default {
         text: 'Data Master'
       }, {
         text: 'Akun'
-      }, {
-        text: 'Akun'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)

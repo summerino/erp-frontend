@@ -390,7 +390,12 @@ export default {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
           take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
-          sorts: JSON.stringify(sorts)
+          sorts: JSON.stringify(sorts),
+          filters: JSON.stringify([{
+            field: 'custCode',
+            operator: 'eq',
+            keyword: null
+          }])
         }
       })
         .then(response => {

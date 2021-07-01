@@ -1436,6 +1436,15 @@ export default {
           sorts: JSON.stringify([{
             field: 'initial',
             direction: 'asc'
+          }]),
+          filters: JSON.stringify([{
+            field: 'custCode',
+            operator: 'eq',
+            keyword: null
+          }, {
+            field: 'isActive',
+            operator: 'eq',
+            keyword: true
           }])
         }
       })
