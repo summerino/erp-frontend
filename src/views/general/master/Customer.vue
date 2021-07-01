@@ -124,7 +124,7 @@
               v-if="data.action == 'edit'"
               class="text-caption mr-1"
             >
-              Tanggal Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
+              Tanggal Diperbarui: {{ data.updatedDate }} oleh {{ data.updatedInitial }}
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
