@@ -61,7 +61,9 @@ export default {
   accounting: {
     coa: 'coa',
     coaType: 'coa-type',
-    currencyRate: 'currency-rate'
+    currencyRate: 'currency-rate',
+    accountReceivable: 'account-receivable',
+    accountPayable: 'account-payable'
   },
 
   systemManagement:{

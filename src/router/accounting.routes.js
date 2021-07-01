@@ -19,5 +19,19 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/accounting/transaction/begin-balance/begin-balance-ap',
+  name: 'begin-balance-ap',
+  component: () => import(/* webpackChunkName: "begin-balance-ap" */ '@/views/accounting/transaction/begin-balance/AccountPayable.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/accounting/transaction/begin-balance/begin-balance-ar',
+  name: 'begin-balance-ar',
+  component: () => import(/* webpackChunkName: "begin-balance-ar" */ '@/views/accounting/transaction/begin-balance/AccountReceiveable.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
   

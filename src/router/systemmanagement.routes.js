@@ -1,5 +1,5 @@
 export default [{
-  path: '/systemmanagement/company-profile',
+  path: '/system-management/company-profile',
   name: 'company-profile',
   component: () => import(/* webpackChunkName: "systemmanagement-company-profile" */ '@/views/systemmanagement/CompanyProfile.vue'),
   meta: {
@@ -20,7 +20,7 @@ export default [{
     authRequired: true
   }
 }, {
-  path: '/systemmanagement/system-parameter',
+  path: '/system-management/system-parameter',
   name: 'system-parameter',
   component: () => import(/* webpackChunkName: "systemmanagement-parameter" */ '@/views/systemmanagement/SystemParameter.vue'),
   meta: {
