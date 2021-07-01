@@ -97,10 +97,10 @@
     <v-card v-else>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="4">
             <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' }} Grup Penjual</span>
           </v-col>
-          <v-col cols="12" md="6" class="text-right">
+          <v-col cols="12" md="8" class="text-right">
             <label
               v-if="data.action == 'edit'"
               class="text-caption mr-1"

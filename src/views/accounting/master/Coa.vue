@@ -4,7 +4,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="2">
-            Pemasok
+            Akun
           </v-col>
           <v-col cols="12" md="4">
             <v-text-field
@@ -13,12 +13,12 @@
               label="Cari..."
               class="font-weight-regular mt-0 pt-0"
               single-line
-              @keyup.enter="getList()"
+              @keyup.enter="getList"
             ></v-text-field>
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" md="1">
-            <export-excel title="Daftar Pemasok" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+            <export-excel title="Daftar Jenis Akun" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
           </v-col>
           <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
@@ -91,9 +91,9 @@
             <span>Hapus</span>
           </v-tooltip>
         </template>
-        <template v-slot:[`item.isActive`]="{ item }">
-          <v-icon v-if="item.isActive" color="green">mdi-toggle-switch-outline</v-icon>
-          <v-icon v-else color="red">mdi-toggle-switch-off-outline</v-icon>
+        <template v-slot:[`item.name`]="{ item }">
+          <span v-html="getSpaceName(item)" :class="item.isParent ? 'font-weight-black' : 'font-weight-medium'">
+          </span>
         </template>
       </v-data-table>
     </v-card>
@@ -102,7 +102,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="4">
-            <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' }} Pemasok</span>
+            <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' }} Akun</span>
           </v-col>
           <v-col cols="12" md="8" class="text-right">
             <label
@@ -116,15 +116,16 @@
                 <v-btn
                   v-bind="attrs"
                   v-on="on"
-                  v-shortkey="['ctrl', 's']"
+                  v-shortkey="['ctrl', 'enter']"
                   color="blue darken-2"
                   class="font-weight-regular"
+                  :disabled="isActive || (data.action === 'edit' && !auth.allowUpdate)"
                   dark
                   small
                   tile
                   @click="save"
                   @shortkey="save"
-                  :disabled="(data.action === 'edit' && !auth.allowUpdate)"
+                  
                 >
                   <v-icon left>
                     mdi-content-save
@@ -132,7 +133,7 @@
                   Simpan
                 </v-btn>
               </template>
-              <span class="text-caption">(Ctrl + S)</span>
+              <span class="text-caption">(Ctrl + Enter)</span>
             </v-tooltip>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -167,70 +168,63 @@
             <v-row no-gutters>
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-text-field
+                  ref="code"
                   v-model="data.code"
-                  label="Kode"
+                  :rules="[rules.required[0], rules.max6chars[0]]"
+                  :counter="6"
+                  label="Code"
                   class="mt-0"
-                  readonly
                   required
                 ></v-text-field>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-text-field
-                  ref="initial"
-                  v-model="data.initial"
-                  :rules="[rules.required[0], rules.max20chars[0]]"
-                  :counter="20"
-                  label="Inisial"
-                  class="mt-0"
-                  required
-                ></v-text-field>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
-                <v-text-field
                   v-model="data.name"
-                  :rules="rules.required"
+                  :rules="[rules.required[0], rules.max50chars[0]]"
                   :counter="50"
                   label="Nama"
                   class="mt-0"
                   required
                 ></v-text-field>
               </v-col>
+            </v-row>
+
+            <v-row no-gutters>
+              <v-col cols="12" md="6" class="pr-md-3">
+                <v-autocomplete
+                    v-model="data.typeId"
+                    :items="types"
+                    :item-text="item => `${item.initial} - ${item.name}`"
+                    :rules="rules.required"
+                    label="Tipe"
+                    item-value="id"
+                    class="mt-0"
+                    required
+                    @change="typeChange"
+                  ></v-autocomplete>
+              </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-autocomplete
-                  v-model="data.typeId"
-                  :items="types"
-                  :item-text="item => `${item.initial} - ${item.name}`"
-                  :rules="rules.required"
-                  label="Tipe"
-                  item-value="id"
-                  class="mt-0"
-                  required
-                ></v-autocomplete>
+                    v-model="data.parentId"
+                    :items="accounts"
+                    :item-text="item => `${item.code} - ${item.name}`"
+                    label="Induk Akun"
+                    item-value="id"
+                    class="mt-0"
+                    clearable
+                    @change="parentChange"
+                    @click:clear="parentChange"
+                  ></v-autocomplete>
               </v-col>
             </v-row>
 
             <v-row no-gutters>
               <v-col cols="12">
                 <v-text-field
-                  v-model="data.address1"
-                  :rules="rules.required"
+                  v-model="data.description"
+                  :rules="rules.max100chars"
                   :counter="100"
-                  label="Alamat 1"
-                  class="mt-0"
-                  required
-                ></v-text-field>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="data.address2"
-                  :counter="100"
-                  label="Alamat 2"
+                  label="Deskripsi"
                   class="mt-0"
                 ></v-text-field>
               </v-col>
@@ -238,47 +232,46 @@
 
             <v-row no-gutters>
               <v-col cols="12" md="6" class="pr-md-3">
+                <v-autocomplete
+                    v-model="data.currCode"
+                    :disabled="(data.typeId !== 2) || (data.typeId === 2 && data.parentId === null)"
+                    :items="currencies"
+                    :item-text="item => `${item.code} - ${item.name}`"
+                    :rules="data.typeId === 2 && data.parentId !== null ? rules.required : []"
+                    label="Kurensi"
+                    item-value="code"
+                    class="mt-0"
+                    :required="data.typeId === 2 && data.parentId !== null ? true : false"
+                  ></v-autocomplete>
+              </v-col>
+              <v-col cols="12" md="6" class="pl-md-3">
+                <v-autocomplete
+                    v-model="data.cbType"
+                    :disabled="(data.typeId !== 2) || (data.typeId === 2 && data.parentId === null)"
+                    :items="cbTypes"
+                    :rules="data.typeId === 2 && data.parentId !== null ? rules.required : []"
+                    label="Kas / Bank Tipe"
+                    item-text="name"
+                    item-value="id"
+                    class="mt-0"
+                    :required="data.typeId === 2 && data.parentId !== null ? true : false"
+                  ></v-autocomplete>
+              </v-col>
+            </v-row>
+
+            <v-row no-gutters>
+              <v-col cols="12" md="6" class="pr-md-3">
                 <v-text-field
-                  v-model="data.phone"
-                  :rules="rules.required"
-                  :counter="30"
-                  label="Telepon"
+                  v-model="data.vouCode"
+                  :disabled="(data.typeId !== 2) || (data.typeId === 2 && data.parentId === null)"
+                  :rules="data.typeId === 2 && data.parentId !== null ? [rules.required[0],rules.max4chars[0]] : []"
+                  :counter="4"
+                  label="Kode Voucher"
                   class="mt-0"
-                  required
+                  :required="data.typeId === 2 && data.parentId !== null ? true : false"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
-                <v-text-field
-                  v-model="data.fax"
-                  :counter="15"
-                  label="Fax"
-                  class="mt-0"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
-                <v-text-field
-                  v-model="data.email"
-                  :rules="[rules.required[0], rules.email[0]]"
-                  :counter="30"
-                  class="mt-0"
-                  label="Email"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-text-field
-                  v-model="data.refNo"
-                  :counter="30"
-                  class="mt-0"
-                  label="No. Ref."
-                ></v-text-field>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
                 <v-checkbox
                   v-model="data.isActive"
                   label="Aktif"
@@ -315,14 +308,12 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
-        { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'15' },
-        { text: 'Inisial', value: 'initial', divider: true, width: '150', excelColWidth:'15' },
+        { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'20' },
         { text: 'Nama', value: 'name', divider: true, width: '200', excelColWidth:'20' },
-        { text: 'Tipe', value: 'typeName', divider: true, width: '180', excelColWidth:'20' },
-        { text: 'Alamat', value: 'address1', divider: true, width: '200', excelColWidth:'20' },
-        { text: 'Telepon', value: 'phone', divider: true, width: '120', excelColWidth:'15' },
-        { text: 'Email', value: 'email', divider: true, width: '90', excelColWidth:'10' },
-        { text: 'Status', value: 'isActive', width: '90', excelColWidth:'10', isBool: true }
+        { text: 'Tipe', value: 'typeName', divider: true, width: '200', excelColWidth:'20' },
+        { text: 'Mata Uang', value: 'currCode', divider: true, width: '120', excelColWidth:'20' },
+        { text: 'Tipe Kas & Bank', value: 'cbType', divider: true, width: '100', excelColWidth:'20' },
+        { text: 'Kode Voucher', value: 'vouCode', divider: true, width: '100', excelColWidth:'20' }
       ],
       data: [],
       options: {
@@ -333,14 +324,19 @@ export default {
       search: null
     },
     valid: false,
+    accounts: [],
+    cbTypes: [{ id: 'C', name: 'Kas' }, { id: 'B', name: 'Bank' }],
+    currencies: [],
     types: [],
     data: {}
   }),
 
   created: function () {
     this.getList()
-    this.getTypesList()
-    auth.getAction(this.endpoint, this.menuId.supplier, [this.action.insert, this.action.update, this.action.delete])
+    this.getAccountLists()
+    this.getCoaTypeList()
+    this.getCurrencyLists()
+    auth.getAction(this.endpoint, this.menuId.coa, [this.action.insert, this.action.update, this.action.delete])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -349,11 +345,11 @@ export default {
   mounted: function () {
     setTimeout(() => {
       this.$store.commit('app/setBreadcrumbs', [{
-        text: 'Umum'
+        text: 'Akuntansi'
       }, {
         text: 'Data Master'
       }, {
-        text: 'Pemasok'
+        text: 'Akun'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
@@ -376,7 +372,10 @@ export default {
       auth: state => state.api.authorization,
       action: state => state.api.action,
       menuId: state => state.api.menus
-    })  
+    }),
+    isActive() {
+      return (!this.data.isActive)
+    }  
   },
   
   methods:{
@@ -384,15 +383,15 @@ export default {
       this.data = {
         action: '',
         code: null,
-        initial: null,
         name: null,
-        typeId: null,
-        address1: null,
-        address2: null,
-        email: null,
-        phone: null,
-        fax: null,
-        refNo: null
+        typeId: 0,
+        parentId: null,
+        deep: null,
+        description: null,
+        currCode: null,
+        cbType: null,
+        vouCode: null,
+        isActive: true
       }
 
       // Reset form validation
@@ -411,34 +410,28 @@ export default {
         })
       }
       
-      api.getAll(this.endpoint.general.supplier.supplier, {
+      api.getAll(this.endpoint.accounting.coa, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
           take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
-          sorts: JSON.stringify(sorts)
+          sorts: JSON.stringify(sorts),
+          filters: JSON.stringify([
+            {
+              field: 'isActive',
+              operator: 'eq',
+              keyword: 'true'
+            }
+          ])
         }
       })
         .then(response => {
           this.grid.data = response.data.tableData
           this.grid.total = response.data.rowCount
           if (bindToForm) {
-            const item = this.grid.data.find(h => h.code === this.data.code)
+            const item = this.grid.data.find(h => h.id === this.data.id)
             this.edit(item)
           }
-        })
-    },
-    getTypesList() {
-      api.getAll(`${this.endpoint.general.supplier.type}/lists`, {
-        params: {
-          sorts: JSON.stringify([{
-            field: 'initial',
-            direction: 'asc'
-          }])
-        }
-      })
-        .then(response => {
-          this.types = response.data.tableData
         })
     },
     back() {
@@ -451,7 +444,7 @@ export default {
 
       setTimeout(() => {
         // Set focus to initial field
-        this.$refs.initial.focus()
+        this.$refs.code.focus()
 
         // Validate form first
         this.$refs.form.validate()
@@ -475,7 +468,7 @@ export default {
           'Hapus Data?',
           'Apakah anda yakin untuk menghapus data ini?')
       ) {
-        api.delete(this.endpoint.general.supplier.supplier, item.code)
+        api.delete(this.endpoint.accounting.coa, item.id)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -492,10 +485,10 @@ export default {
 
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
-        const resp = await api.create(this.endpoint.general.supplier.supplier, this.data)
+        const resp = await api.create(this.endpoint.accounting.coa, this.data)
         result = resp.data
       } else if (this.data.action === 'edit') {
-        const resp = await api.update(this.endpoint.general.supplier.supplier, this.data.code, this.data)
+        const resp = await api.update(this.endpoint.accounting.coa, this.data.id, this.data)
         result = resp.data
       }
 
@@ -507,10 +500,87 @@ export default {
     },
     async exportExcel() {
       this.exportExcel.export()
+    },
+    getCoaTypeList() {
+      api.getAll(this.endpoint.accounting.coaType, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'isActive',
+            operator: 'eq',
+            keyword: true
+          }]),
+          sorts: JSON.stringify([{
+            field: 'id',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.types = response.data.tableData
+        })
+    },
+    getCurrencyLists() {
+      api.getAll(`${this.endpoint.general.currency}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'isActive',
+            operator: 'eq',
+            keyword: true
+          }]),
+          sorts: JSON.stringify([{
+            field: 'code',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.currencies = response.data.tableData
+        })
+    },
+    getAccountLists() {
+      api.getAll(`${this.endpoint.accounting.coa}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'isActive',
+            operator: 'eq',
+            keyword: true
+          }]),
+          sorts: JSON.stringify([{
+            field: 'code',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.accounts = response.data.tableData
+        })
+    },
+    typeChange() {
+      if (this.data.typeId !== 2) {
+        this.data.currCode = null
+        this.data.cbType = null
+        this.data.vouCode = null
+      }
+    },
+    parentChange() {
+      if (this.data.typeId === 2 && this.data.parentId !== null) {
+        this.data.currCode = null
+        this.data.cbType = null
+        this.data.vouCode = null
+      }
+    },
+    getSpaceName(item) {
+      let space = ''
+      if (item.deep !== null) {
+        for (let i = 0; i < item.deep; i++) {
+          space += '&nbsp;'
+        }
+      }
+      space += item.name
+      return space
     }
   }
 }
-
 </script>
 
 <style>

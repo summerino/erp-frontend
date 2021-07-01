@@ -107,21 +107,24 @@
             </span>
           </v-tooltip>
         </template>
+        <template v-slot:[`item.creditLimit`]="{ item }">
+          {{ item.creditLimit | formatCurrency }}
+        </template>
       </v-data-table>
     </v-card>
 
     <v-card v-else :style="{ background: $vuetify.theme.themes[theme].surface }">
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="4">
             <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' }} Pelanggan</span>
           </v-col>
-          <v-col cols="12" md="6" class="text-right">
+          <v-col cols="12" md="8" class="text-right">
             <label
               v-if="data.action == 'edit'"
               class="text-caption mr-1"
             >
-              Tanggal Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
+              Tanggal Diperbarui: {{ data.updatedDate }} oleh {{ data.updatedInitial }}
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -295,6 +298,12 @@
                   <v-checkbox
                     v-model="data.isActive"
                     label="Aktif"
+                  ></v-checkbox>
+                </v-col>
+                <v-col cols="12" md="6" class="pl-md-3">
+                  <v-checkbox
+                    v-model="data.isConsignee"
+                    label="Menerima titipan barang (Konsinyi)"
                   ></v-checkbox>
                 </v-col>
               </v-row>

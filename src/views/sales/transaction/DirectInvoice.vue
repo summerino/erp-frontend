@@ -1080,6 +1080,11 @@ export default {
           sorts: JSON.stringify([{
             field: 'initial',
             direction: 'asc'
+          }]),
+          filters: JSON.stringify([{
+            field: 'isActive',
+            operator: 'eq',
+            keyword: true
           }])
         }
       })

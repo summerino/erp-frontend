@@ -134,10 +134,10 @@
     <v-card v-else>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="4">
             <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' | capitalize }} Gudang</span>
           </v-col>
-          <v-col cols="12" md="6" class="text-right">
+          <v-col cols="12" md="8" class="text-right">
             <label
               v-if="data.action == 'edit'"
               class="text-caption mr-1"
@@ -390,7 +390,12 @@ export default {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
           take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
-          sorts: JSON.stringify(sorts)
+          sorts: JSON.stringify(sorts),
+          filters: JSON.stringify([{
+            field: 'custCode',
+            operator: 'eq',
+            keyword: null
+          }])
         }
       })
         .then(response => {
