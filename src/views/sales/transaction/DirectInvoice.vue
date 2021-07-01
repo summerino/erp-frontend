@@ -453,7 +453,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid || hasRelatedTrans"
+                                :disabled="isVoid || hasRelatedTrans || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
                                 class="blue--text"
                                 small
                                 tile
@@ -489,6 +489,7 @@
                                   icon
                                   small
                                   @click="removeItem(item)"
+                                  :disabled="(!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
                                 >
                                   <v-icon small>mdi-close-thick</v-icon>
                                 </v-btn>

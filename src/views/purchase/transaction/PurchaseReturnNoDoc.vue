@@ -113,7 +113,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="item.mark.toUpperCase() !== 'A' || !auth.allowVoid"
+                :disabled="item.mark.toUpperCase() !== 'A' || !auth.allowVoid || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
                 color="red"
                 icon
                 small
@@ -506,7 +506,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid || hasRelatedTrans"
+                                :disabled="isVoid || hasRelatedTrans || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
                                 class="blue--text"
                                 small
                                 tile

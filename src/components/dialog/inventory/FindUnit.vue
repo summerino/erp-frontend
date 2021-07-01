@@ -1,9 +1,8 @@
 <template>
   <v-dialog
     v-model="dialog"
-    :width="options.width"
+    width="800"
     persistent
-    scrollable
     @keydown.esc="close"
   >
     <v-card>
@@ -136,8 +135,8 @@
               @click="save"
               @shortkey="save"
             >
-              <v-icon left>mdi-content-save</v-icon>
-              Save
+              <v-icon left>mdi-check</v-icon>
+              Simpan
             </v-btn>
           </template>
           <span class="text-caption">(Ctrl + S)</span>

@@ -518,7 +518,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid || hasRelatedTrans"
+                                :disabled="isVoid || hasRelatedTrans || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
                                 class="blue--text"
                                 small
                                 tile
@@ -550,7 +550,7 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
-                                  :disabled="isVoid || hasRelatedTrans"
+                                  :disabled="isVoid || hasRelatedTrans || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
                                   color="red"
                                   icon
                                   small
@@ -982,7 +982,7 @@ export default {
     this.getWarehouseLists()
     this.getTaxLists()
     this.getItemLists()
-    auth.getAction(this.endpoint, this.menuId.purchaseorder, [this.action.insert, this.action.update, this.action.void, this.action.close, this.action.changeWarehouse, this.data.changeDate])
+    auth.getAction(this.endpoint, this.menuId.purchaseorder, [this.action.insert, this.action.update, this.action.void, this.action.close, this.action.changeWarehouse, this.action.changeDate])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
