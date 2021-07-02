@@ -50,6 +50,29 @@
               <export-excel title="Daftar Nota Kredit" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
+          <v-spacer></v-spacer>
+          <v-col cols="12" md="4" class="text-right">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'n']"
+                  color="green darken-1"
+                  class="font-weight-regular"
+                  dark
+                  small
+                  tile
+                  @click="add"
+                  @shortkey="add"
+                >
+                  <v-icon left>mdi-plus</v-icon>
+                  Data Baru
+                </v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Alt + N)</span>
+            </v-tooltip>
+          </v-col>
         </v-row>
       </v-card-title>
       <v-card-text v-if="true" class="pb-1">
@@ -83,6 +106,22 @@
               </v-btn>
             </template>
             <span class="text-caption">Ubah</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                :disabled="(item.mark.toUpperCase() !== 'A' && item.mark.toUpperCase() !== 'PP') || !auth.allowVoid"
+                color="red"
+                icon
+                small
+                @click="remove(item)"
+              >
+                <v-icon small>mdi-close-thick</v-icon>
+              </v-btn>
+            </template>
+            <span class="text-caption">Void</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">
@@ -139,6 +178,85 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-toolbar-title>Nota Kredit</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-toolbar-items>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'enter']"
+                  dark
+                  text
+                  @click="save(true)"
+                  @shortkey="save(true)"
+                  :disabled="(data.action === 'edit' && !auth.allowUpdate)"
+                >Simpan & Tutup</v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Enter)</span>
+            </v-tooltip>
+            <v-divider vertical></v-divider>
+            <v-menu
+              bottom
+              eager
+              left
+              open-on-hover
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  dark
+                  icon
+                >
+                  <v-icon>mdi-menu-down</v-icon>
+                </v-btn>
+              </template>
+              <v-list class="cursor-pointer">
+                <v-list-item
+                  v-shortkey="['ctrl', 's']"
+                  @click="save(false)"
+                  @shortkey="save(false)"
+                  :disabled="(data.action === 'edit' && !auth.allowUpdate)"
+                >
+                  <v-list-item-title>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <span
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          Simpan
+                        </span>
+                      </template>
+                      <span class="text-caption">(Ctrl + S)</span>
+                    </v-tooltip>
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+               <v-list class="cursor-pointer">
+                <v-list-item
+                  v-shortkey="['ctrl', 'alt', 'r']"
+                >
+                  <v-list-item-title>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <span
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          Pembayaran
+                        </span>
+                      </template>
+                      <span class="text-caption">(Ctrl + Alt + R)</span>
+                    </v-tooltip>
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+             
+            </v-menu>
+            <v-divider vertical></v-divider>
+          </v-toolbar-items>
         </v-toolbar>
 
         <v-card-text class="px-2">
@@ -163,14 +281,34 @@
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12" md="6" class="pl-md-1">
-                        <v-text-field
-                          :rules="rules.required"
-                          :value="formatDate"
-                          label="Tanggal Transaksi"
-                          class="mt-0"
-                          readonly
-                          required
-                        ></v-text-field>
+                        <v-menu
+                          v-model="menu.date"
+                          :close-on-content-click="false"
+                          transition="scale-transition"
+                          min-width="290px"
+                          offset-y
+                          :disabled="!auth.allowChangeDate"
+                        >
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-text-field
+                              v-bind="attrs"
+                              v-on="on"
+                              :rules="rules.required"
+                              :value="formatDate"
+                              :disabled="!auth.allowChangeDate"
+                              label="Tanggal"
+                              class="mt-0"
+                              readonly
+                              required
+                            ></v-text-field>
+                          </template>
+                          <v-date-picker
+                            v-model="data.date"
+                            no-title
+                            scrollable
+                            @change="menu.date = false"
+                          ></v-date-picker>
+                        </v-menu>
                       </v-col>
                     </v-row>
 
@@ -204,7 +342,9 @@
                           v-model="data.amount"
                           label="Nilai"
                           class="text-right mt-0"
-                          readonly
+                          @keyup="amountChange"
+                          @keypress="amountChange"
+                          @keydown="amountChange"
                         ></v-currency-field>
                       </v-col>
                       <v-col cols="12" md="6" class="pl-md-1">
@@ -244,15 +384,18 @@
                       transition="false"
                     >
                       <v-row no-gutters>
-                        <v-col cols="3">
-                          <v-text-field
+                        <v-col cols="3">                          
+                          <v-autocomplete
                             v-model="data.custCode"
+                            :items="customers"
+                            :item-text="item => `${item.code} - ${item.initial}`"
                             :rules="rules.required"
-                            label="Kode Pelanggan"
+                            label="Kode"
+                            item-value="code"
                             class="mt-0"
-                            readonly
                             required
-                          ></v-text-field>
+                            @change="custCodeChange"
+                          ></v-autocomplete>
                         </v-col>
                         <v-col cols="9" class="pl-1">
                           <v-text-field
@@ -306,7 +449,6 @@
                         counter="256"
                         class="mt-0"
                         rows="4"
-                        readonly
                       ></v-textarea>
                     </v-tab-item>
                   </v-tabs-items>
@@ -348,6 +490,8 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+    <confirm ref="confirm"></confirm>
+
   </div>
 </template>
 
@@ -356,6 +500,9 @@ import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
 
 import api from '@/services/axios.service'
+import auth from '@/services/authorization.service'
+
+import Confirm from '@/components/dialog/Confirm'
 
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
@@ -363,7 +510,8 @@ import ExportExcel from '@/components/common/ExportExcel.vue'
 export default {
   components:{
     AdvancedSearch,
-    ExportExcel
+    ExportExcel,
+    Confirm
   },
   data: () => ({
     dialog: {
@@ -433,11 +581,17 @@ export default {
     ],
     valid: false,
     sources: [{ id: 1, name: 'Deposit' }, { id: 2, name: 'Retur' }, { id: 2, name: 'Return (Same Item)' }],
-    data: {}
+    data: {},
+    customers: []
   }),
 
   created: function () {
     this.getList()
+    this.getCustomerLists()
+    auth.getAction(this.endpoint, this.menuId.creditmemo, [this.action.insert, this.action.update, this.action.void, this.action.changeDate])
+      .then((response) => {
+        this.$store.commit('api/setAuth', response.data)
+      })
     this.$store.commit('app/setFilterFields', this.filterfields)
   },
 
@@ -466,7 +620,10 @@ export default {
       gridDefOpts: state => state.app.grid,
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
-      filter: state => state.app.filter
+      filter: state => state.app.filter,
+      auth: state => state.api.authorization,
+      action: state => state.api.action,
+      menuId: state => state.api.menus
     }),
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'
@@ -542,6 +699,19 @@ export default {
           }
         })
     },
+    getCustomerLists() {
+      api.getAll(`${this.endpoint.general.customer.customer}/lists`, {
+        params: {
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.customers = response.data.tableData
+        })
+    },
     // getList(bindToForm = false) {
     //   const sorts = []
     //   for (let i = 0; i < this.grid.options.sortBy.length; i++) {
@@ -568,6 +738,18 @@ export default {
     //       }
     //     })
     // },
+    add() {
+      if (this.dialog.add) return
+      this.dialog.add = true
+      this.reset(false)
+      this.data.action = 'add'
+
+      setTimeout(() => {
+
+        // Validate form first
+        this.$refs.form.validate()
+      }, 0)
+    },
     edit(item) {
       if (!item) return
 
@@ -582,6 +764,9 @@ export default {
       // Get customer details
       this.bindCustData(this.data)
       
+      // Calculate Outstanding
+      this.amountChange()
+
       // Get related transaction details
       api.getAll(`${this.endpoint.sales.creditMemo}/related-trans`, {
         params: { code: item.code }
@@ -595,6 +780,16 @@ export default {
         this.$refs.code.focus()
       }, 0)
     },
+    custCodeChange() {
+      const customer = this.customers.find(s => s.code === this.data.custCode)
+      if (customer) {
+        this.data.custName = customer.name
+        this.data.custAddr = customer.address1
+        this.data.custPhone = customer.phone
+        this.data.custFax = customer.fax
+        this.data.paymentTermId = customer.paymentTermId
+      }
+    },
     bindCustData(item) {
       api.getOne(this.endpoint.general.customer.customer, item.custCode)
         .then(response => {
@@ -607,7 +802,58 @@ export default {
     },
     async exportExcel() {
       this.exportExcel.export()
+    },
+    amountChange() {
+      this.data.outstanding = this.data.amount - this.data.used
+    },
+    close() {
+      this.dialog.add = false
+      this.getList()
+    },
+    async remove(item) {
+      if (
+        await this.$refs.confirm.open(
+          'Void?',
+          'Apakah anda yakin ingin membuat void data ini?')
+      ) {
+        api.delete(this.endpoint.sales.creditMemo, item.code)
+          .then(response => {
+            if (response.data.success) {
+              this.$store.dispatch('app/showSuccess', response.data.message)
+              this.getList()
+            }
+          })
+      }
+    },
+    async save(closeDialog) {
+      if (!this.dialog.add) return
+      if (!this.$refs.form.validate()) {
+        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
+        return
+      }
+
+      const data = this.data
+      data.currCode = 'IDR'
+      let result = { success: false, message: '' }
+      if (data.action === 'add') {
+        const resp = await api.create(this.endpoint.sales.creditMemo, data)
+        result = resp.data
+      } else if (data.action === 'edit') {
+        const resp = await api.update(this.endpoint.sales.creditMemo, data.code, data)
+        result = resp.data
+      }
+
+      if (result.success) {
+        this.$store.dispatch('app/showSuccess', result.message)
+        if (closeDialog) {
+          this.dialog.add = false
+        } else {
+          this.data.code = result.data
+        }
+        this.getList(!closeDialog)
+      }
     }
+    
   }
 }
 </script>
