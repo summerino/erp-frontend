@@ -116,41 +116,43 @@
             </v-row>
           </v-card>
           <v-card>
-          <v-form
-            ref="form"
-            v-model="valid"
-          >
-            <v-row dense>
-              <v-col cols="12">
-                <v-textarea
-                  v-model="notes"
-                  :rules="[rules.max256chars[0], rules.required[0]]"
-                  label="Catatan"
-                  counter="256"
-                  class="mt-0"
-                  rows="6"
-                  required
-                ></v-textarea>
-              </v-col>
-            </v-row>
-            <v-row dense>
-              <v-col cols="12">
-                <v-card-actions class="justify-end pb-2 pr-2">
-                  <v-btn
-                    color="green"
-                    class="font-weight-regular"
-                    dark
-                    small
-                    tile
-                    @click="save"
-                  >
-                    <v-icon left>mdi-content-save</v-icon>
-                    Simpan
-                  </v-btn>
-                </v-card-actions>
-              </v-col>
-            </v-row>
-          </v-form>
+            <v-card-text>
+              <v-form
+                ref="form"
+                v-model="valid"
+              >
+                <v-row dense>
+                  <v-col cols="12">
+                    <v-textarea
+                      v-model="notes"
+                      :rules="[rules.max256chars[0], rules.required[0]]"
+                      label="Catatan"
+                      counter="256"
+                      class="mt-0"
+                      rows="6"
+                      required
+                    ></v-textarea>
+                  </v-col>
+                </v-row>
+                <v-row dense>
+                  <v-col cols="12">
+                    <v-card-actions class="justify-end pb-2 pr-2">
+                      <v-btn
+                        color="green"
+                        class="font-weight-regular"
+                        dark
+                        small
+                        tile
+                        @click="save"
+                      >
+                        <v-icon left>mdi-content-save</v-icon>
+                        Simpan
+                      </v-btn>
+                    </v-card-actions>
+                  </v-col>
+                </v-row>
+              </v-form>
+            </v-card-text>
           </v-card>
       </v-card-text>
     </v-card>
@@ -206,7 +208,6 @@ export default {
       this.dialog = true
       this.rowItem = rowItem
       this.notes = rowItem.notesFailShipment
-      this.checkAll = true
       this.reset()
       this.getDetail(rowItem)
       setTimeout(() => {
@@ -235,6 +236,10 @@ export default {
               warehouseCode: this.warehouseCode,
               type: 0,
               unitName: this.data[i].unitName
+            }
+            const uItem = this.rowItem.undeliveredItems.find(x => x.itemId === item.itemId)
+            if (uItem) {
+              item.qty = uItem.qty
             }
             this.grid.data.push(item) 
           }
