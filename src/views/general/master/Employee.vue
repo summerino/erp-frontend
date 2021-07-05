@@ -806,11 +806,13 @@ export default {
       }
 
       const data = this.data
-      this.createSchedule(this.gridItem.data)
-      data.scheduleDetails = this.schedule
-      data.customerListDetails = this.customerList
-
-      if (data.type !== 2) {
+      
+      // Preventing save from type 1 & 3
+      if (data.type === 2) {
+        this.createSchedule(this.gridItem.data)
+        data.scheduleDetails = this.schedule
+        data.customerListDetails = this.customerList
+      } else {
         data.salesGroupId = null
       }
 
