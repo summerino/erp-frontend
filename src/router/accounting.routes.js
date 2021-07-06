@@ -33,5 +33,12 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/accounting/transaction/general-journal',
+  name: 'general-journal',
+  component: () => import(/* webpackChunkName: "general-journal" */ '@/views/accounting/transaction/GeneralJournal.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
   
