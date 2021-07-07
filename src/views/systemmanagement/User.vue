@@ -253,7 +253,7 @@
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-autocomplete
                   v-model="data.employeeId"
-                  :items="employees"
+                  :items="data.action === 'add' ? unemployees : employees"
                   :item-text="item => `${item.initial} - ${item.firstName}`"
                   :rules="rules.required"
                   label="Karyawan"
@@ -310,6 +310,7 @@ export default {
     valid: false,
     roles: [],
     employees: [],
+    unemployees: [],
     data: {},
     show: false
   }),
@@ -317,6 +318,7 @@ export default {
   created: function () {
     this.getList()
     this.getEmployeeList()
+    this.getUnusedEmployeeList()
     this.getRolesList()
     auth.getAction(this.endpoint, this.menuId.user, [this.action.insert, this.action.update, this.action.delete])
       .then((response) => {
@@ -420,6 +422,19 @@ export default {
       })
         .then(response => {
           this.employees = response.data.tableData
+        })
+    },
+    getUnusedEmployeeList() {
+      api.getAll(`${this.endpoint.general.employee}/un-lists`, {
+        params: {
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.unemployees = response.data.tableData
         })
     },
     getRolesList() {
