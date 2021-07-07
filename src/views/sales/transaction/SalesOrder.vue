@@ -2336,7 +2336,8 @@ export default {
         gridData[k].nettPrice = gridData[k].unitPrice - totalDisc 
         gridData[k].total =  gridData[k].nettPrice * gridData[k].qty
       }
-      this.gridBonus.data = bonusPromo    
+      this.gridBonus.data = bonusPromo
+      this.calcPrice()    
     },
     setDefaultWarehouse() {
       const userInfo = this.userInfo = auth.getUserInfo()

@@ -42,5 +42,6 @@ export default {
   expeditionInvoice: 70,
   companyProfile: 75,
   accountPayable: 78,
-  accountReceivable: 79
+  accountReceivable: 79,
+  generalJournal: 84
 }

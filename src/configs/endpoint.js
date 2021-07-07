@@ -63,7 +63,8 @@ export default {
     coaType: 'coa-type',
     currencyRate: 'currency-rate',
     accountReceivable: 'account-receivable',
-    accountPayable: 'account-payable'
+    accountPayable: 'account-payable',
+    generalJournal: 'general-journal'
   },
 
   systemManagement:{
