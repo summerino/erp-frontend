@@ -172,7 +172,7 @@
                   v-model="data.code"
                   :rules="[rules.required[0], rules.max6chars[0]]"
                   :counter="6"
-                  label="Code"
+                  label="Kode"
                   class="mt-0"
                   required
                 ></v-text-field>
