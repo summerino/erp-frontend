@@ -316,7 +316,6 @@ export default {
 
   created: function () {
     this.getList()
-    this.getEmployeeList()
     this.getRolesList()
     auth.getAction(this.endpoint, this.menuId.user, [this.action.insert, this.action.update, this.action.delete])
       .then((response) => {
@@ -409,14 +408,9 @@ export default {
           }
         })
     },
-    getEmployeeList() {
-      api.getAll(`${this.endpoint.general.employee}/lists`, {
-        params: {
-          sorts: JSON.stringify([{
-            field: 'initial',
-            direction: 'asc'
-          }])
-        }
+    getUnusedEmployeeList() {
+      api.getAll(`${this.endpoint.general.employee}/un-lists`, {
+        params: { id: this.data.employeeId }
       })
         .then(response => {
           this.employees = response.data.tableData
@@ -447,7 +441,7 @@ export default {
       this.main = false
       this.reset(false)
       this.data.action = 'add'
-
+      this.getUnusedEmployeeList()
       setTimeout(() => {
         // Set focus to initial field
         this.$refs.username.focus()
@@ -467,6 +461,8 @@ export default {
         action: 'edit',
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
+
+      this.getUnusedEmployeeList()
     },
     async remove(item) {
       if (
