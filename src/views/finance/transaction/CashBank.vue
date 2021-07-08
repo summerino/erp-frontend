@@ -114,7 +114,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="(item.mark.toUpperCase() !== 'PP  ') || !auth.allowVoid"
+                :disabled="!auth.allowVoid"
                 color="red"
                 icon
                 small
@@ -127,6 +127,32 @@
           </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">
+          {{ item.date | formatDate('dd-MMM-yyyy') }}
+        </template>
+        <template v-slot:[`item.type`]="{ item }">
+          {{ item.type === 'D' ? 'Debit' : 'Credit' }}
+        </template>
+        <template v-slot:[`item.amount`]="{ item }">
+          {{ item.amount | formatCurrency }}
+        </template>
+        <template v-slot:[`item.mark`]="{ item }">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-chip
+                v-bind="attrs"
+                v-on="on"
+                :color="item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
+                class="px-1"
+                dark
+                small
+              >
+                {{ item.mark }}
+              </v-chip>
+            </template>
+            <span class="text-caption">{{ item.status }}</span>
+          </v-tooltip>
+        </template>
+        <!-- <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
         <template v-slot:[`item.amount`]="{ item }">
@@ -154,12 +180,12 @@
             </template>
             <span class="text-caption">{{ item.status }}</span>
           </v-tooltip>
-        </template>
+        </template> -->
       </v-data-table>
     </v-card>
 
     <v-dialog
-       v-model="dialog.add"
+      v-model="dialog.add"
       transition="dialog-bottom-transition"
       fullscreen
       hide-overlay
@@ -321,6 +347,8 @@
                           item-value="code"
                           class="mt-0"
                           @change="changeCoaCode"
+                          :rules="rules.required"
+                          required
                           dense
                         ></v-autocomplete>
                       </v-col>
@@ -383,7 +411,7 @@
                     >
                       <v-textarea
                         v-model="data.notes"
-                        :rules="[rules.max256chars, rules.required]"
+                        :rules="[rules.max256chars[0], rules.required[0]]"
                         label="Catatan"
                         counter="256"
                         class="mt-0"
@@ -404,6 +432,7 @@
                                 label="Dibuat Oleh"
                                 class="mt-0"
                                 readonly
+                                dense
                               ></v-text-field>
                             </v-col>
                             <v-col cols="6" class="pl-md-1">
@@ -412,6 +441,7 @@
                                 label="Tanggal Dibuat"
                                 class="mt-0"
                                 readonly
+                                dense
                               ></v-text-field>
                             </v-col>
                           </v-row>
@@ -423,6 +453,7 @@
                                 label="Diperbarui Oleh"
                                 class="mt-0"
                                 readonly
+                                dense
                               ></v-text-field>
                             </v-col>
                             <v-col cols="6" class="pl-md-1">
@@ -431,6 +462,7 @@
                                 label="Tanggal Diperbarui"
                                 class="mt-0"
                                 readonly
+                                dense
                               ></v-text-field>
                             </v-col>
                           </v-row>
@@ -441,6 +473,7 @@
                                 label="Disetujui Oleh"
                                 class="mt-0"
                                 readonly
+                                dense
                               ></v-text-field>
                             </v-col>
                             <v-col cols="6" class="pl-md-1">
@@ -449,6 +482,7 @@
                                 label="Tanggal Disetujui"
                                 class="mt-0"
                                 readonly
+                                dense
                               ></v-text-field>
                             </v-col>
                           </v-row>
@@ -505,6 +539,23 @@
                           fixed-header
                           hide-default-footer
                         >
+                          <template v-slot:[`item.action`]="{ item }">
+                            <v-tooltip bottom>
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-btn
+                                  v-bind="attrs"
+                                  v-on="on"
+                                  color="red"
+                                  icon
+                                  small
+                                  @click="removeItem(item)"
+                                >
+                                  <v-icon small>mdi-close-thick</v-icon>
+                                </v-btn>
+                              </template>
+                              <span class="text-caption">Void</span>
+                            </v-tooltip>
+                          </template>
                           <template v-slot:[`item.amount`]="{ item }">
                             <v-currency-field
                               v-model="item.amount"
@@ -515,10 +566,12 @@
                           <template v-slot:[`item.notes`]="{ item }">
                             <v-textarea
                               v-model="item.notes"
-                              label="Catatan"
                               class="mt-0"
-                              rows="2"
+                              rows="1"
                             ></v-textarea>
+                          </template>
+                          <template v-slot:[`item.transAmount`]="{ item }">
+                            {{ item.transAmount | formatCurrency }}
                           </template>
                         </v-data-table>
                       </v-card>
@@ -533,7 +586,7 @@
       </v-card>
     </v-dialog>
     <confirm ref="confirm"></confirm>
-    <detail-cash-bank ref="detailCashBank" :coas="coas" :cashBankTypes="cashBankTypes" @saveItem="saveItem"></detail-cash-bank>
+    <detail-cash-bank ref="detailCashBank" :coas="coas" :cashBankTypes="cashBankTypes" :coaCodes="coaCodes" @saveItem="saveItem"></detail-cash-bank>
   </div>
 </template>
 
@@ -571,11 +624,13 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
-        { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
-        { text: 'Kode Voucher', value: 'vouCode', divider: true, width: '160', excelColWidth:'19' },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
-        { text: 'Tipe', value: 'type', divider: true, width: '100', excelColWidth:'13' },
-        { text: 'Akun', value: 'coaCode', divider: true, width: '100', excelColWidth:'13' }
+        { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'19' },
+        // { text: 'Kode Voucher', value: 'vouCode', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'15', isDateTime: true },
+        { text: 'Nilai', value: 'amount', divider: true, align:'right', width: '100', excelColWidth:'13' },
+        { text: 'Tipe', value: 'type', divider: true, width: '50', excelColWidth:'13' },
+        { text: 'Akun', value: 'coaCode', divider: true, width: '100', excelColWidth:'13' },
+        { text: 'Status', value: 'mark', divider: true, width: '100' }
       ],
       data: [],
       options: {
@@ -587,14 +642,14 @@ export default {
     },
     gridItem: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Akun', value: 'coaCode', divider: true, width: '120' },
+        { value: 'action', sortable: false, divider: true, width: '50' },
+        { text: 'Akun', value: 'coaCode', divider: true, width: '90' },
         { text: 'Kode Trans.', value: 'transCode', divider: true, width: '120' },
         { text: 'Catatan', value: 'notes', divider: true, width: '200' },
         { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120' },
-        { text: 'D/C', value: 'type', divider: true, width: '90' },
-        { text: 'Mata Uang', value: 'currCode', divider: true, width: '120' },
-        { text: 'Kurs', value: 'rate', align: 'right', divider: true, width: '120' },
+        { text: 'D/C', value: 'typeAmount', divider: true, width: '50' },
+        { text: 'Mata Uang', value: 'currCode', divider: true, width: '50' },
+        { text: 'Kurs', value: 'rate', align: 'right', divider: true, width: '50' },
         { text: 'Nilai Transaction', value: 'transAmount', align: 'right', divider: true, width: '120' }
       ],
       data: []
@@ -633,7 +688,8 @@ export default {
     coas: [],
     data: {},
     isShowCheque: false,
-    cashBankTypes: []
+    cashBankTypes: [],
+    coaCodes: []
   }),
 
   created: function () {
@@ -710,6 +766,14 @@ export default {
       this.tab.note = 0
       this.tab.related = 0
 
+      // Get item details
+      api.getAll(`${this.endpoint.finance.cashBank}/detail`, {
+        params: { code: this.data.code }
+      })
+        .then(response => {
+          this.gridData.data = response.data.tableData
+        })
+
       // Reset form validation
       if (resetValidation) {
         setTimeout(() => {
@@ -737,7 +801,7 @@ export default {
           direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
         })
       }
-      api.getAll(this.endpoint.purchase.debitMemo, {
+      api.getAll(this.endpoint.finance.cashBank, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -769,10 +833,25 @@ export default {
           this.coas = response.data.tableData
         })
     },
+    getCOACodeList(temp) {
+      const codes = []
+      for (let i = 0; i < temp.length; i++) {
+        codes.push(`${temp[i].code}_COA`)
+      }
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          codes: JSON.stringify(codes)
+        }
+      })
+        .then(response => {
+          this.coaCodes = response.data.tableData
+        })
+    },
     getCashBankTypeList() {
       api.getAll(`${this.endpoint.finance.cashBankType}/lists`, {})
         .then(response => {
           this.cashBankTypes = response.data.tableData
+          this.getCOACodeList(this.cashBankTypes)
         })
     },
     add() {
@@ -798,18 +877,12 @@ export default {
         action: 'edit'
       }
 
-      // Get supplier details
-      this.bindSupData(this.data)
-      
-      // Calculate Outstanding
-      this.amountChange()
-
-      // Get related transaction details
-      api.getAll(`${this.endpoint.purchase.debitMemo}/related-trans`, {
+      // Get item details
+      api.getAll(`${this.endpoint.finance.cashBank}/detail`, {
         params: { code: item.code }
       })
         .then(response => {
-          this.gridRelated.data = response.data.tableData
+          this.gridItem.data = response.data.tableData
         })
 
       // Set focus to return code field
@@ -831,13 +904,23 @@ export default {
           'Void?',
           'Apakah anda yakin ingin membuat void data ini?')
       ) {
-        api.delete(this.endpoint.purchase.debitMemo, item.code)
+        api.delete(this.endpoint.finance.cashBank, item.code)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
               this.getList()
             }
           })
+      }
+    },
+    async removeItem(item) {
+      if (
+        await this.$refs.confirm.open(
+          'Hapus?',
+          'Apakah anda yakin ingin menghapus data ini?')
+      ) {
+        const idx = this.gridItem.data.findIndex(i => i.id === item.id)
+        this.gridItem.data.splice(idx, 1)
       }
     },
     async save(closeDialog) {
@@ -847,14 +930,21 @@ export default {
         return
       }
 
+      if (this.gridItem.data.length === 0) {
+        this.$store.dispatch('app/showInfo', 'Data detil tidak boleh kosong.')
+        return
+      }
+
       const data = this.data
+      data.itemDetails = this.gridItem.data
       data.currCode = 'IDR'
+      data.rate = 1
       let result = { success: false, message: '' }
       if (data.action === 'add') {
-        const resp = await api.create(this.endpoint.purchase.debitMemo, data)
+        const resp = await api.create(this.endpoint.finance.cashBank, data)
         result = resp.data
       } else if (data.action === 'edit') {
-        const resp = await api.update(this.endpoint.purchase.debitMemo, data.code, data)
+        const resp = await api.update(this.endpoint.finance.cashBank, data.code, data)
         result = resp.data
       }
 
@@ -869,7 +959,11 @@ export default {
       }
     },
     saveItem(items) {
-      this.gridItem.data = items 
+      for (let i = 0; i < items.length; i++) {
+        if (this.gridItem.data.find(x => x.transCode === items[i].transCode) === undefined) {
+          this.gridItem.data.push(items[i]) 
+        }
+      }
     },
     addItem() {
       this.showDetailCashBank()
