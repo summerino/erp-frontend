@@ -360,13 +360,13 @@ export default {
       this.resetGeneralTransaction()
     },
     resetGeneralTransaction() {
-      // this.data.typeAmount = 'D'
-      // this.data.notes = ''
-      // this.data.amount = 0
-      // this.data.typeAmount = 'D'
-      // this.data.coaCode = null
-      // this.data.type = null
-      // this.data.transAmount = 0
+      this.data.id = randomNumber(-1, -1000)
+      this.data.notes = ''
+      this.data.amount = 0
+      this.data.total = 0
+      this.data.typeAmount = 'D'
+      this.data.coaCode = null
+      this.data.transAmount = 0
     },
     open(options) {
       this.dialog = true
@@ -472,6 +472,7 @@ export default {
     changeType() {
       this.bindColumn()
       this.grid.data = []
+      this.selected = []
       this.resetGeneralTransaction()
     },
     bindColumn() {
@@ -553,13 +554,6 @@ export default {
         ]
         this.filters = this.customerFilters
         this.data.by = 'custName'
-      } else if (this.data.type === 'TU') {
-        this.grid.columns = [
-          { text: 'Tipe D/C', value: 'type', divider: true, width: '120' },
-          { text: 'Akun', value: 'account', divider: true, width: '150' },
-          { text: 'Catatan', value: 'notess', divider: true, width: '300' },
-          { text: 'Nilai', value: 'amount', divider: true, width: '120' }
-        ]
       }            
     },
     bindDate() {
@@ -573,7 +567,11 @@ export default {
     },
     save() {
       if (this.data.type === 'TU') {
-        
+        let coaName = ''
+        const temp = this.coas.find(x => x.code === this.data.coaCode)
+        if (temp) {
+          coaName = `${temp.name}` 
+        }
         const model = {
           id: randomNumber(-1, -1000),
           transAmount: this.data.amount,
@@ -585,7 +583,8 @@ export default {
           remaining: 0,
           amount: this.data.amount,
           typeAmount: this.data.typeAmount,
-          coaCode: this.data.coaCode
+          coaCode: this.data.coaCode,
+          coaName: coaName
         }
         this.selected.push(model)
       }
@@ -599,8 +598,13 @@ export default {
           this.selected[i].id = randomNumber(-1, -1000)
           this.selected[i].notes = this.selected[i][field]
           const temp = this.coaCodes.find(x => x.code === `${this.data.type}_COA`)
+          const coas = this.coas
           if (temp) {
             this.selected[i].coaCode = temp.value
+            const tempName = coas.find(x => x.code === temp.value)
+            if (tempName) {
+              this.selected[i].coaName = `${tempName.name}` 
+            }
           }
           this.selected[i].type = this.data.type
           this.selected[i].currCode = 'IDR'

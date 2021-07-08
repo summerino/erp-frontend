@@ -135,6 +135,9 @@
         <template v-slot:[`item.amount`]="{ item }">
           {{ item.amount | formatCurrency }}
         </template>
+        <template v-slot:[`item.coaCode`]="{ item }">
+          {{ item.coaCode }} - {{ item.coaName }}
+        </template>
         <template v-slot:[`item.mark`]="{ item }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -573,6 +576,9 @@
                           <template v-slot:[`item.transAmount`]="{ item }">
                             {{ item.transAmount | formatCurrency }}
                           </template>
+                          <template v-slot:[`item.coaCode`]="{ item }">
+                            {{ item.coaCode }} - {{ item.coaName }}
+                          </template>
                         </v-data-table>
                       </v-card>
                       
@@ -629,7 +635,7 @@ export default {
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'15', isDateTime: true },
         { text: 'Nilai', value: 'amount', divider: true, align:'right', width: '100', excelColWidth:'13' },
         { text: 'Tipe', value: 'type', divider: true, width: '50', excelColWidth:'13' },
-        { text: 'Akun', value: 'coaCode', divider: true, width: '100', excelColWidth:'13' },
+        { text: 'Akun', value: 'coaCode', divider: true, width: '100', excelColWidth:'20', customValues: ['coaCode', 'coaName'] },
         { text: 'Status', value: 'mark', divider: true, width: '100' }
       ],
       data: [],
@@ -662,22 +668,7 @@ export default {
         text: 'Tanggal Transaksi', value: 'date', dataType: 'datetime'
       },
       {
-        text: 'Pemasok', value: 'supName', dataType: 'text'
-      },
-      {
-        text: 'Sumber Transksi', value: 'srcTransName', dataType: 'text'
-      },
-      {
-        text: 'Kode Transaksi Sumber', value: 'transCode', dataType: 'text'
-      },
-      {
-        text: 'Nilai', value: 'amount', dataType: 'text'
-      },
-      {
-        text: 'Digunakan', value: 'used', dataType: 'text'
-      },
-      {
-        text: 'Saldo', value: 'outstanding', dataType: 'text'
+        text: 'Tipe', value: 'type', dataType: 'text'
       }
     ],
     valid: false,
@@ -960,7 +951,7 @@ export default {
     },
     saveItem(items) {
       for (let i = 0; i < items.length; i++) {
-        if (this.gridItem.data.find(x => x.transCode === items[i].transCode) === undefined) {
+        if (this.gridItem.data.find(x => x.id === items[i].id) === undefined) {
           this.gridItem.data.push(items[i]) 
         }
       }
