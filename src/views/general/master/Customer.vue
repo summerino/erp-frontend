@@ -303,7 +303,7 @@
                 <v-col cols="12" md="6" class="pl-md-3">
                   <v-checkbox
                     v-model="data.isConsignee"
-                    label="Menerima titipan barang (Konsinyi)"
+                    label="Menerima titipan barang (Konsinyasi)"
                   ></v-checkbox>
                 </v-col>
               </v-row>

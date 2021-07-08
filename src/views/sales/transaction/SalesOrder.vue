@@ -418,7 +418,7 @@
                             item-value="code"
                             class="mt-0"
                             required
-                            @change="custCodeChange"
+                            @change="custCodeChange(); findPromo(); calcPromo();"
                           ></v-autocomplete>
                         </v-col>
 
@@ -1490,14 +1490,14 @@ export default {
             field: 'mark',
             operator: 'eq',
             keyword: 'A'
-          // }, {
-          //   field: 'startDate',
-          //   operator: 'gte',
-          //   keyword: new Date().toISOString().slice(0, 10)
-          // }, {
-          //   field: 'endDate',
-          //   operator: 'lte',
-          //   keyword: new Date().toISOString().slice(0, 10)
+          }, {
+            field: 'startDate',
+            operator: 'lte',
+            keyword: format(new Date(), 'yyyy-MM-dd')
+          }, {
+            field: 'endDate',
+            operator: 'gte',
+            keyword: format(new Date(), 'yyyy-MM-dd')
           }])
         }
       })
@@ -1760,6 +1760,7 @@ export default {
         this.data.custPhone = customer.phone1
         this.data.custFax = customer.fax
         this.data.paymentTermId = customer.paymentTermId
+        this.data.custTypeId = customer.typeId
         this.getCustomerAddressesLists(customer)
       }
     },
@@ -1927,8 +1928,20 @@ export default {
       this.gridPromo.data = []
       for (let k = 0; k < gridData.length; k++) {
         for (let i = 0; i < this.promos.length; i++) {
+          let appliedHeader = false
           const applied = this.promos[i].itemDetails.find(x => x.itemId === gridData[k].itemId || x.itemId === gridData[k].categoryId)
-          if (applied) {
+          if (this.promos[i].applyTo === 1) {
+            appliedHeader = true
+          } else if (this.promos[i].applyTo === 2) {
+            if (this.promos[i].custCode === this.data.custCode) {
+              appliedHeader = true
+            }
+          } else if (this.promos[i].applyTo === 3) {
+            if (this.promos[i].custTypeId === this.data.custTypeId) {
+              appliedHeader = true
+            }
+          }
+          if (applied && appliedHeader) {
             if (!this.gridPromo.data.includes(this.promos[i])) {
               this.gridPromo.data.push(this.promos[i])
             }
@@ -2323,7 +2336,8 @@ export default {
         gridData[k].nettPrice = gridData[k].unitPrice - totalDisc 
         gridData[k].total =  gridData[k].nettPrice * gridData[k].qty
       }
-      this.gridBonus.data = bonusPromo    
+      this.gridBonus.data = bonusPromo
+      this.calcPrice()    
     },
     setDefaultWarehouse() {
       const userInfo = this.userInfo = auth.getUserInfo()

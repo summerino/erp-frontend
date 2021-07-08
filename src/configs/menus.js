@@ -41,5 +41,8 @@ export default {
   approval:72,
   expeditionInvoice: 70,
   companyProfile: 75,
-  cashBank: 82
+  cashBank: 82,
+  accountPayable: 78,
+  accountReceivable: 79,
+  generalJournal: 84
 }

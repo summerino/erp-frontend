@@ -4,7 +4,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="2">
-            Akun
+            Hutang
           </v-col>
           <v-col cols="12" md="4">
             <v-text-field
@@ -18,7 +18,7 @@
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" md="1">
-            <export-excel title="Daftar Jenis Akun" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+            <export-excel title="Daftar Hutang" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
           </v-col>
           <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
@@ -91,9 +91,14 @@
             <span>Hapus</span>
           </v-tooltip>
         </template>
-        <template v-slot:[`item.name`]="{ item }">
-          <span v-html="getSpaceName(item)" :class="item.isParent ? 'font-weight-black' : 'font-weight-medium'">
-          </span>
+        <template v-slot:[`item.date`]="{ item }">
+          {{ item.date | formatDate('dd-MMM-yyyy') }}
+        </template>
+        <template v-slot:[`item.dueDate`]="{ item }">
+          {{ item.dueDate | formatDate('dd-MMM-yyyy') }}
+        </template>
+        <template v-slot:[`item.amount`]="{ item }">
+          {{ item.amount | formatCurrency }}
         </template>
       </v-data-table>
     </v-card>
@@ -102,14 +107,14 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="4">
-            <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' }} Akun</span>
+            <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' }} Hutang</span>
           </v-col>
           <v-col cols="12" md="8" class="text-right">
             <label
               v-if="data.action == 'edit'"
               class="text-caption mr-1"
             >
-              Tanggal Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
+              Tanggal Diperbarui: {{ data.updatedDate }} oleh {{ data.updatedInitial }}
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -164,119 +169,133 @@
           ref="form"
           v-model="valid"
         >
-          <v-container class="px-1 pt-0 pb-1">
+          <v-container fluid grid-list-md>
             <v-row no-gutters>
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-text-field
                   ref="code"
                   v-model="data.code"
-                  :rules="[rules.required[0], rules.max6chars[0]]"
-                  :counter="6"
+                  :rules="[rules.required[0], rules.max17chars[0]]"
+                  :counter="17"
                   label="Kode"
                   class="mt-0"
                   required
                 ></v-text-field>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
-                <v-text-field
-                  v-model="data.name"
-                  :rules="[rules.required[0], rules.max50chars[0]]"
-                  :counter="50"
-                  label="Nama"
+                <v-autocomplete
+                  v-model="data.supCode"
+                  :items="suppliers"
+                  :item-text="item => `${item.code} - ${item.name}`"
+                  :rules="rules.required"
+                  label="Pemasok"
+                  item-value="code"
                   class="mt-0"
                   required
-                ></v-text-field>
+                ></v-autocomplete>
+              </v-col>
+            </v-row>
+
+            <v-row no-gutters>
+              <v-col cols="12" md="6" class="pr-md-3">
+                <v-menu
+                  v-model="menu.date"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  min-width="290px"
+                  offset-y
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-bind="attrs"
+                      v-on="on"
+                      :rules="rules.required"
+                      :value="formatDate"
+                      label="Tanggal"
+                      class="mt-0"
+                      readonly
+                      required
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="data.date"
+                    no-title
+                    scrollable
+                    @change="menu.date = false"
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-col cols="12" md="6" class="pl-md-3">
+                <v-menu
+                  v-model="menu.dueDate"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  min-width="290px"
+                  offset-y
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-bind="attrs"
+                      v-on="on"                      
+                      :rules="rules.required"
+                      :value="formatDueDate"
+                      label="Tanggal Jatuh Tempo"
+                      class="mt-0"
+                      readonly
+                      required
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="data.dueDate"
+                    no-title
+                    scrollable
+                    @change="menu.dueDate = false"
+                  ></v-date-picker>
+                </v-menu>
               </v-col>
             </v-row>
 
             <v-row no-gutters>
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-autocomplete
-                    v-model="data.typeId"
-                    :items="types"
-                    :item-text="item => `${item.initial} - ${item.name}`"
-                    :rules="rules.required"
-                    label="Tipe"
-                    item-value="id"
-                    class="mt-0"
-                    required
-                    @change="typeChange"
-                  ></v-autocomplete>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-autocomplete
-                    v-model="data.parentId"
-                    :items="accounts"
-                    :item-text="item => `${item.code} - ${item.name}`"
-                    label="Induk Akun"
-                    item-value="id"
-                    class="mt-0"
-                    clearable
-                    @change="parentChange"
-                    @click:clear="parentChange"
-                  ></v-autocomplete>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="data.description"
-                  :rules="rules.max100chars"
-                  :counter="100"
-                  label="Deskripsi"
+                  v-model="data.currCode"
+                  :items="currencies"
+                  :item-text="item => `${item.code} - ${item.name}`"
+                  :rules="rules.required"
+                  label="Kurensi"
+                  item-value="code"
                   class="mt-0"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
-                <v-autocomplete
-                    v-model="data.currCode"
-                    :disabled="(data.typeId !== 2) || (data.typeId === 2 && data.parentId === null)"
-                    :items="currencies"
-                    :item-text="item => `${item.code} - ${item.name}`"
-                    :rules="data.typeId === 2 && data.parentId !== null ? rules.required : []"
-                    label="Kurensi"
-                    item-value="code"
-                    class="mt-0"
-                    :required="data.typeId === 2 && data.parentId !== null ? true : false"
-                  ></v-autocomplete>
+                  required
+                ></v-autocomplete>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
-                <v-autocomplete
-                    v-model="data.cbType"
-                    :disabled="(data.typeId !== 2) || (data.typeId === 2 && data.parentId === null)"
-                    :items="cbTypes"
-                    :rules="data.typeId === 2 && data.parentId !== null ? rules.required : []"
-                    label="Kas / Bank Tipe"
-                    item-text="name"
-                    item-value="id"
-                    class="mt-0"
-                    :required="data.typeId === 2 && data.parentId !== null ? true : false"
-                  ></v-autocomplete>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
-                <v-text-field
-                  v-model="data.vouCode"
-                  :disabled="(data.typeId !== 2) || (data.typeId === 2 && data.parentId === null)"
-                  :rules="data.typeId === 2 && data.parentId !== null ? [rules.required[0],rules.max4chars[0]] : []"
-                  :counter="4"
-                  label="Kode Voucher"
+                <v-currency-field
+                  v-model="data.currRate"
+                  :decimal-length="0"
                   class="mt-0"
-                  :required="data.typeId === 2 && data.parentId !== null ? true : false"
-                ></v-text-field>
+                  label="Nilai tukar mata uang"
+                ></v-currency-field>
+              </v-col>
+            </v-row>
+
+            <v-row no-gutters>
+              <v-col cols="12" md="6" class="pr-md-3">
+                <v-currency-field
+                  v-model="data.amount"
+                  :decimal-length="0"
+                  class="mt-0"
+                  label="Nilai"
+                ></v-currency-field>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
-                <v-checkbox
-                  v-model="data.isActive"
-                  label="Aktif"
-                ></v-checkbox>
-              </v-col>
+                  <v-text-field
+                    v-model="data.notes"
+                    :rules="rules.max256chars"
+                    :counter="256"
+                    class="mt-0"
+                    label="Catatan"
+                  ></v-text-field>
+                </v-col>
             </v-row>
           </v-container>
         </v-form>
@@ -305,15 +324,19 @@ export default {
 
   data: () => ({
     main: true,
+    menu: {
+      date: false,
+      dueDate: false
+    },
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
         { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'20' },
-        { text: 'Nama', value: 'name', divider: true, width: '200', excelColWidth:'20' },
-        { text: 'Tipe', value: 'typeName', divider: true, width: '200', excelColWidth:'20' },
+        { text: 'Pemasok', value: 'supName', divider: true, width: '150', excelColWidth:'20' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'20'  },
+        { text: 'Tanggal Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '100', excelColWidth:'20' },
         { text: 'Mata Uang', value: 'currCode', divider: true, width: '120', excelColWidth:'20' },
-        { text: 'Tipe Kas & Bank', value: 'cbType', divider: true, width: '100', excelColWidth:'20' },
-        { text: 'Kode Voucher', value: 'vouCode', divider: true, width: '100', excelColWidth:'20' }
+        { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '100', excelColWidth:'20' }
       ],
       data: [],
       options: {
@@ -324,19 +347,17 @@ export default {
       search: null
     },
     valid: false,
-    accounts: [],
-    cbTypes: [{ id: 'C', name: 'Kas' }, { id: 'B', name: 'Bank' }],
     currencies: [],
+    suppliers: [],
     types: [],
     data: {}
   }),
 
   created: function () {
     this.getList()
-    this.getAccountLists()
-    this.getCoaTypeList()
     this.getCurrencyLists()
-    auth.getAction(this.endpoint, this.menuId.coa, [this.action.insert, this.action.update, this.action.delete])
+    this.getSupplierLists()
+    auth.getAction(this.endpoint, this.menuId.accountPayable, [this.action.insert, this.action.update, this.action.delete])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -347,9 +368,11 @@ export default {
       this.$store.commit('app/setBreadcrumbs', [{
         text: 'Akuntansi'
       }, {
-        text: 'Data Master'
+        text: 'Tranksasi'
       }, {
-        text: 'Akun'
+        text: 'Saldo Awal'
+      }, {
+        text: 'Hutang'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
@@ -375,22 +398,21 @@ export default {
     }),
     isActive() {
       return (!this.data.isActive)
-    }  
+    },
+    formatDate() {
+      return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
+    },
+    formatDueDate() {
+      return this.data.dueDate ? format(parseISO(this.data.dueDate), 'dd-MMM-yyyy') : ''
+    }
   },
   
   methods:{
     reset(resetValidation = true) {
       this.data = {
         action: '',
-        code: null,
+        initial: null,
         name: null,
-        typeId: 0,
-        parentId: null,
-        deep: null,
-        description: null,
-        currCode: null,
-        cbType: null,
-        vouCode: null,
         isActive: true
       }
 
@@ -410,7 +432,7 @@ export default {
         })
       }
       
-      api.getAll(this.endpoint.accounting.coa, {
+      api.getAll(this.endpoint.accounting.accountPayable, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -443,7 +465,7 @@ export default {
       this.data.action = 'add'
 
       setTimeout(() => {
-        // Set focus to initial field
+        // Set focus to code field
         this.$refs.code.focus()
 
         // Validate form first
@@ -468,7 +490,7 @@ export default {
           'Hapus Data?',
           'Apakah anda yakin untuk menghapus data ini?')
       ) {
-        api.delete(this.endpoint.accounting.coa, item.id)
+        api.delete(this.endpoint.accounting.accountPayable, item.id)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -485,10 +507,10 @@ export default {
 
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
-        const resp = await api.create(this.endpoint.accounting.coa, this.data)
+        const resp = await api.create(this.endpoint.accounting.accountPayable, this.data)
         result = resp.data
       } else if (this.data.action === 'edit') {
-        const resp = await api.update(this.endpoint.accounting.coa, this.data.id, this.data)
+        const resp = await api.update(this.endpoint.accounting.accountPayable, this.data.id, this.data)
         result = resp.data
       }
 
@@ -500,24 +522,6 @@ export default {
     },
     async exportExcel() {
       this.exportExcel.export()
-    },
-    getCoaTypeList() {
-      api.getAll(this.endpoint.accounting.coaType, {
-        params: {
-          filters: JSON.stringify([{
-            field: 'isActive',
-            operator: 'eq',
-            keyword: true
-          }]),
-          sorts: JSON.stringify([{
-            field: 'id',
-            direction: 'asc'
-          }])
-        }
-      })
-        .then(response => {
-          this.types = response.data.tableData
-        })
     },
     getCurrencyLists() {
       api.getAll(`${this.endpoint.general.currency}/lists`, {
@@ -537,8 +541,8 @@ export default {
           this.currencies = response.data.tableData
         })
     },
-    getAccountLists() {
-      api.getAll(`${this.endpoint.accounting.coa}/lists`, {
+    getSupplierLists() {
+      api.getAll(`${this.endpoint.general.supplier.supplier}/lists`, {
         params: {
           filters: JSON.stringify([{
             field: 'isActive',
@@ -546,41 +550,18 @@ export default {
             keyword: true
           }]),
           sorts: JSON.stringify([{
-            field: 'code',
+            field: 'initial',
             direction: 'asc'
           }])
         }
       })
         .then(response => {
-          this.accounts = response.data.tableData
+          this.suppliers = response.data.tableData
         })
-    },
-    typeChange() {
-      if (this.data.typeId !== 2) {
-        this.data.currCode = null
-        this.data.cbType = null
-        this.data.vouCode = null
-      }
-    },
-    parentChange() {
-      if (this.data.typeId === 2 && this.data.parentId !== null) {
-        this.data.currCode = null
-        this.data.cbType = null
-        this.data.vouCode = null
-      }
-    },
-    getSpaceName(item) {
-      let space = ''
-      if (item.deep !== null) {
-        for (let i = 0; i < item.deep; i++) {
-          space += '&nbsp;'
-        }
-      }
-      space += item.name
-      return space
     }
   }
 }
+
 </script>
 
 <style>

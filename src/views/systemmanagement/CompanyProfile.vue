@@ -17,7 +17,7 @@
             ></v-text-field>
           </v-col>
           <v-spacer></v-spacer>
-          <v-col cols="12" md="1">
+          <v-col cols="12" md="6">
             <export-excel title="Daftar Profil Perusahaan" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
           </v-col>
         </v-row>

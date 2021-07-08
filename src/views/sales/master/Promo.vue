@@ -285,6 +285,51 @@
                         </v-menu>
                       </v-col>
                     </v-row>
+
+                    <v-row no-gutters>
+                      <v-col cols="12" md="6">
+                        <v-autocomplete
+                          v-model="data.applyTo"
+                          :items="applyToHeader"
+                          :rules="rules.required"
+                          label="Terapkan ke"
+                          item-text="name"
+                          item-value="id"
+                          class="mt-0"
+                          dense
+                          required
+                          @change="applyToHeaderChange"
+                        >
+                        </v-autocomplete>
+                      </v-col>
+                      <v-col cols="12" md="6" class="pl-md-1">
+                        <v-autocomplete
+                          v-if="data.applyTo === 2"
+                          v-model="data.custCode"
+                          :items="customers"
+                          :rules="rules.required"
+                          :item-text="item => `${item.code} - ${item.name}`"
+                          item-value="code"
+                          class="mt-0"
+                          dense
+                          required
+                        >
+                        </v-autocomplete>
+                        <v-autocomplete
+                          v-else
+                          v-model="data.custTypeId"
+                          :disabled="data.applyTo === 1"
+                          :items="customerTypes "
+                          :required="data.applyTo !== 1"
+                          :rules="data.applyTo !== 1 ? rules.required : []"
+                          :item-text="item => `${item.initial} - ${item.name}`"
+                          item-value="id"
+                          class="mt-0"
+                          dense
+                        >
+                        </v-autocomplete>
+                      </v-col>
+                    </v-row>
                   </v-card-text>
                 </v-card>
               </v-col>
@@ -632,6 +677,9 @@ export default {
     },  
     accounts: [],
     applyTo: [{ id: 1, name: 'Barang' }, { id: 2, name: 'Faktur' }, { id: 3, name: 'Kategori Barang' }],
+    applyToHeader: [{ id: 1, name: 'Semua' }, { id: 2, name: 'Pelanggan' }, { id: 3, name: 'Tipe Pelanggan' }],
+    customers: [],
+    customerTypes: [],
     data: {},
     items: [],
     itemCategories: [],
@@ -643,6 +691,8 @@ export default {
   created: function () {
     this.getList()
     this.getAccountLists()
+    this.getCustomerLists()
+    this.getCustomerTypeLists()
     this.getItemLists()
     this.getItemCategoryLists()
     auth.getAction(this.endpoint, this.menuId.promo, [this.action.insert, this.action.update, this.action.void])
@@ -810,7 +860,7 @@ export default {
         mark: item.status === 'Void' ? 'V' : 'A',
         createdDate: format(parseISO(item.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss'),
-        approvedDate: format(parseISO(item.approvedDate), 'dd-MMM-yyyy HH:mm:ss')
+        approvedDate: item.approvedDate === null ? format(new Date(), 'yyyy-MM-dd') : format(parseISO(item.approvedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
 
       // Get item details
@@ -970,6 +1020,42 @@ export default {
     changeValueAmount(item) { 
       item.isPercentage = false
       item.valuePercentage = 0
+    },
+    getCustomerLists() {
+      api.getAll(`${this.endpoint.general.customer.customer}/lists`, {
+        params: {
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.customers = response.data.tableData
+        })
+    },
+    getCustomerTypeLists() {
+      api.getAll(`${this.endpoint.general.customer.type}/lists`, {
+        params: {
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.customerTypes = response.data.tableData
+        })
+    },
+    applyToHeaderChange() {
+      if (this.data.applyTo === 1) {
+        this.data.custCode = null
+        this.data.custTypeId = null
+      } else if (this.data.applyTo === 2) {
+        this.data.custTypeId = null
+      } else if (this.data.applyTo === 3) {
+        this.data.custCode = null
+      }
     }
   }
 }
