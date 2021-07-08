@@ -94,7 +94,30 @@
         </template>
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
+        </template>
+        <template v-slot:[`item.salesmanName`]="{ item }">
+          {{ `${item.salesmanInitial} - ${item.salesmanName}` }}
+        </template>
+        <template v-slot:[`item.groupName`]="{ item }">
+          {{ `${item.groupInitial} - ${item.groupName}` }}
         </template>     
+        <template v-slot:[`item.mark`]="{ item }">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-chip
+                v-bind="attrs"
+                v-on="on"
+                :color="item.mark.toUpperCase() === 'CLS' ? 'grey darken-1' : item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
+                class="px-1"
+                dark
+                small
+              >
+                {{ item.mark }}
+              </v-chip>
+            </template>
+            <span class="text-caption">{{ item.status }}</span>
+          </v-tooltip>
+        </template>
       </v-data-table>
     </v-card>
 
@@ -185,7 +208,7 @@
             v-model="valid"
           >
             <v-row dense>
-              <v-col cols="12">
+              <v-col cols="12" md="6">
                 <v-card>
                   <v-card-title>Umum</v-card-title>
 
@@ -195,7 +218,7 @@
                         <v-text-field
                           ref="Code"
                           v-model="data.code"
-                          label="No. Perintah Kunjungan"
+                          label="Kode"
                           class="mt-0"
                           readonly
                         ></v-text-field>
@@ -235,11 +258,22 @@
 
                     <v-row no-gutters>
                       <v-col cols="12" md="6">
+                        <v-autocomplete
+                          ref="Source"
+                          v-model="data.sourceTransaction"
+                          :items="sourceTransactionRef"
+                          item-text="textValue"
+                          item-value="textValue"
+                          label="Sumber Transaksi"
+                          class="mt-0"
+                        ></v-autocomplete>
+                      </v-col>
+                      <v-col cols="12" md="6" class="pl-md-1">
                         <v-text-field
                           v-model="employee.aliases"
                           :readonly="data.mark === 'CMP' || data.mark === 'V'"
                           :rules="rules.required"
-                          label="ID Penjual"
+                          label="Penjual"
                           class="mt-0"
                           required
                         >
@@ -258,38 +292,113 @@
                           </template>
                         </v-text-field>
                       </v-col>
-                      <v-col cols="12" md="6" class="pl-md-1">
-                        <v-text-field
-                          ref="Source"
-                          v-model="data.sourceTransaction"
-                          label="Sumber Transaksi"
-                          class="mt-0"
-                          readonly
-                        ></v-text-field>
-                      </v-col>
                     </v-row>
 
                     <v-row no-gutters>
-                      <v-col cols="12" md="6">
+                      <v-col cols="12">
                         <v-text-field
                           ref="IDGroup"
                           v-model="employee.groupAliases"
-                          label="ID Grup"
-                          class="mt-0"
-                          readonly
-                        ></v-text-field>
-                      </v-col>
-                      <v-col cols="12" md="6" class="pl-md-1">
-                        <v-text-field
-                          ref="VisitPlanCode"
-                          v-model="data.visitPlanCode"
-                          label="Sumber Dokumen"
+                          label="Grup Penjual"
                           class="mt-0"
                           readonly
                         ></v-text-field>
                       </v-col>
                     </v-row>
                   </v-card-text>
+                </v-card>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-card>
+                  <v-tabs v-model="tab.signatureItem">
+                    <v-tab key="user">Pengguna</v-tab>
+                    <v-tab key="notes">Catatan</v-tab>
+
+                    <v-tab-item
+                      key="user"
+                      transition="false"
+                    >
+                      <v-card>
+                        <v-card-text>
+                          <v-row no-gutters>
+                            <v-col cols="6">
+                              <v-text-field
+                                v-model="data.createdInitial"
+                                label="Dibuat Oleh"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="6" class="pl-md-1">
+                              <v-text-field
+                                v-model="data.createdDate"
+                                label="Tanggal Dibuat"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                          </v-row>
+                          
+                          <v-row no-gutters>
+                            <v-col cols="6">
+                              <v-text-field
+                                v-model="data.updatedInitial"
+                                label="Diperbarui Oleh"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="6" class="pl-md-1">
+                              <v-text-field
+                                v-model="data.updatedDate"
+                                label="Tanggal Diperbarui"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                          </v-row>
+
+                          <v-row no-gutters>
+                            <v-col cols="6">
+                              <v-text-field
+                                v-model="data.approvedInitial"
+                                label="Disetujui Oleh"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="6" class="pl-md-1">
+                              <v-text-field
+                                v-model="data.approvedDate"
+                                label="Tanggal Disetujui"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                          </v-row>
+                        </v-card-text>
+                      </v-card>
+                    </v-tab-item>
+
+                    <v-tab-item
+                      key="notes"
+                      transition="false"
+                    >
+                      <v-card>
+                        <v-card-text>
+                          <v-textarea
+                            v-model="data.notes"
+                            :rules="rules.max256chars"
+                            :readonly="data.mark === 'CMP' || data.mark === 'V'"
+                            label="Catatan"
+                            counter="256"
+                            class="mt-0"
+                            rows="6"
+                          ></v-textarea>
+                        </v-card-text>
+                      </v-card>
+                    </v-tab-item>
+                  </v-tabs>
                 </v-card>
               </v-col>
             </v-row>
@@ -300,7 +409,6 @@
                   <v-tabs v-model="tab.advancedItem">
                     <v-tab key="customer">Pelanggan</v-tab>
                     <v-tab key="invoice">Faktur</v-tab>
-                    <v-tab key="notes">Catatan</v-tab>
 
                     <v-tab-item
                       key="customer"
@@ -556,25 +664,6 @@
                         </v-card-text>
                       </v-card>
                     </v-tab-item>
-
-                    <v-tab-item
-                      key="notes"
-                      transition="false"
-                    >
-                      <v-card>
-                        <v-card-text>
-                          <v-textarea
-                            v-model="data.notes"
-                            :rules="rules.max256chars"
-                            :readonly="data.mark === 'CMP' || data.mark === 'V'"
-                            label="Catatan"
-                            counter="256"
-                            class="mt-0"
-                            rows="7"
-                          ></v-textarea>
-                        </v-card-text>
-                      </v-card>
-                    </v-tab-item>
                   </v-tabs>
                 </v-card>
               </v-col>
@@ -591,7 +680,7 @@
     ></find-salesman>
     <find-salesman
       ref="findReplaceman"
-      @dblclick:row="bindReplaceman"
+      @dblclick:rep="bindReplaceman"
     ></find-salesman>
     <find-customer
       ref="findCustomer"
@@ -635,20 +724,18 @@ export default {
       visitDate: false
     },
     tab: {
-      advancedItem: null
+      advancedItem: null,
+      signatureItem: null
     },
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
-        { text: 'No. Perintah Kunjungan', value: 'code', divider: true, width: '110', excelColWidth:'10' },
+        { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'10' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'30' },
-        { text: 'ID Penjual', value: 'salesmanInitial', divider: true, width: '130', excelColWidth:'30' },
-        { text: 'Nama Penjual', value: 'salesmanName', divider: true, width: '200', excelColWidth:'30' },
-        { text: 'ID Grup', value: 'groupInitial', divider: true, width: '90', excelColWidth:'10' },
-        { text: 'Nama Grup', value: 'groupName', divider: true, width: '150', excelColWidth:'18' },
-        { text: 'No. Sumber Dokumen', value: 'visitPlanCode', divider: true, width: '60', excelColWidth:'10' },
+        { text: 'Penjual', value: 'salesmanName', divider: true, width: '250', excelColWidth:'35' },
+        { text: 'Grup', value: 'groupName', divider: true, width: '250', excelColWidth:'20' },
         { text: 'Sumber Transaksi', value: 'sourceTransaction', divider: true, width: '150', excelColWidth:'18' },
-        { text: 'Status', value: 'status', width: '50', excelColWidth:'10' }
+        { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
       ],
       data: [],
       options: {
@@ -661,7 +748,7 @@ export default {
     gridCustomer: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '30' },
-        { text: 'ID Pelanggan', value: 'custCode', divider: true, width: '110'  },
+        { text: 'Inisial', value: 'custCode', divider: true, width: '110'  },
         { text: 'Nama', value: 'customerName', divider: true, width: '120' },
         { text: 'Alamat', value: 'address', divider: true, width: '200' },
         { text: 'Wilayah', value: 'areaName1', divider: true, width: '120' },
@@ -697,10 +784,12 @@ export default {
     },
     valid: false,
     areaReference: [],
+    cAddress: [],
     employee: [],
     employeeRef: [],
     itemInvoice: [],
     items: [],
+    sourceTransactionRef: [{ textValue: 'Manual' }, { textValue: 'Jadwal Kunjungan' }],
     data: {}
   }),
 
@@ -777,6 +866,7 @@ export default {
       this.gridCustomer.data = []
       this.gridInvoice.data = []
       this.tab.advancedItem = 0
+      this.tab.signatureItem = 0
 
       // Reset form validation
       if (resetValidation) {
@@ -819,7 +909,7 @@ export default {
       this.dialog.add = true
       this.reset(false)
       this.data.action = 'add'  
-      this.data.sourceTransaction = 'Manual'  
+      this.data.sourceTransaction = 'Jadwal Kunjungan'  
 
       await this.getCustomer()
       await this.getInvoice()
@@ -920,8 +1010,9 @@ export default {
     showFindSalesDialog() {
       this.$refs.findSalesman.open()
     },
-    showFindReplacemanDialog() {
-      this.$refs.findReplaceman.open()
+    showFindReplacemanDialog(item) {
+      const idx = this.gridCustomer.data.findIndex(i => i.id === item.id)
+      this.$refs.findReplaceman.openReplaceman(idx)
     },
     showFindCustomerDialog(item) {
       this.$refs.findCustomer.open(item)
@@ -937,9 +1028,15 @@ export default {
         aliases: `${item.initial} - ${item.fullName}`,
         groupAliases: `${item.groupInitial} - ${item.groupName}`
       }
-    },
-    bindReplaceman() {
 
+      if (this.data.sourceTransaction === 'Jadwal Kunjungan') {
+        this.mappingVisitSchedule()
+      }
+    },
+    bindReplaceman(rowItem) {
+      this.gridCustomer.data[rowItem.gridIndex].replacingForSalesmanId = rowItem.id
+      this.gridCustomer.data[rowItem.gridIndex].replacemanInitial = rowItem.initial
+      this.gridCustomer.data[rowItem.gridIndex].replacemanName = rowItem.fullName
     },
     bindCustomer(rowItem) {
       this.custCodeChange(rowItem)
@@ -947,13 +1044,63 @@ export default {
     bindInvoice(rowItem) {
       this.invCodeChange(rowItem)
     },
+    mappingVisitSchedule() {
+      const arrId = []
+      let customerList = []
+      let dataSchedule = []
+
+      api.getAll(`${this.endpoint.general.employee}/salesman-schedule-by-id`, {
+        params: {
+          id: this.employee.id
+        }
+      })
+        .then(response => {
+          dataSchedule = response.data.tableData
+
+          if (dataSchedule) {
+            arrId.push(dataSchedule[0].salesmanScheduleId)
+          }
+
+          api.getAll(`${this.endpoint.general.employee}/salesman-schedule-customer`, {
+            params: {
+              ids: JSON.stringify(arrId)
+            }
+          })
+            .then(response => {
+              customerList = response.data.tableData
+
+              if (customerList) {
+                for (let i = 0; i < customerList.length; i++) {
+                  this.getCustomerAddressByCode(customerList[i].code)
+                    .then(result => { 
+                      const item = {
+                        id: randomNumber(-1, -1000),
+                        custCode: customerList[i].code,
+                        replacingForSalesmanId: null,
+                        visited: false,
+                        customerInitial: customerList[i].initial,
+                        customerName: customerList[i].name,
+                        address: result,
+                        areaName1: customerList[i].areaName1,
+                        areaName2: customerList[i].areaName2,
+                        replacemanInitial: null,
+                        replacemanName: null,
+                        state: 'A'
+                      }
+                      this.gridCustomer.data.push(item)
+                    })
+                }
+              }
+            })
+        })
+    },
     addItem() {
       if (this.gridCustomer.data.length === 0 || (this.gridCustomer.data.slice(-1)[0]?.custCode ?? null)) {
         const item = {
           id: randomNumber(-1, -1000),
           custCode: null,
           replacingForSalesmanId: null,
-          visited: null,
+          visited: false,
           customerInitial: null,
           customerName: null,
           address: null,
@@ -1115,6 +1262,25 @@ export default {
 
       if (item) {
         return item.name
+      } else {
+        return ''
+      }
+    },
+    getCustomerAddressByCode(code) {
+      return api.getAll(`${this.endpoint.general.customer.customer}/addresses`, {
+        params: { code: code}
+      })
+        .then(response => {
+          this.cAddress = response.data.tableData
+
+          return this.getCustomerAddressName()
+        })
+    },
+    getCustomerAddressName() {
+      const item = this.cAddress.find(x => x.isDefault)
+
+      if (item) {
+        return item.address1
       } else {
         return ''
       }
