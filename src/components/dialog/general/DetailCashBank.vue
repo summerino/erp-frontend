@@ -130,8 +130,14 @@
                 <template v-slot:[`item.date`]="{ item }">
                   {{ item.date | formatDate('dd-MMM-yyyy') }}
                 </template>
+                <template v-slot:[`item.total`]="{ item }">
+                  {{ item.total | formatCurrency }}
+                </template>
                 <template v-slot:[`item.amount`]="{ item }">
                   {{ item.amount | formatCurrency }}
+                </template>
+                <template v-slot:[`item.paidAmount`]="{ item }">
+                  {{ item.paidAmount | formatCurrency }}
                 </template>
                 <template v-slot:[`item.used`]="{ item }">
                   {{ item.used | formatCurrency }}
@@ -168,7 +174,7 @@
           <v-row no-gutters>
             <v-col cols="12" md="4">
               <v-autocomplete
-                
+                v-model="data.typeAmount"
                 :items="transType"
                 label="D/C"
                 class="mt-0"
@@ -213,7 +219,7 @@
           dark
           small
           tile
-          @click="select"
+          @click="save"
         >
           <v-icon left>mdi-check-outline</v-icon>
             Simpan
@@ -239,9 +245,10 @@ import { mapState } from 'vuex'
 import api from '@/services/axios.service'
 import { format, parseISO } from 'date-fns'
 import { sumBy as _sumBy } from 'lodash'
+import { randomNumber } from '@/helpers/math-helpers'
 
 export default {
-  props: ['coas', 'cashBankTypes'],
+  props: ['coas', 'cashBankTypes', 'coaCodes'],
   data() {
     return {
       menu: {
@@ -255,15 +262,16 @@ export default {
         startDate: null,
         endDate: null,
         type: 0,
-        total: 0
+        total: 0,
+        typeAmount: 'D'
       },
       grid: {
         columns: [
-          { text: 'Kode', value: 'code', divider: true, width: '120' },
-          { text: 'Pelanggan', value: 'custName', divider: true, width: '150' },
+          { text: 'Kode', value: 'code', divider: true, width: '170' },
+          { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
           { text: 'Tanggal', value: 'date', divider: true, width: '120' },
-          { text: 'Nilai', value: 'amount', divider: true, width: '120' },
-          { text: 'Nilai Sudah Diterima', value: 'used', divider: true, width: '120' },
+          { text: 'Nilai', value: 'total', divider: true, width: '120' },
+          { text: 'Nilai Sudah Diterima', value: 'paidAmount', divider: true, width: '120' },
           { text: 'Sisa', value: 'remaining', divider: true, width: '120' },
           { text: 'Saat Ini Diterima', value: 'transAmount', divider: true, width: '150' },
           { text: 'Catatan', value: 'notes', divider: true, width: '150' }
@@ -304,12 +312,12 @@ export default {
       ],      
       transType: [
         {
-          value: 'Debit',
-          text: 'D'
+          value: 'D',
+          text: 'Debit'
         },
         {
-          value: 'Credit',
-          text: 'C'
+          value: 'C',
+          text: 'Credit'
         }
       ],
       selected: []
@@ -347,8 +355,18 @@ export default {
       this.data.startDate = null
       this.data.endDate = null
       this.filters = this.customerFilters 
+      this.selected = []
       this.bindColumn()
-      console.log('this.cashBankTypes from detail', this.cashBankTypes)
+      this.resetGeneralTransaction()
+    },
+    resetGeneralTransaction() {
+      this.data.id = randomNumber(-1, -1000)
+      this.data.notes = ''
+      this.data.amount = 0
+      this.data.total = 0
+      this.data.typeAmount = 'D'
+      this.data.coaCode = null
+      this.data.transAmount = 0
     },
     open(options) {
       this.dialog = true
@@ -366,24 +384,7 @@ export default {
 
       const filter = this.getFilters()
       
-      if (this.data.startDate) {
-        filter.push(
-          {
-            field: 'date',
-            operator: 'gte',
-            keyword: this.data.startDate
-          }
-        )
-      }
-      if (this.data.endDate) {
-        filter.push(
-          {
-            field: 'date',
-            operator: 'lte',
-            keyword: this.data.endDate
-          }
-        )
-      }
+      
       api.getAll(`${url}`, {
         params: {
           filters: JSON.stringify(filter),
@@ -398,7 +399,6 @@ export default {
         })
     },
     getUrl() {
-      debugger
       let url = ''
       if (this.data.type === 'AP') {
         url = this.endpoint.purchase.invoice
@@ -448,50 +448,68 @@ export default {
         )
       }
       
+      if (this.data.startDate) {
+        filter.push(
+          {
+            field: 'date',
+            operator: 'gte',
+            keyword: this.data.startDate
+          }
+        )
+      }
+      if (this.data.endDate) {
+        filter.push(
+          {
+            field: 'date',
+            operator: 'lte',
+            keyword: this.data.endDate
+          }
+        )
+      }
+
       return filter
     },
     changeType() {
       this.bindColumn()
       this.grid.data = []
+      this.selected = []
+      this.resetGeneralTransaction()
     },
     bindColumn() {
       if (this.data.type === 'AR' || this.data.type === 'SR') {
         this.grid.columns = [
-          { text: '', value: 'action', divider: true, width: '90' },
-          { text: 'Kode', value: 'code', divider: true, width: '120' },
-          { text: 'Pelanggan', value: 'custName', divider: true, width: '150' },
+          { text: 'Kode', value: 'code', divider: true, width: '170' },
+          { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
           { text: 'Tanggal', value: 'date', divider: true, width: '120' },
-          { text: 'Nilai', value: 'total', divider: true, width: '120' },
-          { text: 'Nilai Sudah Diterima', value: 'paidAmount', divider: true, width: '120' },
-          { text: 'Sisa', value: 'remaining', divider: true, width: '120' },
-          { text: 'Saat Ini Diterima', value: 'transAmount', divider: true, width: '150' },
+          { text: 'Nilai', value: 'total', divider: true, align: 'right', width: '120' },
+          { text: 'Nilai Sudah Diterima', value: 'paidAmount', align: 'right', divider: true, width: '120' },
+          { text: 'Sisa', value: 'remaining', divider: true, align: 'right', width: '120' },
+          { text: 'Saat Ini Diterima', value: 'transAmount', align: 'right', divider: true, width: '150' },
           { text: 'Catatan', value: 'notes', divider: true, width: '150' }        
         ]
         this.filters = this.customerFilters
         this.data.by = 'custName'
       } else if (this.data.type === 'AP' || this.data.type === 'PR') {
         this.grid.columns = [
-          { text: '', value: 'action', divider: true, width: '90' },
-          { text: 'Kode', value: 'code', divider: true, width: '120' },
-          { text: 'Pemasok', value: 'supName', divider: true, width: '150' },
+          { text: 'Kode', value: 'code', divider: true, width: '170' },
+          { text: 'Pemasok', value: 'supName', divider: true, width: '200' },
           { text: 'Tanggal', value: 'date', divider: true, width: '120' },
-          { text: 'Nilai', value: 'total', divider: true, width: '120' },
+          { text: 'Nilai', value: 'total', divider: true, align: 'right', width: '120' },
           { text: 'Nilai Sudah Dibayar', value: 'paidAmount', divider: true, width: '120' },
-          { text: 'Sisa', value: 'remaining', divider: true, width: '120' },
-          { text: 'Saat Ini Dibayar', value: 'transAmount', divider: true, width: '150' },
+          { text: 'Sisa', value: 'remaining', divider: true, align: 'right', width: '120' },
+          { text: 'Saat Ini Dibayar', value: 'transAmount', align: 'right', divider: true, width: '150' },
           { text: 'Catatan', value: 'notes', divider: true, width: '150' }        
         ]
         this.filters = this.supplierFilters
         this.data.by = 'supName'
       } else if (this.data.type === 'DPC') {
         this.grid.columns = [
-          { text: '', value: 'action', divider: true, width: '90' },
-          { text: 'Kode', value: 'code', divider: true, width: '120' },
-          { text: 'Pelanggan', value: 'custName', divider: true, width: '150' },
+          { text: 'Kode', value: 'code', divider: true, width: '170' },
+          { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
           { text: 'Tanggal', value: 'date', divider: true, width: '120' },
-          { text: 'Nilai', value: 'amount', divider: true, width: '120' },
-          { text: 'Nilai Sudah Diterima', value: 'used', divider: true, width: '120' },
-          { text: 'Sisa', value: 'remaining', divider: true, width: '120' },
+          { text: 'Nilai', value: 'amount', divider: true, align: 'right', width: '120' },
+          { text: 'Nilai Sudah Diterima', value: 'used', divider: true, align: 'right', width: '120' },
+          { text: 'Sisa', value: 'remaining', divider: true, align: 'right', width: '120' },
           { text: 'Saat Ini Diterima', value: 'transAmount', divider: true, width: '150' },
           { text: 'Catatan', value: 'notes', divider: true, width: '150' }        
         ]
@@ -499,13 +517,12 @@ export default {
         this.data.by = 'custName'
       } else if (this.data.type === 'RDPS') {
         this.grid.columns = [
-          { text: '', value: 'action', divider: true, width: '90' },
-          { text: 'Kode', value: 'code', divider: true, width: '120' },
-          { text: 'Pemasok', value: 'supName', divider: true, width: '150' },
+          { text: 'Kode', value: 'code', divider: true, width: '170' },
+          { text: 'Pemasok', value: 'supName', divider: true, width: '200' },
           { text: 'Tanggal', value: 'date', divider: true, width: '120' },
-          { text: 'Nilai', value: 'amount', divider: true, width: '120' },
-          { text: 'Nilai Sudah Dibayar', value: 'used', divider: true, width: '120' },
-          { text: 'Sisa', value: 'remaining', divider: true, width: '120' },
+          { text: 'Nilai', value: 'amount', divider: true, align: 'right', width: '120' },
+          { text: 'Nilai Sudah Dibayar', value: 'used', divider: true, align: 'right', width: '120' },
+          { text: 'Sisa', value: 'remaining', divider: true, align: 'right', width: '120' },
           { text: 'Saat Ini Dibayar', value: 'transAmount', divider: true, width: '150' },
           { text: 'Catatan', value: 'notes', divider: true, width: '150' }        
         ]
@@ -513,13 +530,12 @@ export default {
         this.data.by = 'supName'
       } else if (this.data.type === 'DPS') {
         this.grid.columns = [
-          { text: '', value: 'action', divider: true, width: '90' },
-          { text: 'Kode', value: 'code', divider: true, width: '120' },
-          { text: 'Pemasok', value: 'supName', divider: true, width: '150' },
+          { text: 'Kode', value: 'code', divider: true, width: '170' },
+          { text: 'Pemasok', value: 'supName', divider: true, width: '200' },
           { text: 'Tanggal', value: 'date', divider: true, width: '120' },
-          { text: 'Nilai', value: 'amount', divider: true, width: '120' },
-          { text: 'Nilai Sudah Dibayar', value: 'used', divider: true, width: '120' },
-          { text: 'Sisa', value: 'remaining', divider: true, width: '120' },
+          { text: 'Nilai', value: 'amount', divider: true, align: 'right', width: '120' },
+          { text: 'Nilai Sudah Dibayar', value: 'used', divider: true, align: 'right', width: '120' },
+          { text: 'Sisa', value: 'remaining', divider: true, align: 'right', width: '120' },
           { text: 'Saat Ini Dibayar', value: 'transAmount', divider: true, width: '150' },
           { text: 'Catatan', value: 'notes', divider: true, width: '150' }        
         ]
@@ -527,26 +543,17 @@ export default {
         this.data.by = 'supName'
       } else if (this.data.type === 'RDPC') {
         this.grid.columns = [
-          { text: '', value: 'action', divider: true, width: '90' },
-          { text: 'Kode', value: 'code', divider: true, width: '120' },
-          { text: 'Pelanggan', value: 'custName', divider: true, width: '150' },
+          { text: 'Kode', value: 'code', divider: true, width: '170' },
+          { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
           { text: 'Tanggal', value: 'date', divider: true, width: '120' },
           { text: 'Nilai', value: 'amount', divider: true, width: '120' },
-          { text: 'Nilai Sudah Dipakai', value: 'used', divider: true, width: '120' },
-          { text: 'Sisa', value: 'remaining', divider: true, width: '120' },
-          { text: 'Saat Ini Diterima', value: 'transAmount', divider: true, width: '150' },
+          { text: 'Nilai Sudah Dipakai', value: 'used', align: 'right', divider: true, width: '120' },
+          { text: 'Sisa', value: 'remaining', divider: true, align: 'right', width: '120' },
+          { text: 'Saat Ini Diterima', value: 'transAmount', align: 'right', divider: true, width: '150' },
           { text: 'Catatan', value: 'notes', divider: true, width: '150' }        
         ]
         this.filters = this.customerFilters
         this.data.by = 'custName'
-      } else if (this.data.type === 'TU') {
-        this.grid.columns = [
-          { text: '', value: 'action', divider: true, width: '90' },
-          { text: 'Tipe D/C', value: 'type', divider: true, width: '120' },
-          { text: 'Akun', value: 'account', divider: true, width: '150' },
-          { text: 'Catatan', value: 'notess', divider: true, width: '300' },
-          { text: 'Nilai', value: 'amount', divider: true, width: '120' }
-        ]
       }            
     },
     bindDate() {
@@ -558,14 +565,93 @@ export default {
       const tempStartDate = `${tempDate.getFullYear()}-${month}-01`
       this.data.startDate = format(new Date(tempStartDate), 'yyyy-MM-dd')
     },
-    select() {
-      this.$emit('save', this.selected)
+    save() {
+      if (this.data.type === 'TU') {
+        let coaName = ''
+        const temp = this.coas.find(x => x.code === this.data.coaCode)
+        if (temp) {
+          coaName = `${temp.name}` 
+        }
+        const model = {
+          id: randomNumber(-1, -1000),
+          transAmount: this.data.amount,
+          notes: this.data.notes,
+          type: this.data.type,
+          currCode: 'IDR',
+          rate: 1,
+          transCode: '',
+          remaining: 0,
+          amount: this.data.amount,
+          typeAmount: this.data.typeAmount,
+          coaCode: this.data.coaCode,
+          coaName: coaName
+        }
+        this.selected.push(model)
+      }
+      this.$emit('saveItem', this.selected)
       this.close()
     },
     bindAdditionalData() {
-      for (let i = 0; i < this.selected.length; i++) {
-        this.selected[i].transAmount = this.selected[i].remaining
-        this.selected[i].notes = this.selected[i].code
+      if (this.data.type !== 'TU') {
+        const field = this.getFieldForNote()
+        for (let i = 0; i < this.selected.length; i++) {
+          this.selected[i].id = randomNumber(-1, -1000)
+          this.selected[i].notes = this.selected[i][field]
+          const temp = this.coaCodes.find(x => x.code === `${this.data.type}_COA`)
+          const coas = this.coas
+          if (temp) {
+            this.selected[i].coaCode = temp.value
+            const tempName = coas.find(x => x.code === temp.value)
+            if (tempName) {
+              this.selected[i].coaName = `${tempName.name}` 
+            }
+          }
+          this.selected[i].type = this.data.type
+          this.selected[i].currCode = 'IDR'
+          this.selected[i].rate = 1
+          this.selected[i].amount = this.selected[i].total
+          this.selected[i].typeAmount = this.getTypeAmount()
+          this.selected[i].remaining = this.selected[i].amount - this.selected[i].paidAmount
+          this.selected[i].transAmount = this.selected[i].remaining
+          this.selected[i].transCode = this.selected[i].code
+          this.bindRemaining(this.selected[i])
+        }
+      }
+      
+    },
+    getTypeAmount() {
+      if (this.data.type === 'AR' || this.data.type === 'DPC' || this.data.type === 'RDPS' || this.data.type === 'PR') {
+        return 'C'
+      } else {
+        return 'D'
+      }
+    },
+    bindRemaining(data) {
+      if (this.data.type === 'AP' || this.data.type === 'AR') {
+        data.remaining = data.total - data.paidAmount
+      } else {
+        data.remaining = data.amount - data.used
+      }
+      // } else if (this.data.type === 'DPC') {
+      //   data.remaining = data.amount - data.used
+      // } else if (this.data.type === 'DPS') {
+        
+      // } else if (this.data.type === 'RDPS') {
+        
+      // } else if (this.data.type === 'RDPC') {
+        
+      // } else if (this.data.type === 'PR') {
+        
+      // } else if (this.data.type === 'SR') {
+        
+      // }
+
+    },
+    getFieldForNote() {
+      if (this.data.type === 'AR' || this.data.type === 'DPC' || this.data.type === 'RDPC' || this.data.type === 'SR') {
+        return 'custName'
+      } else {
+        return 'supName'
       }
     },
     changeTransAmount() {
