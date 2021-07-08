@@ -917,8 +917,6 @@ export default {
         this.gridInvoice.data.splice(idx, 1)
       }
     },
-    salesCodeChange() {
-    },
     showFindSalesDialog() {
       this.$refs.findSalesman.open()
     },
