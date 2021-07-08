@@ -918,7 +918,6 @@ export default {
       }
     },
     salesCodeChange() {
-      console.log('salesCodeChange')
     },
     showFindSalesDialog() {
       this.$refs.findSalesman.open()

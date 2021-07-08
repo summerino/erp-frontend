@@ -427,8 +427,6 @@ export default {
         if (this.data.applyTo !== 3) {
           this.itemUnits = await this.getItemUnitLists(item.itemId)
         }
-        console.log(this.itemUnits[0].id)
-        console.log(item.saleUnit)
         this.data.saleUnit = item.saleUnit === undefined || item.saleUnit === null ? item.promoTierList.length === 0 ? this.itemUnits[0].id : item.promoTierList[0].saleUnit : item.saleUnit        
         const data_u = await this.itemUnits.find(i => i.id === this.data.saleUnit)
         this.unitName = data_u.unitEquivalent

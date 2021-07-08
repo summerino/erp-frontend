@@ -4,7 +4,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="2">
-            Nota Debit
+            Kas Bank
           </v-col>
           <v-col cols="12" md="6" >
             <v-row no-gutters>
@@ -57,7 +57,6 @@
                   tile
                   @click="add"
                   @shortkey="add"
-                  :disabled="!auth.allowInsert"
                 >
                   <v-icon left>mdi-plus</v-icon>
                   Data Baru
@@ -115,7 +114,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="(item.mark.toUpperCase() !== 'PP') || !auth.allowVoid"
+                :disabled="(item.mark.toUpperCase() !== 'PP  ') || !auth.allowVoid"
                 color="red"
                 icon
                 small
@@ -177,7 +176,7 @@
           <v-btn icon dark @click="dialog.add = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Nota Debit</v-toolbar-title>
+          <v-toolbar-title>Kas Bank</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-tooltip bottom>
@@ -234,26 +233,6 @@
                   </v-list-item-title>
                 </v-list-item>
               </v-list>
-               <v-list class="cursor-pointer">
-                <v-list-item
-                  v-shortkey="['ctrl', 'alt', 'r']"
-                >
-                  <v-list-item-title>
-                    <v-tooltip bottom>
-                      <template v-slot:activator="{ on, attrs }">
-                        <span
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                          Pembayaran
-                        </span>
-                      </template>
-                      <span class="text-caption">(Ctrl + Alt + R)</span>
-                    </v-tooltip>
-                  </v-list-item-title>
-                </v-list-item>
-              </v-list>
-             
             </v-menu>
             <v-divider vertical></v-divider>
           </v-toolbar-items>
@@ -271,23 +250,34 @@
 
                   <v-card-text>
                     <v-row no-gutters>
-                      <v-col cols="12" md="6">
+                      <v-col cols="12" md="12">
                         <v-text-field
                           ref="code"
                           v-model.trim="data.code"
-                          label="Kode Transaksi"
+                          label="Kode"
                           class="mt-0"
                           readonly
+                          dense
                         ></v-text-field>
                       </v-col>
-                      <v-col cols="12" md="6" class="pl-md-1">
+                      <!-- <v-col cols="12" md="6" class="pl-md-1">
+                        <v-text-field
+                          ref="code"
+                          v-model.trim="data.voucode"
+                          label="Kode Voucher"
+                          class="mt-0"
+                          dense
+                        ></v-text-field>
+                      </v-col> -->
+                    </v-row>
+                    <v-row no-gutters>
+                      <v-col cols="12" md="6">
                         <v-menu
                           v-model="menu.date"
                           :close-on-content-click="false"
                           transition="scale-transition"
                           min-width="290px"
                           offset-y
-                          :disabled="!auth.allowChangeDate"
                         >
                           <template v-slot:activator="{ on, attrs }">
                             <v-text-field
@@ -295,11 +285,11 @@
                               v-on="on"
                               :rules="rules.required"
                               :value="formatDate"
-                              :disabled="!auth.allowChangeDate"
                               label="Tanggal"
                               class="mt-0"
                               readonly
                               required
+                              dense
                             ></v-text-field>
                           </template>
                           <v-date-picker
@@ -310,148 +300,163 @@
                           ></v-date-picker>
                         </v-menu>
                       </v-col>
-                    </v-row>
-
-                    <v-row no-gutters>
-                      <v-col cols="12" md="6">
+                      <v-col cols="12" md="6" class="pl-md-1">
                         <v-autocomplete
-                          v-model="data.srcTrans"
-                          :items="sources"
+                          v-model="data.type"
+                          :items="types"
                           :rules="rules.required"
-                          label="Sumber Transaksi"
-                          item-text="name"
-                          item-value="id"
+                          label="Tipe"
                           class="mt-0"
-                          readonly
-                          required
+                          dense
                         ></v-autocomplete>
+                      </v-col>
+                    </v-row>
+                    <v-row no-gutters>
+                      <v-col cols="12" md="12">
+                        <v-autocomplete
+                          v-model="data.coaCode"
+                          :items="coas"
+                          label="Akun"
+                          :item-text="item => `${item.code} - ${item.name}`"
+                          item-value="code"
+                          class="mt-0"
+                          @change="changeCoaCode"
+                          dense
+                        ></v-autocomplete>
+                      </v-col>
+                    </v-row>
+                    <v-row no-gutters v-if="isShowCheque">
+                      <v-col cols="12" md="6">
+                        <v-menu
+                          v-model="menu.chequeDate"
+                          :close-on-content-click="false"
+                          transition="scale-transition"
+                          min-width="290px"
+                          offset-y
+                        >
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-text-field
+                              v-bind="attrs"
+                              v-on="on"
+                              :rules="rules.required"
+                              :value="formatChequeDate"
+                              label="Tanggal Cek"
+                              class="mt-0"
+                              readonly
+                              required
+                              dense
+                            ></v-text-field>
+                          </template>
+                          <v-date-picker
+                            v-model="data.chequeDate"
+                            no-title
+                            scrollable
+                            @change="menu.chequeDate = false"
+                          ></v-date-picker>
+                        </v-menu>
                       </v-col>
                       <v-col cols="12" md="6" class="pl-md-1">
                         <v-text-field
-                          v-model.trim="data.transCode"
-                          label="Kode Transaksi Sumber"
+                          ref="code"
+                          v-model.trim="data.chequeNo"
+                          label="Kode Cek"
                           class="mt-0"
-                          readonly
+                          dense
                         ></v-text-field>
-                      </v-col>
-                    </v-row>
-
-                    <v-row no-gutters>
-                      <v-col cols="12" md="6">
-                        <v-currency-field
-                          v-model="data.amount"
-                          label="Nilai"
-                          class="text-right mt-0"
-                          @keyup="amountChange"
-                          @keypress="amountChange"
-                          @keydown="amountChange"
-                        ></v-currency-field>
-                      </v-col>
-                      <v-col cols="12" md="6" class="pl-md-1">
-                        <v-currency-field
-                          v-model="data.used"
-                          label="Digunakan"
-                          class="text-right mt-0"
-                          readonly
-                        ></v-currency-field>
-                      </v-col>
-                    </v-row>
-
-                    <v-row no-gutters>
-                      <v-col cols="12">
-                        <v-currency-field
-                          v-model="data.outstanding"
-                          label="Saldo"
-                          class="text-right mt-0"
-                          readonly
-                        ></v-currency-field>
                       </v-col>
                     </v-row>
                   </v-card-text>
                 </v-card>
               </v-col>
-
               <v-col cols="12" md="8">
                 <v-card>
-                  <v-tabs v-model="tab.sup">
-                    <v-tab key="sup">Pemasok</v-tab>
+                  <v-tabs v-model="tab.note">
                     <v-tab key="notes">Catatan</v-tab>
+                    <v-tab key="user">Pengguna</v-tab>
                   </v-tabs>
 
-                  <v-tabs-items v-model="tab.sup" class="pa-2">
-                    <v-tab-item
-                      key="sup"
-                      transition="false"
-                    >
-                      <v-row no-gutters>
-                        <v-col cols="3">
-                          <v-autocomplete
-                            v-model="data.supCode"
-                            :items="suppliers"
-                            :item-text="item => `${item.code} - ${item.initial}`"
-                            :rules="rules.required"
-                            label="Kode"
-                            item-value="code"
-                            class="mt-0"
-                            required
-                            @change="supCodeChange"
-                          ></v-autocomplete>
-                        </v-col>
-                        <v-col cols="9" class="pl-1">
-                          <v-text-field
-                            v-model="data.supName"
-                            label="Nama"
-                            class="mt-0"
-                            readonly
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-
-                      <v-row no-gutters>
-                        <v-col cols="12">
-                          <v-text-field
-                            v-model.trim="data.supAddr"
-                            label="Alamat"
-                            class="mt-0"
-                            readonly
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-
-                      <v-row no-gutters>
-                        <v-col cols="6">
-                          <v-text-field
-                            v-model="data.supPhone"
-                            label="Telepon"
-                            class="mt-0"
-                            readonly
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="6" class="pl-1">
-                          <v-text-field
-                            v-model="data.supFax"
-                            label="Fax"
-                            class="mt-0"
-                            readonly
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-                    </v-tab-item>
-
+                  <v-tabs-items v-model="tab.note" class="pa-2">
                     <v-tab-item
                       key="notes"
                       transition="false"
+                      eager
                     >
                       <v-textarea
                         v-model="data.notes"
-                        :rules="rules.max256chars"
+                        :rules="[rules.max256chars, rules.required]"
                         label="Catatan"
                         counter="256"
                         class="mt-0"
                         rows="4"
+                        required
                       ></v-textarea>
                     </v-tab-item>
+                    <v-tab-item
+                      key="user"
+                      transition="false"
+                    >
+                      <v-card>
+                        <v-card-text>
+                          <v-row no-gutters>
+                            <v-col cols="6">
+                              <v-text-field
+                                v-model="data.createdInitial"
+                                label="Dibuat Oleh"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="6" class="pl-md-1">
+                              <v-text-field
+                                v-model="data.createdDate"
+                                label="Tanggal Dibuat"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                          </v-row>
+                          
+                          <v-row no-gutters>
+                            <v-col cols="6">
+                              <v-text-field
+                                v-model="data.updatedInitial"
+                                label="Diperbarui Oleh"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="6" class="pl-md-1">
+                              <v-text-field
+                                v-model="data.updatedDate"
+                                label="Tanggal Diperbarui"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                          </v-row>
+                          <v-row no-gutters>
+                            <v-col cols="6">
+                              <v-text-field
+                                v-model="data.approvedInitial"
+                                label="Disetujui Oleh"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="6" class="pl-md-1">
+                              <v-text-field
+                                v-model="data.approvedDate"
+                                label="Tanggal Disetujui"
+                                class="mt-0"
+                                readonly
+                              ></v-text-field>
+                            </v-col>
+                          </v-row>
+                        </v-card-text>
+                      </v-card>
+                    </v-tab-item>
                   </v-tabs-items>
+                  
                 </v-card>
               </v-col>
             </v-row>
@@ -459,28 +464,65 @@
             <v-row dense>
               <v-col cols="12">
                 <v-card>
-                  <v-tabs v-model="tab.related">
-                    <v-tab key="related-trans">Transaksi Terkait</v-tab>
+                  <v-tabs v-model="tab.detail">
+                    <v-tab key="detail">Detail</v-tab>
 
                     <v-tab-item
-                      key="related-trans"
+                      key="detail"
                       transition="false"
                     >
-                      <v-data-table
-                        :headers="gridRelated.columns"
-                        :items="gridRelated.data"
-                        :items-per-page="-1"
-                        height="300"
-                        class="elevation-1"
-                        dense
-                        disable-sort
-                        fixed-header
-                        hide-default-footer
-                      >
-                        <template v-slot:[`item.date`]="{ item }">
-                          {{ item.date | formatDate('dd-MMM-yyyy') }}
-                        </template>
-                      </v-data-table>
+                      <v-card>
+                        <v-app-bar dense flat>
+                          <v-spacer></v-spacer>
+                          <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                v-bind="attrs"
+                                v-on="on"
+                                v-shortkey="['ctrl', 'i']"
+                                :disabled="(!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
+                                class="blue--text"
+                                small
+                                tile
+                                @click="addItem"
+                                @shortkey="addItem"
+                              >
+                                <v-icon left>mdi-plus</v-icon>
+                                Tambah
+                              </v-btn>
+                            </template>
+                            <span class="text-caption">(Ctrl + I)</span>
+                          </v-tooltip>
+                        </v-app-bar>
+                        <v-data-table
+                          :headers="gridItem.columns"
+                          :items="gridItem.data"
+                          :items-per-page="-1"
+                          height="300"
+                          class="elevation-1"
+                          dense
+                          disable-sort
+                          fixed-header
+                          hide-default-footer
+                        >
+                          <template v-slot:[`item.amount`]="{ item }">
+                            <v-currency-field
+                              v-model="item.amount"
+                              class="text-body-2 text-right mt-0"
+                              dense
+                            ></v-currency-field>
+                          </template>
+                          <template v-slot:[`item.notes`]="{ item }">
+                            <v-textarea
+                              v-model="item.notes"
+                              label="Catatan"
+                              class="mt-0"
+                              rows="2"
+                            ></v-textarea>
+                          </template>
+                        </v-data-table>
+                      </v-card>
+                      
                     </v-tab-item>
                   </v-tabs>
                 </v-card>
@@ -491,6 +533,7 @@
       </v-card>
     </v-dialog>
     <confirm ref="confirm"></confirm>
+    <detail-cash-bank ref="detailCashBank" :coas="coas" :cashBankTypes="cashBankTypes" @saveItem="saveItem"></detail-cash-bank>
   </div>
 </template>
 
@@ -502,7 +545,7 @@ import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
 
 import Confirm from '@/components/dialog/Confirm'
-
+import DetailCashBank from '@/components/dialog/general/DetailCashBank'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 
@@ -510,31 +553,29 @@ export default {
   components:{
     AdvancedSearch,
     ExportExcel,
-    Confirm
+    Confirm,
+    DetailCashBank
   },
   data: () => ({
     dialog: {
       add: false
     },
     menu: {
-      date: false
+      date: false,
+      chequeDate: false
     },
     tab: {
-      sup: null,
-      related: null
+      note: null,
+      detail: null
     },
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
-        { text: 'Kode Transaksi', value: 'code', divider: true, width: '160', excelColWidth:'19' },
-        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
-        { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
-        { text: 'Sumber Transksi.', value: 'srcTransName', divider: true, width: '100', excelColWidth:'13' },
-        { text: 'Kode Transaksi Sumber', value: 'transCode', divider: true, width: '100', excelColWidth:'13' },
-        { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
-        { text: 'Digunakan', value: 'used', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
-        { text: 'Saldo', value: 'outstanding', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
-        { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
+        { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Kode Voucher', value: 'vouCode', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+        { text: 'Tipe', value: 'type', divider: true, width: '100', excelColWidth:'13' },
+        { text: 'Akun', value: 'coaCode', divider: true, width: '100', excelColWidth:'13' }
       ],
       data: [],
       options: {
@@ -544,11 +585,17 @@ export default {
       total: 0,
       search: null
     },
-    gridRelated: {
+    gridItem: {
       columns: [
-        { text: 'Kode Transaksi', value: 'code', divider: true },
-        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true },
-        { text: 'Status', value: 'mark' }
+        { value: 'action', sortable: false, divider: true, width: '90' },
+        { text: 'Akun', value: 'coaCode', divider: true, width: '120' },
+        { text: 'Kode Trans.', value: 'transCode', divider: true, width: '120' },
+        { text: 'Catatan', value: 'notes', divider: true, width: '200' },
+        { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120' },
+        { text: 'D/C', value: 'type', divider: true, width: '90' },
+        { text: 'Mata Uang', value: 'currCode', divider: true, width: '120' },
+        { text: 'Kurs', value: 'rate', align: 'right', divider: true, width: '120' },
+        { text: 'Nilai Transaction', value: 'transAmount', align: 'right', divider: true, width: '120' }
       ],
       data: []
     },
@@ -579,15 +626,21 @@ export default {
       }
     ],
     valid: false,
-    sources: [{ id: 1, name: 'Deposit' }, { id: 2, name: 'Retur' }, { id: 2, name: 'Return (Same Item)' }],
+    types: [
+      { value: 'D', text: 'Kas Bank Masuk' }, 
+      { value: 'C', text: 'Kas Bank Keluar' }
+    ],
+    coas: [],
     data: {},
-    suppliers: []
+    isShowCheque: false,
+    cashBankTypes: []
   }),
 
   created: function () {
+    this.getCashBankTypeList()
+    this.getCOAList()
     this.getList()
-    this.getSupplierLists()
-    auth.getAction(this.endpoint, this.menuId.debitmemo, [this.action.insert, this.action.update, this.action.void, this.action.changeDate])
+    auth.getAction(this.endpoint, this.menuId.cashBank, [this.action.insert, this.action.update, this.action.void, this.action.changeDate])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -597,11 +650,11 @@ export default {
   mounted: function () {
     setTimeout(() => {
       this.$store.commit('app/setBreadcrumbs', [{
-        text: 'Pembelian'
+        text: 'Keuangan'
       }, {
         text: 'Transaksi'
       }, {
-        text: 'Nota Debit'
+        text: 'Kas Bank'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
@@ -629,6 +682,9 @@ export default {
     },
     formatDate() {
       return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
+    },
+    formatChequeDate() {
+      return this.data.chequeDate ? format(parseISO(this.data.chequeDate), 'dd-MMM-yyyy') : ''
     }
   },
 
@@ -639,6 +695,7 @@ export default {
         code: null,
         date: format(new Date(), 'yyyy-MM-dd'),
         srcTrans: 1,
+        type: 'D',
         transCode: null,
         supCode: null,
         supName: null,
@@ -649,8 +706,8 @@ export default {
         used: 0,
         outstanding: 0
       }
-      this.gridRelated.data = []
-      this.tab.sup = 0
+      this.gridItem.data = []
+      this.tab.note = 0
       this.tab.related = 0
 
       // Reset form validation
@@ -698,53 +755,25 @@ export default {
           }
         })
     },
-    // getList(bindToForm = false) {
-    //   const sorts = []
-    //   for (let i = 0; i < this.grid.options.sortBy.length; i++) {
-    //     sorts.push({
-    //       field: this.grid.options.sortBy[i],
-    //       direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
-    //     })
-    //   }
-
-    //   api.getAll(this.endpoint.purchase.debitMemo, {
-    //     params: {
-    //       search: this.grid.search,
-    //       skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
-    //       take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
-    //       sorts: JSON.stringify(sorts)
-    //     }
-    //   })
-    //     .then(response => {
-    //       this.grid.data = response.data.tableData
-    //       this.grid.total = response.data.rowCount
-    //       if (bindToForm) {
-    //         const item = this.grid.data.find(h => h.code === this.data.code)
-    //         this.edit(item)
-    //       }
-    //     })
-    // },
-    getSupplierLists() {
-      api.getAll(`${this.endpoint.general.supplier.supplier}/lists`, {
+    getCOAList() {
+      api.getAll(`${this.endpoint.accounting.coa}/lists`, {
         params: {
-          sorts: JSON.stringify([{
-            field: 'initial',
-            direction: 'asc'
+          filters: JSON.stringify([{
+            field: 'typeid',
+            operator: 'eq',
+            keyword: 2
           }])
         }
       })
         .then(response => {
-          this.suppliers = response.data.tableData
+          this.coas = response.data.tableData
         })
     },
-    supCodeChange() {
-      const supplier = this.suppliers.find(s => s.code === this.data.supCode)
-      if (supplier) {
-        this.data.supName = supplier.name
-        this.data.supAddr = supplier.address1
-        this.data.supPhone = supplier.phone
-        this.data.supFax = supplier.fax
-      }
+    getCashBankTypeList() {
+      api.getAll(`${this.endpoint.finance.cashBankType}/lists`, {})
+        .then(response => {
+          this.cashBankTypes = response.data.tableData
+        })
     },
     add() {
       if (this.dialog.add) return
@@ -788,21 +817,9 @@ export default {
         this.$refs.code.focus()
       }, 0)
     },
-    bindSupData(item) {
-      api.getOne(this.endpoint.general.supplier.supplier, item.supCode)
-        .then(response => {
-          if (response.data) {
-            item.supAddr = response.data.address1
-            item.supPhone = response.data.phone
-            item.supFax = response.data.fax
-          }
-        })
-    },
+    
     async exportExcel() {
       this.exportExcel.export()
-    },
-    amountChange() {
-      this.data.outstanding = this.data.amount - this.data.used
     },
     close() {
       this.dialog.add = false
@@ -849,6 +866,27 @@ export default {
           this.data.code = result.data
         }
         this.getList(!closeDialog)
+      }
+    },
+    saveItem(items) {
+      this.gridItem.data = items 
+    },
+    addItem() {
+      this.showDetailCashBank()
+    },
+    showDetailCashBank() {
+      this.$refs.detailCashBank.open()
+    },
+    changeCoaCode() {
+      const find = this.coas.find(x => x.code === this.data.coaCode)
+      if (find) {
+        if (find.cbType === 'C') {
+          this.isShowCheque = true 
+        } else {
+          this.isShowCheque = false
+          this.data.chequeDate = null
+          this.data.chequeNo = ''
+        }
       }
     }
   }

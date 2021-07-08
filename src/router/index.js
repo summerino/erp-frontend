@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import auth from '@/auth/authService'
 
 // Routes
+import FinanceRoutes from './finance.routes'
 import GeneralRoutes from './general.routes'
 import InventoryRoutes from './inventory.routes'
 import PurchaseRoutes from './purchase.routes'
@@ -27,6 +28,7 @@ export const routes = [{
     authRequired: true
   }
 },
+...FinanceRoutes,
 ...GeneralRoutes,
 ...InventoryRoutes,
 ...PurchaseRoutes,
