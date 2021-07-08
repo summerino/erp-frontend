@@ -301,45 +301,15 @@ export default {
           text: 'Kode Transaksi',
           value: 'transCode' 
         }
-      ],
-      sources: [
-        {
-          text: 'Piutang Usaha',
-          value: 1
-        },
-        {
-          text: 'Hutang Usaha',
-          value: 2
-        },
-        {
-          text: 'Uang Muka Penjualan',
-          value: 3
-        },
-        {
-          text: 'Retur Uang Muka Penjualan',
-          value: 4
-        },
-        {
-          text: 'Uang Muka Pembelian',
-          value: 5
-        },
-        {
-          text: 'Retur Uang Muka Pembelian',
-          value: 6
-        },
-        {
-          text: 'Transaksi Umum',
-          value: 7
-        }
-      ],
+      ],      
       transType: [
         {
           value: 'Debit',
-          text: 'Debit'
+          text: 'D'
         },
         {
           value: 'Credit',
-          text: 'Credit'
+          text: 'C'
         }
       ],
       selected: []
@@ -372,11 +342,12 @@ export default {
       this.data.by = 'custName'
       this.data.value = ''
       this.grid.data = []
-      this.data.type = 1
+      this.data.type = this.cashBankTypes[0].code
       this.data.total = 0
       this.data.startDate = null
       this.data.endDate = null
       this.filters = this.customerFilters 
+      this.bindColumn()
       console.log('this.cashBankTypes from detail', this.cashBankTypes)
     },
     open(options) {
@@ -393,19 +364,8 @@ export default {
     search() {
       const url = this.getUrl()
 
-      const filter = []
-      filter.push(
-        {
-          field: this.data.by,
-          operator: 'contains',
-          keyword: this.data.value
-        },
-        {
-          field: 'Mark',
-          operator: 'eq',
-          keyword: 'PP'
-        }
-      )
+      const filter = this.getFilters()
+      
       if (this.data.startDate) {
         filter.push(
           {
@@ -438,45 +398,85 @@ export default {
         })
     },
     getUrl() {
+      debugger
       let url = ''
-      if (this.data.type === 2 || this.data.type === 4 || this.data.type === 5) {
-        url = this.endpoint.sales.invoice
-      } else if (this.data.type === 2) {
+      if (this.data.type === 'AP') {
         url = this.endpoint.purchase.invoice
-      } else if (this.data.type === 2) {
-        url = this.endpoint.purchase.debitMemo
-      } else if (this.data.type === 2) {
+      } else if (this.data.type === 'AR') {
+        url = this.endpoint.sales.invoice
+      } else if (this.data.type === 'DPC' || this.data.type === 'RDPC' || this.data.type === 'SR') {
         url = this.endpoint.sales.creditMemo
+      } else if (this.data.type === 'DPS' || this.data.type === 'RDPS' || this.data.type === 'PR') {
+        url = this.endpoint.purchase.debitMemo
       }
       return url
+    },
+    getFilters() {
+      const filter = []
+      if (this.data.value) {
+        filter.push(
+          {
+            field: this.data.by,
+            operator: 'contains',
+            keyword: this.data.value
+          }
+        )
+      }
+      if (this.data.type === 'AP' || this.data.type === 'AR') {
+        filter.push(
+          {
+            field: 'Mark',
+            operator: 'eq',
+            keyword: 'A'
+          }
+        )
+      } else if (this.data.type === 'RDPC' || this.data.type === 'RDPS') {
+        filter.push(
+          {
+            field: 'Mark',
+            operator: 'eq',
+            keyword: 'A'
+          }
+        )
+      } else {
+        filter.push(
+          {
+            field: 'Mark',
+            operator: 'eq',
+            keyword: 'PP'
+          }
+        )
+      }
+      
+      return filter
     },
     changeType() {
       this.bindColumn()
       this.grid.data = []
     },
     bindColumn() {
-      if (this.data.type === 'AR') {
+      if (this.data.type === 'AR' || this.data.type === 'SR') {
         this.grid.columns = [
           { text: '', value: 'action', divider: true, width: '90' },
           { text: 'Kode', value: 'code', divider: true, width: '120' },
           { text: 'Pelanggan', value: 'custName', divider: true, width: '150' },
           { text: 'Tanggal', value: 'date', divider: true, width: '120' },
-          { text: 'Nilai', value: 'amount', divider: true, width: '120' },
-          { text: 'Nilai Sudah Diterima', value: 'used', divider: true, width: '120' },
+          { text: 'Nilai', value: 'total', divider: true, width: '120' },
+          { text: 'Nilai Sudah Diterima', value: 'paidAmount', divider: true, width: '120' },
           { text: 'Sisa', value: 'remaining', divider: true, width: '120' },
           { text: 'Saat Ini Diterima', value: 'transAmount', divider: true, width: '150' },
           { text: 'Catatan', value: 'notes', divider: true, width: '150' }        
         ]
         this.filters = this.customerFilters
         this.data.by = 'custName'
-      } else if (this.data.type === 'AP') {
+      } else if (this.data.type === 'AP' || this.data.type === 'PR') {
         this.grid.columns = [
           { text: '', value: 'action', divider: true, width: '90' },
           { text: 'Kode', value: 'code', divider: true, width: '120' },
           { text: 'Pemasok', value: 'supName', divider: true, width: '150' },
           { text: 'Tanggal', value: 'date', divider: true, width: '120' },
-          { text: 'Nilai', value: 'amount', divider: true, width: '120' },
-          { text: 'Nilai Sudah Dibayar', value: 'used', divider: true, width: '120' },
+          { text: 'Nilai', value: 'total', divider: true, width: '120' },
+          { text: 'Nilai Sudah Dibayar', value: 'paidAmount', divider: true, width: '120' },
           { text: 'Sisa', value: 'remaining', divider: true, width: '120' },
           { text: 'Saat Ini Dibayar', value: 'transAmount', divider: true, width: '150' },
           { text: 'Catatan', value: 'notes', divider: true, width: '150' }        
@@ -497,7 +497,7 @@ export default {
         ]
         this.filters = this.customerFilters
         this.data.by = 'custName'
-      } else if (this.data.type === 'RDPC') {
+      } else if (this.data.type === 'RDPS') {
         this.grid.columns = [
           { text: '', value: 'action', divider: true, width: '90' },
           { text: 'Kode', value: 'code', divider: true, width: '120' },
@@ -525,7 +525,7 @@ export default {
         ]
         this.filters = this.supplierFilters
         this.data.by = 'supName'
-      } else if (this.data.type === 'RDPS') {
+      } else if (this.data.type === 'RDPC') {
         this.grid.columns = [
           { text: '', value: 'action', divider: true, width: '90' },
           { text: 'Kode', value: 'code', divider: true, width: '120' },

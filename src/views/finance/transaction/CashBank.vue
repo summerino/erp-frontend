@@ -300,7 +300,7 @@
                           ></v-date-picker>
                         </v-menu>
                       </v-col>
-                      <v-col cols="12" md="6">
+                      <v-col cols="12" md="6" class="pl-md-1">
                         <v-autocomplete
                           v-model="data.type"
                           :items="types"
@@ -533,7 +533,7 @@
       </v-card>
     </v-dialog>
     <confirm ref="confirm"></confirm>
-    <detail-cash-bank ref="detailCashBank" :coas="coas" :casBankTypes="cashBankTypes" @saveItem="saveItem"></detail-cash-bank>
+    <detail-cash-bank ref="detailCashBank" :coas="coas" :cashBankTypes="cashBankTypes" @saveItem="saveItem"></detail-cash-bank>
   </div>
 </template>
 
@@ -878,7 +878,6 @@ export default {
       this.$refs.detailCashBank.open()
     },
     changeCoaCode() {
-      console.log('coa', this.coas)
       const find = this.coas.find(x => x.code === this.data.coaCode)
       if (find) {
         if (find.cbType === 'C') {
