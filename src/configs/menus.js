@@ -40,5 +40,6 @@ export default {
   parameter: 73,
   approval:72,
   expeditionInvoice: 70,
-  companyProfile: 75
+  companyProfile: 75,
+  cashBank: 82
 }

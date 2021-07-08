@@ -1,6 +1,9 @@
 export default {
   master: 'master',
-  
+  finance: {
+    cashBank: 'general-cash-bank',
+    cashBankType: 'general-cash-bank-type'
+  },
   general: {
     currency: 'currency',
     customer: {
@@ -21,7 +24,6 @@ export default {
     paymentTerm: 'payment-term',
     approval: 'approval'
   },
-
   inventory: {
     item: {
       category: 'item-category',
