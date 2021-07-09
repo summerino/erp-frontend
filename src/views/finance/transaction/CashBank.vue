@@ -587,6 +587,44 @@
                 </v-card>
               </v-col>
             </v-row>
+            <v-row dense>
+              <v-col cols="12">
+                <v-card>
+                  <v-tabs v-model="tab.summary">
+                    <v-tab key="summary">Total</v-tab>
+
+                    <v-tab-item
+                      key="summary"
+                      transition="false"
+                    >
+                      <v-card>
+                        <v-card-text>
+                          <v-row no-gutters>
+                            <v-col cols="6">
+                              <v-currency-field
+                                label="Total Nilai"
+                                v-model="data.amountSummary"
+                                class="text-body-2 text-right mt-0"
+                                readonly
+                              ></v-currency-field>
+                            </v-col>
+                            <v-col cols="6" class="pl-md-1">
+                              <v-currency-field
+                                label="Total Nilai Transaksi"
+                                v-model="data.transAmountSummary"
+                                class="text-body-2 text-right mt-0"
+                                readonly
+                              ></v-currency-field>
+                            </v-col>
+                          </v-row>
+                        </v-card-text>
+                      </v-card>
+                      
+                    </v-tab-item>
+                  </v-tabs>
+                </v-card>
+              </v-col>
+            </v-row>
           </v-form>
         </v-card-text>
       </v-card>
@@ -751,7 +789,9 @@ export default {
         supFax: null,
         amount: 0,
         used: 0,
-        outstanding: 0
+        outstanding: 0,
+        transAmountSummary: 0,
+        amountSummary: 0
       }
       this.gridItem.data = []
       this.tab.note = 0
