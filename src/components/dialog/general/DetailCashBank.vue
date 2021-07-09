@@ -473,6 +473,8 @@ export default {
       this.bindColumn()
       this.grid.data = []
       this.selected = []
+      this.data.startDate = null
+      this.data.endDate = null
       this.resetGeneralTransaction()
     },
     bindColumn() {

@@ -235,7 +235,7 @@
                   </v-list-item-title>
                 </v-list-item>
               </v-list>
-               <v-list class="cursor-pointer">
+               <v-list class="cursor-pointer" v-if="data.code !== null">
                 <v-list-item
                   v-shortkey="['ctrl', 'alt', 'r']"
                 >
