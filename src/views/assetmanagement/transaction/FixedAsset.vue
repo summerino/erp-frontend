@@ -850,7 +850,9 @@ export default {
   mounted: function () {
     setTimeout(() => {
       this.$store.commit('app/setBreadcrumbs', [{
-        text: 'Aktiva'
+        text: 'Manajemen Aset'
+      }, {
+        text: 'Transaksi'
       }, {
         text: 'Aktiva Tetap'
       }])

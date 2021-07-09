@@ -448,6 +448,8 @@ export default {
       }, {
         text: 'Data Master'
       }, {
+        text: 'Pengguna'
+      }, {
         text: 'Peran'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)

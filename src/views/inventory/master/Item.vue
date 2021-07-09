@@ -16,7 +16,6 @@
               @keyup.enter="getList()"
             ></v-text-field>
           </v-col>
-          <v-spacer></v-spacer>
           <v-col cols="12" md="1">
             <export-excel title="Daftar Barang" :grid="grid" :gridDefOpts="gridDefOpts"  ref="exportExcel"></export-excel>
           </v-col>
@@ -614,7 +613,7 @@
                                 v-model="data.coaInventory"
                                 :items="coa"
                                 :item-text="item => `${item.code} - ${item.name}`"
-                                label="Kode akun barang"
+                                label="Kode akun persediaan"
                                 item-value="code"
                                 class="mt-0"
                               ></v-autocomplete>

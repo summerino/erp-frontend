@@ -3,19 +3,9 @@
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
-          <v-col cols="12" md="2">
+          <v-col cols="12" md="3">
             Rencana Pengiriman
           </v-col>
-          <!-- <v-col cols="12" md="4">
-            <v-text-field
-              v-model.trim="grid.search"
-              append-icon="mdi-magnify"
-              label="Cari..."
-              class="font-weight-regular mt-0 pt-0"
-              single-line
-              @keyup.enter="getList()"
-            ></v-text-field>
-          </v-col> -->
           <v-col cols="12" md="4" >
             <v-row no-gutters>
               <v-text-field
@@ -50,8 +40,7 @@
               <export-excel title="Daftar Rencana Pengiriman" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
-          <v-spacer></v-spacer>
-          <v-col cols="12" md="6" class="text-right">
+          <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
