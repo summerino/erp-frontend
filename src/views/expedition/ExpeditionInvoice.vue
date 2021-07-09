@@ -4,7 +4,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="2">
-            Faktur
+            Faktur Ekspedisi
           </v-col>
           <v-col cols="12" md="6" >
             <v-row no-gutters>

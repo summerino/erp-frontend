@@ -4,18 +4,8 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="2">
-            Faktur
+            Faktur Penjualan
           </v-col>
-          <!-- <v-col cols="12" md="4">
-            <v-text-field
-              v-model="grid.search"
-              append-icon="mdi-magnify"
-              label="Cari..."
-              class="font-weight-regular mt-0 pt-0"
-              single-line
-              @keyup.enter="getList()"
-            ></v-text-field>
-          </v-col> -->
           <v-col cols="12" md="4" >
             <v-row no-gutters>
               <v-text-field
@@ -47,10 +37,9 @@
                 </template>
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
-              <export-excel title="Daftar Faktur" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
+              <export-excel title="Daftar Faktur Penjualan" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
-          <v-spacer></v-spacer>
           <v-col cols="12" md="6" class="text-right">
             <v-menu
               bottom
