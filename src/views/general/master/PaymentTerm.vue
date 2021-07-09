@@ -3,8 +3,8 @@
     <v-card v-if="main">
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
-          <v-col cols="12" md="2">
-            Pembayaran
+          <v-col cols="12" md="3">
+            Syarat Pembayaran
           </v-col>
           <v-col cols="12" md="4">
             <v-text-field
@@ -16,11 +16,10 @@
               @keyup.enter="getList"
             ></v-text-field>
           </v-col>
-          <v-spacer></v-spacer>
           <v-col cols="12" md="1">
-            <export-excel title="Daftar Jenis Pelanggan" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
+            <export-excel title="Daftar Syarat Pembayaran" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
           </v-col>
-          <v-col cols="12" md="5" class="text-right">
+          <v-col cols="12" md="4" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -98,7 +97,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="4">
-            <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' }} Pembayaran</span>
+            <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' }} Syarat Pembayaran</span>
           </v-col>
           <v-col cols="12" md="8" class="text-right">
             <label
@@ -258,7 +257,7 @@ export default {
       }, {
         text: 'Data Master'
       }, {
-        text: 'Pembayaran'
+        text: 'Syarat Pembayaran'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
