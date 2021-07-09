@@ -898,6 +898,7 @@ export default {
       }, 0)
     },
     edit(item) {
+      debugger
       if (!item) return
 
       this.dialog.add = true
@@ -993,6 +994,7 @@ export default {
       for (let i = 0; i < items.length; i++) {
         if (this.gridItem.data.find(x => x.id === items[i].id) === undefined) {
           this.gridItem.data.push(items[i]) 
+          console.log('items', items[i])
         }
       }
     },

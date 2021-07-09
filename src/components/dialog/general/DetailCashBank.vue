@@ -133,8 +133,8 @@
                 <template v-slot:[`item.total`]="{ item }">
                   {{ item.total | formatCurrency }}
                 </template>
-                <template v-slot:[`item.amount`]="{ item }">
-                  {{ item.amount | formatCurrency }}
+                <template v-slot:[`item.transAmount`]="{ item }">
+                  {{ item.transAmount | formatCurrency }}
                 </template>
                 <template v-slot:[`item.paidAmount`]="{ item }">
                   {{ item.paidAmount | formatCurrency }}
@@ -145,14 +145,14 @@
                 <template v-slot:[`item.remaining`]="{ item }">
                   {{ item.remaining | formatCurrency }}
                 </template>
-                <template v-slot:[`item.transAmount`]="{ item }">
+                <template v-slot:[`item.amount`]="{ item }">
                   <v-currency-field
-                    v-model="item.transAmount"
+                    v-model="item.amount"
                     class="text-body-2 text-right mt-0"
                     :readonly="!selected.find(x => x.code === item.code)"
-                    @keydown="changeTransAmount"
-                    @keyup="changeTransAmount"
-                    @keypress="changeTransAmount"
+                    @keydown="changeAmount"
+                    @keyup="changeAmount"
+                    @keypress="changeAmount"
                   ></v-currency-field>
                 </template>
                 <template v-slot:[`item.notes`]="{ item }">
@@ -267,14 +267,14 @@ export default {
       },
       grid: {
         columns: [
-          { text: 'Kode', value: 'code', divider: true, width: '170' },
-          { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
-          { text: 'Tanggal', value: 'date', divider: true, width: '120' },
-          { text: 'Nilai', value: 'total', divider: true, width: '120' },
-          { text: 'Nilai Sudah Diterima', value: 'paidAmount', divider: true, width: '120' },
-          { text: 'Sisa', value: 'remaining', divider: true, width: '120' },
-          { text: 'Saat Ini Diterima', value: 'transAmount', divider: true, width: '150' },
-          { text: 'Catatan', value: 'notes', divider: true, width: '150' }
+          // { text: 'Kode', value: 'code', divider: true, width: '170' },
+          // { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
+          // { text: 'Tanggal', value: 'date', divider: true, width: '120' },
+          // { text: 'Nilai', value: 'total', divider: true, width: '120' },
+          // { text: 'Nilai Sudah Diterima', value: 'paidAmount', divider: true, width: '120' },
+          // { text: 'Sisa', value: 'remaining', divider: true, width: '120' },
+          // { text: 'Saat Ini Diterima', value: 'amount', divider: true, width: '150' },
+          // { text: 'Catatan', value: 'notes', divider: true, width: '150' }
         ],
         data: []
       },
@@ -486,7 +486,7 @@ export default {
           { text: 'Nilai', value: 'total', divider: true, align: 'right', width: '120' },
           { text: 'Nilai Sudah Diterima', value: 'paidAmount', align: 'right', divider: true, width: '120' },
           { text: 'Sisa', value: 'remaining', divider: true, align: 'right', width: '120' },
-          { text: 'Saat Ini Diterima', value: 'transAmount', align: 'right', divider: true, width: '150' },
+          { text: 'Saat Ini Diterima', value: 'amount', align: 'right', divider: true, width: '150' },
           { text: 'Catatan', value: 'notes', divider: true, width: '150' }        
         ]
         this.filters = this.customerFilters
@@ -499,7 +499,7 @@ export default {
           { text: 'Nilai', value: 'total', divider: true, align: 'right', width: '120' },
           { text: 'Nilai Sudah Dibayar', value: 'paidAmount', divider: true, width: '120' },
           { text: 'Sisa', value: 'remaining', divider: true, align: 'right', width: '120' },
-          { text: 'Saat Ini Dibayar', value: 'transAmount', align: 'right', divider: true, width: '150' },
+          { text: 'Saat Ini Dibayar', value: 'amount', align: 'right', divider: true, width: '150' },
           { text: 'Catatan', value: 'notes', divider: true, width: '150' }        
         ]
         this.filters = this.supplierFilters
@@ -509,10 +509,10 @@ export default {
           { text: 'Kode', value: 'code', divider: true, width: '170' },
           { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
           { text: 'Tanggal', value: 'date', divider: true, width: '120' },
-          { text: 'Nilai', value: 'amount', divider: true, align: 'right', width: '120' },
+          { text: 'Nilai', value: 'total', divider: true, align: 'right', width: '120' },
           { text: 'Nilai Sudah Diterima', value: 'used', divider: true, align: 'right', width: '120' },
           { text: 'Sisa', value: 'remaining', divider: true, align: 'right', width: '120' },
-          { text: 'Saat Ini Diterima', value: 'transAmount', divider: true, width: '150' },
+          { text: 'Saat Ini Diterima', value: 'amount', divider: true, width: '150' },
           { text: 'Catatan', value: 'notes', divider: true, width: '150' }        
         ]
         this.filters = this.customerFilters
@@ -522,10 +522,10 @@ export default {
           { text: 'Kode', value: 'code', divider: true, width: '170' },
           { text: 'Pemasok', value: 'supName', divider: true, width: '200' },
           { text: 'Tanggal', value: 'date', divider: true, width: '120' },
-          { text: 'Nilai', value: 'amount', divider: true, align: 'right', width: '120' },
+          { text: 'Nilai', value: 'total', divider: true, align: 'right', width: '120' },
           { text: 'Nilai Sudah Dibayar', value: 'used', divider: true, align: 'right', width: '120' },
           { text: 'Sisa', value: 'remaining', divider: true, align: 'right', width: '120' },
-          { text: 'Saat Ini Dibayar', value: 'transAmount', divider: true, width: '150' },
+          { text: 'Saat Ini Dibayar', value: 'amount', divider: true, width: '150' },
           { text: 'Catatan', value: 'notes', divider: true, width: '150' }        
         ]
         this.filters = this.supplierFilters
@@ -535,10 +535,10 @@ export default {
           { text: 'Kode', value: 'code', divider: true, width: '170' },
           { text: 'Pemasok', value: 'supName', divider: true, width: '200' },
           { text: 'Tanggal', value: 'date', divider: true, width: '120' },
-          { text: 'Nilai', value: 'amount', divider: true, align: 'right', width: '120' },
+          { text: 'Nilai', value: 'total', divider: true, align: 'right', width: '120' },
           { text: 'Nilai Sudah Dibayar', value: 'used', divider: true, align: 'right', width: '120' },
           { text: 'Sisa', value: 'remaining', divider: true, align: 'right', width: '120' },
-          { text: 'Saat Ini Dibayar', value: 'transAmount', divider: true, width: '150' },
+          { text: 'Saat Ini Dibayar', value: 'amount', divider: true, width: '150' },
           { text: 'Catatan', value: 'notes', divider: true, width: '150' }        
         ]
         this.filters = this.supplierFilters
@@ -548,10 +548,10 @@ export default {
           { text: 'Kode', value: 'code', divider: true, width: '170' },
           { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
           { text: 'Tanggal', value: 'date', divider: true, width: '120' },
-          { text: 'Nilai', value: 'amount', divider: true, width: '120' },
+          { text: 'Nilai', value: 'total', divider: true, width: '120' },
           { text: 'Nilai Sudah Dipakai', value: 'used', align: 'right', divider: true, width: '120' },
           { text: 'Sisa', value: 'remaining', divider: true, align: 'right', width: '120' },
-          { text: 'Saat Ini Diterima', value: 'transAmount', align: 'right', divider: true, width: '150' },
+          { text: 'Saat Ini Diterima', value: 'amount', align: 'right', divider: true, width: '150' },
           { text: 'Catatan', value: 'notes', divider: true, width: '150' }        
         ]
         this.filters = this.customerFilters
@@ -594,6 +594,7 @@ export default {
       this.close()
     },
     bindAdditionalData() {
+      debugger
       if (this.data.type !== 'TU') {
         const field = this.getFieldForNote()
         for (let i = 0; i < this.selected.length; i++) {
@@ -611,10 +612,13 @@ export default {
           this.selected[i].type = this.data.type
           this.selected[i].currCode = 'IDR'
           this.selected[i].rate = 1
-          this.selected[i].amount = this.selected[i].total
           this.selected[i].typeAmount = this.getTypeAmount()
-          this.selected[i].remaining = this.selected[i].amount - this.selected[i].paidAmount
-          this.selected[i].transAmount = this.selected[i].remaining
+          const amount = this.selected[i].total === undefined ? this.selected[i].amount :  this.selected[i].total 
+          const paidOrUsed = this.selected[i].paidAmount === undefined ? this.selected[i].used : this.selected[i].paidAmount
+          this.selected[i].total = amount
+          this.selected[i].remaining = this.selected[i].total - paidOrUsed
+          this.selected[i].transAmount = this.selected[i].total
+          this.selected[i].amount = this.selected[i].remaining
           this.selected[i].transCode = this.selected[i].code
           this.bindRemaining(this.selected[i])
         }
@@ -656,11 +660,11 @@ export default {
         return 'supName'
       }
     },
-    changeTransAmount() {
+    changeAmount() {
       this.calculateTotal()
     },
     calculateTotal() {
-      this.data.total = _sumBy(this.selected, 'transAmount')
+      this.data.total = _sumBy(this.selected, 'amount')
     }
   }
 }
