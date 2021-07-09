@@ -4,7 +4,7 @@
       <v-card-title>
         <v-row>
           <v-col>
-            Sistem Parameter
+            Parameter Sistem
           </v-col>
           <v-col class="text-right">
             <v-tooltip bottom>
@@ -103,7 +103,7 @@ export default {
       }, {
         text: 'Data Master'
       }, {
-        text: 'Peran'
+        text: 'Parameter Sistem'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)

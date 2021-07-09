@@ -3,8 +3,8 @@
     <v-card v-if="main">
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
-          <v-col cols="12" md="2">
-            Hutang
+          <v-col cols="12" md="3">
+            Saldo Awal Hutang
           </v-col>
           <v-col cols="12" md="4">
             <v-text-field
@@ -16,11 +16,10 @@
               @keyup.enter="getList"
             ></v-text-field>
           </v-col>
-          <v-spacer></v-spacer>
           <v-col cols="12" md="1">
             <export-excel title="Daftar Hutang" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
           </v-col>
-          <v-col cols="12" md="5" class="text-right">
+          <v-col cols="12" md="4" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn

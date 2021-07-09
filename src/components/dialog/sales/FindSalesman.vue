@@ -153,7 +153,9 @@ export default {
       },
       options: {
         width: 800
-      }
+      },
+      isReplaceman: false,
+      gridIndex: 0
     }
   },
 
@@ -173,6 +175,15 @@ export default {
     open(options) {
       this.dialog = true
       this.options = Object.assign(this.options, options)
+      this.reset()
+      setTimeout(() => {
+        this.$refs.search.focus()
+      }, 0)
+    },
+    openReplaceman(idx) {
+      this.dialog = true
+      this.isReplaceman = true
+      this.gridIndex = idx
       this.reset()
       setTimeout(() => {
         this.$refs.search.focus()
@@ -216,7 +227,13 @@ export default {
     },
     dblclickRow(event, { item }) {
       item.called = 'dialog'
-      this.$emit('dblclick:row', item)
+
+      if (this.isReplaceman) {
+        item.gridIndex = this.gridIndex
+        this.$emit('dblclick:rep', item)
+      } else {
+        this.$emit('dblclick:row', item)
+      }
       this.dialog = false
     }
   }
