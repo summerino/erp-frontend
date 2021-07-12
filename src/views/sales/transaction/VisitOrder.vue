@@ -226,7 +226,7 @@
                         <v-menu
                           v-model="menu.visitDate"
                           :close-on-content-click="false"
-                          :disabled="data.mark === 'CMP' || data.mark === 'V'"
+                          :disabled="data.mark === 'CMP' || data.mark === 'V' || data.action === 'edit'"
                           transition="scale-transition"
                           min-width="290px"
                           offset-y                          
@@ -238,7 +238,7 @@
                               v-on="on"
                               :rules="rules.required"
                               :value="formatVisitDate"
-                              :readonly="data.mark === 'CMP' || data.mark === 'V'"
+                              :readonly="data.mark === 'CMP' || data.mark === 'V' || data.action === 'edit'"
                               label="Tanggal"
                               class="mt-0"
                               required
@@ -246,7 +246,7 @@
                           </template>
                           <v-date-picker
                             v-model="data.date"
-                            :disabled="data.mark === 'CMP' || data.mark === 'V'"
+                            :disabled="data.mark === 'CMP' || data.mark === 'V' || data.action === 'edit'"
                             no-title
                             scrollable
                             @change="menu.visitDate = false"
@@ -265,6 +265,7 @@
                           item-value="textValue"
                           label="Sumber Transaksi"
                           class="mt-0"
+                          @change="onSourceChange"
                         ></v-autocomplete>
                       </v-col>
                       <v-col cols="12" md="6" class="pl-md-1">
@@ -967,6 +968,13 @@ export default {
       const data = this.data
       data.customerDetails = this.gridCustomer.data
       data.invoiceDetails = this.gridInvoice.data
+
+      if (data.sourceTransaction === 'Manual') {
+        data.visitPlanCode = null
+      } else {
+        data.visitPlanCode = 'Jadwal'
+      }
+
       let result = { success: false, message: '' }
       if (data.action === 'add') {
         const resp = await api.create(this.endpoint.sales.visitOrder, data)
@@ -1282,6 +1290,11 @@ export default {
         return item.address1
       } else {
         return ''
+      }
+    },
+    onSourceChange() {
+      if (this.data.sourceTransaction === 'Manual') {
+        this.gridCustomer.data = []
       }
     },
     async exportExcel() {
