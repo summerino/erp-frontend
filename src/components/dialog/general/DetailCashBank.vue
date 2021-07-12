@@ -580,12 +580,12 @@ export default {
     },
     bindAdditionalData() {
       if (this.data.type !== 'TU') {
-        debugger
         const field = this.getFieldForNote()
         for (let i = 0; i < this.selected.length; i++) {
           this.selected[i].id = randomNumber(-1, -1000)
           this.selected[i].notes = this.selected[i][field]
-          const temp = this.coaCodes.find(x => x.code === `${this.data.type}_COA`)
+          const type = this.getFindType()
+          const temp = this.coaCodes.find(x => x.code === `${type}_COA`)
           const coas = this.coas
           if (temp) {
             this.selected[i].coaCode = temp.value
@@ -621,6 +621,15 @@ export default {
     },
     calculateTotal() {
       this.data.total = _sumBy(this.selected, 'transAmount')
+    },
+    getFindType() {
+      let type = this.data.type
+      if (type === 'RDPC') {
+        type = 'DPC'
+      } else if (type === 'RDPS') {
+        type = 'DPS'
+      }
+      return type
     }
   }
 }

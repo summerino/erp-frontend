@@ -124,7 +124,6 @@ export default {
       this.dialog = false
     },
     async save() {
-      debugger
       this.fillData()
       let result = { success: false, message: '' }
       const resp = await api.create(this.endpoint.finance.cashBank, this.data)
@@ -151,7 +150,7 @@ export default {
         })
     },
     getCOACodeList() {
-      const codes = ['DPS_COA', 'DPC_COA', 'RDPS_COA', 'RDPC_COA']
+      const codes = ['DPS_COA', 'DPC_COA']
       api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
         params: {
           codes: JSON.stringify(codes)
@@ -198,12 +197,20 @@ export default {
       this.data.itemDetails[0].transAmount = this.data.memo
       this.data.itemDetails[0].notes = custOrSup
       this.data.itemDetails[0].type = type
+      
+      if (type === 'DPC' || type === 'RDPC') {
+        this.getCoaCode('DPC')
+      } else if (type === 'DPS' || type === 'RDPS') {
+        this.getCoaCode('DPS')
+      }
+
+    },
+    getCoaCode(type) {
       const temp = this.coaCodes.find(x => x.code === `${type}_COA`)
       if (temp) {
         this.data.itemDetails[0].coaCode = temp.value
       }
-
-    }    
+    }  
   }
 }
 </script>

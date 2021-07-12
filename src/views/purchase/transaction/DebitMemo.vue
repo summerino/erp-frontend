@@ -238,6 +238,7 @@
                 <v-list-item
                   v-shortkey="['ctrl', 'alt', 'r']"
                   @click="payment"
+                  :disabled="!allowInsertCashBank"
                 >
                   <v-list-item-title>
                     <v-tooltip bottom>
@@ -258,6 +259,7 @@
                 <v-list-item
                   v-shortkey="['ctrl', 'alt', 'r']"
                   @click="retur"
+                  :disabled="!allowInsertCashBank"
                 >
                   <v-list-item-title>
                     <v-tooltip bottom>
@@ -607,7 +609,8 @@ export default {
     sources: [{ id: 1, name: 'Deposit' }, { id: 2, name: 'Retur' }, { id: 2, name: 'Return (Same Item)' }],
     data: {},
     suppliers: [],
-    transactionType: ''
+    transactionType: '',
+    allowInsertCashBank: false
   }),
 
   created: function () {
@@ -617,6 +620,12 @@ export default {
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
+
+    auth.getAction(this.endpoint, this.menuId.cashBank, [this.action.insert])
+      .then((response) => {
+        this.allowInsertCashBank = response.data.find(x => x === this.action.insert) !== undefined
+      })
+
     this.$store.commit('app/setFilterFields', this.filterfields)
   },
 
