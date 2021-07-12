@@ -4,7 +4,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="2">
-            Approval
+            Persetujuan
           </v-col>
           <v-col cols="12" md="4">
             <v-text-field
@@ -17,9 +17,8 @@
             ></v-text-field>
             
           </v-col>
-          <v-spacer></v-spacer>
           <v-col cols="12" md="1">
-            <export-excel title="Daftar Gudang" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+            <export-excel title="Daftar Persetujuan" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
           </v-col>
           <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
@@ -37,7 +36,7 @@
                   @shortkey="save"
                   :disabled="selected.length === 0 || !auth.allowApprove"
                 >
-                  Approval
+                  Setujui
                 </v-btn>
               </template>
               <span class="text-caption">(Ctrl + Alt + N)</span>
