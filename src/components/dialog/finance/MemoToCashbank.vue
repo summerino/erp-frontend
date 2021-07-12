@@ -189,12 +189,12 @@ export default {
         custOrSup = this.memo.custName
         type = 'RDPC'
       }
-      this.data.memo = this.memo.amount
+      this.data.amount = this.memo.amount
       this.data.date = this.memo.date
       this.data.notes = `Automatically created by ${createdFrom}`
       this.data.itemDetails[0].transCode = this.memo.code
-      this.data.itemDetails[0].amount = this.data.memo
-      this.data.itemDetails[0].transAmount = this.data.memo
+      this.data.itemDetails[0].amount = this.data.amount
+      this.data.itemDetails[0].transAmount = this.data.amount
       this.data.itemDetails[0].notes = custOrSup
       this.data.itemDetails[0].type = type
       

@@ -293,7 +293,7 @@
                       <v-col cols="12">
                         <v-treeview
                           ref="itemMenuName"
-                          v-model="selection"
+                          v-model="selectionForView"
                           :active.sync="active"
                           :items="hierarchy.data"
                           :open.sync="open"
@@ -423,6 +423,7 @@ export default {
     defaultListAction: [],
     listAction: [],
     selection: [],
+    selectionForView: [],
     selectionAction: [],
     selectionParent: [],
     selectionTable: [],
@@ -463,7 +464,7 @@ export default {
       },
       deep: true
     },
-    'selectedItem': {
+    'selectedItemForView': {
       handler: function (value) {
         this.listingAction(value)
       },
@@ -504,6 +505,7 @@ export default {
       this.menuAction = []
       this.hierarchy.data = []
       this.selection = []
+      this.selectionForView = []
       this.selectionAction = []
       this.listAction = []
       this.selectionTable = []
@@ -645,8 +647,8 @@ export default {
       }
 
       // Inserting child
-      for (let i = 0; i < this.selection.length; i++) {
-        this.addSelection(this.selection[i])
+      for (let i = 0; i < this.selectionForView.length; i++) {
+        this.addSelection(this.selectionForView[i])
       }
     },
     addSelection(id) {
@@ -728,6 +730,7 @@ export default {
         const isExistSelection = this.selection.find(x => x === itemId)
         if (!isExistSelection) {
           this.selection.push(itemId)
+          this.selectionForView.push(itemId)
         }
       } else {
         // Delete
@@ -762,12 +765,26 @@ export default {
           this.loadRoleMenuAction()
         })
     },
+    getSelectionForView(selection) {
+      for (let i = 0; i < selection.length; i++) {
+        const item = selection[i]
+        const temp = this.menuList.find(x => x.id === item)
+        if (temp) {
+
+          if (temp.link) {
+            this.selectionForView.push(item)
+          }
+        }
+      }
+    },
     loadRoleMenu() {
       api.getAll(`${this.endpoint.systemManagement.role}/role-menus`, {
         params: { id: this.data.id }
       })
         .then(response => {
+          debugger
           this.selection = response.data
+          this.getSelectionForView(this.selection)
         })
     },
     loadRoleMenuAction() {
@@ -797,8 +814,11 @@ export default {
         })
     },
     getSelectionParent() {
-      for (let i = 0; i < this.selection.length; i++) {
-        this.lookParent(this.selection[i])
+      // for (let i = 0; i < this.selection.length; i++) {
+      //   this.lookParent(this.selection[i])
+      // }
+      for (let i = 0; i < this.selectionForView.length; i++) {
+        this.lookParent(this.selectionForView[i])
       }
     },
     lookParent(id) {
