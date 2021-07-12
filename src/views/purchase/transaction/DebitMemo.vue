@@ -234,9 +234,10 @@
                   </v-list-item-title>
                 </v-list-item>
               </v-list>
-               <v-list class="cursor-pointer" v-if="data.code !== null">
+              <v-list class="cursor-pointer" v-if="isAllowPayment()">
                 <v-list-item
                   v-shortkey="['ctrl', 'alt', 'r']"
+                  @click="payment"
                 >
                   <v-list-item-title>
                     <v-tooltip bottom>
@@ -253,7 +254,26 @@
                   </v-list-item-title>
                 </v-list-item>
               </v-list>
-             
+              <v-list class="cursor-pointer" v-if="isAllowRetur()">
+                <v-list-item
+                  v-shortkey="['ctrl', 'alt', 'r']"
+                  @click="retur"
+                >
+                  <v-list-item-title>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <span
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          Penarikan
+                        </span>
+                      </template>
+                      <span class="text-caption">(Ctrl + Alt + R)</span>
+                    </v-tooltip>
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
             </v-menu>
             <v-divider vertical></v-divider>
           </v-toolbar-items>
@@ -492,6 +512,8 @@
       </v-card>
     </v-dialog>
     <confirm ref="confirm"></confirm>
+    <memo-to-cashbank ref="cashBank" :memo="data" source="debit-memo" :transactionType="transactionType" @closeParent="close"></memo-to-cashbank>
+
   </div>
 </template>
 
@@ -504,6 +526,7 @@ import auth from '@/services/authorization.service'
 
 import Confirm from '@/components/dialog/Confirm'
 
+import MemoToCashbank from '@/components/dialog/finance/MemoToCashbank'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 
@@ -511,6 +534,7 @@ export default {
   components:{
     AdvancedSearch,
     ExportExcel,
+    MemoToCashbank,
     Confirm
   },
   data: () => ({
@@ -582,7 +606,8 @@ export default {
     valid: false,
     sources: [{ id: 1, name: 'Deposit' }, { id: 2, name: 'Retur' }, { id: 2, name: 'Return (Same Item)' }],
     data: {},
-    suppliers: []
+    suppliers: [],
+    transactionType: ''
   }),
 
   created: function () {
@@ -851,6 +876,20 @@ export default {
         }
         this.getList(!closeDialog)
       }
+    },
+    payment() {
+      this.transactionType = 'payment'
+      this.$refs.cashBank.open()
+    },
+    retur() {
+      this.transactionType = 'retur'
+      this.$refs.cashBank.open()
+    },
+    isAllowPayment() {
+      return this.data.code !== null && this.data.mark === 'PP' && this.data.srcTrans === 1
+    },
+    isAllowRetur() {
+      return this.data.code !== null && this.data.mark === 'A' && this.data.outstanding > 0
     }
   }
 }
