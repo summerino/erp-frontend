@@ -556,7 +556,7 @@
                                   <v-icon small>mdi-close-thick</v-icon>
                                 </v-btn>
                               </template>
-                              <span class="text-caption">Void</span>
+                              <span class="text-caption">Hapus</span>
                             </v-tooltip>
                           </template>
                           <template v-slot:[`item.amount`]="{ item }">
@@ -640,6 +640,7 @@ import { format, parseISO } from 'date-fns'
 
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
+import { sumBy as _sumBy } from 'lodash'
 
 import Confirm from '@/components/dialog/Confirm'
 import DetailCashBank from '@/components/dialog/general/DetailCashBank'
@@ -750,6 +751,12 @@ export default {
         this.getList()
       },
       deep: true
+    },
+    'gridItem.data': {
+      handler() {
+        this.calculateTotal()
+      },
+      deep: true
     }
   },
   computed: {
@@ -772,7 +779,6 @@ export default {
       return this.data.chequeDate ? format(parseISO(this.data.chequeDate), 'dd-MMM-yyyy') : ''
     }
   },
-
   methods: {
     reset(resetValidation = true) {
       this.data = {
@@ -898,6 +904,7 @@ export default {
       }, 0)
     },
     edit(item) {
+      debugger
       if (!item) return
 
       this.dialog.add = true
@@ -989,11 +996,17 @@ export default {
         this.getList(!closeDialog)
       }
     },
-    saveItem(items) {
+    saveItem(data) {
+      const items = JSON.parse(JSON.stringify(data))
       for (let i = 0; i < items.length; i++) {
-        if (this.gridItem.data.find(x => x.id === items[i].id) === undefined) {
+        if ((items[i].type === 'TU' && this.gridItem.data.find(x => x.id === items[i].id) === undefined) ||
+          (items[i].type !== 'TU' && this.gridItem.data.find(x => x.code === items[i].code) === undefined))  {
+          const temp = items[i].transAmount
+          items[i].transAmount = items[i].amount 
+          items[i].amount = temp 
           this.gridItem.data.push(items[i]) 
         }
+        
       }
     },
     addItem() {
@@ -1013,6 +1026,10 @@ export default {
           this.data.chequeNo = ''
         }
       }
+    },
+    calculateTotal() {
+      this.data.amountSummary = _sumBy(this.gridItem.data, 'amount')
+      this.data.transAmountSummary = _sumBy(this.gridItem.data, 'transAmount')
     }
   }
 }

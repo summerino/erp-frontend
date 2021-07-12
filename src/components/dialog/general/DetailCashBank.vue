@@ -150,9 +150,9 @@
                     v-model="item.transAmount"
                     class="text-body-2 text-right mt-0"
                     :readonly="!selected.find(x => x.code === item.code)"
-                    @keydown="changeTransAmount"
-                    @keyup="changeTransAmount"
-                    @keypress="changeTransAmount"
+                    @keydown="changeAmount"
+                    @keyup="changeAmount"
+                    @keypress="changeAmount"
                   ></v-currency-field>
                 </template>
                 <template v-slot:[`item.notes`]="{ item }">
@@ -171,44 +171,55 @@
           </v-row>
         </v-card>
         <v-card v-if="data.type === 'TU' ">
-          <v-row no-gutters>
-            <v-col cols="12" md="4">
-              <v-autocomplete
-                v-model="data.typeAmount"
-                :items="transType"
-                label="D/C"
-                class="mt-0"
-              ></v-autocomplete>
-            </v-col>
-            <v-col cols="12" md="4" class="pl-md-1">
-              <v-autocomplete
-                v-model="data.coaCode"
-                :items="coas"
-                :item-text="item => `${item.code} - ${item.name}`"
-                label="Akun"
-                item-value="code"
-                class="mt-0"
-              ></v-autocomplete>
-            </v-col>
-            <v-col cols="12" md="4" class="pl-md-1">
-              <v-currency-field
-                v-model="data.amount"
-                label="Nilai"
-                class="text-right mt-0"
-              ></v-currency-field>
-            </v-col>
-          </v-row>
-          <v-row no-gutters>
-            <v-col cols="12" md="12" class="pl-md-1">
-              <v-textarea
-                v-model="data.notes"
-                label="Catatan"
-                counter="256"
-                class="mt-0"
-                rows="4"
-              ></v-textarea>
-            </v-col>
-          </v-row>
+          <v-form ref="form" v-model="valid">
+            <v-row no-gutters>
+              <v-col cols="12" md="4">
+                <v-autocomplete
+                  v-model="data.typeAmount"
+                  :items="transType"
+                  label="D/C"
+                  class="mt-0"
+                  :rules="rules.required"
+                  required
+                ></v-autocomplete>
+              </v-col>
+              <v-col cols="12" md="4" class="pl-md-1">
+                <v-autocomplete
+                  v-model="data.coaCode"
+                  :items="coas"
+                  :item-text="item => `${item.code} - ${item.name}`"
+                  label="Akun"
+                  item-value="code"
+                  class="mt-0"
+                  :rules="rules.required"
+                  required
+                ></v-autocomplete>
+              </v-col>
+              <v-col cols="12" md="4" class="pl-md-1">
+                <v-currency-field
+                  v-model="data.amount"
+                  label="Nilai"
+                  class="text-right mt-0"
+                  :rules="rules.required"
+                  required
+                ></v-currency-field>
+              </v-col>
+            </v-row>
+            <v-row no-gutters>
+              <v-col cols="12" md="12" class="pl-md-1">
+                <v-textarea
+                  v-model="data.notes"
+                  label="Catatan"
+                  counter="256"
+                  class="mt-0"
+                  rows="4"
+                  :rules="rules.required"
+                  required
+                ></v-textarea>
+              </v-col>
+            </v-row>
+          </v-form>
+          
         </v-card>
       </v-card-text>
 
@@ -249,8 +260,13 @@ import { randomNumber } from '@/helpers/math-helpers'
 
 export default {
   props: ['coas', 'cashBankTypes', 'coaCodes'],
+  created: function () {
+    this.rules = this.$store.state.app.rules
+  },
   data() {
     return {
+      rules: {},
+      valid: false,
       menu: {
         startDate: false,
         endDate: false
@@ -266,16 +282,7 @@ export default {
         typeAmount: 'D'
       },
       grid: {
-        columns: [
-          { text: 'Kode', value: 'code', divider: true, width: '170' },
-          { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
-          { text: 'Tanggal', value: 'date', divider: true, width: '120' },
-          { text: 'Nilai', value: 'total', divider: true, width: '120' },
-          { text: 'Nilai Sudah Diterima', value: 'paidAmount', divider: true, width: '120' },
-          { text: 'Sisa', value: 'remaining', divider: true, width: '120' },
-          { text: 'Saat Ini Diterima', value: 'transAmount', divider: true, width: '150' },
-          { text: 'Catatan', value: 'notes', divider: true, width: '150' }
-        ],
+        columns: [],
         data: []
       },
       options: {
@@ -293,7 +300,7 @@ export default {
         },
         {
           text: 'Kode Transaksi',
-          value: 'transCode' 
+          value: 'code' 
         }
       ],
       customerFilters: [
@@ -307,7 +314,7 @@ export default {
         },
         {
           text: 'Kode Transaksi',
-          value: 'transCode' 
+          value: 'code' 
         }
       ],      
       transType: [
@@ -401,13 +408,13 @@ export default {
     getUrl() {
       let url = ''
       if (this.data.type === 'AP') {
-        url = this.endpoint.purchase.invoice
+        url = `${this.endpoint.finance.cashBank}/ap`
       } else if (this.data.type === 'AR') {
-        url = this.endpoint.sales.invoice
+        url = `${this.endpoint.finance.cashBank}/ar`
       } else if (this.data.type === 'DPC' || this.data.type === 'RDPC' || this.data.type === 'SR') {
-        url = this.endpoint.sales.creditMemo
+        url = `${this.endpoint.finance.cashBank}/credit-memo`
       } else if (this.data.type === 'DPS' || this.data.type === 'RDPS' || this.data.type === 'PR') {
-        url = this.endpoint.purchase.debitMemo
+        url = `${this.endpoint.finance.cashBank}/debit-memo`
       }
       return url
     },
@@ -422,7 +429,7 @@ export default {
           }
         )
       }
-      if (this.data.type === 'AP' || this.data.type === 'AR') {
+      if (this.data.type === 'RDPC' || this.data.type === 'RDPS') {
         filter.push(
           {
             field: 'Mark',
@@ -430,15 +437,7 @@ export default {
             keyword: 'A'
           }
         )
-      } else if (this.data.type === 'RDPC' || this.data.type === 'RDPS') {
-        filter.push(
-          {
-            field: 'Mark',
-            operator: 'eq',
-            keyword: 'A'
-          }
-        )
-      } else {
+      } else if (this.data.type === 'DPC' || this.data.type === 'DPS') {
         filter.push(
           {
             field: 'Mark',
@@ -478,12 +477,12 @@ export default {
       this.resetGeneralTransaction()
     },
     bindColumn() {
-      if (this.data.type === 'AR' || this.data.type === 'SR') {
+      if (this.data.type === 'AR') {
         this.grid.columns = [
           { text: 'Kode', value: 'code', divider: true, width: '170' },
           { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
           { text: 'Tanggal', value: 'date', divider: true, width: '120' },
-          { text: 'Nilai', value: 'total', divider: true, align: 'right', width: '120' },
+          { text: 'Nilai', value: 'amount', divider: true, align: 'right', width: '120' },
           { text: 'Nilai Sudah Diterima', value: 'paidAmount', align: 'right', divider: true, width: '120' },
           { text: 'Sisa', value: 'remaining', divider: true, align: 'right', width: '120' },
           { text: 'Saat Ini Diterima', value: 'transAmount', align: 'right', divider: true, width: '150' },
@@ -491,59 +490,7 @@ export default {
         ]
         this.filters = this.customerFilters
         this.data.by = 'custName'
-      } else if (this.data.type === 'AP' || this.data.type === 'PR') {
-        this.grid.columns = [
-          { text: 'Kode', value: 'code', divider: true, width: '170' },
-          { text: 'Pemasok', value: 'supName', divider: true, width: '200' },
-          { text: 'Tanggal', value: 'date', divider: true, width: '120' },
-          { text: 'Nilai', value: 'total', divider: true, align: 'right', width: '120' },
-          { text: 'Nilai Sudah Dibayar', value: 'paidAmount', divider: true, width: '120' },
-          { text: 'Sisa', value: 'remaining', divider: true, align: 'right', width: '120' },
-          { text: 'Saat Ini Dibayar', value: 'transAmount', align: 'right', divider: true, width: '150' },
-          { text: 'Catatan', value: 'notes', divider: true, width: '150' }        
-        ]
-        this.filters = this.supplierFilters
-        this.data.by = 'supName'
-      } else if (this.data.type === 'DPC') {
-        this.grid.columns = [
-          { text: 'Kode', value: 'code', divider: true, width: '170' },
-          { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
-          { text: 'Tanggal', value: 'date', divider: true, width: '120' },
-          { text: 'Nilai', value: 'amount', divider: true, align: 'right', width: '120' },
-          { text: 'Nilai Sudah Diterima', value: 'used', divider: true, align: 'right', width: '120' },
-          { text: 'Sisa', value: 'remaining', divider: true, align: 'right', width: '120' },
-          { text: 'Saat Ini Diterima', value: 'transAmount', divider: true, width: '150' },
-          { text: 'Catatan', value: 'notes', divider: true, width: '150' }        
-        ]
-        this.filters = this.customerFilters
-        this.data.by = 'custName'
-      } else if (this.data.type === 'RDPS') {
-        this.grid.columns = [
-          { text: 'Kode', value: 'code', divider: true, width: '170' },
-          { text: 'Pemasok', value: 'supName', divider: true, width: '200' },
-          { text: 'Tanggal', value: 'date', divider: true, width: '120' },
-          { text: 'Nilai', value: 'amount', divider: true, align: 'right', width: '120' },
-          { text: 'Nilai Sudah Dibayar', value: 'used', divider: true, align: 'right', width: '120' },
-          { text: 'Sisa', value: 'remaining', divider: true, align: 'right', width: '120' },
-          { text: 'Saat Ini Dibayar', value: 'transAmount', divider: true, width: '150' },
-          { text: 'Catatan', value: 'notes', divider: true, width: '150' }        
-        ]
-        this.filters = this.supplierFilters
-        this.data.by = 'supName'
-      } else if (this.data.type === 'DPS') {
-        this.grid.columns = [
-          { text: 'Kode', value: 'code', divider: true, width: '170' },
-          { text: 'Pemasok', value: 'supName', divider: true, width: '200' },
-          { text: 'Tanggal', value: 'date', divider: true, width: '120' },
-          { text: 'Nilai', value: 'amount', divider: true, align: 'right', width: '120' },
-          { text: 'Nilai Sudah Dibayar', value: 'used', divider: true, align: 'right', width: '120' },
-          { text: 'Sisa', value: 'remaining', divider: true, align: 'right', width: '120' },
-          { text: 'Saat Ini Dibayar', value: 'transAmount', divider: true, width: '150' },
-          { text: 'Catatan', value: 'notes', divider: true, width: '150' }        
-        ]
-        this.filters = this.supplierFilters
-        this.data.by = 'supName'
-      } else if (this.data.type === 'RDPC') {
+      } else if (this.data.type === 'DPC' || this.data.type === 'RDPC' || this.data.type === 'SR') {
         this.grid.columns = [
           { text: 'Kode', value: 'code', divider: true, width: '170' },
           { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
@@ -556,7 +503,38 @@ export default {
         ]
         this.filters = this.customerFilters
         this.data.by = 'custName'
-      }            
+      } else if (this.data.type === 'AP') {
+        this.grid.columns = [
+          { text: 'Kode', value: 'code', divider: true, width: '170' },
+          { text: 'Pemasok', value: 'supName', divider: true, width: '200' },
+          { text: 'Tanggal', value: 'date', divider: true, width: '120' },
+          { text: 'Nilai', value: 'amount', divider: true, align: 'right', width: '120' },
+          { text: 'Nilai Sudah Dibayar', value: 'paidAmount', divider: true, width: '120' },
+          { text: 'Sisa', value: 'remaining', divider: true, align: 'right', width: '120' },
+          { text: 'Saat Ini Dibayar', value: 'transAmount', align: 'right', divider: true, width: '150' },
+          { text: 'Catatan', value: 'notes', divider: true, width: '150' }        
+        ]
+        this.filters = this.supplierFilters
+        this.data.by = 'supName'
+      } else if (this.data.type === 'DPS' || this.data.type === 'RDPS' || this.data.type === 'PR') {
+        this.grid.columns = [
+          { text: 'Kode', value: 'code', divider: true, width: '170' },
+          { text: 'Pemasok', value: 'supName', divider: true, width: '200' },
+          { text: 'Tanggal', value: 'date', divider: true, width: '120' },
+          { text: 'Nilai', value: 'amount', divider: true, align: 'right', width: '120' },
+          { text: 'Nilai Sudah Dibayar', value: 'used', divider: true, align: 'right', width: '120' },
+          { text: 'Sisa', value: 'remaining', divider: true, align: 'right', width: '120' },
+          { text: 'Saat Ini Dibayar', value: 'transAmount', divider: true, width: '150' },
+          { text: 'Catatan', value: 'notes', divider: true, width: '150' }        
+        ]
+        this.filters = this.supplierFilters
+        this.data.by = 'supName'
+      } else if (this.data.type === 'TU') {
+        setTimeout(() => {
+          // Validate form first
+          this.$refs.form.validate()
+        }, 0)
+      }        
     },
     bindDate() {
       const tempDate = new Date()
@@ -568,7 +546,14 @@ export default {
       this.data.startDate = format(new Date(tempStartDate), 'yyyy-MM-dd')
     },
     save() {
+
       if (this.data.type === 'TU') {
+
+        if (!this.$refs.form.validate()) {
+          this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
+          return
+        }
+
         let coaName = ''
         const temp = this.coas.find(x => x.code === this.data.coaCode)
         if (temp) {
@@ -595,6 +580,7 @@ export default {
     },
     bindAdditionalData() {
       if (this.data.type !== 'TU') {
+        debugger
         const field = this.getFieldForNote()
         for (let i = 0; i < this.selected.length; i++) {
           this.selected[i].id = randomNumber(-1, -1000)
@@ -609,17 +595,11 @@ export default {
             }
           }
           this.selected[i].type = this.data.type
-          this.selected[i].currCode = 'IDR'
-          this.selected[i].rate = 1
-          this.selected[i].amount = this.selected[i].total
           this.selected[i].typeAmount = this.getTypeAmount()
-          this.selected[i].remaining = this.selected[i].amount - this.selected[i].paidAmount
           this.selected[i].transAmount = this.selected[i].remaining
           this.selected[i].transCode = this.selected[i].code
-          this.bindRemaining(this.selected[i])
         }
       }
-      
     },
     getTypeAmount() {
       if (this.data.type === 'AR' || this.data.type === 'DPC' || this.data.type === 'RDPS' || this.data.type === 'PR') {
@@ -628,27 +608,7 @@ export default {
         return 'D'
       }
     },
-    bindRemaining(data) {
-      if (this.data.type === 'AP' || this.data.type === 'AR') {
-        data.remaining = data.total - data.paidAmount
-      } else {
-        data.remaining = data.amount - data.used
-      }
-      // } else if (this.data.type === 'DPC') {
-      //   data.remaining = data.amount - data.used
-      // } else if (this.data.type === 'DPS') {
-        
-      // } else if (this.data.type === 'RDPS') {
-        
-      // } else if (this.data.type === 'RDPC') {
-        
-      // } else if (this.data.type === 'PR') {
-        
-      // } else if (this.data.type === 'SR') {
-        
-      // }
-
-    },
+    
     getFieldForNote() {
       if (this.data.type === 'AR' || this.data.type === 'DPC' || this.data.type === 'RDPC' || this.data.type === 'SR') {
         return 'custName'
@@ -656,7 +616,7 @@ export default {
         return 'supName'
       }
     },
-    changeTransAmount() {
+    changeAmount() {
       this.calculateTotal()
     },
     calculateTotal() {

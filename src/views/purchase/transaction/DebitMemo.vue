@@ -342,6 +342,7 @@
                           v-model="data.amount"
                           label="Nilai"
                           class="text-right mt-0"
+                          :readonly="data.code !== null && data.srcTrans === 2"
                           @keyup="amountChange"
                           @keypress="amountChange"
                           @keydown="amountChange"
