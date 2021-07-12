@@ -124,7 +124,6 @@ export default {
       this.dialog = false
     },
     async save() {
-      debugger
       this.fillData()
       let result = { success: false, message: '' }
       const resp = await api.create(this.endpoint.finance.cashBank, this.data)
