@@ -782,7 +782,6 @@ export default {
         params: { id: this.data.id }
       })
         .then(response => {
-          debugger
           this.selection = response.data
           this.getSelectionForView(this.selection)
         })
