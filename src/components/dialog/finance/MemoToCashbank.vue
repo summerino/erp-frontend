@@ -150,7 +150,7 @@ export default {
         })
     },
     getCOACodeList() {
-      const codes = ['DPS_COA', 'DPC_COA', 'RDPS_COA', 'RDPC_COA']
+      const codes = ['DPS_COA', 'DPC_COA']
       api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
         params: {
           codes: JSON.stringify(codes)
@@ -189,20 +189,28 @@ export default {
         custOrSup = this.memo.custName
         type = 'RDPC'
       }
-      this.data.memo = this.memo.amount
+      this.data.amount = this.memo.amount
       this.data.date = this.memo.date
       this.data.notes = `Automatically created by ${createdFrom}`
       this.data.itemDetails[0].transCode = this.memo.code
-      this.data.itemDetails[0].amount = this.data.memo
-      this.data.itemDetails[0].transAmount = this.data.memo
+      this.data.itemDetails[0].amount = this.data.amount
+      this.data.itemDetails[0].transAmount = this.data.amount
       this.data.itemDetails[0].notes = custOrSup
       this.data.itemDetails[0].type = type
+      
+      if (type === 'DPC' || type === 'RDPC') {
+        this.getCoaCode('DPC')
+      } else if (type === 'DPS' || type === 'RDPS') {
+        this.getCoaCode('DPS')
+      }
+
+    },
+    getCoaCode(type) {
       const temp = this.coaCodes.find(x => x.code === `${type}_COA`)
       if (temp) {
         this.data.itemDetails[0].coaCode = temp.value
       }
-
-    }    
+    }  
   }
 }
 </script>
