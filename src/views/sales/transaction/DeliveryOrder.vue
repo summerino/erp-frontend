@@ -663,7 +663,6 @@
     ></find-so>
     <find-return
       ref="findReturn"
-      :type="2"
       :mark-exclude="['V', 'CLS', 'CMP']"
       @dblclick:row="bindTransData"
     ></find-return>

@@ -130,7 +130,6 @@ import api from '@/services/axios.service'
 export default {
   props: {
     rcvCode: String,
-    type: Number,
     markExclude: {
       type: Array,
       required: true
@@ -202,8 +201,8 @@ export default {
       if (this.type) {
         filters.push({
           field: 'type',
-          operator: 'eq',
-          keyword: this.type
+          operator: 'contains',
+          keyword: [2, 3]
         })
       }
 
