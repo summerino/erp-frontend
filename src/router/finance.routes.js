@@ -6,5 +6,12 @@ export default [
     meta: {
       authRequired: true
     }
+  }, {
+    path: '/finance/transaction/cash-bank-inter',
+    name: 'cash-bank-inter',
+    component: () => import(/* webpackChunkName: "cash-bank-inter" */ '@/views/finance/transaction/CashBankInter.vue'),
+    meta: {
+      authRequired: true
+    }
   }
 ]

@@ -2,7 +2,8 @@ export default {
   master: 'master',
   finance: {
     cashBank: 'general-cash-bank',
-    cashBankType: 'general-cash-bank-type'
+    cashBankType: 'general-cash-bank-type',
+    cashBankInter: 'inter-cash-bank'
   },
   general: {
     currency: 'currency',
