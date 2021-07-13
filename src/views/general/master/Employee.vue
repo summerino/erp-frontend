@@ -607,7 +607,7 @@ export default {
     areaReference: [],
     customerList: [],
     daysOfWeek: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
-    employeeTypeRef: [{text: 'Karyawan', value: 1}, {text: 'Penjual', value: 2}, {text: 'Supir', value: 3}],
+    employeeTypeRef: [{text: 'Karyawan', value: 1}, {text: 'Penjual', value: 2}, {text: 'Supir', value: 3}, {text: 'Gudang', value: 4}],
     maritalStatusRef: [{text: 'Lajang', value: 1}, {text: 'Menikah', value: 2}, {text: 'Bercerai', value: 3}],
     religionRef: [{text: 'Islam', value: 1}, {text: 'Protestant', value: 2}, {text: 'Catholic', value: 3}, {text: 'Buddha', value: 4}, {text: 'Hindu', value: 5}, {text: 'Konghucu', value: 6}, {text: 'Lainnya', value: 7}],
     salesmanGroupRef: [],
