@@ -7,5 +7,6 @@ export default {
     state.authorization.allowChangeWarehouse = actions.find(x => x === state.action.changeWarehouse) !== undefined 
     state.authorization.allowChangeDate = actions.find(x => x === state.action.changeDate) !== undefined 
     state.authorization.allowApprove = actions.find(x => x === state.action.approve) !== undefined 
+    state.authorization.allowPost = actions.find(x => x === state.action.post) !== undefined 
   }
 }
