@@ -14,6 +14,7 @@ import SystemManagementRoutes from './systemmanagement.routes'
 import ParameterRoutes from './parameter.routes'
 import AssetManagementRoutes from './assetmanagement.routes'
 import ExpeditionRoutes from './expedition.routes'
+import UtilityRoutes from './utility.routes'
 
 Vue.use(Router)
 
@@ -39,6 +40,7 @@ export const routes = [{
 ...ParameterRoutes,
 ...AssetManagementRoutes,
 ...ExpeditionRoutes,
+...UtilityRoutes,
 {
   path: '/login',
   name: 'login',

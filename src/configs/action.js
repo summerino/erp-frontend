@@ -7,5 +7,6 @@ export default {
   viewRelatedTrans: 6,
   close: 7,
   changeDate: 8,
-  approve: 9
+  approve: 9,
+  post: 10
 }
