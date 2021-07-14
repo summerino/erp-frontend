@@ -2,14 +2,14 @@ export default {
   // apps quickmenu
   apps: [{
     icon: 'mdi-email-outline',
-    text: 'Profile',
-    key: 'menu.profile',
+    text: 'Ubah kata sandi',
+    key: 'menu.changePassword',
     subtitle: 'Hey!',
-    link: '/users/edit'
+    link: '/users/change-password'
   }],
 
   // user dropdown menu
   user: [
-    { icon: 'mdi-account-box-outline', key: 'menu.profile', text: 'Profile', link: '/users/edit' }
+    { icon: 'mdi-account-box-outline', key: 'menu.changePassword', text: 'Ubah kata sandi', link: '/users/change-password' }
   ]
 }
