@@ -30,7 +30,7 @@
           <v-icon small :class="{ 'grey--text': item.disabled }">{{ item.icon }}</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
-          <v-list-item-title>{{ item.key ? $t(item.key) : item.text }}</v-list-item-title>
+          <v-list-item-title>{{ item.text }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
 

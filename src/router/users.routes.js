@@ -9,4 +9,8 @@ export default [{
   path: '/users/edit',
   name: 'users-edit',
   component: () => import(/* webpackChunkName: "users-edit" */ '@/views/users/EditUserPage.vue')
+}, {
+  path: '/users/change-password',
+  name: 'users-change-password',
+  component: () => import(/* webpackChunkName: "users-change-password" */ '@/views/users/ChangePassword.vue')
 }]
