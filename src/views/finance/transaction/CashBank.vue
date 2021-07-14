@@ -130,7 +130,7 @@
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
         <template v-slot:[`item.type`]="{ item }">
-          {{ item.type === 'D' ? 'Debit' : 'Credit' }}
+          {{ item.type === 'D' ? 'Kas Bank Keluar' : 'Kas Bank Masuk' }}
         </template>
         <template v-slot:[`item.amount`]="{ item }">
           {{ item.amount | formatCurrency }}
@@ -587,7 +587,7 @@
                 </v-card>
               </v-col>
             </v-row>
-            <v-row dense>
+            <!-- <v-row dense>
               <v-col cols="12">
                 <v-card>
                   <v-tabs v-model="tab.summary">
@@ -624,7 +624,7 @@
                   </v-tabs>
                 </v-card>
               </v-col>
-            </v-row>
+            </v-row> -->
           </v-form>
         </v-card-text>
       </v-card>
@@ -668,14 +668,14 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { value: 'action', sortable: false, divider: true, width: '50', excelColWidth:'10' },
         { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'19' },
         // { text: 'Kode Voucher', value: 'vouCode', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'15', isDateTime: true },
         { text: 'Nilai', value: 'amount', divider: true, align:'right', width: '100', excelColWidth:'13' },
-        { text: 'Tipe', value: 'type', divider: true, width: '50', excelColWidth:'13' },
-        { text: 'Akun', value: 'coaCode', divider: true, width: '100', excelColWidth:'20', customValues: ['coaCode', 'coaName'] },
-        { text: 'Status', value: 'mark', divider: true, width: '100' }
+        { text: 'Tipe', value: 'type', divider: true, width: '90', excelColWidth:'13' },
+        { text: 'Akun', value: 'coaCode', divider: true, width: '130', excelColWidth:'20', customValues: ['coaCode', 'coaName'] },
+        { text: 'Status', value: 'mark', divider: true, width: '50' }
       ],
       data: [],
       options: {
@@ -754,7 +754,8 @@ export default {
     },
     'gridItem.data': {
       handler() {
-        this.calculateTotal()
+        this.calculateTotalHeader()
+        //this.calculateTotal()
       },
       deep: true
     }
@@ -1000,9 +1001,10 @@ export default {
       for (let i = 0; i < items.length; i++) {
         if ((items[i].type === 'TU' && this.gridItem.data.find(x => x.id === items[i].id) === undefined) ||
           (items[i].type !== 'TU' && this.gridItem.data.find(x => x.code === items[i].code) === undefined))  {
-          const temp = items[i].transAmount
-          items[i].transAmount = items[i].amount 
-          items[i].amount = temp 
+          // const temp = items[i].transAmount
+          // items[i].transAmount = items[i].amount 
+          // items[i].amount = temp 
+          items[i].amount = items[i].transAmount
           this.gridItem.data.push(items[i]) 
         }
         
@@ -1029,7 +1031,21 @@ export default {
     calculateTotal() {
       this.data.amountSummary = _sumBy(this.gridItem.data, 'amount')
       this.data.transAmountSummary = _sumBy(this.gridItem.data, 'transAmount')
+    },
+    calculateTotalHeader() {
+      let totalHeader = 0
+      const data = this.gridItem.data
+      for (let i = 0; i < data.length; i++) {
+        data[i].transAmount = data[i].amount
+        if (data[i].typeAmount === 'C') {
+          totalHeader += data[i].amount
+        } else {
+          totalHeader -= data[i].amount
+        }
+      }
+      this.data.amount = totalHeader
     }
+
   }
 }
 </script>
