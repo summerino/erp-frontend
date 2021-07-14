@@ -639,8 +639,8 @@
                         <template v-slot:[`item.date`]="{ item }">
                           {{ item.date | formatDate('dd-MMM-yyyy') }}
                         </template>
-                        <template v-slot:[`item.amount`]="{ item }">
-                          {{ item.amount | formatCurrency }}
+                        <template v-slot:[`item.total`]="{ item }">
+                          {{ item.total | formatCurrency }}
                         </template>
                       </v-data-table>
                     </v-tab-item>
@@ -897,8 +897,7 @@ export default {
         { text: 'Kode Trans.', value: 'code', divider: true },
         { text: 'Tipe Trans.', value: 'code', divider: true },
         { text: 'Tgl. Trans.', value: 'date', align: 'right', divider: true },
-        { text: 'Nilai', value: 'total', align: 'right', divider: true },
-        { text: 'Status', value: 'mark' }
+        { text: 'Nilai', value: 'total', align: 'right', divider: true }
       ],
       data: []
     },

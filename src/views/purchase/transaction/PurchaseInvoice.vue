@@ -117,6 +117,12 @@
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
+        <template v-slot:[`item.paidAmount`]="{ item }">
+          {{ item.paidAmount | formatCurrency }}
+        </template>
+        <template v-slot:[`item.remaining`]="{ item }">
+          {{ item.remaining | formatCurrency }}
+        </template>
         <template v-slot:[`item.total`]="{ item }">
           {{ item.total | formatCurrency }}
         </template>
@@ -615,7 +621,24 @@
                       key="related-trans"
                       transition="false"
                     >
-                      Ini adalah transaksi terkait
+                      <v-data-table
+                        :headers="gridRelated.columns"
+                        :items="gridRelated.data"
+                        :items-per-page="-1"
+                        height="300"
+                        class="elevation-1"
+                        dense
+                        disable-sort
+                        fixed-header
+                        hide-default-footer
+                      >
+                        <template v-slot:[`item.date`]="{ item }">
+                          {{ item.date | formatDate('dd-MMM-yyyy') }}
+                        </template>
+                        <template v-slot:[`item.total`]="{ item }">
+                          {{ item.total | formatCurrency }}
+                        </template>
+                      </v-data-table>
                     </v-tab-item>
                   </v-tabs>
                 </v-card>
@@ -743,6 +766,8 @@ export default {
         { text: 'Tgl. Trans.', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
         { text: 'No. Ord. Pembelian', value: 'poCode', divider: true, width: '150', excelColWidth:'18', isNumber: true },
+        { text: 'Nilai Sudah Dibayar', value: 'paidAmount', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Sisa', value: 'remaining', align: 'right', divider: true, width: '120', excelColWidth:'15' },
         { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15' },
         { text: 'Dikeluarkan Oleh', value: 'issuedInitial', divider: true, width: '200', excelColWidth:'23' },
         { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
@@ -766,6 +791,15 @@ export default {
         { text: 'Biaya Pengiriman', value: 'shipmentFee', align: 'right', divider: true, width: '120' },
         { text: 'Biaya Penanganan', value: 'handlingFee', align: 'right', divider: true, width: '120' },
         { text: 'Total', value: 'total', align: 'right', width: '120' }
+      ],
+      data: []
+    },
+    gridRelated: {
+      columns: [
+        { text: 'Kode Trans.', value: 'code', divider: true },
+        { text: 'Tipe Trans.', value: 'type', divider: true },
+        { text: 'Tgl. Trans.', value: 'date', align: 'right', divider: true },
+        { text: 'Nilai', value: 'total', align: 'right', divider: true }
       ],
       data: []
     },
@@ -1034,6 +1068,14 @@ export default {
 
       // Get purchase receive details
       this.getReceiveLists()
+
+      // Get related transaction details
+      api.getAll(`${this.endpoint.sales.directInvoice}/related-trans`, {
+        params: { code: item.code }
+      })
+        .then(response => {
+          this.gridRelated.data = response.data.tableData
+        })
 
       // Set focus to invoice code field
       setTimeout(() => {

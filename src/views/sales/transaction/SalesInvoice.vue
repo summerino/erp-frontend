@@ -174,6 +174,12 @@
         <template v-slot:[`item.fromDirectInvoice`]="{ item }">
           {{ item.fromDirectInvoice ? 'Penjualan Langsung' : 'Faktur Penjualan' }}
         </template>
+        <template v-slot:[`item.paidAmount`]="{ item }">
+          {{ item.paidAmount | formatCurrency }}
+        </template>
+        <template v-slot:[`item.remaining`]="{ item }">
+          {{ item.remaining | formatCurrency }}
+        </template>
         <template v-slot:[`item.total`]="{ item }">
           {{ item.total | formatCurrency }}
         </template>
@@ -666,7 +672,24 @@
                       key="related-trans"
                       transition="false"
                     >
-                      Ini adalah transaksi terkait
+                      <v-data-table
+                        :headers="gridRelated.columns"
+                        :items="gridRelated.data"
+                        :items-per-page="-1"
+                        height="300"
+                        class="elevation-1"
+                        dense
+                        disable-sort
+                        fixed-header
+                        hide-default-footer
+                      >
+                        <template v-slot:[`item.date`]="{ item }">
+                          {{ item.date | formatDate('dd-MMM-yyyy') }}
+                        </template>
+                        <template v-slot:[`item.total`]="{ item }">
+                          {{ item.total | formatCurrency }}
+                        </template>
+                      </v-data-table>
                     </v-tab-item>
                   </v-tabs>
                 </v-card>
@@ -773,8 +796,10 @@ export default {
         { text: 'No. Faktur', value: 'code', divider: true, width: '160', excelColWidth:'18' },
         { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'20', isDateTime: true },
         { text: 'Tipe', value: 'fromDirectInvoice', divider: true, width: '170', excelColWidth:'20', isBool: true, customValues: [{state: true, value: 'Penjualan Langsung'}, {state: false, value: 'Faktur Penjualan'}] },
-        { text: 'Pelanggan', value: 'custName', divider: true, width: '200', excelColWidth:'35', customValues: ['custCode', 'custName'] },
+        { text: 'Pelanggan', value: 'custName', divider: true, width: '270', excelColWidth:'35', customValues: ['custCode', 'custName'] },
         { text: 'No. Ord. Penjualan', value: 'soCode', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Nilai Sudah Dibayar', value: 'paidAmount', align: 'right', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Sisa', value: 'remaining', align: 'right', divider: true, width: '120', excelColWidth:'15' },
         { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
         { text: 'Dikeluarkan Oleh', value: 'issuedInitial', divider: true, width: '200', excelColWidth:'23' },
         { text: 'Tanggal Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'20', isDateTime: true },
@@ -797,6 +822,15 @@ export default {
         { text: 'Biaya Pengiriman', value: 'shipmentFee', align: 'right', divider: true, width: '120' },
         { text: 'Biaya Penanganan', value: 'handlingFee', align: 'right', divider: true, width: '120' },
         { text: 'Total', value: 'total', align: 'right', width: '120' }
+      ],
+      data: []
+    },
+    gridRelated: {
+      columns: [
+        { text: 'Kode Trans.', value: 'code', divider: true },
+        { text: 'Tipe Trans.', value: 'type', divider: true },
+        { text: 'Tgl. Trans.', value: 'date', align: 'right', divider: true },
+        { text: 'Nilai', value: 'total', align: 'right', divider: true }
       ],
       data: []
     },
@@ -1101,6 +1135,14 @@ export default {
 
       // Get sales delivery details
       this.getDOLists()
+
+      // Get related transaction details
+      api.getAll(`${this.endpoint.sales.directInvoice}/related-trans`, {
+        params: { code: item.code }
+      })
+        .then(response => {
+          this.gridRelated.data = response.data.tableData
+        })
 
       // Set focus to invoice code field
       setTimeout(() => {
