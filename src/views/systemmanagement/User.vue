@@ -262,6 +262,14 @@
                 ></v-autocomplete>
               </v-col>
             </v-row>
+            <v-row no-gutters>
+              <v-col cols="12" md="6" class="pr-md-3">
+                <v-checkbox
+                  v-model="data.mobileSignIn"
+                  label="Login Mobile"
+                ></v-checkbox>
+              </v-col>
+            </v-row>
           </v-container>
         </v-form>
       </v-card-text>
@@ -369,6 +377,7 @@ export default {
         name: null,
         roleId: 0,
         employeeId: 0,
+        mobileSignIn: false,
         isActive: true,
         updatedInitial: null,
         roleName: null,
