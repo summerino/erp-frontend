@@ -284,17 +284,39 @@
                   :decimal-length="0"
                   class="mt-0"
                   label="Nilai"
+                  @change="nilaiChange()"
                 ></v-currency-field>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
-                  <v-text-field
-                    v-model="data.notes"
-                    :rules="rules.max256chars"
-                    :counter="256"
-                    class="mt-0"
-                    label="Catatan"
-                  ></v-text-field>
-                </v-col>
+                <v-currency-field
+                  v-model="data.paidAmount"
+                  :decimal-length="0"
+                  class="mt-0"
+                  label="Nilai Sudah Dibayar"
+                  readonly
+                ></v-currency-field>
+              </v-col>
+            </v-row>
+
+            <v-row no-gutters>
+              <v-col cols="12" md="6" class="pr-md-3">
+                <v-currency-field
+                  v-model="data.leftoverAmount"
+                  :decimal-length="0"
+                  class="mt-0"
+                  label="Nilai Sisa"
+                  readonly
+                ></v-currency-field>
+              </v-col>
+              <v-col cols="12" md="6" class="pl-md-3">
+                <v-text-field
+                  v-model="data.notes"
+                  :rules="rules.max256chars"
+                  :counter="256"
+                  class="mt-0"
+                  label="Catatan"
+                ></v-text-field>
+              </v-col>
             </v-row>
           </v-container>
         </v-form>
@@ -335,7 +357,9 @@ export default {
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'20'  },
         { text: 'Tanggal Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '100', excelColWidth:'20' },
         { text: 'Mata Uang', value: 'currCode', divider: true, width: '120', excelColWidth:'20' },
-        { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '100', excelColWidth:'20' }
+        { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '100', excelColWidth:'20' },
+        { text: 'Nilai Sudah Dibayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20' }
+
       ],
       data: [],
       options: {
@@ -412,6 +436,9 @@ export default {
         action: '',
         initial: null,
         name: null,
+        amount: 0,
+        paidAmount: 0,
+        leftoverAmount: 0,
         isActive: true
       }
 
@@ -480,6 +507,7 @@ export default {
       this.data = {
         ...item,
         action: 'edit',
+        leftoverAmount: item.amount - item.paidAmount,
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
     },
@@ -557,6 +585,9 @@ export default {
         .then(response => {
           this.customers = response.data.tableData
         })
+    },
+    nilaiChange() {
+      this.data.leftoverAmount = this.data.amount - this.data.paidAmount
     }
   }
 }
