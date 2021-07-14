@@ -21,7 +21,7 @@
       <v-list-item
         v-for="(item, index) in menu"
         :key="index"
-        :to="item.link"
+        :to="{ name: item.link }"
         :exact="item.exact"
         :disabled="item.disabled"
         link

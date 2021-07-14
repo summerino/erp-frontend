@@ -3,18 +3,16 @@ import Router from 'vue-router'
 import auth from '@/auth/authService'
 
 // Routes
+import AccountingRoutes from './accounting.routes'
+import AssetManagementRoutes from './assetmanagement.routes'
+import ExpeditionRoutes from './expedition.routes'
 import FinanceRoutes from './finance.routes'
 import GeneralRoutes from './general.routes'
 import InventoryRoutes from './inventory.routes'
+import ParameterRoutes from './parameter.routes'
 import PurchaseRoutes from './purchase.routes'
 import SalesRoutes from './sales.routes'
-import UsersRoutes from './users.routes'
-import AccountingRoutes from './accounting.routes'
 import SystemManagementRoutes from './systemmanagement.routes'
-import ParameterRoutes from './parameter.routes'
-import AssetManagementRoutes from './assetmanagement.routes'
-import ExpeditionRoutes from './expedition.routes'
-import UtilityRoutes from './utility.routes'
 
 Vue.use(Router)
 
@@ -28,19 +26,21 @@ export const routes = [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/user/change-password',
+  name: 'user-change-password',
+  component: () => import(/* webpackChunkName: "user-change-password" */ '@/views/user/ChangePassword.vue')
 },
+...AccountingRoutes,
+...AssetManagementRoutes,
+...ExpeditionRoutes,
 ...FinanceRoutes,
 ...GeneralRoutes,
 ...InventoryRoutes,
+...ParameterRoutes,
 ...PurchaseRoutes,
 ...SalesRoutes,
-...UsersRoutes,
-...AccountingRoutes,
 ...SystemManagementRoutes,
-...ParameterRoutes,
-...AssetManagementRoutes,
-...ExpeditionRoutes,
-...UtilityRoutes,
 {
   path: '/login',
   name: 'login',
