@@ -21,7 +21,7 @@
       <v-list-item
         v-for="(item, index) in menu"
         :key="index"
-        :to="item.link"
+        :to="{ name: item.link }"
         :exact="item.exact"
         :disabled="item.disabled"
         link
@@ -30,7 +30,7 @@
           <v-icon small :class="{ 'grey--text': item.disabled }">{{ item.icon }}</v-icon>
         </v-list-item-icon>
         <v-list-item-content>
-          <v-list-item-title>{{ item.key ? $t(item.key) : item.text }}</v-list-item-title>
+          <v-list-item-title>{{ item.text }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
 

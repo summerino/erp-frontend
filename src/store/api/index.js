@@ -14,7 +14,8 @@ const state = {
     viewRelatedTrans: 6,
     close: 6,
     changeDate: 8,
-    approve: 9
+    approve: 9,
+    post: 10
   },
   menus,
   authorization: {
@@ -23,7 +24,8 @@ const state = {
     allowDelete: false,
     allowVoid: false,
     allowChangeWarehouse: false,
-    allowChangeDate: false
+    allowChangeDate: false,
+    allowPost: false
   }
 }
 

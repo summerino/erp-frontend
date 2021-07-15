@@ -44,5 +44,6 @@ export default {
   cashBank: 82,
   accountPayable: 78,
   accountReceivable: 79,
-  generalJournal: 84
+  generalJournal: 84,
+  postingJournal: 86
 }
