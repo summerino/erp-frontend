@@ -1000,7 +1000,7 @@ export default {
       const items = JSON.parse(JSON.stringify(data))
       for (let i = 0; i < items.length; i++) {
         if ((items[i].type === 'TU' && this.gridItem.data.find(x => x.id === items[i].id) === undefined) ||
-          (items[i].type !== 'TU' && this.gridItem.data.find(x => x.code === items[i].code) === undefined))  {
+          (items[i].type !== 'TU' && this.gridItem.data.find(x => x.transCode === items[i].transCode) === undefined))  {
           // const temp = items[i].transAmount
           // items[i].transAmount = items[i].amount 
           // items[i].amount = temp 
