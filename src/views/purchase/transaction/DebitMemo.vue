@@ -160,7 +160,7 @@
     </v-card>
 
     <v-dialog
-       v-model="dialog.add"
+      v-model="dialog.add"
       transition="dialog-bottom-transition"
       fullscreen
       hide-overlay
