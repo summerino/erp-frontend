@@ -1,27 +1,41 @@
 <template>
   <v-dialog
     v-model="dialog"
-    :width="options.width"
+    transition="dialog-bottom-transition"
+    fullscreen
+    hide-overlay
     persistent
     scrollable
     @keydown.esc="close"
   >
-    <v-card>
+    <v-card :style="{ background: $vuetify.theme.themes[theme].surface }">
       <v-toolbar
-        color="indigo darken-1"
+        color="primary"
+        max-height="64"
         dark
-        dense
       >
+        <v-btn icon dark @click="dialog = false">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
         <v-toolbar-title>Detail Kas Bank</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-btn
-          icon
-          @click="close"
-        >
-          <v-icon>mdi-window-close</v-icon>
-        </v-btn>
+        <v-toolbar-items>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                v-shortkey="['ctrl', 'enter']"
+                dark
+                text
+                @click="save"
+                @shortkey="save"
+              >Simpan</v-btn>
+            </template>
+            <span class="text-caption">(Ctrl + Enter)</span>
+          </v-tooltip>
+        </v-toolbar-items>
       </v-toolbar>
-
       <v-card-text class="px-2 pt-1">
         <v-row no-gutters>
           <v-col cols="12" md="4">
@@ -149,7 +163,7 @@
                   <v-currency-field
                     v-model="item.transAmount"
                     class="text-body-2 text-right mt-0"
-                    :readonly="!selected.find(x => x.code === item.code)"
+                    :readonly="!selected.find(x => x.code === item.code) || data.type === 'DPC' || data.type === 'DPS'"
                     @keydown="changeAmount"
                     @keyup="changeAmount"
                     @keypress="changeAmount"
@@ -162,11 +176,15 @@
             </v-col>
           </v-row>
           <v-row no-gutters class="pt-2">
-            <v-col md="6" cols="12" >
-              <h3>Total</h3>
+            <v-col md="6" class="text-right">
             </v-col>
-            <v-col md="6" cols="12">
-              <h3>{{ data.total | formatCurrency }}</h3>
+            <v-col md="6" class="text-right">
+              <v-currency-field
+                label="Total"
+                v-model="data.total"
+                class="text-body-2 text-right mt-0"
+                readonly
+              ></v-currency-field>
             </v-col>
           </v-row>
         </v-card>
@@ -223,7 +241,7 @@
         </v-card>
       </v-card-text>
 
-      <v-card-actions class="justify-end pb-2 pr-2">
+      <!-- <v-card-actions class="justify-end pb-2 pr-2">
         <v-btn
           color="blue darken-2"
           class="font-weight-regular"
@@ -246,7 +264,7 @@
           <v-icon left>mdi-close-circle-outline</v-icon>
           Batal
         </v-btn>
-      </v-card-actions>
+      </v-card-actions> -->
     </v-card>
   </v-dialog>
 </template>
@@ -259,7 +277,7 @@ import { sumBy as _sumBy } from 'lodash'
 import { randomNumber } from '@/helpers/math-helpers'
 
 export default {
-  props: ['coas', 'cashBankTypes', 'coaCodes'],
+  props: ['coas', 'cashBankTypes', 'coaCodes', 'cashBankCode'],
   created: function () {
     this.rules = this.$store.state.app.rules
   },
@@ -285,9 +303,7 @@ export default {
         columns: [],
         data: []
       },
-      options: {
-        width: 800
-      },
+      
       filters: [],
       supplierFilters: [
         {
@@ -342,13 +358,15 @@ export default {
   computed: {
     ...mapState('api', { 
       endpoint: state => state.endpoint,
-      rules: state => state.app.rules,
       formatStartDate() {
         return this.data.startDate ? format(parseISO(this.data.startDate), 'dd-MMM-yyyy') : ''
       },
       formatEndDate() {
         return this.data.endDate ? format(parseISO(this.data.endDate), 'dd-MMM-yyyy') : ''
-      }  
+      },
+      theme() {
+        return this.$vuetify.theme.isDark ? 'dark' : 'light'
+      }
     })
   },
 
@@ -375,9 +393,8 @@ export default {
       this.data.coaCode = null
       this.data.transAmount = 0
     },
-    open(options) {
+    open() {
       this.dialog = true
-      this.options = Object.assign(this.options, options)
       this.reset()
       setTimeout(() => {
         this.$refs.search.focus()
@@ -388,7 +405,6 @@ export default {
     },
     search() {
       const url = this.getUrl()
-
       const filter = this.getFilters()
       
       
@@ -398,7 +414,8 @@ export default {
           sorts: JSON.stringify([{
             field: this.data.by,
             direction: 'asc'
-          }])
+          }]),
+          cashBankCode: this.cashBankCode
         }
       })
         .then(response => {
@@ -432,12 +449,48 @@ export default {
       if (this.data.type === 'RDPC' || this.data.type === 'RDPS') {
         filter.push(
           {
+            field: 'SrcTrans',
+            operator: 'eq',
+            keyword: '1'
+          }
+        )
+        filter.push(
+          {
+            field: 'remaining',
+            operator: 'gt',
+            keyword: '0'
+          }
+        )
+        filter.push(
+          {
             field: 'Mark',
             operator: 'eq',
             keyword: 'A'
           }
         )
       } else if (this.data.type === 'DPC' || this.data.type === 'DPS') {
+        filter.push(
+          {
+            field: 'SrcTrans',
+            operator: 'eq',
+            keyword: '1'
+          }
+        )
+        filter.push(
+          {
+            field: 'Mark',
+            operator: 'eq',
+            keyword: 'PP'
+          }
+        )
+      } else if (this.data.type === 'SR' || this.data.type === 'PR') {
+        filter.push(
+          {
+            field: 'SrcTrans',
+            operator: 'neq',
+            keyword: '1'
+          }
+        )
         filter.push(
           {
             field: 'Mark',

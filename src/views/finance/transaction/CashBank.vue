@@ -630,7 +630,7 @@
       </v-card>
     </v-dialog>
     <confirm ref="confirm"></confirm>
-    <detail-cash-bank ref="detailCashBank" :coas="coas" :cashBankTypes="cashBankTypes" :coaCodes="coaCodes" @saveItem="saveItem"></detail-cash-bank>
+    <detail-cash-bank ref="detailCashBank" :coas="coas" :cashBankTypes="cashBankTypes" :coaCodes="coaCodes" :cashBankCode="data.code" @saveItem="saveItem"></detail-cash-bank>
   </div>
 </template>
 
