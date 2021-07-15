@@ -114,7 +114,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="!auth.allowVoid"
+                :disabled="!auth.allowVoid || item.mark === 'V'"
                 color="red"
                 icon
                 small
@@ -564,6 +564,7 @@
                               v-model="item.amount"
                               class="text-body-2 text-right mt-0"
                               dense
+                              :readonly="item.type === 'DPC' || item.type === 'DPS'"
                             ></v-currency-field>
                           </template>
                           <template v-slot:[`item.notes`]="{ item }">
@@ -587,7 +588,7 @@
                 </v-card>
               </v-col>
             </v-row>
-            <!-- <v-row dense>
+            <v-row dense>
               <v-col cols="12">
                 <v-card>
                   <v-tabs v-model="tab.summary">
@@ -601,17 +602,17 @@
                         <v-card-text>
                           <v-row no-gutters>
                             <v-col cols="6">
-                              <v-currency-field
+                              <!-- <v-currency-field
                                 label="Total Nilai"
                                 v-model="data.amountSummary"
                                 class="text-body-2 text-right mt-0"
                                 readonly
-                              ></v-currency-field>
+                              ></v-currency-field> -->
                             </v-col>
                             <v-col cols="6" class="pl-md-1">
                               <v-currency-field
-                                label="Total Nilai Transaksi"
-                                v-model="data.transAmountSummary"
+                                label="Total Nilai"
+                                v-model="data.amount"
                                 class="text-body-2 text-right mt-0"
                                 readonly
                               ></v-currency-field>
@@ -624,7 +625,7 @@
                   </v-tabs>
                 </v-card>
               </v-col>
-            </v-row> -->
+            </v-row>
           </v-form>
         </v-card-text>
       </v-card>
@@ -1043,7 +1044,7 @@ export default {
           totalHeader -= data[i].amount
         }
       }
-      this.data.amount = totalHeader
+      this.data.amount = Math.abs(totalHeader)
     }
 
   }
