@@ -503,6 +503,9 @@
                         <template v-slot:[`item.date`]="{ item }">
                           {{ item.date | formatDate('dd-MMM-yyyy') }}
                         </template>
+                        <template v-slot:[`item.total`]="{ item }">
+                          {{ item.total | formatCurrency }}
+                        </template>
                       </v-data-table>
                     </v-tab-item>
                   </v-tabs>
@@ -573,9 +576,9 @@ export default {
     },
     gridRelated: {
       columns: [
-        { text: 'Kode Transaksi', value: 'code', divider: true },
-        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true },
-        { text: 'Status', value: 'mark' }
+        { text: 'Kode Trans.', value: 'code', divider: true },
+        { text: 'Tgl. Trans.', value: 'date', align: 'right', divider: true },
+        { text: 'Nilai', value: 'total', align: 'right', divider: true }
       ],
       data: []
     },
