@@ -149,7 +149,7 @@
                   <v-currency-field
                     v-model="item.transAmount"
                     class="text-body-2 text-right mt-0"
-                    :readonly="!selected.find(x => x.code === item.code)"
+                    :readonly="!selected.find(x => x.code === item.code) || data.type === 'DPC' || data.type === 'DPS'"
                     @keydown="changeAmount"
                     @keyup="changeAmount"
                     @keypress="changeAmount"
@@ -259,7 +259,7 @@ import { sumBy as _sumBy } from 'lodash'
 import { randomNumber } from '@/helpers/math-helpers'
 
 export default {
-  props: ['coas', 'cashBankTypes', 'coaCodes'],
+  props: ['coas', 'cashBankTypes', 'coaCodes', 'cashBankCode'],
   created: function () {
     this.rules = this.$store.state.app.rules
   },
@@ -388,7 +388,6 @@ export default {
     },
     search() {
       const url = this.getUrl()
-
       const filter = this.getFilters()
       
       
@@ -398,7 +397,8 @@ export default {
           sorts: JSON.stringify([{
             field: this.data.by,
             direction: 'asc'
-          }])
+          }]),
+          cashBankCode: this.cashBankCode
         }
       })
         .then(response => {
@@ -432,12 +432,48 @@ export default {
       if (this.data.type === 'RDPC' || this.data.type === 'RDPS') {
         filter.push(
           {
+            field: 'SrcTrans',
+            operator: 'eq',
+            keyword: '1'
+          }
+        )
+        filter.push(
+          {
+            field: 'remaining',
+            operator: 'gt',
+            keyword: '0'
+          }
+        )
+        filter.push(
+          {
             field: 'Mark',
             operator: 'eq',
             keyword: 'A'
           }
         )
       } else if (this.data.type === 'DPC' || this.data.type === 'DPS') {
+        filter.push(
+          {
+            field: 'SrcTrans',
+            operator: 'eq',
+            keyword: '1'
+          }
+        )
+        filter.push(
+          {
+            field: 'Mark',
+            operator: 'eq',
+            keyword: 'PP'
+          }
+        )
+      } else if (this.data.type === 'SR' || this.data.type === 'PR') {
+        filter.push(
+          {
+            field: 'SrcTrans',
+            operator: 'neq',
+            keyword: '1'
+          }
+        )
         filter.push(
           {
             field: 'Mark',

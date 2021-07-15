@@ -137,8 +137,8 @@
         <template v-slot:[`item.used`]="{ item }">
           {{ item.used | formatCurrency }}
         </template>
-        <template v-slot:[`item.outstanding`]="{ item }">
-          {{ item.outstanding | formatCurrency }}
+        <template v-slot:[`item.remaining`]="{ item }">
+          {{ item.remaining | formatCurrency }}
         </template>
         <template v-slot:[`item.mark`]="{ item }">
           <v-tooltip bottom>
@@ -562,7 +562,7 @@ export default {
         { text: 'Kode Transaksi Sumber', value: 'transCode', divider: true, width: '100', excelColWidth:'12' },
         { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'13', isNumber: true },
         { text: 'Digunakan', value: 'used', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
-        { text: 'Nilai', value: 'outstanding', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
+        { text: 'Saldo', value: 'remaining', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
         { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
       ],
       data: [],
