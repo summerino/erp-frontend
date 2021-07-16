@@ -264,6 +264,7 @@
                           </template>
                           <v-date-picker
                             v-model="data.date"
+                            :min="dataStartDate"
                             no-title
                             scrollable
                             @change="menu.deliveryDate = false"
@@ -757,6 +758,7 @@ export default {
       }     
     ],
     valid: false,
+    dataStartDate: null,
     defWarehouseCode: '',
     types: [{ id: 1, name: 'Penjualan Langsung' }, { id: 2, name: 'Surat Jalan' }, { id: 3, name: 'Semua' }],
     drivers: [],
@@ -769,6 +771,7 @@ export default {
 
   created: function () {
     this.getList()
+    this.getSystemParameter()
     this.getDriverLists()
     this.getEmployeeLists()
     this.getVehicleLists()
@@ -890,32 +893,20 @@ export default {
           }
         })
     },
-    // getList(bindToForm = false) {
-    //   const sorts = []
-    //   for (let i = 0; i < this.grid.options.sortBy.length; i++) {
-    //     sorts.push({
-    //       field: this.grid.options.sortBy[i],
-    //       direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
-    //     })
-    //   }
-
-    //   api.getAll(this.endpoint.sales.plan, {
-    //     params: {
-    //       search: this.grid.search,
-    //       skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
-    //       take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
-    //       sorts: JSON.stringify(sorts)
-    //     }
-    //   })
-    //     .then(response => {
-    //       this.grid.data = response.data.tableData
-    //       this.grid.total = response.data.rowCount
-    //       if (bindToForm) {
-    //         const item = this.grid.data.find(h => h.code === this.data.code)
-    //         this.edit(item)
-    //       }
-    //     })
-    // },
+    getSystemParameter() {
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: 'DATA_START_DATE'
+          }])
+        }
+      })
+        .then(response => {
+          this.dataStartDate = response.data.tableData[0].value
+        })
+    },
     getDriverLists() {
       api.getAll(`${this.endpoint.general.employee}/lists`, {
         params: {

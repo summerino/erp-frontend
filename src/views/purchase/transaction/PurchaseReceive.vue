@@ -6,16 +6,6 @@
           <v-col cols="12" md="2">
             Penerimaan
           </v-col>
-          <!-- <v-col cols="12" md="4">
-            <v-text-field
-              v-model="grid.search"
-              append-icon="mdi-magnify"
-              label="Cari..."
-              class="font-weight-regular mt-0 pt-0"
-              single-line
-              @keyup.enter="getList()"
-            ></v-text-field>
-          </v-col> -->
           <v-col cols="12" md="6" >
             <v-row no-gutters>
               <v-text-field
@@ -310,6 +300,7 @@
                           </template>
                           <v-date-picker
                             v-model="data.date"
+                            :min="dataStartDate"
                             no-title
                             scrollable
                             @change="menu.rcvDate = false"
@@ -764,6 +755,7 @@ export default {
       }
     ],
     valid: false,
+    dataStartDate: null,
     lblTransCode: null,
     sources: [{ id: 1, name: 'Order Pembelian' }, { id: 2, name: 'Retur Pembelian' }],
     employees: [],
@@ -776,6 +768,7 @@ export default {
 
   created: function () {
     this.getList()
+    this.getSystemParameter()
     this.getEmployeeLists()
     this.getTaxLists()
     this.getItemLists()
@@ -928,32 +921,20 @@ export default {
           }
         })
     },
-    // getList(bindToForm = false) {
-    //   const sorts = []
-    //   for (let i = 0; i < this.grid.options.sortBy.length; i++) {
-    //     sorts.push({
-    //       field: this.grid.options.sortBy[i],
-    //       direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
-    //     })
-    //   }
-
-    //   api.getAll(this.endpoint.purchase.receive, {
-    //     params: {
-    //       search: this.grid.search,
-    //       skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
-    //       take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
-    //       sorts: JSON.stringify(sorts)
-    //     }
-    //   })
-    //     .then(response => {
-    //       this.grid.data = response.data.tableData
-    //       this.grid.total = response.data.rowCount
-    //       if (bindToForm) {
-    //         const item = this.grid.data.find(h => h.code === this.data.code)
-    //         this.edit(item)
-    //       }
-    //     })
-    // },
+    getSystemParameter() {
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: 'DATA_START_DATE'
+          }])
+        }
+      })
+        .then(response => {
+          this.dataStartDate = response.data.tableData[0].value
+        })
+    },
     getEmployeeLists() {
       api.getAll(`${this.endpoint.general.employee}/lists`, {
         params: {

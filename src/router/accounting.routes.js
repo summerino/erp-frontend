@@ -20,20 +20,6 @@ export default [{
     authRequired: true
   }
 }, {
-  path: '/accounting/transaction/begin-balance/begin-balance-ap',
-  name: 'begin-balance-ap',
-  component: () => import(/* webpackChunkName: "accounting-begin-balance-ap" */ '@/views/accounting/transaction/begin-balance/AccountPayable.vue'),
-  meta: {
-    authRequired: true
-  }
-}, {
-  path: '/accounting/transaction/begin-balance/begin-balance-ar',
-  name: 'begin-balance-ar',
-  component: () => import(/* webpackChunkName: "accounting-begin-balance-ar" */ '@/views/accounting/transaction/begin-balance/AccountReceiveable.vue'),
-  meta: {
-    authRequired: true
-  }
-}, {
   path: '/accounting/transaction/general-journal',
   name: 'general-journal',
   component: () => import(/* webpackChunkName: "accounting-general-journal" */ '@/views/accounting/transaction/GeneralJournal.vue'),
@@ -41,23 +27,37 @@ export default [{
     authRequired: true
   }
 }, {
-  path: '/accounting/utility/posting',
-  name: 'posting',
-  component: () => import(/* webpackChunkName: "accounting-posting" */ '@/views/accounting/utility/PostingJournal.vue'),
+  path: '/accounting/transaction/begin-balance-ap',
+  name: 'begin-balance-ap',
+  component: () => import(/* webpackChunkName: "accounting-begin-balance-ap" */ '@/views/accounting/transaction/begin-balance/AccountPayable.vue'),
   meta: {
     authRequired: true
   }
 }, {
-  path: '/accounting/transaction/begin-balance/begin-balance-debit-memo',
+  path: '/accounting/transaction/begin-balance-ar',
+  name: 'begin-balance-ar',
+  component: () => import(/* webpackChunkName: "accounting-begin-balance-ar" */ '@/views/accounting/transaction/begin-balance/AccountReceiveable.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/accounting/transaction/begin-balance-debit-memo',
   name: 'begin-balance-debit-memo',
   component: () => import(/* webpackChunkName: "accounting-begin-balance-debit-memo" */ '@/views/accounting/transaction/begin-balance/DebitMemo.vue'),
   meta: {
     authRequired: true
   }
 }, {
-  path: '/accounting/transaction/begin-balance/begin-balance-credit-memo',
+  path: '/accounting/transaction/begin-balance-credit-memo',
   name: 'begin-balance-credit-memo',
   component: () => import(/* webpackChunkName: "accounting-begin-balance-credit-memo" */ '@/views/accounting/transaction/begin-balance/CreditMemo.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/accounting/utility/posting',
+  name: 'posting',
+  component: () => import(/* webpackChunkName: "accounting-posting" */ '@/views/accounting/utility/PostingJournal.vue'),
   meta: {
     authRequired: true
   }

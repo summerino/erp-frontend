@@ -250,6 +250,7 @@
                           </template>
                           <v-date-picker
                             v-model="data.date"
+                            :min="dataStartDate"
                             no-title
                             scrollable
                             @change="menu.returnDate = false"
@@ -708,6 +709,7 @@ export default {
       data: []
     },
     valid: false,
+    dataStartDate: null,
     types: [{ id: 1, name: 'Exchange Memo' }, { id: 2, name: 'Exchange Same Item' }],
     employees: [],
     taxes: [],
@@ -717,6 +719,7 @@ export default {
 
   created: function () {
     this.getList()
+    this.getSystemParameter()
     this.getEmployeeLists()
     this.getTaxLists()
     this.getWarehouseLists()
@@ -828,6 +831,20 @@ export default {
             const item = this.grid.data.find(h => h.code === this.data.code)
             this.edit(item)
           }
+        })
+    },
+    getSystemParameter() {
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: 'DATA_START_DATE'
+          }])
+        }
+      })
+        .then(response => {
+          this.dataStartDate = response.data.tableData[0].value
         })
     },
     getEmployeeLists() {

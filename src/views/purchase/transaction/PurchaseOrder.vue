@@ -328,6 +328,7 @@
                           </template>
                           <v-date-picker
                             v-model="data.date"
+                            :min="dataStartDate"
                             no-title
                             scrollable
                             @change="menu.orderDate = false"
@@ -961,6 +962,7 @@ export default {
       }
     ],
     valid: false,
+    dataStartDate: null,
     defTaxInc: false,
     employees: [],
     currencies: [],
@@ -975,7 +977,7 @@ export default {
 
   created: function () {
     this.getList()
-    this.getDefTaxIncSetting()
+    this.getSystemParameter()
     this.getPurchaserLists()
     // this.getCurrLists()
     this.getSupplierLists()
@@ -1062,7 +1064,6 @@ export default {
   },
 
   methods: {
-    
     reset(resetValidation = true) {
       this.data = {
         action: '',
@@ -1149,18 +1150,23 @@ export default {
           }
         })
     },
-    getDefTaxIncSetting() {
+    getSystemParameter() {
       api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
         params: {
           filters: JSON.stringify([{
             field: 'code',
-            operator: 'eq',
-            keyword: 'DEF_PURC_TAX_INC'
+            operator: 'contains',
+            keyword: ['DATA_START_DATE', 'DEF_PURC_TAX_INC']
+          }]),
+          sorts: JSON.stringify([{
+            field: 'code',
+            direction: 'asc'
           }])
         }
       })
         .then(response => {
-          this.defTaxInc = (response.data.tableData[0].value === '1')
+          this.dataStartDate = response.data.tableData[0].value
+          this.defTaxInc = (response.data.tableData[1].value === '1')
         })
     },
     getPurchaserLists() {

@@ -278,6 +278,7 @@
                           </template>
                           <v-date-picker
                             v-model="data.date"
+                            :min="dataStartDate"
                             no-title
                             scrollable
                             @change="menu.date = false"
@@ -307,6 +308,7 @@
                           </template>
                           <v-date-picker
                             v-model="data.dueDate"
+                            :min="dataStartDate"
                             no-title
                             scrollable
                             @change="menu.dueDate = false"
@@ -664,6 +666,7 @@ export default {
       }
     ],
     valid: false,
+    dataStartDate: null,
     sources: [{ id: 1, name: 'Penerimaan Pembelian' }, { id: 2, name: 'Surat Jalan' }],
     deliveries: [],
     receives: [],
@@ -673,6 +676,7 @@ export default {
 
   created: function () {
     this.getList()
+    this.getSystemParameter()
     this.getDeliveryLists()
     this.getReceiveLists()
     this.getSupplierLists()
@@ -792,6 +796,20 @@ export default {
             const item = this.grid.data.find(h => h.code === this.data.code)
             this.edit(item)
           }
+        })
+    },
+    getSystemParameter() {
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: 'DATA_START_DATE'
+          }])
+        }
+      })
+        .then(response => {
+          this.dataStartDate = response.data.tableData[0].value
         })
     },
     supCodeChange() {

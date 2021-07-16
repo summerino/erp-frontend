@@ -123,7 +123,7 @@
                   v-shortkey="['ctrl', 'enter']"
                   color="blue darken-2"
                   class="font-weight-regular"
-                  :disabled="isActive || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="data.action === 'edit' && !auth.allowUpdate"
                   dark
                   small
                   tile
@@ -218,6 +218,7 @@
                   </template>
                   <v-date-picker
                     v-model="data.date"
+                    :max="dataStartDate"
                     no-title
                     scrollable
                     @change="menu.date = false"
@@ -246,34 +247,12 @@
                   </template>
                   <v-date-picker
                     v-model="data.dueDate"
+                    :max="dataStartDate"
                     no-title
                     scrollable
                     @change="menu.dueDate = false"
                   ></v-date-picker>
                 </v-menu>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
-                <v-autocomplete
-                  v-model="data.currCode"
-                  :items="currencies"
-                  :item-text="item => `${item.code} - ${item.name}`"
-                  :rules="rules.required"
-                  label="Kurensi"
-                  item-value="code"
-                  class="mt-0"
-                  required
-                ></v-autocomplete>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-currency-field
-                  v-model="data.currRate"
-                  :decimal-length="0"
-                  class="mt-0"
-                  label="Nilai tukar mata uang"
-                ></v-currency-field>
               </v-col>
             </v-row>
 
@@ -329,7 +308,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { format, parseISO }  from 'date-fns'
+import { add, format, parseISO }  from 'date-fns'
 
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
@@ -356,7 +335,6 @@ export default {
         { text: 'Pelanggan', value: 'custName', divider: true, width: '150', excelColWidth:'20' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'20'  },
         { text: 'Tanggal Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '100', excelColWidth:'20' },
-        { text: 'Mata Uang', value: 'currCode', divider: true, width: '120', excelColWidth:'20' },
         { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '100', excelColWidth:'20' },
         { text: 'Nilai Sudah Dibayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20' }
 
@@ -370,15 +348,14 @@ export default {
       search: null
     },
     valid: false,
-    currencies: [],
+    dataStartDate: null,
     customers: [],
-    types: [],
     data: {}
   }),
 
   created: function () {
     this.getList()
-    this.getCurrencyLists()
+    this.getSystemParameter()
     this.getCustomerLists()
     auth.getAction(this.endpoint, this.menuId.accountReceivable, [this.action.insert, this.action.update, this.action.delete])
       .then((response) => {
@@ -419,9 +396,6 @@ export default {
       action: state => state.api.action,
       menuId: state => state.api.menus
     }),
-    isActive() {
-      return (!this.data.isActive)
-    },
     formatDate() {
       return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
     },
@@ -434,12 +408,16 @@ export default {
     reset(resetValidation = true) {
       this.data = {
         action: '',
-        initial: null,
-        name: null,
+        code: null,
+        custCode: null,
+        date: format(parseISO(this.dataStartDate), 'yyyy-MM-dd'),
+        dueDate: format(parseISO(this.dataStartDate), 'yyyy-MM-dd'),
+        currCode: 'IDR',
+        rate: 1,
         amount: 0,
         paidAmount: 0,
         leftoverAmount: 0,
-        isActive: true
+        notes: null
       }
 
       // Reset form validation
@@ -480,6 +458,20 @@ export default {
             const item = this.grid.data.find(h => h.id === this.data.id)
             this.edit(item)
           }
+        })
+    },
+    getSystemParameter() {
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: 'DATA_START_DATE'
+          }])
+        }
+      })
+        .then(response => {
+          this.dataStartDate = format(add(parseISO(response.data.tableData[0].value), { days: -1 }), 'yyyy-MM-dd')
         })
     },
     back() {
@@ -550,24 +542,7 @@ export default {
     async exportExcel() {
       this.exportExcel.export()
     },
-    getCurrencyLists() {
-      api.getAll(`${this.endpoint.general.currency}/lists`, {
-        params: {
-          filters: JSON.stringify([{
-            field: 'isActive',
-            operator: 'eq',
-            keyword: true
-          }]),
-          sorts: JSON.stringify([{
-            field: 'code',
-            direction: 'asc'
-          }])
-        }
-      })
-        .then(response => {
-          this.currencies = response.data.tableData
-        })
-    },
+    
     getCustomerLists() {
       api.getAll(`${this.endpoint.general.customer.customer}/lists`, {
         params: {

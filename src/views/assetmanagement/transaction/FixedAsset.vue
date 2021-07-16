@@ -290,12 +290,12 @@
                           </template>
                           <v-date-picker
                             v-model="data.purchaseDate"
+                            :min="dataStartDate"
                             no-title
                             scrollable
                             @change="menu.purchaseDate = false"
                           ></v-date-picker>
                         </v-menu>
-                        
                       </v-col>
                     </v-row>
                     <v-row no-gutters>
@@ -321,6 +321,7 @@
                           </template>
                           <v-date-picker
                             v-model="data.startDepreciateOn"
+                            :min="dataStartDate"
                             no-title
                             scrollable
                             @change="menu.startDepreciateOn = false"
@@ -819,24 +820,23 @@ export default {
       }
     ],
     valid: false,
+    dataStartDate: null,
     suppliers: [],
     data: {},
     assetTypes: [],
     coas: [],
-    depretiationMethods: [
-      {
-        text: 'NonDepreciable',
-        value: 1
-      },
-      {
-        text: 'StraightLine',
-        value: 2
-      }
-    ]
+    depretiationMethods: [{
+      text: 'NonDepreciable',
+      value: 1
+    }, {
+      text: 'StraightLine',
+      value: 2
+    }]
   }),
 
   created: function () {
     this.getList()
+    this.getSystemParameter()
     this.getSupplierLists()
     this.getAssetType()
     this.getCOAList()
@@ -966,6 +966,20 @@ export default {
             const item = this.grid.data.find(h => h.code === this.data.code)
             this.edit(item)
           }
+        })
+    },
+    getSystemParameter() {
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: 'DATA_START_DATE'
+          }])
+        }
+      })
+        .then(response => {
+          this.dataStartDate = response.data.tableData[0].value
         })
     },
     getAssetType() {

@@ -249,6 +249,7 @@
                           </template>
                           <v-date-picker
                             v-model="data.startDate"
+                            :min="dataStartDate"
                             no-title
                             scrollable
                             @change="menu.startDate = false"
@@ -277,6 +278,7 @@
                           </template>
                           <v-date-picker
                             v-model="data.endDate"
+                            :min="dataStartDate"
                             no-title
                             scrollable
                             @change="menu.endDate = false"
@@ -674,6 +676,7 @@ export default {
       ],
       data: []
     },  
+    dataStartDate: null,
     accounts: [],
     applyTo: [{ id: 1, name: 'Barang' }, { id: 2, name: 'Faktur' }, { id: 3, name: 'Kategori Barang' }],
     applyToHeader: [{ id: 1, name: 'Semua' }, { id: 2, name: 'Pelanggan' }, { id: 3, name: 'Tipe Pelanggan' }],
@@ -689,6 +692,7 @@ export default {
 
   created: function () {
     this.getList()
+    this.getSystemParameter()
     this.getAccountLists()
     this.getCustomerLists()
     this.getCustomerTypeLists()
@@ -797,6 +801,20 @@ export default {
             const item = this.grid.data.find(h => h.code === this.data.code)
             this.edit(item)
           }
+        })
+    },
+    getSystemParameter() {
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: 'DATA_START_DATE'
+          }])
+        }
+      })
+        .then(response => {
+          this.dataStartDate = response.data.tableData[0].value
         })
     },
     getAccountLists() {
