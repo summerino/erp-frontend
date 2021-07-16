@@ -61,5 +61,12 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/accounting/utility/closing-month',
+  name: 'closing-month',
+  component: () => import(/* webpackChunkName: "closing-month" */ '@/views/accounting/utility/ClosingMonth.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
   
