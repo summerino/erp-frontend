@@ -1,4 +1,4 @@
-import auth from '@/auth/authService'
+import auth from '@/services/auth.service'
 import router from '@/router'
 
 const login = ({ commit }, payload) => {

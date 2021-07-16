@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import auth from '@/auth/authService'
+import auth from '@/services/auth.service'
 
 // Routes
 import AccountingRoutes from './accounting.routes'
