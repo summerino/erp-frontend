@@ -45,5 +45,7 @@ export default {
   accountPayable: 78,
   accountReceivable: 79,
   generalJournal: 84,
-  postingJournal: 86
+  postingJournal: 86,
+  bbDebitMemo: 89,
+  bbCreditMemo: 90
 }

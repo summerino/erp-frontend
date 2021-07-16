@@ -67,7 +67,9 @@ export default {
     currencyRate: 'currency-rate',
     accountReceivable: 'account-receivable',
     accountPayable: 'account-payable',
-    generalJournal: 'general-journal'
+    generalJournal: 'general-journal',
+    debitMemo: 'bb-debit-memo',
+    creditMemo: 'bb-credit-memo'
   },
 
   systemManagement:{
