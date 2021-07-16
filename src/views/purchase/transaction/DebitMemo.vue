@@ -136,8 +136,8 @@
         <template v-slot:[`item.used`]="{ item }">
           {{ item.used | formatCurrency }}
         </template>
-        <template v-slot:[`item.outstanding`]="{ item }">
-          {{ item.outstanding | formatCurrency }}
+        <template v-slot:[`item.remaining`]="{ item }">
+          {{ item.remaining | formatCurrency }}
         </template>
         <template v-slot:[`item.mark`]="{ item }">
           <v-tooltip bottom>

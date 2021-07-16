@@ -429,9 +429,9 @@ export default {
       } else if (this.data.type === 'AR') {
         url = `${this.endpoint.finance.cashBank}/ar`
       } else if (this.data.type === 'DPC' || this.data.type === 'RDPC' || this.data.type === 'SR') {
-        url = `${this.endpoint.finance.cashBank}/credit-memo`
+        url = `${this.endpoint.finance.cashBank}/credit-memo?type=${this.data.type}`
       } else if (this.data.type === 'DPS' || this.data.type === 'RDPS' || this.data.type === 'PR') {
-        url = `${this.endpoint.finance.cashBank}/debit-memo`
+        url = `${this.endpoint.finance.cashBank}/debit-memo?type=${this.data.type}`
       }
       return url
     },
@@ -446,59 +446,59 @@ export default {
           }
         )
       }
-      if (this.data.type === 'RDPC' || this.data.type === 'RDPS') {
-        filter.push(
-          {
-            field: 'SrcTrans',
-            operator: 'eq',
-            keyword: '1'
-          }
-        )
-        filter.push(
-          {
-            field: 'remaining',
-            operator: 'gt',
-            keyword: '0'
-          }
-        )
-        filter.push(
-          {
-            field: 'Mark',
-            operator: 'eq',
-            keyword: 'A'
-          }
-        )
-      } else if (this.data.type === 'DPC' || this.data.type === 'DPS') {
-        filter.push(
-          {
-            field: 'SrcTrans',
-            operator: 'eq',
-            keyword: '1'
-          }
-        )
-        filter.push(
-          {
-            field: 'Mark',
-            operator: 'eq',
-            keyword: 'PP'
-          }
-        )
-      } else if (this.data.type === 'SR' || this.data.type === 'PR') {
-        filter.push(
-          {
-            field: 'SrcTrans',
-            operator: 'neq',
-            keyword: '1'
-          }
-        )
-        filter.push(
-          {
-            field: 'Mark',
-            operator: 'eq',
-            keyword: 'PP'
-          }
-        )
-      }
+      // if (this.data.type === 'RDPC' || this.data.type === 'RDPS') {
+      //   filter.push(
+      //     {
+      //       field: 'SrcTrans',
+      //       operator: 'eq',
+      //       keyword: '1'
+      //     }
+      //   )
+      //   filter.push(
+      //     {
+      //       field: 'remaining',
+      //       operator: 'gt',
+      //       keyword: '0'
+      //     }
+      //   )
+      //   filter.push(
+      //     {
+      //       field: 'Mark',
+      //       operator: 'eq',
+      //       keyword: 'A'
+      //     }
+      //   )
+      // } else if (this.data.type === 'DPC' || this.data.type === 'DPS') {
+      //   filter.push(
+      //     {
+      //       field: 'SrcTrans',
+      //       operator: 'eq',
+      //       keyword: '1'
+      //     }
+      //   )
+      //   filter.push(
+      //     {
+      //       field: 'Mark',
+      //       operator: 'eq',
+      //       keyword: 'PP'
+      //     }
+      //   )
+      // } else if (this.data.type === 'SR' || this.data.type === 'PR') {
+      //   filter.push(
+      //     {
+      //       field: 'SrcTrans',
+      //       operator: 'neq',
+      //       keyword: '1'
+      //     }
+      //   )
+      //   filter.push(
+      //     {
+      //       field: 'Mark',
+      //       operator: 'eq',
+      //       keyword: 'PP'
+      //     }
+      //   )
+      // }
       
       if (this.data.startDate) {
         filter.push(
