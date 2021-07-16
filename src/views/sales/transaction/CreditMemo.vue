@@ -6,16 +6,6 @@
           <v-col cols="12" md="2">
             Nota Kredit
           </v-col>
-          <!-- <v-col cols="12" md="4">
-            <v-text-field
-              v-model.trim="grid.search"
-              append-icon="mdi-magnify"
-              label="Cari..."
-              class="font-weight-regular mt-0 pt-0"
-              single-line
-              @keyup.enter="getList()"
-            ></v-text-field>
-          </v-col> -->
           <v-col cols="12" md="4" >
             <v-row no-gutters>
               <v-text-field
@@ -328,6 +318,7 @@
                           </template>
                           <v-date-picker
                             v-model="data.date"
+                            :min="dataStartDate"
                             no-title
                             scrollable
                             @change="menu.date = false"
@@ -611,6 +602,7 @@ export default {
       }
     ],
     valid: false,
+    dataStartDate: null,
     sources: [{ id: 1, name: 'Deposit' }, { id: 2, name: 'Retur' }, { id: 2, name: 'Return (Same Item)' }],
     data: {},
     customers: [],
@@ -620,6 +612,7 @@ export default {
 
   created: function () {
     this.getList()
+    this.getSystemParameter()
     this.getCustomerLists()
     auth.getAction(this.endpoint, this.menuId.creditmemo, [this.action.insert, this.action.update, this.action.void, this.action.changeDate])
       .then((response) => {
@@ -734,6 +727,20 @@ export default {
             const item = this.grid.data.find(h => h.code === this.data.code)
             this.edit(item)
           }
+        })
+    },
+    getSystemParameter() {
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: 'DATA_START_DATE'
+          }])
+        }
+      })
+        .then(response => {
+          this.dataStartDate = response.data.tableData[0].value
         })
     },
     getCustomerLists() {

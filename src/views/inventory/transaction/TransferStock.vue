@@ -294,6 +294,7 @@
                           </template>
                           <v-date-picker
                             v-model="data.date"
+                            :min="dataStartDate"
                             no-title
                             scrollable
                             @change="menu.transfDate = false"
@@ -761,7 +762,8 @@ export default {
       }      
     ],
     valid: false,
-    typeRef: [{ value: 1, text: 'Barang Keluar'}, { value: 2, text: 'Barang Masuk'}, { value: 3, text: 'Transfer Langsung'}],
+    dataStartDate: null,
+    typeRef: [{ value: 1, text: 'Barang Keluar' }, { value: 2, text: 'Barang Masuk' }, { value: 3, text: 'Transfer Langsung' }],
     warehouseRef: [],
     items: [],
     data: {}
@@ -769,6 +771,7 @@ export default {
 
   created: function () {
     this.getList()
+    this.getSystemParameter()
     this.loadWarehouse()
     this.getItemLists()
     auth.getAction(this.endpoint, this.menuId.transferstock, [this.action.insert, this.action.update, this.action.void, this.action.changeDate])
@@ -887,32 +890,20 @@ export default {
           }
         })
     },
-    // getList(bindToForm = false) {
-    //   const sorts = []
-    //   for (let i = 0; i < this.grid.options.sortBy.length; i++) {
-    //     sorts.push({
-    //       field: this.grid.options.sortBy[i],
-    //       direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
-    //     })
-    //   }
-
-    //   api.getAll(this.endpoint.inventory.transferStock, {
-    //     params: {
-    //       search: this.grid.search,
-    //       skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
-    //       take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
-    //       sorts: JSON.stringify(sorts)
-    //     }
-    //   })
-    //     .then(response => {
-    //       this.grid.data = response.data.tableData
-    //       this.grid.total = response.data.rowCount
-    //       if (bindToForm) {
-    //         const item = this.grid.data.find(h => h.code === this.data.code)
-    //         this.edit(item)
-    //       }
-    //     })
-    // },
+    getSystemParameter() {
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: 'DATA_START_DATE'
+          }])
+        }
+      })
+        .then(response => {
+          this.dataStartDate = response.data.tableData[0].value
+        })
+    },
     close() {
       this.dialog.add = false
     },

@@ -271,6 +271,7 @@
                           </template>
                           <v-date-picker
                             v-model="data.date"
+                            :min="dataStartDate"
                             no-title
                             scrollable
                             @change="menu.date = false"
@@ -712,6 +713,7 @@ export default {
       }    
     ],
     valid: false,
+    dataStartDate: null,
     types: [
       { code: 1, name:'Penyesuaian' },
       { code: 2, name:'Perhitungan Persediaan' }
@@ -727,6 +729,7 @@ export default {
 
   created: function () {
     this.getList()
+    this.getSystemParameter()
     this.getWarehouseLists()
     this.getUomLists()
     auth.getAction(this.endpoint, this.menuId.adjustment, [this.action.insert, this.action.update, this.action.void, this.action.changeWarehouse, this.action.changeDate])
@@ -845,43 +848,20 @@ export default {
           }
         })
     },
-    // getList() {
-    //   const sorts = []
-    //   for (let i = 0; i < this.grid.options.sortBy.length; i++) {
-    //     sorts.push({
-    //       field: this.grid.options.sortBy[i],
-    //       direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
-    //     })
-    //   }
-      
-    //   api.getAll(this.endpoint.inventory.adjustment, {
-    //     params: {
-    //       search: this.grid.search,
-    //       skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
-    //       take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
-    //       sorts: JSON.stringify(sorts)
-    //     }
-    //   })
-    //     .then(response => {
-    //       this.grid.data = response.data.tableData
-    //       this.grid.total = response.data.rowCount 
-    //     })
-    // },
-    // getItemLists() {
-    //   const filters = [{
-    //     field: 'warehouseCode',
-    //     operator: 'eq',
-    //     keyword: this.data.warehouseCode
-    //   }]
-    //   api.getAll(`${this.endpoint.inventory.adjustment}/item-list`, {
-    //     params: {
-    //       filters: JSON.stringify(filters)         
-    //     }
-    //   })  
-    //     .then(response => {
-    //       this.items = response.data.tableData
-    //     })
-    // },
+    getSystemParameter() {
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: 'DATA_START_DATE'
+          }])
+        }
+      })
+        .then(response => {
+          this.dataStartDate = response.data.tableData[0].value
+        })
+    },
     getItemLists() {      
       api.getAll(this.endpoint.inventory.item.item, {
         params: {

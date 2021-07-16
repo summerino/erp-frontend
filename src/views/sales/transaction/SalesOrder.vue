@@ -6,16 +6,6 @@
           <v-col cols="12" md="2">
             Order Penjualan
           </v-col>
-          <!-- <v-col cols="12" md="4">
-            <v-text-field
-              v-model="grid.search"
-              append-icon="mdi-magnify"
-              label="Cari..."
-              class="font-weight-regular mt-0 pt-0"
-              single-line
-              @keyup.enter="getList()"
-            ></v-text-field>
-          </v-col> -->
           <v-col cols="12" md="4" >
             <v-row no-gutters>
               <v-text-field
@@ -340,6 +330,7 @@
                           </template>
                           <v-date-picker
                             v-model="data.date"
+                            :min="dataStartDate"
                             no-title
                             scrollable
                             @change="menu.orderDate = false"
@@ -605,6 +596,7 @@
                             </template>
                             <v-date-picker
                               v-model="data.deliveryDate"
+                              :min="dataStartDate"
                               no-title
                               scrollable
                               @input="menu.deliveryDate = false"
@@ -1143,6 +1135,7 @@ export default {
       }    
     ],
     valid: false,
+    dataStartDate: null,
     defTaxInc: false,
     employees: [],
     currencies: [],
@@ -1161,7 +1154,7 @@ export default {
 
   created: function () {
     this.getList()
-    this.getDefTaxIncSetting()
+    this.getSystemParameter()
     this.getSalesmanLists()
     // this.getCurrLists()
     this.getCustomerLists()
@@ -1339,44 +1332,23 @@ export default {
           }
         })
     },
-    // getList(bindToForm = false) {
-    //   const sorts = []
-    //   for (let i = 0; i < this.grid.options.sortBy.length; i++) {
-    //     sorts.push({
-    //       field: this.grid.options.sortBy[i],
-    //       direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
-    //     })
-    //   }
-      
-    //   api.getAll(this.endpoint.sales.order, {
-    //     params: {
-    //       search: this.grid.search,
-    //       skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
-    //       take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
-    //       sorts: JSON.stringify(sorts)
-    //     }
-    //   })
-    //     .then(response => {
-    //       this.grid.data = response.data.tableData
-    //       this.grid.total = response.data.rowCount
-    //       if (bindToForm) {
-    //         const item = this.grid.data.find(h => h.code === this.data.code)
-    //         this.edit(item)
-    //       }
-    //     })
-    // },
-    getDefTaxIncSetting() {
+    getSystemParameter() {
       api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
         params: {
           filters: JSON.stringify([{
             field: 'code',
-            operator: 'eq',
-            keyword: 'DEF_SALES_TAX_INC'
+            operator: 'contains',
+            keyword: ['DATA_START_DATE', 'DEF_SALES_TAX_INC']
+          }]),
+          sorts: JSON.stringify([{
+            field: 'code',
+            direction: 'asc'
           }])
         }
       })
         .then(response => {
-          this.defTaxInc = (response.data.tableData[0].value === '1')
+          this.dataStartDate = response.data.tableData[0].value
+          this.defTaxInc = (response.data.tableData[1].value === '1')
         })
     },
     getSalesmanLists() {

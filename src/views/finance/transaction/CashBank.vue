@@ -286,7 +286,6 @@
                           label="Kode"
                           class="mt-0"
                           readonly
-                          dense
                         ></v-text-field>
                       </v-col>
                       <!-- <v-col cols="12" md="6" class="pl-md-1">
@@ -295,7 +294,6 @@
                           v-model.trim="data.voucode"
                           label="Kode Voucher"
                           class="mt-0"
-                          dense
                         ></v-text-field>
                       </v-col> -->
                     </v-row>
@@ -318,11 +316,11 @@
                               class="mt-0"
                               readonly
                               required
-                              dense
                             ></v-text-field>
                           </template>
                           <v-date-picker
                             v-model="data.date"
+                            :min="dataStartDate"
                             no-title
                             scrollable
                             @change="menu.date = false"
@@ -336,7 +334,6 @@
                           :rules="rules.required"
                           label="Tipe"
                           class="mt-0"
-                          dense
                         ></v-autocomplete>
                       </v-col>
                     </v-row>
@@ -352,7 +349,6 @@
                           @change="changeCoaCode"
                           :rules="rules.required"
                           required
-                          dense
                         ></v-autocomplete>
                       </v-col>
                     </v-row>
@@ -375,7 +371,6 @@
                               class="mt-0"
                               readonly
                               required
-                              dense
                             ></v-text-field>
                           </template>
                           <v-date-picker
@@ -392,7 +387,6 @@
                           v-model.trim="data.chequeNo"
                           label="Kode Cek"
                           class="mt-0"
-                          dense
                         ></v-text-field>
                       </v-col>
                     </v-row>
@@ -426,74 +420,63 @@
                       key="user"
                       transition="false"
                     >
-                      <v-card>
-                        <v-card-text>
-                          <v-row no-gutters>
-                            <v-col cols="6">
-                              <v-text-field
-                                v-model="data.createdInitial"
-                                label="Dibuat Oleh"
-                                class="mt-0"
-                                readonly
-                                dense
-                              ></v-text-field>
-                            </v-col>
-                            <v-col cols="6" class="pl-md-1">
-                              <v-text-field
-                                v-model="data.createdDate"
-                                label="Tanggal Dibuat"
-                                class="mt-0"
-                                readonly
-                                dense
-                              ></v-text-field>
-                            </v-col>
-                          </v-row>
-                          
-                          <v-row no-gutters>
-                            <v-col cols="6">
-                              <v-text-field
-                                v-model="data.updatedInitial"
-                                label="Diperbarui Oleh"
-                                class="mt-0"
-                                readonly
-                                dense
-                              ></v-text-field>
-                            </v-col>
-                            <v-col cols="6" class="pl-md-1">
-                              <v-text-field
-                                v-model="data.updatedDate"
-                                label="Tanggal Diperbarui"
-                                class="mt-0"
-                                readonly
-                                dense
-                              ></v-text-field>
-                            </v-col>
-                          </v-row>
-                          <v-row no-gutters>
-                            <v-col cols="6">
-                              <v-text-field
-                                v-model="data.approvedInitial"
-                                label="Disetujui Oleh"
-                                class="mt-0"
-                                readonly
-                                dense
-                              ></v-text-field>
-                            </v-col>
-                            <v-col cols="6" class="pl-md-1">
-                              <v-text-field
-                                v-model="data.approvedDate"
-                                label="Tanggal Disetujui"
-                                class="mt-0"
-                                readonly
-                                dense
-                              ></v-text-field>
-                            </v-col>
-                          </v-row>
-                        </v-card-text>
-                      </v-card>
+                      <v-row no-gutters>
+                        <v-col cols="6">
+                          <v-text-field
+                            v-model="data.createdInitial"
+                            label="Dibuat Oleh"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="6" class="pl-md-1">
+                          <v-text-field
+                            v-model="data.createdDate"
+                            label="Tanggal Dibuat"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                      
+                      <v-row no-gutters>
+                        <v-col cols="6">
+                          <v-text-field
+                            v-model="data.updatedInitial"
+                            label="Diperbarui Oleh"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="6" class="pl-md-1">
+                          <v-text-field
+                            v-model="data.updatedDate"
+                            label="Tanggal Diperbarui"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                      <v-row no-gutters>
+                        <v-col cols="6">
+                          <v-text-field
+                            v-model="data.approvedInitial"
+                            label="Disetujui Oleh"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="6" class="pl-md-1">
+                          <v-text-field
+                            v-model="data.approvedDate"
+                            label="Tanggal Disetujui"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
                     </v-tab-item>
                   </v-tabs-items>
-                  
                 </v-card>
               </v-col>
             </v-row>
@@ -712,6 +695,7 @@ export default {
       }
     ],
     valid: false,
+    dataStartDate: null,
     types: [
       { value: 'D', text: 'Kas Bank Masuk' }, 
       { value: 'C', text: 'Kas Bank Keluar' }
@@ -725,6 +709,7 @@ export default {
 
   created: function () {
     this.getCashBankTypeList()
+    this.getSystemParameter()
     this.getCOAList()
     this.getList()
     auth.getAction(this.endpoint, this.menuId.cashBank, [this.action.insert, this.action.update, this.action.void, this.action.changeDate])
@@ -805,14 +790,6 @@ export default {
       this.tab.note = 0
       this.tab.related = 0
 
-      // Get item details
-      api.getAll(`${this.endpoint.finance.cashBank}/detail`, {
-        params: { code: this.data.code }
-      })
-        .then(response => {
-          this.gridData.data = response.data.tableData
-        })
-
       // Reset form validation
       if (resetValidation) {
         setTimeout(() => {
@@ -858,6 +835,20 @@ export default {
           }
         })
     },
+    getSystemParameter() {
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: 'DATA_START_DATE'
+          }])
+        }
+      })
+        .then(response => {
+          this.dataStartDate = response.data.tableData[0].value
+        })
+    },
     getCOAList() {
       api.getAll(`${this.endpoint.accounting.coa}/lists`, {
         params: {
@@ -900,7 +891,6 @@ export default {
       this.data.action = 'add'
 
       setTimeout(() => {
-
         // Validate form first
         this.$refs.form.validate()
       }, 0)

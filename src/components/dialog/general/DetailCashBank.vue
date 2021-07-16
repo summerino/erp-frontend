@@ -308,7 +308,7 @@ export default {
       supplierFilters: [
         {
           text: 'Inisial Supplier',
-          value: 'supInitial' 
+          value: 'supCode' 
         },
         {
           text: 'Nama Supplier',
@@ -322,7 +322,7 @@ export default {
       customerFilters: [
         {
           text: 'Inisial Customer',
-          value: 'custInitial' 
+          value: 'custCode' 
         },
         {
           text: 'Nama Customer',

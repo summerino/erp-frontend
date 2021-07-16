@@ -127,6 +127,7 @@
                           </template>
                           <v-date-picker
                             v-model="data.date"
+                            :min="dataStartDate"
                             no-title
                             scrollable
                             @change="menu.invDate = false"
@@ -155,6 +156,7 @@
                           </template>
                           <v-date-picker
                             v-model="data.dueDate"
+                            :min="dataStartDate"
                             no-title
                             scrollable
                             @change="menu.dueDate = false"
@@ -384,6 +386,7 @@
                             </template>
                             <v-date-picker
                               v-model="data.deliveryDate"
+                              :min="dataStartDate"
                               no-title
                               scrollable
                               @input="menu.deliveryDate = false"
@@ -902,6 +905,7 @@ export default {
       data: []
     },
     valid: false,
+    dataStartDate: null,
     employees: [],
     customers: [],
     warehouses: [],
@@ -938,7 +942,7 @@ export default {
   }),
 
   created: function () {
-    this.getDefTaxIncSetting()
+    this.getSystemParameter()
     this.getSalesmanLists()
     this.getCustomerLists()
     this.getWarehouseLists()
@@ -1027,18 +1031,23 @@ export default {
     formatDate(date) {
       return date ? format(parseISO(date), 'dd-MMM-yyyy') : ''
     },
-    getDefTaxIncSetting() {
+    getSystemParameter() {
       api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
         params: {
           filters: JSON.stringify([{
             field: 'code',
-            operator: 'eq',
-            keyword: 'DEF_SALES_TAX_INC'
+            operator: 'contains',
+            keyword: ['DATA_START_DATE', 'DEF_SALES_TAX_INC']
+          }]),
+          sorts: JSON.stringify([{
+            field: 'code',
+            direction: 'asc'
           }])
         }
       })
         .then(response => {
-          this.data.includeTax = (response.data.tableData[0].value === '1')
+          this.dataStartDate = response.data.tableData[0].value
+          this.data.includeTax = (response.data.tableData[1].value === '1')
         })
     },
     getSalesmanLists() {

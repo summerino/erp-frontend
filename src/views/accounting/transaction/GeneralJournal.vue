@@ -266,6 +266,7 @@
                           </template>
                           <v-date-picker
                             v-model="data.date"
+                            :min="dataStartDate"
                             no-title
                             scrollable
                             @change="menu.date = false"
@@ -586,12 +587,14 @@ export default {
       }
     ],
     valid: false,
+    dataStartDate: null,
     accounts: [],
     data: {}
   }),
 
   created: function () {
     this.getList()
+    this.getSystemParameter()
     this.getAccountLists()
     auth.getAction(this.endpoint, this.menuId.generalJournal, [this.action.insert, this.action.update, this.action.void, this.action.changeDate])
       .then((response) => {
@@ -700,6 +703,20 @@ export default {
             const item = this.grid.data.find(h => h.code === this.data.code)
             this.edit(item)
           }
+        })
+    },
+    getSystemParameter() {
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: 'DATA_START_DATE'
+          }])
+        }
+      })
+        .then(response => {
+          this.dataStartDate = response.data.tableData[0].value
         })
     },
     async edit(item) {

@@ -182,21 +182,6 @@
                 ></v-text-field>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
-                <v-autocomplete
-                  v-model="data.supCode"
-                  :items="suppliers"
-                  :item-text="item => `${item.code} - ${item.name}`"
-                  :rules="rules.required"
-                  label="Pemasok"
-                  item-value="code"
-                  class="mt-0"
-                  required
-                ></v-autocomplete>
-              </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
                 <v-menu
                   v-model="menu.date"
                   :close-on-content-click="false"
@@ -218,13 +203,17 @@
                   </template>
                   <v-date-picker
                     v-model="data.date"
+                    :max="dataStartDate"
                     no-title
                     scrollable
                     @change="menu.date = false"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
+            </v-row>
+
+            <v-row no-gutters>
+              <v-col cols="12" md="6" class="pr-md-3">
                 <v-autocomplete
                   v-model="data.type"
                   :items="types"
@@ -236,28 +225,17 @@
                   required
                 ></v-autocomplete>
               </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
+              <v-col cols="12" md="6" class="pl-md-3">
                 <v-autocomplete
-                  v-model="data.currCode"
-                  :items="currencies"
+                  v-model="data.supCode"
+                  :items="suppliers"
                   :item-text="item => `${item.code} - ${item.name}`"
                   :rules="rules.required"
-                  label="Kurensi"
+                  label="Pemasok"
                   item-value="code"
                   class="mt-0"
                   required
                 ></v-autocomplete>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
-                <v-currency-field
-                  v-model="data.currRate"
-                  :decimal-length="0"
-                  class="mt-0"
-                  label="Nilai tukar mata uang"
-                ></v-currency-field>
               </v-col>
             </v-row>
 
@@ -313,7 +291,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { format, parseISO }  from 'date-fns'
+import { add, format, parseISO }  from 'date-fns'
 
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
@@ -330,8 +308,7 @@ export default {
   data: () => ({
     main: true,
     menu: {
-      date: false,
-      dueDate: false
+      date: false
     },
     grid: {
       columns: [
@@ -339,7 +316,6 @@ export default {
         { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'20' },
         { text: 'Pemasok', value: 'supName', divider: true, width: '150', excelColWidth:'20' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'20'  },
-        { text: 'Mata Uang', value: 'currCode', divider: true, width: '120', excelColWidth:'20' },
         { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '100', excelColWidth:'20' },
         { text: 'Nilai Sudah Dibayar', value: 'used', align: 'right', divider: true, width: '100', excelColWidth:'20' }
       ],
@@ -352,15 +328,15 @@ export default {
       search: null
     },
     valid: false,
-    currencies: [],
+    dataStartDate: null,
     suppliers: [],
-    types: [{ id: 1, name: 'Deposit' }, { id:2, name: 'Retur' }],
+    types: [{ id: 1, name: 'Deposit' }, { id: 2, name: 'Retur' }],
     data: {}
   }),
 
   created: function () {
     this.getList()
-    this.getCurrencyLists()
+    this.getSystemParameter()
     this.getSupplierLists()
     auth.getAction(this.endpoint, this.menuId.bbDebitMemo, [this.action.insert, this.action.update, this.action.delete])
       .then((response) => {
@@ -411,15 +387,14 @@ export default {
       this.data = {
         action: '',
         code: null,
-        date: format(new Date(), 'yyyy-MM-dd'),
-        type: null,
+        date: format(parseISO(this.dataStartDate), 'yyyy-MM-dd'),
+        type: 1,
         supCode: null,
-        currCode: null,
-        currRate: 0,
+        currCode: 'IDR',
+        rate: 1,
         amount: 0,
         used: 0,
-        leftoverAmount: 0,
-        isActive: true
+        leftoverAmount: 0
       }
 
       // Reset form validation
@@ -460,6 +435,38 @@ export default {
             const item = this.grid.data.find(h => h.id === this.data.id)
             this.edit(item)
           }
+        })
+    },
+    getSystemParameter() {
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: 'DATA_START_DATE'
+          }])
+        }
+      })
+        .then(response => {
+          this.dataStartDate = format(add(parseISO(response.data.tableData[0].value), { days: -1 }), 'yyyy-MM-dd')
+        })
+    },
+    getSupplierLists() {
+      api.getAll(`${this.endpoint.general.supplier.supplier}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'isActive',
+            operator: 'eq',
+            keyword: true
+          }]),
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.suppliers = response.data.tableData
         })
     },
     back() {
@@ -529,42 +536,6 @@ export default {
     },
     async exportExcel() {
       this.exportExcel.export()
-    },
-    getCurrencyLists() {
-      api.getAll(`${this.endpoint.general.currency}/lists`, {
-        params: {
-          filters: JSON.stringify([{
-            field: 'isActive',
-            operator: 'eq',
-            keyword: true
-          }]),
-          sorts: JSON.stringify([{
-            field: 'code',
-            direction: 'asc'
-          }])
-        }
-      })
-        .then(response => {
-          this.currencies = response.data.tableData
-        })
-    },
-    getSupplierLists() {
-      api.getAll(`${this.endpoint.general.supplier.supplier}/lists`, {
-        params: {
-          filters: JSON.stringify([{
-            field: 'isActive',
-            operator: 'eq',
-            keyword: true
-          }]),
-          sorts: JSON.stringify([{
-            field: 'initial',
-            direction: 'asc'
-          }])
-        }
-      })
-        .then(response => {
-          this.suppliers = response.data.tableData
-        })
     },
     nilaiChange() {
       this.data.leftoverAmount = this.data.amount - this.data.used
