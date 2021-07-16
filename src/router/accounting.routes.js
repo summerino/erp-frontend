@@ -47,5 +47,19 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/accounting/transaction/begin-balance/begin-balance-debit-memo',
+  name: 'begin-balance-debit-memo',
+  component: () => import(/* webpackChunkName: "accounting-begin-balance-debit-memo" */ '@/views/accounting/transaction/begin-balance/DebitMemo.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/accounting/transaction/begin-balance/begin-balance-credit-memo',
+  name: 'begin-balance-credit-memo',
+  component: () => import(/* webpackChunkName: "accounting-begin-balance-credit-memo" */ '@/views/accounting/transaction/begin-balance/CreditMemo.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
   
