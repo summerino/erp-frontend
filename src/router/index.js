@@ -86,6 +86,13 @@ router.beforeEach((to, from, next) => {
     }
   }
 
+  // If route name is login & auth authenticated, redirect to dashboard page
+  if (to.name === 'login') {
+    if (auth.isAuthenticated()) {
+      router.push('/').catch(() => {})
+    }
+  }
+
   return next()
 })
 
