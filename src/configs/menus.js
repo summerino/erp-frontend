@@ -47,5 +47,6 @@ export default {
   generalJournal: 84,
   postingJournal: 86,
   bbDebitMemo: 89,
-  bbCreditMemo: 90
+  bbCreditMemo: 90,
+  closingMonth: 88
 }

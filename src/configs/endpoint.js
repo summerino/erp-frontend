@@ -69,7 +69,8 @@ export default {
     accountPayable: 'account-payable',
     generalJournal: 'general-journal',
     debitMemo: 'bb-debit-memo',
-    creditMemo: 'bb-credit-memo'
+    creditMemo: 'bb-credit-memo',
+    closingMonth: 'closing-month'
   },
 
   systemManagement:{
