@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import auth from '@/auth/authService'
+import auth from '@/services/auth.service'
 
 // Routes
 import AccountingRoutes from './accounting.routes'
@@ -83,6 +83,13 @@ router.beforeEach((to, from, next) => {
   if (to.meta.authRequired) {
     if (!auth.isAuthenticated()) {
       router.push({ name: 'login', query: { to: to.path } })
+    }
+  }
+
+  // If route name is login & auth authenticated, redirect to dashboard page
+  if (to.name === 'login') {
+    if (auth.isAuthenticated()) {
+      router.push('/').catch(() => {})
     }
   }
 

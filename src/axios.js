@@ -27,9 +27,10 @@ instance.interceptors.request.use((config) => {
 // response interceptor
 instance.interceptors.response.use((response) => {
   store.state.app.loadOverlay = false
-  if (!(response?.data?.success ?? true)) {
+  if (!(response?.data?.success ?? true) && router?.history?.current?.name !== 'login') {
     store.dispatch('app/showInfo', response.data.message)
   }
+  
   return response
 }, (error) => {
   store.state.app.loadOverlay = false
