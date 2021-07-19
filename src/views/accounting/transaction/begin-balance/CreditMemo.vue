@@ -414,7 +414,7 @@ export default {
         })
       }
       
-      api.getAll(this.endpoint.accounting.creditMemo, {
+      api.getAll(this.endpoint.accounting.beginBalance.cm, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -506,7 +506,7 @@ export default {
           'Hapus Data?',
           'Apakah anda yakin untuk menghapus data ini?')
       ) {
-        api.deleteData(this.endpoint.accounting.creditMemo, item)
+        api.deleteData(this.endpoint.accounting.beginBalance.cm, item)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -523,10 +523,10 @@ export default {
 
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
-        const resp = await api.create(this.endpoint.accounting.creditMemo, this.data)
+        const resp = await api.create(this.endpoint.accounting.beginBalance.cm, this.data)
         result = resp.data
       } else if (this.data.action === 'edit') {
-        const resp = await api.update(this.endpoint.accounting.creditMemo, this.data.id, this.data)
+        const resp = await api.update(this.endpoint.accounting.beginBalance.cm, this.data.id, this.data)
         result = resp.data
       }
 

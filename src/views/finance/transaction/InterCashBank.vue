@@ -687,7 +687,7 @@ export default {
         })
       }
 
-      api.getAll(this.endpoint.finance.cashBankInter, {
+      api.getAll(this.endpoint.finance.interCashBank, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -765,7 +765,7 @@ export default {
           'Hapus Data?',
           'Apakah anda yakin untuk menghapus data ini?')
       ) {
-        api.deleteData(this.endpoint.finance.cashBankInter, item)
+        api.deleteData(this.endpoint.finance.interCashBank, item)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -786,10 +786,10 @@ export default {
 
       let result = { success: false, message: '' }
       if (data.action === 'add') {
-        const resp = await api.create(this.endpoint.finance.cashBankInter, data)
+        const resp = await api.create(this.endpoint.finance.interCashBank, data)
         result = resp.data
       } else if (data.action === 'edit') {
-        const resp = await api.update(this.endpoint.finance.cashBankInter, data.code, data)
+        const resp = await api.update(this.endpoint.finance.interCashBank, data.code, data)
         result = resp.data
       }
 
