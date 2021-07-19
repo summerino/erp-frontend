@@ -1,10 +1,6 @@
 export default {
   master: 'master',
-  finance: {
-    cashBank: 'general-cash-bank',
-    cashBankType: 'general-cash-bank-type',
-    cashBankInter: 'inter-cash-bank'
-  },
+  
   general: {
     currency: 'currency',
     customer: {
@@ -25,6 +21,7 @@ export default {
     paymentTerm: 'payment-term',
     approval: 'approval'
   },
+
   inventory: {
     item: {
       category: 'item-category',
@@ -48,6 +45,8 @@ export default {
 
   sales: {
     area: 'area',
+    salesman: 'salesman-group',
+    promo: 'promo',
     order: 'sales-order',
     delivery: 'sales-delivery',
     invoice: 'sales-invoice',
@@ -55,32 +54,38 @@ export default {
     return: 'sales-return',
     plan: 'delivery-plan',
     creditMemo: 'credit-memo',
-    promo: 'promo',
     visitPlan: 'visit-plan',
-    visitOrder: 'visit-order',
-    salesman: 'salesman-group'
+    visitOrder: 'visit-order'
+  },
+
+  finance: {
+    cashBank: 'general-cash-bank',
+    interCashBank: 'inter-cash-bank',
+    cashBankType: 'general-cash-bank-type'
   },
 
   accounting: {
     coa: 'coa',
     coaType: 'coa-type',
     currencyRate: 'currency-rate',
-    accountReceivable: 'account-receivable',
-    accountPayable: 'account-payable',
     generalJournal: 'general-journal',
-    debitMemo: 'bb-debit-memo',
-    creditMemo: 'bb-credit-memo',
+    beginBalance: {
+      ap: 'bb-ap',
+      ar: 'bb-ar',
+      dm: 'bb-debit-memo',
+      cm: 'bb-credit-memo'
+    },
     closingMonth: 'closing-month'
   },
-
+  
   systemManagement:{
+    companyProfile: 'company-profile',
     user: 'user',
-    parameter: 'system-parameter',
     role: 'role',
-    menu: 'menu',
-    companyProfile: 'company-profile'
+    parameter: 'system-parameter',
+    menu: 'menu'
   },
-
+  
   assetManagement: {
     asset: {
       type: 'asset-type',
