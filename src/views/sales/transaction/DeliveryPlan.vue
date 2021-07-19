@@ -1007,6 +1007,7 @@ export default {
       this.data = {
         ...item,
         action: 'edit',
+        originalDate: item.date,
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
 
@@ -1038,7 +1039,7 @@ export default {
           'Void?',
           'Are you sure want to void this data?')
       ) {
-        api.delete(this.endpoint.sales.plan, item.code)
+        api.deleteData(this.endpoint.sales.plan, item)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)

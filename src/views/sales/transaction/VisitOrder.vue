@@ -945,6 +945,7 @@ export default {
       this.data = {
         ...item,
         action: 'edit',
+        originalDate: item.date,
         createdDate: format(parseISO(item.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
@@ -967,7 +968,7 @@ export default {
           'Hapus Data?',
           'Apakah anda yakin untuk menghapus data ini?')
       ) {
-        api.delete(this.endpoint.sales.visitOrder, item.code)
+        api.deleteData(this.endpoint.sales.visitOrder, item)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)

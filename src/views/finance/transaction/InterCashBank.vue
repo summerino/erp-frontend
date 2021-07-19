@@ -745,6 +745,7 @@ export default {
       this.data = {
         ...item,
         action: 'edit',
+        originalDate: item.date,
         createdDate: format(parseISO(item.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
         updatedDate: (item.updatedDate) ? format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss') : null,
         approvedDate: (item.approvedDate) ? format(parseISO(item.approvedDate), 'dd-MMM-yyyy HH:mm:ss') : null
@@ -764,7 +765,7 @@ export default {
           'Hapus Data?',
           'Apakah anda yakin untuk menghapus data ini?')
       ) {
-        api.delete(this.endpoint.finance.cashBankInter, item.code)
+        api.deleteData(this.endpoint.finance.cashBankInter, item)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
