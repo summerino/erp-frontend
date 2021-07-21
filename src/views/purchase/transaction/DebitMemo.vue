@@ -795,7 +795,8 @@ export default {
 
       this.data = {
         ...item,
-        action: 'edit'
+        action: 'edit',
+        originalDate: item.date
       }
 
       // Get supplier details
@@ -843,7 +844,7 @@ export default {
           'Void?',
           'Apakah anda yakin ingin membuat void data ini?')
       ) {
-        api.delete(this.endpoint.purchase.debitMemo, item.code)
+        api.delete(this.endpoint.purchase.debitMemo, item.code, {data: item})
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)

@@ -874,6 +874,8 @@ export default {
       this.data = {
         ...item,
         action: 'edit',
+        originalStartDate: item.startDate,
+        originalEndDate: item.endDate,
         mark: item.status === 'Void' ? 'V' : 'A',
         createdDate: format(parseISO(item.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss'),
@@ -904,7 +906,7 @@ export default {
           'Void?',
           'Apakah anda yakin ingin membuat void data ini?')
       ) {
-        api.delete(this.endpoint.sales.promo, item.code)
+        api.delete(this.endpoint.sales.promo, item.code, {data: item})
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)

@@ -903,7 +903,8 @@ export default {
 
       this.data = {
         ...item,
-        action: 'edit'
+        action: 'edit',
+        originalDate: item.date
       }
 
       // Get item details
@@ -933,7 +934,7 @@ export default {
           'Void?',
           'Apakah anda yakin ingin membuat void data ini?')
       ) {
-        api.delete(this.endpoint.finance.cashBank, item.code)
+        api.delete(this.endpoint.finance.cashBank, item.code, {data: item})
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)

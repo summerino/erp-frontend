@@ -494,6 +494,7 @@ export default {
       this.data = {
         ...item,
         action: 'edit',
+        originalDate: item.date,
         leftoverAmount: item.amount - item.used,
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
@@ -504,7 +505,7 @@ export default {
           'Hapus Data?',
           'Apakah anda yakin untuk menghapus data ini?')
       ) {
-        api.delete(this.endpoint.accounting.beginBalance.dm, item.id)
+        api.delete(this.endpoint.accounting.beginBalance.dm, item.id, {data: item})
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)

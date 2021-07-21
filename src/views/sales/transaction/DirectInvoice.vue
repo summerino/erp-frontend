@@ -1196,6 +1196,8 @@ export default {
         this.data = {
           ...resp.data,
           action: 'edit',
+          originalDate: resp.data.date,
+          originalDueDate: resp.data.dueDate,
           createdDate: (resp.data.createdDate === null) ? null : format(parseISO(resp.data.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
           updatedDate: (resp.data.updatedDate === null) ? null : format(parseISO(resp.data.updatedDate), 'dd-MMM-yyyy HH:mm:ss'),
           approvedDate: (resp.data.approvedDate === null) ? null : format(parseISO(resp.data.approvedDate), 'dd-MMM-yyyy HH:mm:ss')
@@ -1252,7 +1254,7 @@ export default {
           'Void?',
           'Apakah anda yakin ingin membuat void data ini?')
       ) {
-        api.delete(this.endpoint.sales.directInvoice, item.code)
+        api.delete(this.endpoint.sales.directInvoice, item.code, {data: item})
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)

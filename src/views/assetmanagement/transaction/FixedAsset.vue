@@ -1052,6 +1052,8 @@ export default {
       this.data = {
         ...item,
         action: 'edit',
+        originalPurchaseDate: item.purchaseDate,
+        originalStartDepreciateOn: item.startDepreciateOn,
         createdDate: (item.createdDate === null) ? null : format(parseISO(item.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
         updatedDate: (item.updatedDate === null) ? null : format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss'),
         approvedDate: (item.approvedDate === null) ? null : format(parseISO(item.approvedDate), 'dd-MMM-yyyy HH:mm:ss')
@@ -1072,7 +1074,7 @@ export default {
           'Void?',
           'Apakah anda yakin ingin membuat void data ini?')
       ) {
-        api.delete(this.endpoint.assetManagement.asset.fixedAsset, item.code)
+        api.delete(this.endpoint.assetManagement.asset.fixedAsset, item.code, {data: item})
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
