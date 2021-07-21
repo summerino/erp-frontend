@@ -313,19 +313,20 @@
                 <v-scroll-y-transition mode="out-in">
                   <v-card 
                     v-if="!selectedItem"
-                    class="title grey--text text--lighten-1 font-weight-light text-center"
                     height="480"
+                    class="title grey--text text--lighten-1 font-weight-light text-center"
                   >
                     <v-row>
                       <v-col cols="12">
-                        <span>Action tidak tersedia</span>
+                        <span>Aksi tidak tersedia</span>
                       </v-col>
                     </v-row>
                   </v-card>
                   <v-card
                     v-else
                     :key="selectedItem"
-                    style="overflow-y: scroll" height="320"
+                    height="480"
+                    style="overflow-y: scroll"
                   >
                     <v-card-title>{{ menuName }}</v-card-title>
                     <v-card-text>
@@ -333,7 +334,7 @@
                         <v-col cols="12">
                           <v-row dense>
                             <v-col cols="12">
-                              <span>Silahkan pilih action</span>
+                              <span>Silahkan pilih Aksi</span>
                             </v-col>
                           </v-row>
                           <v-row dense>
@@ -354,7 +355,7 @@
                         dense
                       >
                         <v-col cols="12">
-                          <span>Action tidak tersedia</span>
+                          <span>Aksi tidak tersedia</span>
                         </v-col>
                       </v-row>
                     </v-card-text>
@@ -464,7 +465,7 @@ export default {
       },
       deep: true
     },
-    'selectedItemForView': {
+    'selectedItem': {
       handler: function (value) {
         this.listingAction(value)
       },
@@ -675,6 +676,7 @@ export default {
       })
         .then(response => {
           this.menuAction = response.data.tableData
+          console.log(this.menuAction)
 
           // Update menu before change to another menu 
           // Notes : to prevent action on save, call updateMenu once again to update the last item
@@ -765,12 +767,11 @@ export default {
           this.loadRoleMenuAction()
         })
     },
-    getSelectionForView(selection) {
-      for (let i = 0; i < selection.length; i++) {
-        const item = selection[i]
+    getSelectionForView() {
+      for (let i = 0; i < this.selection.length; i++) {
+        const item = this.selection[i]
         const temp = this.menuList.find(x => x.id === item)
         if (temp) {
-
           if (temp.link) {
             this.selectionForView.push(item)
           }
@@ -783,7 +784,7 @@ export default {
       })
         .then(response => {
           this.selection = response.data
-          this.getSelectionForView(this.selection)
+          this.getSelectionForView()
         })
     },
     loadRoleMenuAction() {
