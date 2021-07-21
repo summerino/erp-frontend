@@ -800,7 +800,7 @@ export default {
           'Void?',
           'Apakah anda yakin ingin membuat void data ini?')
       ) {
-        api.deleteData(this.endpoint.accounting.generalJournal, item)
+        api.delete(this.endpoint.accounting.generalJournal, item.code, {data: item})
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)

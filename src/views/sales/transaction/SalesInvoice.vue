@@ -1155,7 +1155,7 @@ export default {
           'Hapus?',
           'Apakah anda yakin ingin menghapus data ini?')
       ) {
-        api.deleteData(this.endpoint.sales.invoice, item)
+        api.delete(this.endpoint.sales.invoice, item.code, {data: item})
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)

@@ -1039,7 +1039,7 @@ export default {
           'Void?',
           'Are you sure want to void this data?')
       ) {
-        api.deleteData(this.endpoint.sales.plan, item)
+        api.delete(this.endpoint.sales.plan, item.code, {data: item})
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)

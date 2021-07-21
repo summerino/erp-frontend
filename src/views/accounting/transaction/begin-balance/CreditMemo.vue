@@ -506,7 +506,7 @@ export default {
           'Hapus Data?',
           'Apakah anda yakin untuk menghapus data ini?')
       ) {
-        api.deleteData(this.endpoint.accounting.beginBalance.cm, item)
+        api.delete(this.endpoint.accounting.beginBalance.cm, item.id, {data: item})
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)

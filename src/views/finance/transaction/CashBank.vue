@@ -934,7 +934,7 @@ export default {
           'Void?',
           'Apakah anda yakin ingin membuat void data ini?')
       ) {
-        api.deleteData(this.endpoint.finance.cashBank, item)
+        api.delete(this.endpoint.finance.cashBank, item.code, {data: item})
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)

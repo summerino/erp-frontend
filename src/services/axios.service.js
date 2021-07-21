@@ -35,9 +35,6 @@ class AxiosService {
   deletemaster(endpoint, config) {
     return axios.delete(`/${endpoint}`, config)
   }
-  deleteData(url, data, config) {
-    return axios.delete(`/${url}`, { data: data }, config)
-  }
 }
 
 export default new AxiosService

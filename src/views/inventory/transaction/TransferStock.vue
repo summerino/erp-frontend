@@ -958,7 +958,7 @@ export default {
           'Void?',
           'Apakah anda yakin ingin membuat void data ini?')
       ) {
-        api.deleteData(this.endpoint.inventory.transferStock, item)
+        api.delete(this.endpoint.inventory.transferStock, item.code, {data: item})
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)

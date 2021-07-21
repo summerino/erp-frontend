@@ -765,7 +765,7 @@ export default {
           'Hapus Data?',
           'Apakah anda yakin untuk menghapus data ini?')
       ) {
-        api.deleteData(this.endpoint.finance.interCashBank, item)
+        api.delete(this.endpoint.finance.interCashBank, item.code, {data: item})
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)

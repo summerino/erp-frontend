@@ -1343,7 +1343,7 @@ export default {
           'Void?',
           'Apakah anda yakin ingin membuat void data ini?')
       ) {
-        api.deleteData(this.endpoint.purchase.order, item)
+        api.delete(this.endpoint.purchase.order, item.code, {data: item})
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)

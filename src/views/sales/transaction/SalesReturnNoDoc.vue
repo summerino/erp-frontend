@@ -1317,7 +1317,7 @@ export default {
           'Void?',
           'Are you sure want to void this data?')
       ) {
-        api.deleteData(this.endpoint.sales.return, item)
+        api.delete(this.endpoint.sales.return, item.code, {data: item})
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
