@@ -538,80 +538,12 @@
                     >
                       <v-card>
                         <v-card-text>
-                          <v-row no-gutters>
-                            <v-col cols="6">
-                              <v-autocomplete
-                                v-model="data.coaPurc"
-                                :items="coa"
-                                :item-text="item => `${item.code} - ${item.name}`"
-                                label="Kode akun pembelian"
-                                item-value="code"
-                                class="mt-0"
-                              ></v-autocomplete>
-                            </v-col>
-                            <v-col cols="6" class="pl-md-1">
-                              <v-autocomplete
-                                v-model="data.coaSls"
-                                :items="coa"
-                                :item-text="item => `${item.code} - ${item.name}`"
-                                label="Kode akun penjualan"
-                                item-value="code"
-                                class="mt-0"
-                              ></v-autocomplete>
-                            </v-col>
-                          </v-row>
-
-                          <v-row no-gutters>
-                            <v-col cols="6">
-                              <v-autocomplete
-                                v-model="data.coaPurcDisc"
-                                :items="coa"
-                                :item-text="item => `${item.code} - ${item.name}`"
-                                label="Kode akun diskon pembelian"
-                                item-value="code"
-                                class="mt-0"
-                              ></v-autocomplete>
-                            </v-col>
-                            <v-col cols="6" class="pl-md-1">
-                              <v-autocomplete
-                                v-model="data.coaSlsDisc"
-                                :items="coa"
-                                :item-text="item => `${item.code} - ${item.name}`"
-                                label="Kode akun diskon penjualan"
-                                item-value="code"
-                                class="mt-0"
-                              ></v-autocomplete>
-                            </v-col>
-                          </v-row>
-
-                          <v-row no-gutters>
-                            <v-col cols="6">
-                              <v-autocomplete
-                                v-model="data.coaPurcReturn"
-                                :items="coa"
-                                :item-text="item => `${item.code} - ${item.name}`"
-                                label="Kode akun pengembalian pembelian"
-                                item-value="code"
-                                class="mt-0"
-                              ></v-autocomplete>
-                            </v-col>
-                            <v-col cols="6" class="pl-md-1">
-                              <v-autocomplete
-                                v-model="data.coaSlsReturn"
-                                :items="coa"
-                                :item-text="item => `${item.code} - ${item.name}`"
-                                label="Kode akun pengembalian penjualan"
-                                item-value="code"
-                                class="mt-0"
-                              ></v-autocomplete>
-                            </v-col>
-                          </v-row>
 
                           <v-row no-gutters>
                             <v-col cols="6">
                               <v-autocomplete
                                 v-model="data.coaInventory"
-                                :items="coa"
+                                :items="coas"
                                 :item-text="item => `${item.code} - ${item.name}`"
                                 label="Kode akun persediaan"
                                 item-value="code"
@@ -621,7 +553,7 @@
                             <v-col cols="6" class="pl-md-1">
                               <v-autocomplete
                                 v-model="data.coaCogs"
-                                :items="coa"
+                                :items="coas"
                                 :item-text="item => `${item.code} - ${item.name}`"
                                 label="Kode akun harga pokok penjualan"
                                 item-value="code"
@@ -630,11 +562,80 @@
                             </v-col>
                           </v-row>
 
+                          <!-- <v-row no-gutters>
+                            <v-col cols="6">
+                              <v-autocomplete
+                                v-model="data.coaPurc"
+                                :items="coas"
+                                :item-text="item => `${item.code} - ${item.name}`"
+                                label="Kode akun pembelian"
+                                item-value="code"
+                                class="mt-0"
+                              ></v-autocomplete>
+                            </v-col>
+                            <v-col cols="6" class="pl-md-1">
+                              <v-autocomplete
+                                v-model="data.coaSls"
+                                :items="coas"
+                                :item-text="item => `${item.code} - ${item.name}`"
+                                label="Kode akun penjualan"
+                                item-value="code"
+                                class="mt-0"
+                              ></v-autocomplete>
+                            </v-col>
+                          </v-row> -->
+
                           <v-row no-gutters>
+                            <!-- <v-col cols="6">
+                              <v-autocomplete
+                                v-model="data.coaPurcDisc"
+                                :items="coas"
+                                :item-text="item => `${item.code} - ${item.name}`"
+                                label="Kode akun diskon pembelian"
+                                item-value="code"
+                                class="mt-0"
+                              ></v-autocomplete>
+                            </v-col> -->
+                            <v-col cols="12">
+                              <v-autocomplete
+                                v-model="data.coaSlsDisc"
+                                :items="coas"
+                                :item-text="item => `${item.code} - ${item.name}`"
+                                label="Kode akun diskon penjualan"
+                                item-value="code"
+                                class="mt-0"
+                              ></v-autocomplete>
+                            </v-col>
+                          </v-row>
+
+                          <!-- <v-row no-gutters>
+                            <v-col cols="6">
+                              <v-autocomplete
+                                v-model="data.coaPurcReturn"
+                                :items="coas"
+                                :item-text="item => `${item.code} - ${item.name}`"
+                                label="Kode akun pengembalian pembelian"
+                                item-value="code"
+                                class="mt-0"
+                              ></v-autocomplete>
+                            </v-col>
+                            <v-col cols="6" class="pl-md-1">
+                              <v-autocomplete
+                                v-model="data.coaSlsReturn"
+                                :items="coas"
+                                :item-text="item => `${item.code} - ${item.name}`"
+                                label="Kode akun pengembalian penjualan"
+                                item-value="code"
+                                class="mt-0"
+                              ></v-autocomplete>
+                            </v-col>
+                          </v-row> -->
+
+                          <!-- <v-row no-gutters>
                             <v-col cols="6">
                               <v-autocomplete
                                 v-model="data.coaCost"
-                                :items="coa"
+                                :items="coas"
                                 :item-text="item => `${item.code} - ${item.name}`"
                                 label="Kode akun biaya"
                                 item-value="code"
@@ -644,12 +645,20 @@
                             <v-col cols="6" class="pl-md-1">
                               <v-autocomplete
                                 v-model="data.coaExpense"
-                                :items="coa"
+                                :items="coas"
                                 :item-text="item => `${item.code} - ${item.name}`"
                                 label="Kode akun pengeluaran"
                                 item-value="code"
                                 class="mt-0"
                               ></v-autocomplete>
+                            </v-col>
+                          </v-row> -->
+
+                          <v-row no-gutters>
+                            <v-col cols="12">
+                              <span class="red--text">
+                                Jika akun kosong, maka sistem akan melihat akun di pengaturan sistem.
+                              </span>
                             </v-col>
                           </v-row>
                         </v-card-text>
@@ -818,7 +827,7 @@ export default {
     dimensionOfMeasurement: [{text: 'mm'}, {text: 'cm'}, {text: 'm'}],
     weightOfMeasurement: [{text: 'g'}, {text: 'ons'}, {text: 'kg'}],
     quantityViewRef: [{value: 1, text: 'Satuan Terkecil'}, {value: 2, text: 'Satuan Beli'}, {value: 3, text: 'Satuan Jual'}],
-    coa: [],
+    coas: [],
     subGroupRef: [],
     data: {}
   }),
@@ -1075,11 +1084,6 @@ export default {
             field: 'typeid',
             operator: 'neq',
             keyword: 2
-          },
-          {
-            field: 'lod',
-            operator: 'eq',
-            keyword: 5
           }]),
           sorts: JSON.stringify([{
             field: 'code',
@@ -1088,7 +1092,7 @@ export default {
         }
       })
         .then(response => {
-          this.coa = response.data.tableData
+          this.coas = response.data.tableData
         })
     },
     close() {

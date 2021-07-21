@@ -809,10 +809,6 @@ export default {
             field: 'typeId',
             operator: 'eq',
             keyword: 2
-          }, {
-            field: 'isActive',
-            operator: 'eq',
-            keyword: true
           }]),
           sorts: JSON.stringify([{
             field: 'code',
