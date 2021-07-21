@@ -676,7 +676,6 @@ export default {
       })
         .then(response => {
           this.menuAction = response.data.tableData
-          console.log(this.menuAction)
 
           // Update menu before change to another menu 
           // Notes : to prevent action on save, call updateMenu once again to update the last item
