@@ -350,8 +350,8 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '30' },
         { text: 'Qty Mulai', value: 'fromQty', divider: true, width: '100' },
-        { text: 'Nilai', value: 'value', align: 'right', divider: true, width: '100' },
-        { text: 'Qty Sampai', value: 'toQty', divider: true, width: '100' }
+        { text: 'Qty Sampai', value: 'toQty', divider: true, width: '100' },
+        { text: 'Nilai', value: 'value', align: 'right', divider: true, width: '100' }
       ],
       data: [],
       height: 100
@@ -418,7 +418,7 @@ export default {
         this.promoMethod = [{ id: 1, name: 'Persen' }, { id: 2, name: 'Nominal' }]
         this.data.promoMethod = item.isPercentage === false ? 2 : 1
         this.grid.columns[1].text = 'Nilai Mulai'
-        this.grid.columns[3].text = 'Nilai Sampai'
+        this.grid.columns[2].text = 'Nilai Sampai'
       } else {
         this.grid.data = item.promoTierList
         this.data.applyToAllUnit = item.applyToAllUnit === undefined || item.applyToAllUnit === null ? item.promoTierList.length === 0 ? false : item.promoTierList[0].applyToAllUnit : item.applyToAllUnit 
