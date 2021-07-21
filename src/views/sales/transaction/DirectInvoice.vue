@@ -1151,6 +1151,7 @@ export default {
           this.promos = response.data.tableData
           for (let i = 0; i < this.promos.length; i++) {
             this.getPromoDetail(this.promos[i])
+            this.getPromoSubject(this.promos[i])
           }
         })
     },
@@ -1160,6 +1161,14 @@ export default {
       })
         .then(response => {
           item.itemDetails = response.data.tableData
+        })
+    },
+    getPromoSubject(item) {
+      api.getAll(`${this.endpoint.sales.promo}/subject`, {
+        params: { code: item.code }
+      })
+        .then(response => {
+          item.subject = response.data.tableData
         })
     },
     getPaymentTermLists() {
@@ -1539,16 +1548,21 @@ export default {
           if (this.promos[i].applyTo === 1) {
             appliedHeader = true
           } else if (this.promos[i].applyTo === 2) {
-            if (this.promos[i].custCode === this.data.custCode) {
+            const resPromo = this.promos[i].subject.find(x => x.custCode === this.data.custCode)
+            console.log(resPromo)
+            if (resPromo) {
               appliedHeader = true
             }
           } else if (this.promos[i].applyTo === 3) {
-            if (this.promos[i].custTypeId === this.data.custTypeId) {
+            const resPromo = this.promos[i].subject.find(x => x.custTypeId === this.data.custTypeId)
+            console.log(resPromo)
+            if (resPromo) {
               appliedHeader = true
             }
           }
           if (applied && appliedHeader) {
             if (!this.gridPromo.data.includes(this.promos[i])) {
+              this.promos[i].usePromo = true
               this.gridPromo.data.push(this.promos[i])
             }
           }

@@ -288,7 +288,7 @@
                     </v-row>
 
                     <v-row no-gutters>
-                      <v-col cols="12" md="6">
+                      <v-col cols="12">
                         <v-autocomplete
                           v-model="data.applyTo"
                           :items="applyToHeader"
@@ -300,33 +300,6 @@
                           dense
                           required
                           @change="applyToHeaderChange"
-                        >
-                        </v-autocomplete>
-                      </v-col>
-                      <v-col cols="12" md="6" class="pl-md-1">
-                        <v-autocomplete
-                          v-if="data.applyTo === 2"
-                          v-model="data.custCode"
-                          :items="customers"
-                          :rules="rules.required"
-                          :item-text="item => `${item.code} - ${item.name}`"
-                          item-value="code"
-                          class="mt-0"
-                          dense
-                          required
-                        >
-                        </v-autocomplete>
-                        <v-autocomplete
-                          v-else
-                          v-model="data.custTypeId"
-                          :disabled="data.applyTo === 1"
-                          :items="customerTypes "
-                          :required="data.applyTo !== 1"
-                          :rules="data.applyTo !== 1 ? rules.required : []"
-                          :item-text="item => `${item.initial} - ${item.name}`"
-                          item-value="id"
-                          class="mt-0"
-                          dense
                         >
                         </v-autocomplete>
                       </v-col>
@@ -434,8 +407,100 @@
               <v-col cols="12">
                 <v-card>
                   <v-tabs v-model="tab.item">
+                    <v-tab key="subject">Subjek</v-tab>
                     <v-tab key="detail">Detail</v-tab>
-                  
+
+                    <v-tab-item
+                      key="subject"
+                      transition="false"
+                    >
+                      <v-card>
+                        <v-row dense>
+                          <v-col cols="12">
+                            <v-app-bar dense flat>
+                              <v-spacer></v-spacer>
+                              <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-btn
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    v-shortkey="['ctrl', 'k']"
+                                    :disabled="isApplyAll || isVoid || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
+                                    class="blue--text"
+                                    small
+                                    tile
+                                    @click="addSubject"
+                                    @shortkey="addSubject"
+                                  >
+                                    <v-icon left>mdi-plus</v-icon>
+                                    Tambah
+                                  </v-btn>
+                                </template>
+                                <span class="text-caption">(Ctrl + K)</span>
+                              </v-tooltip>
+                            </v-app-bar>
+
+                            <v-data-table
+                              :headers="gridSubject.columns"
+                              :items="gridSubject.data"
+                              :items-per-page="-1"
+                              height="300"
+                              class="elevation-1"
+                              dense
+                              disable-sort
+                              fixed-header
+                              hide-default-footer
+                            >
+                              <template v-slot:[`item.action`]="{ item }">
+                                <v-tooltip bottom>
+                                  <template v-slot:activator="{ on, attrs }">
+                                    <v-btn
+                                      v-bind="attrs"
+                                      v-on="on"
+                                      :disabled="isVoid || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
+                                      color="red"
+                                      icon
+                                      small
+                                      @click="removeSubject(item)"
+                                    >
+                                      <v-icon small>mdi-close-thick</v-icon>
+                                    </v-btn>
+                                  </template>
+                                  <span class="text-caption">Hapus</span>
+                                </v-tooltip>
+                              </template>
+                              <template v-slot:[`item.subject`]="{ item }">
+                                  <v-autocomplete
+                                    v-if="data.applyTo === 2"
+                                    v-model="item.subject"
+                                    :items="customers"
+                                    :rules="rules.required"
+                                    :item-text="item => `${item.code} - ${item.name}`"
+                                    item-value="code"
+                                    class="mt-0"
+                                    dense
+                                    required
+                                  >
+                                  </v-autocomplete>
+                                  <v-autocomplete
+                                    v-else-if="data.applyTo === 3"
+                                    v-model="item.subject"
+                                    :items="customerTypes "
+                                    :rules="rules.required"
+                                    :item-text="item => `${item.initial} - ${item.name}`"
+                                    item-value="id"
+                                    class="mt-0"
+                                    dense
+                                    required
+                                  >
+                                  </v-autocomplete>
+                              </template>
+                            </v-data-table>
+                          </v-col>
+                        </v-row>
+                      </v-card>
+                    </v-tab-item>
+
                     <v-tab-item
                       key="detail"
                       transition="false"
@@ -675,7 +740,14 @@ export default {
         { text: 'Jenjang', value: 'tier', align: 'center', divider: true, width: '100' }
       ],
       data: []
-    },  
+    },
+    gridSubject: {
+      columns: [
+        { value: 'action', sortable: false, divider: true, width: '50' },
+        { text: 'Subjek', value: 'subject', divider: true, width: '130' }
+      ],
+      data: []
+    }, 
     dataStartDate: null,
     accounts: [],
     applyTo: [{ id: 1, name: 'Barang' }, { id: 2, name: 'Faktur' }, { id: 3, name: 'Kategori Barang' }],
@@ -737,6 +809,9 @@ export default {
     },
     isVoid() {
       return (this.data?.mark?.toUpperCase() === 'V')
+    },
+    isApplyAll() {
+      return (this.data.applyTo === 1)
     }
   },
 
@@ -764,9 +839,11 @@ export default {
         updatedBy: 0,
         updatedDate: format(new Date(), 'yyyy-MM-dd'),
         approvedBy: 0,
-        approvedDate: format(new Date(), 'yyyy-MM-dd')
+        approvedDate: format(new Date(), 'yyyy-MM-dd'),
+        applyTo: 1
       }
       this.gridItem.data = []
+      this.gridSubject.data = []
       this.tab.notes = 0
       this.tab.item = 0
 
@@ -895,6 +972,19 @@ export default {
           }
         })
 
+      // Get subject details
+      if (item.applyTo !== 1) {
+        api.getAll(`${this.endpoint.sales.promo}/subject`, {
+          params: { code: item.code }
+        })
+          .then(response => {
+            for (let i = 0; i < response.data.tableData.length; i++) {
+              response.data.tableData[i].subject = item.applyTo === 2 ? response.data.tableData[i].custCode : response.data.tableData[i].custTypeId
+            }
+            this.gridSubject.data = response.data.tableData
+          })
+      }
+
       // Set focus to return code field
       setTimeout(() => {
         this.$refs.code.focus()
@@ -925,10 +1015,25 @@ export default {
 
       const data = this.data
       data.itemDetails = this.gridItem.data
+      data.subjectDetails = this.gridSubject.data
+
+      const valueArr = data.subjectDetails.map(function (item) { return item.subject })
+      const isDuplicate = valueArr.some(function (item, idx) { 
+        return valueArr.indexOf(item) !== idx 
+      })
+      if (isDuplicate) {
+        this.$store.dispatch('app/showInfo', 'Subjek tidak boleh duplikat.')
+        return
+      }
       
 
       if (data.itemDetails.length === 0) {
         this.$store.dispatch('app/showInfo', 'Detil tidak boleh kosong.')
+        return
+      }
+
+      if (data.subjectDetails.length === 0 && data.applyTo !== 1) {
+        this.$store.dispatch('app/showInfo', 'Subjek tidak boleh kosong.')
         return
       }
 
@@ -1067,13 +1172,29 @@ export default {
         })
     },
     applyToHeaderChange() {
-      if (this.data.applyTo === 1) {
-        this.data.custCode = null
-        this.data.custTypeId = null
-      } else if (this.data.applyTo === 2) {
-        this.data.custTypeId = null
-      } else if (this.data.applyTo === 3) {
-        this.data.custCode = null
+      this.gridSubject.data = []
+    },
+    addSubject() {
+      if (this.gridSubject.data.length === 0 || (this.gridSubject.data.slice(-1)[0]?.subject ?? null)) {
+        const item = {
+          id: randomNumber(-1, -1000),
+          subject: null
+        }
+        this.gridSubject.data.push(item)
+
+        setTimeout(() => {
+          this.$refs.subject.focus()
+        }, 0)
+      }
+    },
+    async removeSubject(item) {
+      if (
+        await this.$refs.confirm.open(
+          'Hapus?',
+          'Apakah anda yakin ingin menghapus data ini?')
+      ) {
+        const idx = this.gridSubject.data.findIndex(i => i.id === item.id)
+        this.gridSubject.data.splice(idx, 1)
       }
     }
   }
