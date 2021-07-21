@@ -1015,11 +1015,6 @@ export default {
             field: 'typeId',
             operator: 'neq',
             keyword: '2'
-          },
-          {
-            field: 'lod',
-            operator: 'eq',
-            keyword: 5
           }]),
           sorts: JSON.stringify([{
             field: 'code',

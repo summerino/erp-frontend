@@ -106,7 +106,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="4">
-            <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' }} Piutang</span>
+            <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' }} Saldo Awal Piutang</span>
           </v-col>
           <v-col cols="12" md="8" class="text-right">
             <label

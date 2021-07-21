@@ -130,7 +130,7 @@
                 {{ item.mark }}
               </v-chip>
             </template>
-            <span class="text-caption">{{ item.status }}</span>
+            <span class="text-caption">{{ item.mark == 'A' ? 'Aktif' : 'Void' }}</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">
@@ -138,6 +138,9 @@
         </template>
         <template v-slot:[`item.dueDate`]="{ item }">
           {{ item.dueDate | formatDate('dd-MMM-yyyy') }}
+        </template>
+        <template v-slot:[`item.amount`]="{ item }">
+          {{ item.amount | formatCurrency }}
         </template>
       </v-data-table>
     </v-card>
@@ -627,7 +630,7 @@ export default {
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Tanggal Faktur', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Tanggal Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
-        { text: 'Pemasok', value: 'supplierInitial', width: '120', excelColWidth:'15' },        
+        { text: 'Pemasok', value: 'supplierInitial', divider: true, width: '120', excelColWidth:'15' },        
         { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
         { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
       ],
