@@ -255,10 +255,10 @@
                   v-model="data.employeeId"
                   :items="employees"
                   :item-text="item => `${item.initial} - ${item.firstName}`"
-                  :rules="rules.required"
                   label="Karyawan"
                   item-value="id"
                   class="mt-0"
+                  clearable
                 ></v-autocomplete>
               </v-col>
             </v-row>
