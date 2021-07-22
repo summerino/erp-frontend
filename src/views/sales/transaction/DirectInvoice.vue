@@ -29,7 +29,7 @@
                   v-shortkey="['ctrl', 'enter']"
                   dark
                   text
-                  :disabled="(data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="hasRelatedTrans || (data.action === 'edit' && !auth.allowUpdate)"
                   @click="save(true)"
                   @shortkey="save(true)"
                 >Simpan & Tutup</v-btn>
@@ -58,7 +58,7 @@
                   v-shortkey="['ctrl', 's']"
                   @click="save(false)"
                   @shortkey="save(false)"
-                  :disabled="(data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="hasRelatedTrans || (data.action === 'edit' && !auth.allowUpdate)"
                 >
                   <v-list-item-title>
                     <v-tooltip bottom>
@@ -518,6 +518,7 @@
                                   color="primary"
                                   icon
                                   x-small
+                                  :disabled="hasRelatedTrans"
                                   @click="showFindItemDialog(item)"
                                 >
                                   <v-icon>
