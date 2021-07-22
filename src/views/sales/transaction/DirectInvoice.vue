@@ -1550,13 +1550,11 @@ export default {
             appliedHeader = true
           } else if (this.promos[i].applyTo === 2) {
             const resPromo = this.promos[i].subject.find(x => x.custCode === this.data.custCode)
-            console.log(resPromo)
             if (resPromo) {
               appliedHeader = true
             }
           } else if (this.promos[i].applyTo === 3) {
             const resPromo = this.promos[i].subject.find(x => x.custTypeId === this.data.custTypeId)
-            console.log(resPromo)
             if (resPromo) {
               appliedHeader = true
             }
