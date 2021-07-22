@@ -780,6 +780,11 @@ export default {
         return
       }
 
+      if (this.data.coaCode === this.details.coaCode) {
+        this.$store.dispatch('app/showInfo', 'Akun asal dan akun tujuan tidak boleh sama.')
+        return
+      }
+
       const data = this.data
       this.setDetail(data)
       data.itemDetails = this.itemDetails
