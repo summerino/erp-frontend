@@ -6,16 +6,6 @@
           <v-col cols="12" md="3">
             Transfer Persediaan
           </v-col>
-          <!-- <v-col cols="12" md="4">
-            <v-text-field
-              v-model="grid.search"
-              append-icon="mdi-magnify"
-              label="Cari..."
-              class="font-weight-regular mt-0 pt-0"
-              single-line
-              @keyup.enter="getList()"
-            ></v-text-field>
-          </v-col> -->
           <v-col cols="12" md="4" >
             <v-row no-gutters>
               <v-text-field
@@ -176,7 +166,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="isVoid || data.mark === 'CMP' || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || isComplete || (data.action === 'edit' && !auth.allowUpdate)"
                   dark
                   text
                   @click="save(true, false)"
@@ -205,7 +195,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="isVoid || data.mark === 'CMP' || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || isComplete || (data.action === 'edit' && !auth.allowUpdate)"
                   @click="save(false, false)"
                   @shortkey="save(false, false)"
                 >
@@ -224,9 +214,9 @@
                   </v-list-item-title>
                 </v-list-item>
                 <v-list-item
-                  v-if="data.type === 1"
+                  v-if="isTypeIn === 'OUT'"
                   v-shortkey="['ctrl', 'alt', 's']"
-                  :disabled="isVoid || data.mark === 'CMP' || hasRelatedTrans"
+                  :disabled="isVoid || isComplete || hasRelatedTrans"
                   @click="save(false, true)"
                   @shortkey="save(false, true)"
                 >
@@ -288,7 +278,7 @@
                               :value="formatTransfDate"
                               label="Tanggal"
                               class="mt-0"
-                              :readonly="data.mark === 'CMP'"
+                              :readonly="isComplete"
                               required
                             ></v-text-field>
                           </template>
@@ -313,7 +303,7 @@
                           label="Tipe"
                           item-value="value"
                           class="mt-0"
-                          :readonly="data.mark === 'CMP' || hasRelatedTrans"
+                          :readonly="isComplete || hasRelatedTrans"
                           required
                           @change="onChangeType"
                         ></v-autocomplete>
@@ -324,14 +314,14 @@
                       <v-col cols="12">
                         <v-text-field
                           v-model="data.originTransferCode"
-                          :rules="(data.type === 2) ? rules.required : []"
+                          :rules="isTypeIn ? rules.required : []"
                           label="No. Transf. Persd. Keluar"
                           class="mt-0"
-                          :required="data.type === 2"
-                          :readonly="data.type !== 2 || data.mark === 'CMP'"
+                          :required="isTypeIn"
+                          :readonly="!isTypeIn || isComplete"
                           @change="tsCodeChange"
                         >
-                          <template v-slot:append v-if="data.type === 2">
+                          <template v-slot:append v-if="isTypeIn">
                             <v-btn
                               color="primary"
                               icon
@@ -369,12 +359,12 @@
                             v-model="data.warehouseCodeFrom"
                             :items="warehouseRef"
                             :item-text="item => `${item.initial} - ${item.name}`"
-                            :rules="(data.type !== 2) ? rules.required : []"
-                            :readonly="data.type === 2 || data.mark === 'CMP' || hasRelatedTrans"
+                            :rules="!isTypeIn ? rules.required : []"
+                            :readonly="isTypeIn || isComplete || hasRelatedTrans"
                             label="Gudang Asal"
                             item-value="code"
                             class="mt-0"
-                            :required="data.type !== 2"
+                            :required="!isTypeIn"
                           ></v-autocomplete>
                         </v-col>
                       </v-row>
@@ -385,12 +375,12 @@
                             v-model="data.warehouseCodeTo"
                             :items="warehouseRef"
                             :item-text="item => `${item.initial} - ${item.name}`"
-                            :rules="(data.type !== 2) ? rules.required : []"
-                            :readonly="data.type === 2 || data.mark === 'CMP' || hasRelatedTrans"
+                            :rules="!isTypeIn ? rules.required : []"
+                            :readonly="isTypeIn || isComplete || hasRelatedTrans"
                             label="Gudang Tujuan"
                             item-value="code"
                             class="mt-0"
-                            :required="data.type !== 2"
+                            :required="!isTypeIn"
                           ></v-autocomplete>
                         </v-col>
                       </v-row>
@@ -407,7 +397,7 @@
                         counter="256"
                         class="mt-0"
                         rows="4"
-                        :readonly="data.mark === 'CMP'"
+                        :readonly="isComplete"
                       ></v-textarea>
                     </v-tab-item>
 
@@ -499,7 +489,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid || data.type === 2 || data.mark === 'CMP' || hasRelatedTrans || ((data.action === 'edit' && !auth.allowUpdate) && !auth.allowInsert)"
+                                :disabled="isVoid || isTypeIn || isComplete || hasRelatedTrans || ((data.action === 'edit' && !auth.allowUpdate) && !auth.allowInsert)"
                                 class="blue--text"
                                 small
                                 tile
@@ -531,7 +521,7 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
-                                  :disabled="isVoid || data.type === 2 || data.mark === 'CMP' || hasRelatedTrans || ((data.action === 'edit' && !auth.allowUpdate) && !auth.allowInsert)"
+                                  :disabled="isVoid || isTypeIn || isComplete || hasRelatedTrans || ((data.action === 'edit' && !auth.allowUpdate) && !auth.allowInsert)"
                                   color="red"
                                   icon
                                   small
@@ -548,7 +538,7 @@
                               ref="itemId"
                               v-model="item.itemId"
                               :items="items"
-                              :readonly="data.type === 2 || data.mark === 'CMP' || hasRelatedTrans"
+                              :readonly="isTypeIn || isComplete || hasRelatedTrans"
                               :rules="rules.required"
                               item-text="initial"
                               item-value="id"
@@ -559,7 +549,7 @@
                             >
                               <template v-slot:append>
                                 <v-btn
-                                  :disabled="data.type === 2 || data.mark === 'CMP' || hasRelatedTrans"
+                                  :disabled="isTypeIn || isComplete || hasRelatedTrans"
                                   color="primary"
                                   icon
                                   x-small
@@ -578,7 +568,7 @@
                               v-model="item.qty"
                               :decimal-length="0"
                               :min="1"
-                              :readonly="data.type === 2 || data.mark === 'CMP'"
+                              :readonly="isTypeIn || isComplete"
                               class="text-body-2 text-right mt-0"
                               dense
                             ></v-currency-field>
@@ -587,7 +577,7 @@
                             <v-autocomplete
                               v-model="item.unitId"
                               :items="item.units"
-                              :readonly="data.type === 2 || data.mark === 'CMP' || hasRelatedTrans"
+                              :readonly="isTypeIn || isComplete || hasRelatedTrans"
                               :rules="rules.required"
                               item-text="unitEquivalent"
                               item-value="id"
@@ -600,7 +590,7 @@
                           <template v-slot:[`item.notes`]="{ item }">
                             <v-text-field
                               v-model="item.notes"
-                              :readonly="data.type === 2 || data.mark === 'CMP'"
+                              :readonly="isTypeIn || isComplete"
                               class="text-body-2 mt-0"
                               dense
                             ></v-text-field>
@@ -763,7 +753,7 @@ export default {
     ],
     valid: false,
     dataStartDate: null,
-    typeRef: [{ value: 1, text: 'Barang Keluar' }, { value: 2, text: 'Barang Masuk' }, { value: 3, text: 'Transfer Langsung' }],
+    typeRef: [{ value: 'OUT', text: 'Barang Keluar' }, { value: 'IN', text: 'Barang Masuk' }, { value: 'DT', text: 'Transfer Langsung' }],
     warehouseRef: [],
     items: [],
     data: {}
@@ -819,11 +809,17 @@ export default {
     formatTransfDate() {
       return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
     },
+    isTypeIn() {
+      return (this.data?.type?.toUpperCase() === 'IN')
+    },
     hasRelatedTrans() {
       return (this.gridRelated?.data?.length > 0)
     },
     isVoid() {
       return (this.data?.mark?.toUpperCase() === 'V')
+    },
+    isComplete() {
+      return (this.data?.mark?.toUpperCase() === 'CMP')
     }
   },
 
@@ -836,7 +832,7 @@ export default {
         type: null,
         originTransferCode: null,
         warehouseCodeFrom: null,
-        WarehouseCodeTo: null,
+        warehouseCodeTo: null,
         notes: null,
         typeInitial: null,
         total: 0
@@ -1002,7 +998,7 @@ export default {
         } else if (saveNew) {
           this.data.originTransferCode = result.data
           this.tsCodeChange()
-          this.data.type = 2
+          this.data.type = 'IN'
         } else {
           this.data.code = result.data
         }
@@ -1110,7 +1106,7 @@ export default {
           }, {
             field: 'type',
             operator: 'neq',
-            keyword: 2
+            keyword: 'IN'
           }])
         }
       })
@@ -1149,7 +1145,7 @@ export default {
           }, {
             field: 'type',
             operator: 'eq',
-            keyword: 2
+            keyword: 'IN'
           }])
         }
       })
@@ -1158,9 +1154,7 @@ export default {
         })
     },
     onChangeType() {
-      if (!this.data.type) return
-
-      if (this.data.type === 2) {
+      if (this.isTypeIn) {
         this.data.warehouseCodeFrom = null
         this.data.warehouseCodeTo = null
         this.gridDet.data = []
