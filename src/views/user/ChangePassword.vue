@@ -14,7 +14,7 @@
           ref="form"
           v-model="valid"
         >
-          <v-row>
+          <v-row dense>
             <v-col cols="12" md="3">
               <h3>Username</h3>
             </v-col>
@@ -26,7 +26,7 @@
             </v-col>
           </v-row>
 
-          <v-row>
+          <v-row align="center" dense>
             <v-col cols="12" md="3">
               <h3>Kata sandi lama</h3>
             </v-col>
@@ -46,7 +46,7 @@
             </v-col>
           </v-row>
 
-          <v-row>
+          <v-row align="center" dense>
             <v-col cols="12" md="3">
               <h3>Kata sandi baru</h3>
             </v-col>
@@ -66,7 +66,7 @@
             </v-col>
           </v-row>
 
-          <v-row>
+          <v-row align="center" dense>
             <v-col cols="12" md="3">
               <h3>Konfirmasi kata sandi baru</h3>
             </v-col>
@@ -132,7 +132,6 @@
 <script>
 import { mapState } from 'vuex'
 import auth from '@/services/authorization.service'
-// import { format, parseISO }  from 'date-fns'
 
 import api from '@/services/axios.service'
 import Confirm from '@/components/dialog/Confirm'
@@ -183,7 +182,7 @@ export default {
       this.data = {
         catalogUserId: user.CatalogUserId,
         userId: user.UserId,
-        username: user.given_name,
+        username: user.sub,
         name: user.given_name,
         initial: user.given_name,
         password: null,
