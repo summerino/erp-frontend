@@ -150,7 +150,7 @@
                   text
                   @click="save(true)"
                   @shortkey="save(true)"
-                  :disabled="data.action === 'edit' || !auth.allowUpdate"
+                  :disabled="data.action === 'edit' && !auth.allowUpdate"
                 >Simpan & Tutup</v-btn>
               </template>
               <span class="text-caption">(Ctrl + Enter)</span>
@@ -177,7 +177,7 @@
                   v-shortkey="['ctrl', 's']"
                   @click="save(false)"
                   @shortkey="save(false)"
-                  :disabled="data.action === 'edit' || !auth.allowUpdate"
+                  :disabled="data.action === 'edit' && !auth.allowUpdate"
                 >
                   <v-list-item-title>
                     <v-tooltip bottom>
