@@ -176,6 +176,7 @@
                           item-value="id"
                           class="mt-0"
                           required
+                          @change="changeSeller()"
                         ></v-autocomplete>
                       </v-col>
                     </v-row>
@@ -209,7 +210,7 @@
                             item-value="code"
                             class="mt-0"
                             required
-                            @change="custCodeChange(); findPromo(); calcPromo();"
+                            @change="changeSeller(); custCodeChange(); findPromo(); calcPromo();"
                           ></v-autocomplete>
                         </v-col>
 
@@ -331,7 +332,7 @@
                             item-value="code"
                             class="mt-0"
                             required
-                            :disabled="!auth.allowChangeWarehouse"
+                            :disabled="this.data.isConsignee || !auth.allowChangeWarehouse"
                           ></v-autocomplete>
                         </v-col>
                       </v-row>
@@ -352,13 +353,22 @@
                       </v-row>
 
                       <v-row no-gutters>
-                        <v-col cols="12">
+                        <v-col cols="12" md="6">
                           <v-checkbox
                             v-model="data.includeTax"
                             :disabled="hasRelatedTrans"
                             label="Termasuk Pajak"
                             class="shrink mt-0"
                             @change="calcTax"
+                          ></v-checkbox>
+                        </v-col>
+                        <v-col cols="12" md="6">
+                          <v-checkbox
+                            v-model="data.isConsignee"
+                            :disabled="hasRelatedTrans"
+                            label="Konsinyasi"
+                            class="shrink mt-0"
+                            @change="changeConsign()"
                           ></v-checkbox>
                         </v-col>
                       </v-row>
@@ -1098,6 +1108,7 @@ export default {
       })
         .then(response => {
           this.warehouses = response.data.tableData
+          this.setDefaultWarehouse()
         })
     },
     getTaxLists() {
@@ -2002,6 +2013,30 @@ export default {
           this.data.warehouseCode = defWarehouse.code
         }
       }
+    },
+    changeWarehouse() {
+      const employee = this.employees.find(x => x.id === this.data.salesBy)
+      const defWarehouse = this.warehouses.find(w => w.isDefault)
+      if (employee && employee.warehouseCode) {
+        this.data.warehouseCode = employee.warehouseCode
+      } else if (defWarehouse) {
+        this.data.warehouseCode = defWarehouse.code
+      }
+    },
+    changeWarehouseConsign() {
+      const custWH = this.data.isConsignee ? this.warehouses.find(x => x.code === this.data.custCode) : null
+      if (custWH) {
+        this.data.warehouseCode = custWH.code
+      } else {
+        this.data.warehouseCode = null
+      }
+    },
+    changeSeller() {
+      this.changeWarehouse()
+      this.data.isConsignee = false
+    },
+    changeConsign() {
+      this.changeWarehouseConsign()
     }
   }
 }
