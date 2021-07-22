@@ -29,7 +29,7 @@
                   v-shortkey="['ctrl', 'enter']"
                   dark
                   text
-                  :disabled="(data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="hasRelatedTrans || (data.action === 'edit' && !auth.allowUpdate)"
                   @click="save(true)"
                   @shortkey="save(true)"
                 >Simpan & Tutup</v-btn>
@@ -58,7 +58,7 @@
                   v-shortkey="['ctrl', 's']"
                   @click="save(false)"
                   @shortkey="save(false)"
-                  :disabled="(data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="hasRelatedTrans || (data.action === 'edit' && !auth.allowUpdate)"
                 >
                   <v-list-item-title>
                     <v-tooltip bottom>
@@ -528,6 +528,7 @@
                                   color="primary"
                                   icon
                                   x-small
+                                  :disabled="hasRelatedTrans"
                                   @click="showFindItemDialog(item)"
                                 >
                                   <v-icon>
@@ -1560,13 +1561,11 @@ export default {
             appliedHeader = true
           } else if (this.promos[i].applyTo === 2) {
             const resPromo = this.promos[i].subject.find(x => x.custCode === this.data.custCode)
-            console.log(resPromo)
             if (resPromo) {
               appliedHeader = true
             }
           } else if (this.promos[i].applyTo === 3) {
             const resPromo = this.promos[i].subject.find(x => x.custTypeId === this.data.custTypeId)
-            console.log(resPromo)
             if (resPromo) {
               appliedHeader = true
             }
