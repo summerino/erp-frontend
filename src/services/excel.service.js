@@ -205,6 +205,18 @@ class ExcelService {
       bold: true,
       color: {argb:'FFFFFF'}
     }
+
+    // style column format
+    for (let c = 0; c < columns.length; c++) {
+      if (columns[c].isNumber) {
+        worksheet.getColumn(c + 1).numFmt = '_ * #,##0_ ;_ * -#,##0_ ;_ * "-"_ ;_ @_ '
+      } 
+      if (columns[c].isDateTime) {
+        worksheet.getColumn(c + 1).numFmt = 'dd-MMM-yyyy' 
+        worksheet.getColumn(c + 1).alignment = { vertical: 'middle', horizontal: 'right' }
+      } 
+    }
+
     // style align header column
     for (let i = 1; i <= columns.length; i++) {
       worksheet.getCell(firstRow, i).fill = {
@@ -215,18 +227,7 @@ class ExcelService {
       worksheet.getCell(firstRow, i).font = headerColumnFontSettings
       worksheet.getCell(firstRow, i).alignment = { vertical: 'middle', horizontal: 'center' }
     }
-
     worksheet.getRow(firstRow).height = 27
-    // style align header column style
-    for (let c = 0; c < columns.length; c++) {
-      if (columns[c].isNumber) {
-        worksheet.getColumn(c + 1).numFmt = '_ * #,##0_ ;_ * -#,##0_ ;_ * "-"_ ;_ @_ '
-      } 
-      if (columns[c].isDateTime) {
-        worksheet.getColumn(c + 1).numFmt = 'dd-MMM-yyyy' 
-        worksheet.getColumn(c + 1).alignment = { vertical: 'middle', horizontal: 'right' }
-      } 
-    }
 
     // style align column number
     for (let i = 0; i <= datas.length; i++) {
