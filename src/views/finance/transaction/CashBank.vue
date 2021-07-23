@@ -130,7 +130,7 @@
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
         <template v-slot:[`item.type`]="{ item }">
-          {{ item.type === 'D' ? 'Kas Bank Keluar' : 'Kas Bank Masuk' }}
+          {{ item.type === 'C' ? 'Kas Bank Keluar' : 'Kas Bank Masuk' }}
         </template>
         <template v-slot:[`item.amount`]="{ item }">
           {{ item.amount | formatCurrency }}
