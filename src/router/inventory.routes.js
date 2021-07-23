@@ -47,4 +47,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/inventory/transaction/consignee',
+  name: 'consignee',
+  component: () => import(/* webpackChunkName: "inventory-trans-consignee" */ '@/views/inventory/transaction/Consignee.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
