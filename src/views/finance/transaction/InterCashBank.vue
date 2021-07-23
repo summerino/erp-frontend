@@ -411,9 +411,11 @@
                             <v-text-field
                               ref="Currency1"
                               v-model="data.currCode"
+                              :rules="rules.required"
                               label="Mata Uang"
                               class="mt-0"
                               readonly
+                              required
                             ></v-text-field>
                           </v-col>
 
@@ -423,9 +425,11 @@
                             <v-text-field
                               ref="Currency2"
                               v-model="details.currCode"
+                              :rules="rules.required"
                               label="Mata Uang"
                               class="mt-0"
                               readonly
+                              required
                             ></v-text-field>
                           </v-col>
                         </v-row>
