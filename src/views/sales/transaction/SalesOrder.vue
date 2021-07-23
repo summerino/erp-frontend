@@ -349,6 +349,7 @@
                           item-value="id"
                           class="mt-0"
                           required
+                          @change="changeSales()"
                         ></v-autocomplete>
                       </v-col>
                     </v-row>
@@ -2325,16 +2326,16 @@ export default {
       this.calcPrice()    
     },
     setDefaultWarehouse() {
-      const userInfo = this.userInfo = auth.getUserInfo()
+      const employee = this.employees.find(x => x.id === this.data.salesBy)
       const defWarehouse = this.warehouses.find(w => w.isDefault)
-      if (userInfo) {
-        const userDefaultWarehouse = userInfo.WarehouseCode
-        if (userDefaultWarehouse) {
-          this.data.warehouseCode = userDefaultWarehouse
-        } else if (defWarehouse) {
-          this.data.warehouseCode = defWarehouse.code
-        }
+      if (employee && employee.warehouseCode) {
+        this.data.warehouseCode = employee.warehouseCode
+      } else if (defWarehouse) {
+        this.data.warehouseCode = defWarehouse.code
       }
+    },
+    changeSales() {
+      this.setDefaultWarehouse()
     }
   }
 }
