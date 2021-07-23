@@ -18,7 +18,7 @@
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" md="1">
-            <export-excel title="Antar Kas Bank" :grid="grid" :gridDefOpts="gridDefOpts"  ref="exportExcel"></export-excel>
+            <export-excel title="Daftar Pemindahan Dana" :grid="grid" :gridDefOpts="gridDefOpts"  ref="exportExcel"></export-excel>
           </v-col>
           <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
@@ -95,11 +95,14 @@
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
-        <template v-slot:[`item.type`]="{ item }">
-          {{ (item.type) === 'D' ? 'Debit' : 'Credit' }}
+        <template v-slot:[`item.coaCode`]="{ item }">
+          {{ `${item.coaCode} - ${item.coaNameFrom}` }}
         </template>
-        <template v-slot:[`item.coaNameFrom`]="{ item }">
-          {{ `${item.coaNameFrom} ke ${item.coaNameTo}` }}
+        <template v-slot:[`item.coaDetail`]="{ item }">
+          {{ `${item.coaDetail} - ${item.coaNameTo}` }}
+        </template>
+        <template v-slot:[`item.amount`]="{ item }">
+          {{ item.amount | formatCurrency }}
         </template>
         <template v-slot:[`item.mark`]="{ item }">
           <v-tooltip bottom>
@@ -552,13 +555,13 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
-        { text: 'Kode', value: 'code', divider: true, width: '130', excelColWidth:'10' },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '110', excelColWidth:'30' },
-        { text: 'Tipe', value: 'type', divider: true, width: '150', excelColWidth:'30' },
-        { text: 'Kode Lawan Trans.', value: 'transCode', divider: true, width: '200', excelColWidth:'30' },
-        { text: 'Akun Terkait', value: 'coaNameFrom', divider: true, width: '200', excelColWidth:'30' },
-        { text: 'Status', value: 'mark', align: 'center', width: '50', excelColWidth:'10', isBool: true }
+        { value: 'action', sortable: false, divider: true, width: '90' },
+        { text: 'Kode', value: 'code', divider: true, width: '130', excelColWidth:'18' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '110', excelColWidth:'15', isDateTime: true },
+        { text: 'Akun Asal', value: 'coaCode', divider: true, width: '180', excelColWidth:'40', customValues: ['coaCode', 'coaNameFrom'] },
+        { text: 'Akun Tujuan', value: 'coaDetail', divider: true, width: '180', excelColWidth:'40', customValues: ['coaDetail', 'coaNameTo'] },
+        { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
+        { text: 'Status', value: 'mark', align: 'center', width: '50' }
       ],
       data: [],
       options: {
