@@ -565,7 +565,7 @@ export default {
       let space = ''
       if (item.deep !== null) {
         for (let i = 0; i < item.deep; i++) {
-          space += '&nbsp;'
+          space += '&nbsp;&nbsp;'
         }
       }
       space += item.name
