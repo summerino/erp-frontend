@@ -32,7 +32,8 @@ export default {
     warehouse: 'warehouse',
     transferStock: 'transfer-stock',
     adjustment: 'adjustment',
-    warehouseQuantity: 'warehouse-quantity'
+    warehouseQuantity: 'warehouse-quantity',
+    consignee: 'consignee'
   },
 
   purchase: {
