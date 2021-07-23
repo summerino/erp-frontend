@@ -679,7 +679,7 @@ export default {
         { text: 'D/C', value: 'typeAmount', divider: true, width: '50' },
         { text: 'Mata Uang', value: 'currCode', divider: true, width: '50' },
         { text: 'Kurs', value: 'rate', align: 'right', divider: true, width: '50' },
-        { text: 'Nilai Transaction', value: 'transAmount', align: 'right', divider: true, width: '120' }
+        { text: 'Nilai', value: 'transAmount', align: 'right', width: '120' }
       ],
       data: []
     },
