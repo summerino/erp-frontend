@@ -129,9 +129,6 @@
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
-        <template v-slot:[`item.type`]="{ item }">
-          {{ item.type === 'C' ? 'Kas Bank Keluar' : 'Kas Bank Masuk' }}
-        </template>
         <template v-slot:[`item.amount`]="{ item }">
           {{ item.amount | formatCurrency }}
         </template>
@@ -657,7 +654,7 @@ export default {
         // { text: 'Kode Voucher', value: 'vouCode', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'15', isDateTime: true },
         { text: 'Nilai', value: 'amount', divider: true, align:'right', width: '100', excelColWidth:'13' },
-        { text: 'Tipe', value: 'type', divider: true, width: '90', excelColWidth:'13' },
+        { text: 'Tipe', value: 'typeName', divider: true, width: '90', excelColWidth:'13' },
         { text: 'Akun', value: 'coaCode', divider: true, width: '130', excelColWidth:'20', customValues: ['coaCode', 'coaName'] },
         { text: 'Status', value: 'mark', divider: true, width: '50' }
       ],
@@ -691,7 +688,7 @@ export default {
         text: 'Tanggal Transaksi', value: 'date', dataType: 'datetime'
       },
       {
-        text: 'Tipe', value: 'type', dataType: 'text'
+        text: 'Tipe', value: 'typeName', dataType: 'text'
       }
     ],
     valid: false,
