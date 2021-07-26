@@ -32,6 +32,7 @@
             </v-col>
             <v-col cols="12" md="3" class="pl-md-1">
               <v-text-field
+                ref="password"
                 v-model="data.password"
                 :rules="rules.required"
                 type="password"
@@ -188,7 +189,15 @@ export default {
         password: null,
         newPassword: null,
         confirmPassword: null
-      }
+      }  
+
+      setTimeout(() => {
+        // Set focus to old password field
+        this.$refs.password.focus()
+
+        // Validate form first
+        this.$refs.form.validate()
+      }, 0)
     },
     async save() {
       if (!this.$refs.form.validate()) {
