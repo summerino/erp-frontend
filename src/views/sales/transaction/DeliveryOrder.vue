@@ -1083,7 +1083,7 @@ export default {
       }
       
       if (_sumBy(this.gridItem.data, 'qty') <= 0) {
-        this.$store.dispatch('app/showInfo', 'Jumalah pengiriman tidak boleh 0.')
+        this.$store.dispatch('app/showInfo', 'Jumlah pengiriman tidak boleh 0.')
         return
       }
 
@@ -1124,7 +1124,7 @@ export default {
     },
     saveInv() {
       if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Silahkan periksa kembali data yang wajib diisi.')
+        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
       const data = this.data

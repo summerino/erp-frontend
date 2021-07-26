@@ -1102,7 +1102,7 @@ export default {
     async save(closeDialog) {
       if (!this.dialog.add) return
       if (!this.$refs.form.validate()) {
-        this.$store.dispatch('app/showInfo', 'Silahkan periksa kembali data yang wajib diisi.')
+        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
       
