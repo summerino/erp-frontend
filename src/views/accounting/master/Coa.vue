@@ -171,6 +171,7 @@
                   v-model="data.code"
                   :rules="[rules.required[0], rules.max6chars[0]]"
                   :counter="6"
+                  :readonly="isCB"
                   label="Kode"
                   class="mt-0"
                   required
@@ -181,6 +182,7 @@
                   v-model="data.name"
                   :rules="[rules.required[0], rules.max50chars[0]]"
                   :counter="50"
+                  :readonly="isCB"
                   label="Nama"
                   class="mt-0"
                   required
@@ -195,6 +197,7 @@
                     :items="types"
                     :item-text="item => `${item.initial} - ${item.name}`"
                     :rules="rules.required"
+                    :readonly="isCB"
                     label="Tipe"
                     item-value="id"
                     class="mt-0"
@@ -208,6 +211,7 @@
                     :items="accounts"
                     :item-text="item => `${item.code} - ${item.name}`"
                     label="Induk Akun"
+                    :readonly="isCB"
                     item-value="id"
                     class="mt-0"
                     clearable
@@ -223,6 +227,7 @@
                   v-model="data.description"
                   :rules="rules.max100chars"
                   :counter="100"
+                  :readonly="isCB"
                   label="Deskripsi"
                   class="mt-0"
                 ></v-text-field>
@@ -237,6 +242,7 @@
                     :items="currencies"
                     :item-text="item => `${item.code} - ${item.name}`"
                     :rules="data.typeId === 2 && data.parentId !== null ? rules.required : []"
+                    :readonly="isCB"
                     label="Kurensi"
                     item-value="code"
                     class="mt-0"
@@ -249,6 +255,7 @@
                     :disabled="(data.typeId !== 2) || (data.typeId === 2 && data.parentId === null)"
                     :items="cbTypes"
                     :rules="data.typeId === 2 && data.parentId !== null ? rules.required : []"
+                    :readonly="isCB"
                     label="Kas / Bank Tipe"
                     item-text="name"
                     item-value="id"
@@ -265,6 +272,7 @@
                   :disabled="(data.typeId !== 2) || (data.typeId === 2 && data.parentId === null)"
                   :rules="data.typeId === 2 && data.parentId !== null ? [rules.required[0],rules.max4chars[0]] : []"
                   :counter="4"
+                  :readonly="isCB"
                   label="Kode Voucher"
                   class="mt-0"
                   :required="data.typeId === 2 && data.parentId !== null ? true : false"
@@ -274,6 +282,7 @@
                 <v-checkbox
                   v-model="data.isActive"
                   label="Aktif"
+                  :readonly="isCB"
                 ></v-checkbox>
               </v-col>
             </v-row>
@@ -374,6 +383,9 @@ export default {
     }),
     isActive() {
       return (!this.data.isActive)
+    },
+    isCB() {
+      return (this.data.typeId === 2)
     }  
   },
   
