@@ -233,11 +233,11 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
+                  :disabled="isVoid || hasRelatedTrans || (data.action === 'edit' && !auth.allowUpdate)"
                   dark
                   text
                   @click="save(true)"
                   @shortkey="save(true)"
-                  :disabled="isVoid || (data.action === 'edit' && !auth.allowUpdate)"
                 >Simpan & Tutup</v-btn>
               </template>
               <span class="text-caption">(Ctrl + Enter)</span>
@@ -264,7 +264,7 @@
                   v-shortkey="['ctrl', 's']"
                   @click="save(false)"
                   @shortkey="save(false)"
-                  :disabled="isVoid || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || hasRelatedTrans || (data.action === 'edit' && !auth.allowUpdate)"
                 >
                   <v-list-item-title>
                     <v-tooltip bottom>
@@ -375,6 +375,7 @@
                       <v-col cols="12">
                         <v-text-field
                           v-model="data.soCode"
+                          :readonly="hasRelatedTrans"
                           :rules="rules.required"
                           label="No. Order Penjualan"
                           class="mt-0"
@@ -383,6 +384,7 @@
                         >
                           <template v-slot:append>
                               <v-btn
+                                :disabled="hasRelatedTrans"
                                 color="primary"
                                 icon
                                 small
@@ -581,7 +583,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
+                                :disabled="isVoid || hasRelatedTrans || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
                                 class="blue--text"
                                 small
                                 tile
@@ -613,7 +615,7 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
-                                  :disabled="isVoid || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
+                                  :disabled="isVoid || hasRelatedTrans || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
                                   color="red"
                                   icon
                                   small
@@ -630,6 +632,8 @@
                               ref="doCode"
                               v-model="item.doCode"
                               :items="dlvOrders"
+                              :readonly="hasRelatedTrans"
+                              :rules="rules.required"
                               item-text="code"
                               item-value="code"
                               class="text-body-2 mt-0"
@@ -639,6 +643,7 @@
                             >
                               <template v-slot:append>
                                 <v-btn
+                                  :disabled="hasRelatedTrans"
                                   color="primary"
                                   icon
                                   x-small
@@ -933,6 +938,9 @@ export default {
     },
     formatDueDate() {
       return this.data.dueDate ? format(parseISO(this.data.dueDate), 'dd-MMM-yyyy') : ''
+    },
+    hasRelatedTrans() {
+      return (this.gridRelated?.data?.length > 0)
     },
     isVoid() {
       return (this.data?.mark?.toUpperCase() === 'V')

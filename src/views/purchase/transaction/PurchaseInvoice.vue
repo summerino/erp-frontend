@@ -176,7 +176,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="isVoid || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || hasRelatedTrans || (data.action === 'edit' && !auth.allowUpdate)"
                   dark
                   text
                   @click="save(true)"
@@ -205,7 +205,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="isVoid || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || hasRelatedTrans || (data.action === 'edit' && !auth.allowUpdate)"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -324,6 +324,7 @@
                       <v-col cols="12">
                         <v-text-field
                           v-model="data.poCode"
+                          :readonly="hasRelatedTrans"
                           :rules="rules.required"
                           label="No. Order Pembelian"
                           class="mt-0"
@@ -332,6 +333,7 @@
                         >
                           <template v-slot:append>
                               <v-btn
+                                :disabled="hasRelatedTrans"
                                 color="primary"
                                 icon
                                 small
@@ -530,7 +532,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
+                                :disabled="isVoid || hasRelatedTrans || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
                                 class="blue--text"
                                 small
                                 tile
@@ -562,7 +564,7 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
-                                  :disabled="isVoid || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
+                                  :disabled="isVoid || hasRelatedTrans || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
                                   color="red"
                                   icon
                                   small
@@ -579,6 +581,8 @@
                               ref="rcvCode"
                               v-model="item.rcvCode"
                               :items="receives"
+                              :readonly="hasRelatedTrans"
+                              :rules="rules.required"
                               item-text="code"
                               item-value="code"
                               class="text-body-2 mt-0"
@@ -588,6 +592,7 @@
                             >
                               <template v-slot:append>
                                 <v-btn
+                                  :disabled="hasRelatedTrans"
                                   color="primary"
                                   icon
                                   x-small
@@ -888,6 +893,9 @@ export default {
     },
     formatDueDate() {
       return this.data.dueDate ? format(parseISO(this.data.dueDate), 'dd-MMM-yyyy') : ''
+    },
+    hasRelatedTrans() {
+      return (this.gridRelated?.data?.length > 0)
     },
     isVoid() {
       return (this.data?.mark?.toUpperCase() === 'V')

@@ -29,7 +29,7 @@
                   v-shortkey="['ctrl', 'enter']"
                   dark
                   text
-                  :disabled="hasRelatedTrans || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || hasRelatedTrans || (data.action === 'edit' && !auth.allowUpdate)"
                   @click="save(true)"
                   @shortkey="save(true)"
                 >Simpan & Tutup</v-btn>
@@ -58,7 +58,7 @@
                   v-shortkey="['ctrl', 's']"
                   @click="save(false)"
                   @shortkey="save(false)"
-                  :disabled="hasRelatedTrans || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || hasRelatedTrans || (data.action === 'edit' && !auth.allowUpdate)"
                 >
                   <v-list-item-title>
                     <v-tooltip bottom>
@@ -497,11 +497,11 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
+                                  :disabled="isVoid || hasRelatedTrans || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
                                   color="red"
                                   icon
                                   small
                                   @click="removeItem(item)"
-                                  :disabled="(!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
                                 >
                                   <v-icon small>mdi-close-thick</v-icon>
                                 </v-btn>
