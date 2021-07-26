@@ -329,13 +329,13 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
-        { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'20' },
-        { text: 'Pemasok', value: 'supName', divider: true, width: '150', excelColWidth:'20' },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'20'  },
-        { text: 'Tanggal Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '100', excelColWidth:'20' },
-        { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '100', excelColWidth:'20' },
-        { text: 'Nilai Sudah Dibayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20' }
+        { value: 'action', sortable: false, divider: true, width: '90' },
+        { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'18' },
+        { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'30' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+        { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'16', isDateTime: true },
+        { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
+        { text: 'Nilai Sudah Dibayar', value: 'paidAmount', align: 'right', width: '120', excelColWidth:'19', isNumber: true }
       ],
       data: [],
       options: {
