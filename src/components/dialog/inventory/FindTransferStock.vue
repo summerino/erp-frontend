@@ -199,11 +199,10 @@ export default {
           }, {
             field: 'type',
             operator: 'eq',
-            keyword: 1
+            keyword: 'OUT'
           }, {
-            field: 'origintransfercode',
-            operator: 'eq',
-            keyword: null
+            field: 'originTransferCode',
+            operator: 'isnull'
           }]),
           sorts: JSON.stringify([{
             field: this.data.by,
