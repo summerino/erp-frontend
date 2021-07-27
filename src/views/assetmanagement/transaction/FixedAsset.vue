@@ -637,7 +637,7 @@
                                 v-model="data.initDepreciationExpense"
                                 label="Akumulasi Depresiasi"
                                 class="text-right mt-0"
-                                required
+                                readonly
                               ></v-currency-field>
                             </v-col>
                           </v-row>
@@ -647,30 +647,8 @@
                                 v-model="data.bookValue"
                                 label="Nilai Sisa Buku"
                                 class="text-right mt-0"
-                                required
+                                readonly
                               ></v-currency-field>
-                            </v-col>
-                            <v-col cols="6" class="pl-1">
-                              <v-autocomplete
-                                v-model="data.coaAsset"
-                                :items="coas"
-                                :item-text="item => `${item.code} - ${item.name}`"
-                                label="Akun Beban Depresiasi"
-                                item-value="code"
-                                class="mt-0"
-                              ></v-autocomplete>
-                            </v-col>
-                          </v-row>
-                          <v-row no-gutters>
-                            <v-col cols="6">
-                              <v-autocomplete
-                                v-model="data.coaAccumDeprec"
-                                :items="coas"
-                                :item-text="item => `${item.code} - ${item.name}`"
-                                label="Akun Akumulasi Depresiasi"
-                                item-value="code"
-                                class="mt-0"
-                              ></v-autocomplete>
                             </v-col>
                             <v-col cols="6" class="pl-1">
                               <v-autocomplete
