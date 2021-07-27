@@ -941,10 +941,6 @@ export default {
       api.getAll(`${this.endpoint.inventory.warehouse}/lists`, {
         params: { 
           filters: JSON.stringify([{
-            field: 'isactive',
-            operator: 'eq',
-            keyword: true
-          }, {
             field: 'custCode',
             operator: 'neq',
             keyword: null
@@ -963,10 +959,6 @@ export default {
       api.getAll(`${this.endpoint.inventory.warehouse}/lists`, {
         params: { 
           filters: JSON.stringify([{
-            field: 'isactive',
-            operator: 'eq',
-            keyword: true
-          }, {
             field: 'custCode',
             operator: 'eq',
             keyword: null

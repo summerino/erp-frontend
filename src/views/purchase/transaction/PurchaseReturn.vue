@@ -899,9 +899,9 @@ export default {
         params: {
           skip: 0, take: -1,
           filters: JSON.stringify([{
-            field: 'isActive',
+            field: 'custCode',
             operator: 'eq',
-            keyword: true
+            keyword: null
           }]),
           sorts: JSON.stringify([{
             field: 'initial',

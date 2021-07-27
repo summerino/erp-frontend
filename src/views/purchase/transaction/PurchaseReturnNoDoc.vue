@@ -1198,18 +1198,14 @@ export default {
     getWarehouseLists() {
       api.getAll(`${this.endpoint.inventory.warehouse}/lists`, {
         params: {
-          sorts: JSON.stringify([{
-            field: 'initial',
-            direction: 'asc'
-          }]),
           filters: JSON.stringify([{
             field: 'custCode',
             operator: 'eq',
             keyword: null
-          }, {
-            field: 'isActive',
-            operator: 'eq',
-            keyword: true
+          }]),
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
           }])
         }
       })

@@ -1078,9 +1078,9 @@ export default {
       api.getAll(`${this.endpoint.inventory.warehouse}/lists`, {
         params: { 
           filters: JSON.stringify([{
-            field: 'isactive',
+            field: 'custCode',
             operator: 'eq',
-            keyword: true
+            keyword: null
           }]),
           sorts: JSON.stringify([{
             field: 'name',
