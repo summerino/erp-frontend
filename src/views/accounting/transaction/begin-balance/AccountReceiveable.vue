@@ -90,6 +90,9 @@
             <span>Hapus</span>
           </v-tooltip>
         </template>
+        <template v-slot:[`item.custName`]="{ item }">
+          {{ item.custCode }} - {{ item.custName }}
+        </template>
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
@@ -98,6 +101,9 @@
         </template>
         <template v-slot:[`item.amount`]="{ item }">
           {{ item.amount | formatCurrency }}
+        </template>
+        <template v-slot:[`item.paidAmount`]="{ item }">
+          {{ item.paidAmount | formatCurrency }}
         </template>
       </v-data-table>
     </v-card>
@@ -332,7 +338,7 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'18' },
-        { text: 'Pelanggan', value: 'custName', divider: true, width: '200', excelColWidth:'30' },
+        { text: 'Pelanggan', value: 'custName', divider: true, width: '220', excelColWidth:'35', customValues: ['custCode', 'custName'] },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'16', isDateTime: true },
         { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },

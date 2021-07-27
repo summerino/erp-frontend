@@ -940,7 +940,7 @@ export default {
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
         { text: 'Kode Penerimaan Barang', value: 'rcvCode', divider: true, width: '100', excelColWidth:'13' },
-        { text: 'Dikirim Oleh', value: 'shippedInitial', divider: true, width: '200', excelColWidth:'23' }
+        { text: 'Dikirim Oleh', value: 'shippedInitial', width: '200', excelColWidth:'23' }
       ],
       data: [],
       options: {

@@ -923,9 +923,9 @@ export default {
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Tipe', value: 'returnType', divider: true, width: '160', excelColWidth:'19' },
-        { text: 'Pelanggan', value: 'custName', divider: true, width: '200', excelColWidth:'35', customValues: ['custCode', 'custName'] },
+        { text: 'Pelanggan', value: 'custName', divider: true, width: '220', excelColWidth:'35', customValues: ['custCode', 'custName'] },
         { text: 'Gudang', value: 'warehouseCode', divider: true, width: '100', excelColWidth:'13' },
-        { text: 'Dijual Oleh', value: 'salesInitial', divider: true, width: '200', excelColWidth:'23' }
+        { text: 'Dijual Oleh', value: 'salesInitial', width: '180', excelColWidth:'23' }
       ],
       data: [],
       options: {
