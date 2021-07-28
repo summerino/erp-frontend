@@ -74,9 +74,6 @@
             <span>Ubah</span>
           </v-tooltip>
         </template>
-        <template v-slot:[`item.period`]="{ item }">
-          {{ item.period | formatDate('MMM-yyyy') }}
-        </template>
         <template v-slot:[`item.isClose`]="{ item }">
           <v-checkbox
             v-model="item.isClose"
@@ -341,7 +338,7 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
-        { text: 'Periode', value: 'period', divider: true, width: '150', excelColWidth:'20' },
+        { text: 'Periode', value: 'periodName', divider: true, width: '150', excelColWidth:'20' },
         { text: 'Tutup Bulan', value: 'isClose', divider: true, width: '100', excelColWidth:'20' }
       ],
       data: [],
