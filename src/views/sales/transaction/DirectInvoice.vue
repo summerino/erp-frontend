@@ -1214,6 +1214,7 @@ export default {
           action: 'edit',
           originalDate: resp.data.date,
           originalDueDate: resp.data.dueDate,
+          isConsignee: resp.data.warehouseCode === resp.data.custCode ?? false,
           createdDate: (resp.data.createdDate === null) ? null : format(parseISO(resp.data.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
           updatedDate: (resp.data.updatedDate === null) ? null : format(parseISO(resp.data.updatedDate), 'dd-MMM-yyyy HH:mm:ss'),
           approvedDate: (resp.data.approvedDate === null) ? null : format(parseISO(resp.data.approvedDate), 'dd-MMM-yyyy HH:mm:ss')
