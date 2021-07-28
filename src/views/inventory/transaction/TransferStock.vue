@@ -653,7 +653,8 @@
     ></find-item>
     <find-transfer-stock
       ref="findTransferStock"
-      :mark-exclude="['V']"
+      :type="['OUT']"
+      :mark="['A']"
       @dblclick:row="bindTSData"
     ></find-transfer-stock>
   </div>

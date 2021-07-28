@@ -126,10 +126,8 @@ import api from '@/services/axios.service'
 
 export default {
   props: {
-    MarkExclude: {
-      type: Array,
-      required: true
-    }
+    type: Array,
+    mark: Array
   },
 
   data() {
@@ -186,24 +184,31 @@ export default {
       this.dialog = false
     },
     search() {
+      const filters = [{
+        field: this.data.by,
+        operator: this.data.by === 'date' ? 'eq' : 'contains',
+        keyword: this.data.value
+      }]
+
+      if (this.type) {
+        filters.push({
+          field: 'type',
+          operator: 'contains',
+          keyword: this.type
+        })
+      }
+
+      if (this.mark) {
+        filters.push({
+          field: 'mark',
+          operator: 'contains',
+          keyword: this.mark
+        })
+      }
+
       api.getAll(this.endpoint.inventory.transferStock, {
         params: {
-          filters: JSON.stringify([{
-            field: this.data.by,
-            operator: this.data.by === 'date' ? 'eq' : 'contains',
-            keyword: this.data.value
-          }, {
-            field: 'mark',
-            operator: 'doesnotcontain',
-            keyword: this.MarkExclude
-          }, {
-            field: 'type',
-            operator: 'eq',
-            keyword: 'OUT'
-          }, {
-            field: 'originTransferCode',
-            operator: 'isnull'
-          }]),
+          filters: JSON.stringify(filters),
           sorts: JSON.stringify([{
             field: this.data.by,
             direction: 'asc'
