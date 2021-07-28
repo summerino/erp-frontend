@@ -38,9 +38,7 @@
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
               <export-excel title="Daftar Note Debit" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
-
             </v-row>
-            
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" md="4" class="text-right">
@@ -65,16 +63,6 @@
               <span class="text-caption">(Ctrl + Alt + N)</span>
             </v-tooltip>
           </v-col>
-          <!-- <v-col cols="12" md="4">
-            <v-text-field
-              v-model.trim="grid.search"
-              append-icon="mdi-magnify"
-              label="Cari..."
-              class="font-weight-regular mt-0 pt-0"
-              single-line
-              @keyup.enter="getList()"
-            ></v-text-field>
-          </v-col> -->
         </v-row>
       </v-card-title>
       <v-card-text v-if="true" class="pb-1">
@@ -152,35 +140,6 @@
             <span class="text-caption">{{ item.status }}</span>
           </v-tooltip>
         </template>
-        <!-- <template v-slot:[`item.date`]="{ item }">
-          {{ item.date | formatDate('dd-MMM-yyyy') }}
-        </template>
-        <template v-slot:[`item.amount`]="{ item }">
-          {{ item.amount | formatCurrency }}
-        </template>
-        <template v-slot:[`item.used`]="{ item }">
-          {{ item.used | formatCurrency }}
-        </template>
-        <template v-slot:[`item.outstanding`]="{ item }">
-          {{ item.outstanding | formatCurrency }}
-        </template>
-        <template v-slot:[`item.mark`]="{ item }">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-chip
-                v-bind="attrs"
-                v-on="on"
-                :color="item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
-                class="px-1"
-                dark
-                small
-              >
-                {{ item.mark }}
-              </v-chip>
-            </template>
-            <span class="text-caption">{{ item.status }}</span>
-          </v-tooltip>
-        </template> -->
       </v-data-table>
     </v-card>
 
@@ -610,8 +569,13 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
     <confirm ref="confirm"></confirm>
-    <detail-cash-bank ref="detailCashBank" :coas="coas" :cashBankTypes="cashBankTypes" :coaCodes="coaCodes" :cashBankCode="data.code" @saveItem="saveItem"></detail-cash-bank>
+    <detail-cash-bank
+      ref="detailCashBank"
+      :cashBankCode="data.code"
+      @saveItem="saveItem"
+    ></detail-cash-bank>
   </div>
 </template>
 
@@ -624,7 +588,7 @@ import auth from '@/services/authorization.service'
 import { sumBy as _sumBy } from 'lodash'
 
 import Confirm from '@/components/dialog/Confirm'
-import DetailCashBank from '@/components/dialog/general/DetailCashBank'
+import DetailCashBank from '@/components/dialog/finance/DetailCashBank'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 
@@ -699,13 +663,10 @@ export default {
     ],
     coas: [],
     data: {},
-    isShowCheque: false,
-    cashBankTypes: [],
-    coaCodes: []
+    isShowCheque: false
   }),
 
   created: function () {
-    this.getCashBankTypeList()
     this.getSystemParameter()
     this.getCOAList()
     this.getList()
@@ -860,27 +821,6 @@ export default {
           this.coas = response.data.tableData
         })
     },
-    getCOACodeList(temp) {
-      const codes = []
-      for (let i = 0; i < temp.length; i++) {
-        codes.push(`${temp[i].code}_COA`)
-      }
-      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
-        params: {
-          codes: JSON.stringify(codes)
-        }
-      })
-        .then(response => {
-          this.coaCodes = response.data.tableData
-        })
-    },
-    getCashBankTypeList() {
-      api.getAll(`${this.endpoint.finance.cashBankType}/lists`, {})
-        .then(response => {
-          this.cashBankTypes = response.data.tableData
-          this.getCOACodeList(this.cashBankTypes)
-        })
-    },
     add() {
       if (this.dialog.add) return
       this.dialog.add = true
@@ -917,7 +857,6 @@ export default {
         this.$refs.code.focus()
       }, 0)
     },
-    
     async exportExcel() {
       this.exportExcel.export()
     },

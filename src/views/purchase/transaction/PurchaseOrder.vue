@@ -855,12 +855,12 @@
       @dblclick:row="bindItemData"
     ></find-item>
     <po-save-receive
-     ref="poSr"
-     @closeParent="closeRcv"
+      ref="poSr"
+      @closeParent="closeRcv"
      ></po-save-receive>
      <po-save-invoice
-     ref="poSi"
-     @closeParent="closeRcv"
+      ref="poSi"
+      @closeParent="closeRcv"
      ></po-save-invoice>      
   </div>
 </template>

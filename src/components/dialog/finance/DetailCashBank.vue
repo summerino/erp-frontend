@@ -41,7 +41,7 @@
           <v-col cols="12" md="4">
             <v-autocomplete
               v-model="data.type"
-              :items="cashBankTypes"
+              :items="types"
               label="Tipe Transaksi"
               class="mt-0"
               item-text="name"
@@ -237,34 +237,8 @@
               </v-col>
             </v-row>
           </v-form>
-          
         </v-card>
       </v-card-text>
-
-      <!-- <v-card-actions class="justify-end pb-2 pr-2">
-        <v-btn
-          color="blue darken-2"
-          class="font-weight-regular"
-          dark
-          small
-          tile
-          @click="save"
-        >
-          <v-icon left>mdi-check-outline</v-icon>
-            Simpan
-          </v-btn>
-          <v-btn
-            color="red darken-2"
-            class="font-weight-regular"
-            dark
-            small
-            tile
-            @click="close"
-          >
-          <v-icon left>mdi-close-circle-outline</v-icon>
-          Batal
-        </v-btn>
-      </v-card-actions> -->
     </v-card>
   </v-dialog>
 </template>
@@ -277,9 +251,10 @@ import { sumBy as _sumBy } from 'lodash'
 import { randomNumber } from '@/helpers/math-helpers'
 
 export default {
-  props: ['coas', 'cashBankTypes', 'coaCodes', 'cashBankCode'],
+  props: ['cashBankCode'],
   created: function () {
     this.rules = this.$store.state.app.rules
+    this.getTypeLists()
   },
   data() {
     return {
@@ -295,7 +270,7 @@ export default {
         value: '',
         startDate: null,
         endDate: null,
-        type: 0,
+        type: null,
         total: 0,
         typeAmount: 'D'
       },
@@ -303,7 +278,6 @@ export default {
         columns: [],
         data: []
       },
-      
       filters: [],
       supplierFilters: [
         {
@@ -343,7 +317,10 @@ export default {
           text: 'Credit'
         }
       ],
-      selected: []
+      selected: [],
+      types: [],
+      typeCoaCode: null,
+      typeCoaName: null
     }
   },
   watch: {
@@ -375,7 +352,7 @@ export default {
       this.data.by = 'custName'
       this.data.value = ''
       this.grid.data = []
-      this.data.type = this.cashBankTypes[0].code
+      this.data.type = this.types[0].code
       this.data.total = 0
       this.data.startDate = null
       this.data.endDate = null
@@ -383,6 +360,7 @@ export default {
       this.selected = []
       this.bindColumn()
       this.resetGeneralTransaction()
+      this.getTypeCoaCode()
     },
     resetGeneralTransaction() {
       this.data.id = randomNumber(-1, -1000)
@@ -392,6 +370,34 @@ export default {
       this.data.typeAmount = 'D'
       this.data.coaCode = null
       this.data.transAmount = 0
+    },
+    async getTypeLists() {
+      const resp = await api.getAll(`${this.endpoint.finance.cashBankType}/lists`)
+      this.types = resp.data.tableData
+      this.getCOALists()
+    },
+    getCOALists() {
+      api.getAll(`${this.endpoint.accounting.coa}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'typeId',
+            operator: 'neq',
+            keyword: 2
+          }, {
+            field: 'code',
+            operator: 'doesnotcontain',
+            keyword: this.types.filter(x => x.coaCode).map(x => x.coaCode)
+          }])
+        }
+      })
+        .then(response => {
+          this.coas = response.data.tableData
+        })
+    },
+    getTypeCoaCode() {
+      const type = this.types.find(x => x.code === this.data.type)
+      this.typeCoaCode = type?.coaCode
+      this.typeCoaName = type?.coaName
     },
     open() {
       this.dialog = true
@@ -406,7 +412,6 @@ export default {
     search() {
       const url = this.getUrl()
       const filter = this.getFilters()
-      
       
       api.getAll(`${url}`, {
         params: {
@@ -446,59 +451,6 @@ export default {
           }
         )
       }
-      // if (this.data.type === 'RDPC' || this.data.type === 'RDPS') {
-      //   filter.push(
-      //     {
-      //       field: 'SrcTrans',
-      //       operator: 'eq',
-      //       keyword: '1'
-      //     }
-      //   )
-      //   filter.push(
-      //     {
-      //       field: 'remaining',
-      //       operator: 'gt',
-      //       keyword: '0'
-      //     }
-      //   )
-      //   filter.push(
-      //     {
-      //       field: 'Mark',
-      //       operator: 'eq',
-      //       keyword: 'A'
-      //     }
-      //   )
-      // } else if (this.data.type === 'DPC' || this.data.type === 'DPS') {
-      //   filter.push(
-      //     {
-      //       field: 'SrcTrans',
-      //       operator: 'eq',
-      //       keyword: '1'
-      //     }
-      //   )
-      //   filter.push(
-      //     {
-      //       field: 'Mark',
-      //       operator: 'eq',
-      //       keyword: 'PP'
-      //     }
-      //   )
-      // } else if (this.data.type === 'SR' || this.data.type === 'PR') {
-      //   filter.push(
-      //     {
-      //       field: 'SrcTrans',
-      //       operator: 'neq',
-      //       keyword: '1'
-      //     }
-      //   )
-      //   filter.push(
-      //     {
-      //       field: 'Mark',
-      //       operator: 'eq',
-      //       keyword: 'PP'
-      //     }
-      //   )
-      // }
       
       if (this.data.startDate) {
         filter.push(
@@ -509,6 +461,7 @@ export default {
           }
         )
       }
+      
       if (this.data.endDate) {
         filter.push(
           {
@@ -528,6 +481,7 @@ export default {
       this.data.startDate = null
       this.data.endDate = null
       this.resetGeneralTransaction()
+      this.getTypeCoaCode()
     },
     bindColumn() {
       if (this.data.type === 'AR') {
@@ -599,9 +553,7 @@ export default {
       this.data.startDate = format(new Date(tempStartDate), 'yyyy-MM-dd')
     },
     save() {
-
       if (this.data.type === 'TU') {
-
         if (!this.$refs.form.validate()) {
           this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
           return
@@ -637,16 +589,8 @@ export default {
         for (let i = 0; i < this.selected.length; i++) {
           this.selected[i].id = randomNumber(-1, -1000)
           this.selected[i].notes = this.selected[i][field]
-          const type = this.getFindType()
-          const temp = this.coaCodes.find(x => x.code === `${type}_COA`)
-          const coas = this.coas
-          if (temp) {
-            this.selected[i].coaCode = temp.value
-            const tempName = coas.find(x => x.code === temp.value)
-            if (tempName) {
-              this.selected[i].coaName = `${tempName.name}` 
-            }
-          }
+          this.selected[i].coaCode = this.typeCoaCode
+          this.selected[i].coaName = this.typeCoaName
           this.selected[i].type = this.data.type
           this.selected[i].typeAmount = this.getTypeAmount()
           this.selected[i].transAmount = this.selected[i].remaining
@@ -661,7 +605,6 @@ export default {
         return 'D'
       }
     },
-    
     getFieldForNote() {
       if (this.data.type === 'AR' || this.data.type === 'DPC' || this.data.type === 'RDPC' || this.data.type === 'SR') {
         return 'custName'
@@ -674,15 +617,6 @@ export default {
     },
     calculateTotal() {
       this.data.total = _sumBy(this.selected, 'transAmount')
-    },
-    getFindType() {
-      let type = this.data.type
-      if (type === 'RDPC') {
-        type = 'DPC'
-      } else if (type === 'RDPS') {
-        type = 'DPS'
-      }
-      return type
     }
   }
 }
