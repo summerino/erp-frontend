@@ -96,7 +96,7 @@
                 <v-icon small>mdi-pencil</v-icon>
               </v-btn>
             </template>
-            <span class="text-caption">Edit</span>
+            <span class="text-caption">Ubah</span>
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -112,7 +112,7 @@
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <span class="text-caption">Hapus</span>
+            <span class="text-caption">Void</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">

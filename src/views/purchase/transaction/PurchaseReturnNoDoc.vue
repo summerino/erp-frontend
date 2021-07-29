@@ -112,7 +112,7 @@
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <span class="text-caption">Hapus</span>
+            <span class="text-caption">Void</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">

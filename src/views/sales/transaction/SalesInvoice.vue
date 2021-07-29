@@ -162,7 +162,7 @@
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <span class="text-caption">Hapus</span>
+            <span class="text-caption">Void</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">
@@ -1160,8 +1160,8 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Hapus?',
-          'Apakah anda yakin ingin menghapus data ini?')
+          'Void?',
+          'Apakah anda yakin ingin membuat void data ini?')
       ) {
         api.delete(this.endpoint.sales.invoice, item.code, {data: item})
           .then(response => {
