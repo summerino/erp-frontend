@@ -844,7 +844,7 @@ export default {
     this.getList()
     this.getSystemParameter()
     this.getEmployeeLists()
-    auth.getAction(this.endpoint, this.menuId.purchaseinvoice, [this.action.insert, this.action.update, this.action.void])
+    auth.getAction(this.endpoint, this.menuId.purchaseInvoice, [this.action.insert, this.action.update, this.action.void])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })

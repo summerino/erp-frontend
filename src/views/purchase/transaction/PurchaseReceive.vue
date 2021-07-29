@@ -773,11 +773,11 @@ export default {
     this.getTaxLists()
     this.getItemLists()
     this.getWarehouseLists()
-    auth.getAction(this.endpoint, this.menuId.purchasereceive, [this.action.insert, this.action.update, this.action.void, this.action.changeDate])
+    auth.getAction(this.endpoint, this.menuId.purchaseReceive, [this.action.insert, this.action.update, this.action.void, this.action.changeDate])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
-    auth.getAction(this.endpoint, this.menuId.purchaseinvoice, [this.action.insert])
+    auth.getAction(this.endpoint, this.menuId.purchaseInvoice, [this.action.insert])
       .then((response) => {
         this.allowInsertPurchaseInvoice = response.data.find(x => x === this.action.insert) !== undefined 
       })

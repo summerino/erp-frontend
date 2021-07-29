@@ -723,7 +723,7 @@ export default {
     this.getEmployeeLists()
     this.getTaxLists()
     this.getWarehouseLists()
-    auth.getAction(this.endpoint, this.menuId.purchasereturn, [this.action.insert, this.action.update, this.action.void])
+    auth.getAction(this.endpoint, this.menuId.purchaseReturn, [this.action.insert, this.action.update, this.action.void])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })

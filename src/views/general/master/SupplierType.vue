@@ -231,7 +231,7 @@ export default {
 
   created: function () {
     this.getList()
-    auth.getAction(this.endpoint, this.menuId.suppliertype, [this.action.insert, this.action.update, this.action.delete])
+    auth.getAction(this.endpoint, this.menuId.supplierType, [this.action.insert, this.action.update, this.action.delete])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })

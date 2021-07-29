@@ -622,7 +622,7 @@ export default {
     this.getList()
     this.getSystemParameter()
     this.getSupplierLists()
-    auth.getAction(this.endpoint, this.menuId.debitmemo, [this.action.insert, this.action.update, this.action.void, this.action.changeDate])
+    auth.getAction(this.endpoint, this.menuId.debitMemo, [this.action.insert, this.action.update, this.action.void, this.action.changeDate])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })

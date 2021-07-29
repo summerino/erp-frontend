@@ -1012,7 +1012,7 @@ export default {
     this.getWarehouseLists()
     this.getTaxLists()
     this.getItemLists()
-    auth.getAction(this.endpoint, this.menuId.purchasereturn, [this.action.insert, this.action.update, this.action.void, this.action.changeDate])
+    auth.getAction(this.endpoint, this.menuId.purchaseReturn, [this.action.insert, this.action.update, this.action.void, this.action.changeDate])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })

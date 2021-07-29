@@ -960,7 +960,7 @@ export default {
     this.getTaxLists()
     this.getItemLists()
     this.defineAction()
-    auth.getAction(this.endpoint, this.menuId.directinvoice, [this.action.insert, this.action.update, this.action.void, this.action.changeWarehouse, this.action.changeDate])
+    auth.getAction(this.endpoint, this.menuId.directInvoice, [this.action.insert, this.action.update, this.action.void, this.action.changeWarehouse, this.action.changeDate])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })

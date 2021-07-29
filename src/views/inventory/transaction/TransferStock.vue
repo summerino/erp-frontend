@@ -765,7 +765,7 @@ export default {
     this.getSystemParameter()
     this.loadWarehouse()
     this.getItemLists()
-    auth.getAction(this.endpoint, this.menuId.transferstock, [this.action.insert, this.action.update, this.action.void, this.action.changeDate])
+    auth.getAction(this.endpoint, this.menuId.transferStock, [this.action.insert, this.action.update, this.action.void, this.action.changeDate])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
