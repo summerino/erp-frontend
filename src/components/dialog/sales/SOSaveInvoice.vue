@@ -21,112 +21,117 @@
         </v-btn>
       </v-toolbar>
 
-      <v-card-text class="px-2 pt-1">
-        <v-row no-gutters>
-          <v-col cols="12" md="6">
-            <v-menu
-              v-model="menu.dlvDate"
-              :close-on-content-click="false"
-              transition="scale-transition"
-              min-width="290px"
-              offset-y
-            >
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                v-bind="attrs"
-                v-on="on"
-                :rules="rules.required"
-                :value="formatDlvDate"
-                label="Tanggal Pengiriman"
-                ref="dlvDate"
-                class="mt-0"
-                readonly
-                required
-              ></v-text-field>
-            </template>
-            <v-date-picker
-              v-model="data.dlvDate"
-              no-title
-              scrollable
-              @change="menu.dlvDate = false"
-            ></v-date-picker>
-            </v-menu>
-          </v-col>
-          <v-col cols="12" md="6" class="pl-md-1">
-            <v-menu
-              v-model="menu.invDate"
-              :close-on-content-click="false"
-              transition="scale-transition"
-              min-width="290px"
-              offset-y
-            >
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                v-bind="attrs"
-                v-on="on"
-                :rules="rules.required"
-                :value="formatInvDate"
-                label="Tanggal Faktur"
-                class="mt-0"
-                readonly
-                required
-              ></v-text-field>
-            </template>
-            <v-date-picker
-              v-model="data.invDate"
-              no-title
-              scrollable
-              @change="menu.invDate = false"
-            ></v-date-picker>
-            </v-menu>
-          </v-col>
-        </v-row>
+      <v-form
+        ref="form"
+        v-model="valid"
+      >
+        <v-card-text class="px-2 pt-1">
+          <v-row no-gutters>
+            <v-col v-if="this.fromOrder" cols="12" md="6">
+              <v-menu
+                v-model="menu.dlvDate"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                min-width="290px"
+                offset-y
+              >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-bind="attrs"
+                  v-on="on"
+                  :rules="rules.required"
+                  :value="formatDlvDate"
+                  label="Tanggal Pengiriman"
+                  ref="dlvDate"
+                  class="mt-0"
+                  readonly
+                  required
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="data.dlvDate"
+                no-title
+                scrollable
+                @change="menu.dlvDate = false"
+              ></v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col cols="12" :md="this.fromOrder ? 6 : 0" :class="this.fromOrder ? 'pl-md-1' : ''">
+              <v-menu
+                v-model="menu.invDate"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                min-width="290px"
+                offset-y
+              >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-bind="attrs"
+                  v-on="on"
+                  :rules="rules.required"
+                  :value="formatInvDate"
+                  label="Tanggal Faktur"
+                  class="mt-0"
+                  readonly
+                  required
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="data.invDate"
+                no-title
+                scrollable
+                @change="menu.invDate = false"
+              ></v-date-picker>
+              </v-menu>
+            </v-col>
+          </v-row>
 
-        <v-row no-gutters>
-          <v-col cols="12">
-            <v-menu
-              v-model="menu.invDueDate"
-              :close-on-content-click="false"
-              transition="scale-transition"
-              min-width="290px"
-              offset-y
-            >
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                v-bind="attrs"
-                v-on="on"
-                :rules="rules.required"
-                :value="formatInvDueDate"
-                label="Tanggal Jatuh Tempo"
-                class="mt-0"
-                readonly
-                required
-              ></v-text-field>
-            </template>
-            <v-date-picker
-              v-model="data.invDueDate"
-              no-title
-              scrollable
-              @change="menu.invDueDate = false"
-            ></v-date-picker>
-            </v-menu>
-          </v-col>
-        </v-row>
-      </v-card-text>
+          <v-row no-gutters>
+            <v-col cols="12">
+              <v-menu
+                v-model="menu.invDueDate"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                min-width="290px"
+                offset-y
+              >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-bind="attrs"
+                  v-on="on"
+                  :rules="rules.required"
+                  :value="formatInvDueDate"
+                  label="Tanggal Jatuh Tempo"
+                  class="mt-0"
+                  readonly
+                  required
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="data.invDueDate"
+                no-title
+                scrollable
+                @change="menu.invDueDate = false"
+              ></v-date-picker>
+              </v-menu>
+            </v-col>
+          </v-row>
+        </v-card-text>
 
-      <v-card-actions class="justify-end pb-2 pr-2">
-        <v-btn
-          color="green"
-          class="font-weight-regular"
-          dark
-          small
-          tile
-          @click="save"
-        >
-          <v-icon left>mdi-content-save</v-icon>
-          Simpan
-        </v-btn>
-      </v-card-actions>
+        <v-card-actions class="justify-end pb-2 pr-2">
+          <v-btn
+            color="green"
+            class="font-weight-regular"
+            dark
+            small
+            tile
+            @click="save"
+          >
+            <v-icon left>mdi-content-save</v-icon>
+            Simpan
+          </v-btn>
+        </v-card-actions>
+      </v-form>
     </v-card>
   </v-dialog>
 </template>
@@ -207,6 +212,11 @@ export default {
       this.dialog = false
     },
     async save() {
+      if (!this.$refs.form.validate()) {
+        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
+        return
+      }
+
       let result = { success: false, message: '' }
       if (this.fromOrder) {
         if (this.data.action === 'add') {
