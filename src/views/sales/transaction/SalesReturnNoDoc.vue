@@ -48,6 +48,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'alt', 'n']"
+                  :disabled="!auth.allowInsert"
                   color="green darken-1"
                   class="font-weight-regular"
                   dark
@@ -55,7 +56,6 @@
                   tile
                   @click="add"
                   @shortkey="add"
-                  :disabled="!auth.allowInsert"
                 >
                   <v-icon left>mdi-plus</v-icon>
                   Data Baru

@@ -37,7 +37,7 @@ export default {
   salesDelivery: 45,
   salesInvoice: 46,
   directInvoice: 46, 
-  salesreturn: 47,
+  salesReturn: 47,
   deliveryPlan: 48,
   creditMemo: 49,
   visitPlan: 54,
