@@ -1,53 +1,74 @@
 export default {
-  warehouse: 32,
-  adjustment: 34,
-  itemcategory: 29,
-  item: 28,
-  itemgroup: 30,
-  transferstock: 33,
-  uom: 31,
-  currency: 8,
+  // General
   customer: 17,
   customertype: 18,
-  employee: 22,
   supplier: 20,
   suppliertype: 21,
-  tax: 26,
+  employee: 22,
   vehicle: 24,
   vehicletype: 25,
-  coa: 66,
-  currencyrate: 18,
-  debitmemo: 40,
-  creditmemo: 49,
-  purchaseinvoice: 38,
+  tax: 26,
+  paymentTerm: 57,
+  currency: 8,
+  approval:72,
+
+  // Inventory
+  item: 28,
+  itemcategory: 29,
+  itemgroup: 30,
+  uom: 31,
+  warehouse: 32,
+  transferstock: 33,
+  consignee: 91,
+  adjustment: 34,
+
+  // Purchase
   purchaseorder: 36,
   purchasereceive: 37,
+  purchaseinvoice: 38,
   purchasereturn: 39,
+  debitmemo: 40,
+
+  // Sales
   area: 42,
-  deliveryplan: 48,
-  directinvoice: 46, 
+  salesmanGroup: 58,
   promo: 56,
+  salesorder: 44,
   salesdelivery: 45,
   salesinvoice: 46,
-  salesorder: 44,
+  directinvoice: 46, 
   salesreturn: 47,
-  role: 52,
-  user: 51,
-  assetType: 62,
-  fixedAsset: 63, 
-  salesmanGroup: 58,
-  coaType: 67,
-  parameter: 73,
-  approval:72,
+  deliveryplan: 48,
+  creditmemo: 49,
+  visitPlan: 54,
+  visitOrder: 55,
+
+  // Expedition
   expeditionInvoice: 70,
-  companyProfile: 75,
+
+  // Finance
   cashBank: 82,
+  interCashBank: 83,
+
+  // Accounting
+  coa: 66,
+  coaType: 67,
+  currencyrate: 18,
+  generalJournal: 84,
   accountPayable: 78,
   accountReceivable: 79,
-  generalJournal: 84,
-  postingJournal: 86,
   bbDebitMemo: 89,
   bbCreditMemo: 90,
+  postingJournal: 86,
   closingMonth: 88,
-  consignee: 91
+
+  // Asset Management
+  assetType: 62,
+  fixedAsset: 63, 
+
+  // System Management
+  companyProfile: 75,
+  user: 51,
+  role: 52,
+  parameter: 73
 }

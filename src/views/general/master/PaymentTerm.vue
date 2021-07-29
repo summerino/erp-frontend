@@ -26,6 +26,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'alt', 'n']"
+                  :disabled="!auth.allowInsert"
                   color="green darken-1"
                   class="font-weight-regular"
                   dark
@@ -33,7 +34,6 @@
                   tile
                   @click="add"
                   @shortkey="add"
-                  
                 >
                   <v-icon left>mdi-plus</v-icon>
                   Data Baru
@@ -78,11 +78,11 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
+                :disabled="!auth.allowDelete"
                 icon
                 small
                 color="red"
                 @click="remove(item)"
-                
               >
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
@@ -112,15 +112,14 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
+                  :disabled="data.action === 'edit' && !auth.allowUpdate"
                   color="blue darken-2"
                   class="font-weight-regular"
-                  :disabled="isActive"
                   dark
                   small
                   tile
                   @click="save"
                   @shortkey="save"
-                  
                 >
                   <v-icon left>
                     mdi-content-save
@@ -209,7 +208,7 @@ import { mapState } from 'vuex'
 import { format, parseISO }  from 'date-fns'
 
 import api from '@/services/axios.service'
-//import auth from '@/services/authorization.service'
+import auth from '@/services/authorization.service'
 
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
@@ -244,10 +243,10 @@ export default {
 
   created: function () {
     this.getList()
-    // auth.getAction(this.endpoint, this.menus, [this.action.insert, this.action.update, this.action.delete])
-    //   .then((response) => {
-    //     this.$store.commit('api/setAuth', response.data)
-    //   })
+    auth.getAction(this.endpoint, this.menuId.paymentTerm, [this.action.insert, this.action.update, this.action.delete])
+      .then((response) => {
+        this.$store.commit('api/setAuth', response.data)
+      })
   },
 
   mounted: function () {
@@ -277,13 +276,10 @@ export default {
       gridDefOpts: state => state.app.grid,
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
-      //auth: state => state.api.authorization,
+      auth: state => state.api.authorization,
       action: state => state.api.action,
       menuId: state => state.api.menus
-    }),
-    isActive() {
-      return (!this.data.isActive)
-    }  
+    })
   },
   
   methods:{
@@ -292,8 +288,7 @@ export default {
         action: '',
         initial: null,
         name: null,
-        due: null,
-        isActive: true
+        due: null
       }
 
       // Reset form validation
@@ -318,13 +313,11 @@ export default {
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
           take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
           sorts: JSON.stringify(sorts),
-          filters: JSON.stringify([
-            {
-              field: 'isActive',
-              operator: 'eq',
-              keyword: 'true'
-            }
-          ])
+          filters: JSON.stringify([{
+            field: 'isActive',
+            operator: 'eq',
+            keyword: 'true'
+          }])
         }
       })
         .then(response => {
@@ -368,7 +361,7 @@ export default {
       if (
         await this.$refs.confirm.open(
           'Hapus Data?',
-          'Apakah anda yakin untuk menghapus data ini?')
+          'Apakah anda yakin ingin menghapus data ini?')
       ) {
         api.delete(this.endpoint.general.paymentTerm, item.id)
           .then(response => {

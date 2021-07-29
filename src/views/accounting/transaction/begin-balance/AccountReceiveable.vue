@@ -514,7 +514,7 @@ export default {
       if (
         await this.$refs.confirm.open(
           'Hapus Data?',
-          'Apakah anda yakin untuk menghapus data ini?')
+          'Apakah anda yakin ingin menghapus data ini?')
       ) {
         api.delete(this.endpoint.accounting.beginBalance.ar, item.id, {data: item})
           .then(response => {

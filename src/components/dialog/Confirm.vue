@@ -43,7 +43,7 @@ export default {
       title: null,
       message: null,
       options: {
-        width: 290
+        width: 340
       }
     }
   },

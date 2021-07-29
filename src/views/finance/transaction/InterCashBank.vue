@@ -80,7 +80,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="!auth.allowDelete || data.mark !== 'A'"
+                :disabled="!auth.allowVoid || item.mark !== 'A'"
                 color="red"
                 icon
                 small
@@ -89,7 +89,7 @@
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
             </template>
-            <span class="text-caption">Hapus</span>
+            <span class="text-caption">Void</span>
           </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">
@@ -234,7 +234,7 @@
                         <v-menu
                           v-model="menu.cbDate"
                           :close-on-content-click="false"
-                          :disabled="data.mark !== 'A'"
+                          :disabled="!auth.allowChangeDate || data.mark !== 'A'"
                           transition="scale-transition"
                           min-width="290px"
                           offset-y
@@ -587,7 +587,7 @@ export default {
     this.getList()
     this.getSystemParameter()
     this.getCOA()
-    auth.getAction(this.endpoint, this.menuId.item, [this.action.insert, this.action.update, this.action.delete])
+    auth.getAction(this.endpoint, this.menuId.interCashBank, [this.action.insert, this.action.update, this.action.void, this.action.changeDate])
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -769,8 +769,8 @@ export default {
     async remove(item) {
       if (
         await this.$refs.confirm.open(
-          'Hapus Data?',
-          'Apakah anda yakin untuk menghapus data ini?')
+          'Void?',
+          'Apakah anda yakin ingin membuat void data ini?')
       ) {
         api.delete(this.endpoint.finance.interCashBank, item.code, {data: item})
           .then(response => {

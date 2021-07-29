@@ -813,7 +813,7 @@ export default {
       if (
         await this.$refs.confirm.open(
           'Hapus Data?',
-          'Apakah anda yakin untuk menghapus data ini?')
+          'Apakah anda yakin ingin menghapus data ini?')
       ) {
         api.delete(this.endpoint.general.customer.customer, item.code)
           .then(response => {
@@ -889,7 +889,7 @@ export default {
       if (
         await this.$refs.confirm.open(
           'Hapus?',
-          'Apakah anda yakin untuk menghapus data ini?')
+          'Apakah anda yakin ingin menghapus data ini?')
       ) {
         const idx = this.gridItem.data.findIndex(i => i.id === item.id)
         if (idx !== -1) {

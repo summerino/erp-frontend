@@ -1037,7 +1037,7 @@ export default {
       if (
         await this.$refs.confirm.open(
           'Void?',
-          'Are you sure want to void this data?')
+          'Apakah anda yakin ingin membuat void data ini?')
       ) {
         api.delete(this.endpoint.sales.plan, item.code, {data: item})
           .then(response => {
