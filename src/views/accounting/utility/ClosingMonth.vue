@@ -339,7 +339,7 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
         { text: 'Periode', value: 'periodName', divider: true, width: '150', excelColWidth:'20' },
-        { text: 'Tutup Bulan', value: 'isClose', divider: true, width: '100', excelColWidth:'20' }
+        { text: 'Tutup Bulan', value: 'isClose', divider: true, width: '100', isBool: true, excelColWidth:'20', customValues: [{value: 'Ya'}, {value: 'Tidak'}] }
       ],
       data: [],
       options: {
