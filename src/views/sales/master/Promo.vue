@@ -743,8 +743,8 @@ export default {
     },
     gridSubject: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '50' },
-        { text: 'Subjek', value: 'subject', divider: true, width: '130' }
+        { value: 'action', sortable: false, divider: true, width: '5%' },
+        { text: 'Subjek', value: 'subject', divider: true, width: '95%' }
       ],
       data: []
     }, 
