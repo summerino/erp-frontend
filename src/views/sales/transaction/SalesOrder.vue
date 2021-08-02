@@ -520,7 +520,7 @@
                           label="Pembayaran"
                           item-value="id"
                           class="mt-0"
-                          @change="findPromo()"
+                          @change="findPromo(); calcPromo();"
                           >
                           </v-autocomplete>
                         </v-col>
