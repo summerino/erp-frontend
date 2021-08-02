@@ -501,9 +501,10 @@
                           <template v-slot:[`item.amount`]="{ item }">
                             <v-currency-field
                               v-model="item.amount"
+                              :readonly="item.type === 'DPC' || item.type === 'DPS'"
+                              :rules="rules.above0"
                               class="text-body-2 text-right mt-0"
                               dense
-                              :readonly="item.type === 'DPC' || item.type === 'DPS'"
                             ></v-currency-field>
                           </template>
                           <template v-slot:[`item.notes`]="{ item }">
@@ -582,10 +583,10 @@
 <script>
 import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
+import { sumBy as _sumBy } from 'lodash'
 
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
-import { sumBy as _sumBy } from 'lodash'
 
 import Confirm from '@/components/dialog/Confirm'
 import DetailCashBank from '@/components/dialog/finance/DetailCashBank'
@@ -935,7 +936,6 @@ export default {
           items[i].amount = items[i].transAmount
           this.gridItem.data.push(items[i]) 
         }
-        
       }
     },
     addItem() {

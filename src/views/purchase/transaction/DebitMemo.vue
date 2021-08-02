@@ -611,7 +611,7 @@ export default {
     ],
     valid: false,
     dataStartDate: null,
-    sources: [{ id: 1, name: 'Deposit' }, { id: 2, name: 'Retur' }, { id: 2, name: 'Return (Same Item)' }],
+    sources: [{ id: 1, name: 'Deposit' }, { id: 2, name: 'Retur' }],
     data: {},
     suppliers: [],
     transactionType: '',

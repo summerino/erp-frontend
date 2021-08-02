@@ -102,6 +102,9 @@
         <template v-slot:[`item.used`]="{ item }">
           {{ item.used | formatCurrency }}
         </template>
+        <template v-slot:[`item.remaining`]="{ item }">
+          {{ item.remaining | formatCurrency }}
+        </template>
       </v-data-table>
     </v-card>
 
@@ -257,7 +260,7 @@
                   v-model="data.used"
                   :decimal-length="0"
                   class="mt-0"
-                  label="Nilai Sudah Dibayar"
+                  label="Digunakan"
                   readonly
                 ></v-currency-field>
               </v-col>
@@ -266,10 +269,10 @@
             <v-row no-gutters>
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-currency-field
-                  v-model="data.leftoverAmount"
+                  v-model="data.remaining"
                   :decimal-length="0"
                   class="mt-0"
-                  label="Nilai Sisa"
+                  label="Saldo"
                   readonly
                 ></v-currency-field>
               </v-col>
@@ -320,7 +323,8 @@ export default {
         { text: 'Pelanggan', value: 'custName', divider: true, width: '220', excelColWidth:'35', customValues: ['custCode', 'custName'] },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true  },
         { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
-        { text: 'Nilai Sudah Dibayar', value: 'used', align: 'right', width: '120', excelColWidth:'19', isNumber: true }
+        { text: 'Digunakan', value: 'used', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
+        { text: 'Saldo', value: 'remaining', align: 'right', width: '120', excelColWidth:'15', isNumber: true }
 
       ],
       data: [],
@@ -398,7 +402,7 @@ export default {
         rate: 1,
         amount: 0,
         used: 0,
-        leftoverAmount: 0
+        remaining: 0
       }
 
       // Reset form validation
@@ -499,7 +503,6 @@ export default {
         ...item,
         action: 'edit',
         originalDate: item.date,
-        leftoverAmount: item.amount - item.used,
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
     },
@@ -543,7 +546,7 @@ export default {
       this.exportExcel.export()
     },
     nilaiChange() {
-      this.data.leftoverAmount = this.data.amount - this.data.used
+      this.data.remaining = this.data.amount - this.data.used
     }
   }
 }

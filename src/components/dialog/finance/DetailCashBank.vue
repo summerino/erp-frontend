@@ -162,8 +162,8 @@
                 <template v-slot:[`item.transAmount`]="{ item }">
                   <v-currency-field
                     v-model="item.transAmount"
-                    class="text-body-2 text-right mt-0"
                     :readonly="!selected.find(x => x.code === item.code) || data.type === 'DPC' || data.type === 'DPS'"
+                    class="text-body-2 text-right mt-0"
                     @keydown="changeAmount"
                     @keyup="changeAmount"
                     @keypress="changeAmount"
@@ -245,10 +245,11 @@
 
 <script>
 import { mapState } from 'vuex'
-import api from '@/services/axios.service'
 import { format, parseISO } from 'date-fns'
 import { sumBy as _sumBy } from 'lodash'
+
 import { randomNumber } from '@/helpers/math-helpers'
+import api from '@/services/axios.service'
 
 export default {
   props: ['cashBankCode'],
@@ -415,12 +416,12 @@ export default {
       
       api.getAll(`${url}`, {
         params: {
+          cbCode: this.cashBankCode,
           filters: JSON.stringify(filter),
           sorts: JSON.stringify([{
             field: this.data.by,
             direction: 'asc'
-          }]),
-          cashBankCode: this.cashBankCode
+          }])
         }
       })
         .then(response => {
@@ -559,11 +560,6 @@ export default {
           return
         }
 
-        let coaName = ''
-        const temp = this.coas.find(x => x.code === this.data.coaCode)
-        if (temp) {
-          coaName = `${temp.name}` 
-        }
         const model = {
           id: randomNumber(-1, -1000),
           transAmount: this.data.amount,
@@ -576,7 +572,7 @@ export default {
           amount: this.data.amount,
           typeAmount: this.data.typeAmount,
           coaCode: this.data.coaCode,
-          coaName: coaName
+          coaName: this.coas.find(x => x.code === this.data.coaCode)?.name
         }
         this.selected.push(model)
       }
