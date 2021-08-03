@@ -96,7 +96,7 @@
                         <v-text-field
                           ref="code"
                           v-model="data.code"
-                          label="No. Faktur"
+                          label="Kode"
                           class="mt-0"
                           readonly
                         ></v-text-field>
@@ -119,7 +119,7 @@
                               v-on="on"
                               :rules="rules.required"
                               :value="formatDate(data.date)"
-                              label="Tanggal Transaksi"
+                              label="Tanggal"
                               class="mt-0"
                               readonly
                               required

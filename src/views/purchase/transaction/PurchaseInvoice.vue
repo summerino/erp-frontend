@@ -2,7 +2,7 @@
   <div class="w-full">
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row dense>
+        <v-row no-gutters>
           <v-col cols="12" md="2">
             Faktur Pembelian
           </v-col>
@@ -245,7 +245,7 @@
                         <v-text-field
                           ref="code"
                           v-model="data.code"
-                          label="No. Faktur"
+                          label="Kode"
                           class="mt-0"
                           readonly
                         ></v-text-field>
@@ -274,7 +274,7 @@
                               v-on="on"
                               :rules="rules.required"
                               :value="formatInvDate"
-                              label="Tanggal Transaksi"
+                              label="Tanggal"
                               class="mt-0"
                               readonly
                               required
@@ -326,7 +326,7 @@
                           v-model="data.poCode"
                           :readonly="hasRelatedTrans"
                           :rules="rules.required"
-                          label="No. Order Pembelian"
+                          label="Kode Order Pembelian"
                           class="mt-0"
                           required
                           @change="poCodeChange"
@@ -755,6 +755,21 @@ export default {
   },
 
   data: () => ({
+    filterfields: [{
+      text: 'Kode', value: 'code', dataType: 'text'
+    }, {
+      text: 'Tanggal', value: 'date', dataType: 'datetime'
+    }, {
+      text: 'Pemasok', value: 'supName', dataType: 'text'
+    }, {
+      text: 'Kd. Ord. Pembelian', value: 'poCode', dataType: 'text'
+    }, {
+      text: 'Dikeluarkan Oleh', value: 'issuedInitial', dataType: 'text'
+    }, {
+      text: 'Tgl. Jatuh Tempo', value: 'dueDate', dataType: 'datetime'
+    }, {
+      text: 'No. Ref', value: 'refNo', dataType: 'text'
+    }],
     dialog: {
       add: false
     },
@@ -769,10 +784,10 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
-        { text: 'No. Faktur', value: 'code', divider: true, width: '160', excelColWidth:'19' },
-        { text: 'Tgl. Trans.', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+        { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
-        { text: 'No. Ord. Pembelian', value: 'poCode', divider: true, width: '150', excelColWidth:'18', isNumber: true },
+        { text: 'Kd. Ord. Pembelian', value: 'poCode', divider: true, width: '150', excelColWidth:'18', isNumber: true },
         { text: 'Nilai Sudah Dibayar', value: 'paidAmount', align: 'right', divider: true, width: '120', excelColWidth:'15' },
         { text: 'Sisa', value: 'remaining', align: 'right', divider: true, width: '120', excelColWidth:'15' },
         { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15' },
@@ -810,29 +825,6 @@ export default {
       ],
       data: []
     },
-    filterfields: [
-      {
-        text: 'No. Faktur', value: 'code', dataType: 'text'
-      },
-      {
-        text: 'Tgl. Trans.', value: 'date', dataType: 'datetime'
-      },
-      {
-        text: 'Pemasok', value: 'supName', dataType: 'text'
-      },
-      {
-        text: 'No. Ord. Pembelian', value: 'poCode', dataType: 'text'
-      },
-      {
-        text: 'Dikeluarkan Oleh', value: 'issuedInitial', dataType: 'text'
-      },
-      {
-        text: 'Tgl. Jatuh Tempo', value: 'dueDate', dataType: 'datetime'
-      },
-      {
-        text: 'No. Ref', value: 'refNo', dataType: 'text'
-      }
-    ],
     valid: false,
     dataStartDate: null,
     employees: [],
@@ -858,7 +850,7 @@ export default {
       }, {
         text: 'Transaksi'
       }, {
-        text: 'Order'
+        text: 'Pembelian'
       }, {
         text: 'Faktur'
       }])

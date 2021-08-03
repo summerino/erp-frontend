@@ -2,7 +2,7 @@
   <div class="w-full">
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row dense>
+        <v-row no-gutters>
           <v-col cols="12" md="2">
             Kas Bank Umum
           </v-col>
@@ -40,7 +40,6 @@
               <export-excel title="Daftar Kas Bank Umum" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
-          <v-spacer></v-spacer>
           <v-col cols="12" md="4" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -603,6 +602,24 @@ export default {
     DetailCashBank
   },
   data: () => ({
+    filterFields: [{
+      text: 'Kode', value: 'code', dataType: 'text'
+    }, {
+      text: 'Tanggal', value: 'date', dataType: 'datetime'
+    }, {
+      text: 'Tipe', value: 'type', dataType: 'bit',
+      options: [{ 
+        text: 'Kas Bank Masuk',
+        value: 'D'
+      }, { 
+        text: 'Kas Bank Keluar',
+        value: 'C'
+      }]
+    }, {
+      text: 'Kd. Akun', value: 'coaCode', dataType: 'text'
+    }, {
+      text: 'Nama Akun', value: 'coaName', dataType: 'text'
+    }],
     dialog: {
       add: false
     },
@@ -647,17 +664,6 @@ export default {
       ],
       data: []
     },
-    filterfields: [
-      {
-        text: 'Kode Transaksi', value: 'code', dataType: 'text'
-      },
-      {
-        text: 'Tanggal Transaksi', value: 'date', dataType: 'datetime'
-      },
-      {
-        text: 'Tipe', value: 'typeName', dataType: 'text'
-      }
-    ],
     valid: false,
     dataStartDate: null,
     types: [
@@ -677,7 +683,7 @@ export default {
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
-    this.$store.commit('app/setFilterFields', this.filterfields)
+    this.$store.commit('app/setFilterFields', this.filterFields)
   },
 
   mounted: function () {

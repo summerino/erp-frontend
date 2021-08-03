@@ -6,15 +6,15 @@
           <v-col cols="12" md="2">
             Order Pembelian
           </v-col>
-          <v-col cols="12" md="6" >
+          <v-col cols="12" md="6">
             <v-row no-gutters>
               <v-text-field
-                append-icon="mdi-magnify"
-                label="Cari..."
-                class="font-weight-regular mt-0 pt-0"
-                single-line
                 v-model="grid.search"
                 :readonly="filter.isAdvancedSearch"
+                label="Cari..."
+                append-icon="mdi-magnify"
+                class="font-weight-regular mt-0 pt-0"
+                single-line
                 @click:append-outer="advancedSearch"
                 @keyup.enter="getList(false)"
               ></v-text-field>
@@ -297,7 +297,7 @@
                         <v-text-field
                           ref="code"
                           v-model="data.code"
-                          label="No. Order Pembelian"
+                          label="Kode"
                           class="mt-0"
                           readonly
                         ></v-text-field>
@@ -893,6 +893,15 @@ export default {
   },
 
   data: () => ({
+    filterfields: [{
+      text: 'Kode', value: 'code', dataType: 'text'
+    }, {
+      text: 'Tanggal', value: 'date', dataType: 'datetime'
+    }, {
+      text: 'Diminta Oleh', value: 'requestInitial', dataType: 'text'
+    }, {
+      text: 'Pemasok', value: 'supName', dataType: 'text'
+    }],
     dialog: {
       add: false
     },
@@ -906,8 +915,8 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '120', excelColWidth:'10' },
-        { text: 'No. Ord. Pembelian', value: 'code', divider: true, width: '160', excelColWidth:'18' },
+        { value: 'action', sortable: false, divider: true, width: '120' },
+        { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'18' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Diminta Oleh', value: 'requestInitial', divider: true, width: '200', excelColWidth:'23' },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
@@ -946,20 +955,6 @@ export default {
       ],
       data: []
     },
-    filterfields: [
-      {
-        text: 'No Order', value: 'code', dataType: 'text'
-      },
-      {
-        text: 'Tanggal', value: 'date', dataType: 'datetime'
-      },
-      {
-        text: 'Diminta Oleh', value: 'requestInitial', dataType: 'text'
-      },
-      {
-        text: 'Pemasok', value: 'supName', dataType: 'text'
-      }
-    ],
     valid: false,
     dataStartDate: null,
     defTaxInc: false,
@@ -1004,6 +999,8 @@ export default {
         text: 'Pembelian'
       }, {
         text: 'Transaksi'
+      }, {
+        text: 'Pembelian'
       }, {
         text: 'Order'
       }])

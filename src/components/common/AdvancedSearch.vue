@@ -41,7 +41,7 @@
                   label="Pilih"
                   item-value="value"
                   item-text="text"
-                  class="mt-0"
+                  class="mt-0 ml-1 font-weight-regular"
                   required
                 ></v-autocomplete>
               </div>

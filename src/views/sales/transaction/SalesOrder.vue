@@ -2,11 +2,11 @@
   <div class="w-full">
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row dense>
+        <v-row no-gutters>
           <v-col cols="12" md="2">
             Order Penjualan
           </v-col>
-          <v-col cols="12" md="4" >
+          <v-col cols="12" md="6" >
             <v-row no-gutters>
               <v-text-field
                 append-icon="mdi-magnify"
@@ -40,8 +40,7 @@
               <export-excel title="Daftar Order Penjualan" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
-          <v-spacer></v-spacer>
-          <v-col cols="12" md="6" class="text-right">
+          <v-col cols="12" md="4" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -300,7 +299,7 @@
                         <v-text-field
                           ref="code"
                           v-model="data.code"
-                          label="No. Order Penjualan"
+                          label="Kode"
                           class="mt-0"
                           readonly
                         ></v-text-field>
@@ -1050,6 +1049,17 @@ export default {
   },
 
   data: () => ({
+    filterfields: [{
+      text: 'Kode', value: 'code', dataType: 'text'
+    }, {
+      text: 'Tanggal', value: 'date', dataType: 'datetime'
+    }, {
+      text: 'Penjual', value: 'salesInitial', dataType: 'text'
+    }, {
+      text: 'Kd. Pelanggan', value: 'custCode', dataType: 'text'
+    }, {
+      text: 'Nama Pelanggan', value: 'custName', dataType: 'text'
+    }],
     dialog: {
       add: false
     },
@@ -1065,7 +1075,7 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '120', excelColWidth:'10' },
-        { text: 'No. Ord. Penjualan', value: 'code', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Penjual', value: 'salesInitial', divider: true, width: '180', excelColWidth:'23' },
         { text: 'Pelanggan', value: 'custName', divider: true, width: '220', excelColWidth:'35', customValues: ['custCode', 'custName'] },
@@ -1121,20 +1131,6 @@ export default {
       ],
       data: []
     },
-    filterfields: [
-      {
-        text: 'No. Ord. Penjualan', value: 'code', dataType: 'text'
-      },
-      {
-        text: 'Tanggal', value: 'date', dataType: 'datetime'
-      },
-      {
-        text: 'Penjual', value: 'salesInitial', dataType: 'text'
-      },
-      {
-        text: 'Pelanggan', value: 'custName', dataType: 'text'
-      }    
-    ],
     valid: false,
     dataStartDate: null,
     defTaxInc: false,
@@ -1187,7 +1183,9 @@ export default {
       }, {
         text: 'Transaksi'
       }, {
-        text: 'Order Penjualan'
+        text: 'Penjualan'
+      }, {
+        text: 'Order'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)

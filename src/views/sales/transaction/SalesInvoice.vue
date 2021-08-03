@@ -2,11 +2,11 @@
   <div class="w-full">
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row dense>
+        <v-row no-gutters>
           <v-col cols="12" md="2">
             Faktur Penjualan
           </v-col>
-          <v-col cols="12" md="4" >
+          <v-col cols="12" md="6">
             <v-row no-gutters>
               <v-text-field
                 append-icon="mdi-magnify"
@@ -40,7 +40,7 @@
               <export-excel title="Daftar Faktur Penjualan" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
-          <v-col cols="12" md="6" class="text-right">
+          <v-col cols="12" md="4" class="text-right">
             <v-menu
               bottom
               eager
@@ -302,7 +302,7 @@
                         <v-text-field
                           ref="code"
                           v-model="data.code"
-                          label="No. Faktur"
+                          label="Kode"
                           class="mt-0"
                           readonly
                         ></v-text-field>
@@ -325,7 +325,7 @@
                               v-on="on"
                               :rules="rules.required"
                               :value="formatInvDate"
-                              label="Tanggal Transaksi"
+                              label="Tanggal"
                               class="mt-0"
                               readonly
                               required
@@ -377,7 +377,7 @@
                           v-model="data.soCode"
                           :readonly="hasRelatedTrans"
                           :rules="rules.required"
-                          label="No. Order Penjualan"
+                          label="Kode Order Penjualan"
                           class="mt-0"
                           required
                           @change="soCodeChange"
@@ -785,6 +785,32 @@ export default {
   },
 
   data: () => ({
+    filterfields: [{
+      text: 'Kode', value: 'code', dataType: 'text'
+    }, {
+      text: 'Tanggal', value: 'date', dataType: 'datetime'
+    }, {
+      text: 'Tipe', 
+      value: 'fromDirectInvoice', 
+      dataType: 'bit', 
+      options: [{ 
+        text: 'Penjualan Langsung',
+        value: true
+      }, { 
+        text: 'Faktur Penjualan',
+        value: false
+      }]
+    }, {
+      text: 'Kd.Pelanggan', value: 'custCode', dataType: 'text'
+    }, {
+      text: 'Nama Pelanggan', value: 'custName', dataType: 'text'
+    }, {
+      text: 'Kd. Ord. Penjualan', value: 'soCode', dataType: 'text'
+    }, {
+      text: 'Dikeluarkan Oleh', value: 'issuedInitial', dataType: 'text'
+    }, {
+      text: 'Tgl. Jatuh Tempo', value: 'dueDate', dataType: 'datetime'
+    }],
     dialog: {
       add: false
     },
@@ -799,18 +825,18 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
-        { text: 'No. Faktur', value: 'code', divider: true, width: '160', excelColWidth:'18' },
-        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'20', isDateTime: true },
+        { value: 'action', sortable: false, divider: true, width: '90' },
+        { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'18' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'20', isDateTime: true },
         { text: 'Tipe', value: 'fromDirectInvoice', divider: true, width: '170', excelColWidth:'20', isBool: true, customValues: [{state: true, value: 'Penjualan Langsung'}, {state: false, value: 'Faktur Penjualan'}] },
         { text: 'Pelanggan', value: 'custName', divider: true, width: '270', excelColWidth:'35', customValues: ['custCode', 'custName'] },
-        { text: 'No. Ord. Penjualan', value: 'soCode', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Kd. Ord. Penjualan', value: 'soCode', divider: true, width: '150', excelColWidth:'18' },
         { text: 'Nilai Sudah Dibayar', value: 'paidAmount', align: 'right', divider: true, width: '120', excelColWidth:'15' },
         { text: 'Sisa', value: 'remaining', align: 'right', divider: true, width: '120', excelColWidth:'15' },
         { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
         { text: 'Dikeluarkan Oleh', value: 'issuedInitial', divider: true, width: '180', excelColWidth:'23' },
-        { text: 'Tanggal Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'20', isDateTime: true },
-        { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
+        { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'20', isDateTime: true },
+        { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
       options: {
@@ -841,41 +867,6 @@ export default {
       ],
       data: []
     },
-    filterfields: [
-      {
-        text: 'No. Faktur', value: 'code', dataType: 'text'
-      },
-      {
-        text: 'Tanggal Transaksi', value: 'date', dataType: 'datetime'
-      },
-      {
-        text: 'Tipe', 
-        value: 'fromDirectInvoice', 
-        dataType: 'bit', 
-        options: [
-          { 
-            text: 'Penjualan Langsung',
-            value: true
-          },
-          { 
-            text: 'Faktur Penjualan',
-            value: false
-          }
-        ]
-      },
-      {
-        text: 'Pelanggan', value: 'custName', dataType: 'text'
-      },
-      {
-        text: 'No. Ord. Penjualan', value: 'soCode', dataType: 'text'
-      },
-      {
-        text: 'Dikeluarkan Oleh', value: 'issuedInitial', dataType: 'text'
-      },
-      {
-        text: 'Tanggal Jatuh Tempo', value: 'dueDate', dataType: 'datetime'
-      }     
-    ], 
     valid: false,
     dataStartDate: null,
     employees: [],
@@ -903,7 +894,7 @@ export default {
       }, {
         text: 'Transaksi'
       }, {
-        text: 'Order'
+        text: 'Penjualan'
       }, {
         text: 'Faktur'
       }])

@@ -2,11 +2,11 @@
   <div class="w-full">
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row dense>
+        <v-row no-gutters>
           <v-col cols="12" md="2">
             Jurnal Umum
           </v-col>
-          <v-col cols="12" md="6" >
+          <v-col cols="12" md="6">
             <v-row no-gutters>
               <v-text-field
                 append-icon="mdi-magnify"
@@ -38,7 +38,6 @@
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
               <export-excel title="Daftar Jurnal Umum" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
-
             </v-row>
           </v-col>
           <v-col cols="12" md="4" class="text-right">
@@ -238,7 +237,7 @@
                         <v-text-field
                           ref="code"
                           v-model.trim="data.code"
-                          label="No. Jurnal"
+                          label="Kode"
                           class="mt-0"
                           readonly
                         ></v-text-field>
@@ -258,7 +257,7 @@
                               :disabled="!auth.allowChangeDate"
                               :rules="rules.required"
                               :value="formatDate"
-                              label="Tanggal Transaksi"
+                              label="Tanggal"
                               class="mt-0"
                               readonly
                               required
@@ -520,23 +519,30 @@
 <script>
 import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
-import { randomNumber } from '@/helpers/math-helpers'
 import { sumBy as _sumBy } from 'lodash'
 
+import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
-
 
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
+
 export default {
   components:{
-    Confirm,
     AdvancedSearch,
+    Confirm,
     ExportExcel
   },
   data: () => ({
+    filterFields: [{
+      text: 'Kode', value: 'code', dataType: 'text'
+    }, {
+      text: 'Tanggal', value: 'date', dataType: 'datetime'
+    }, {
+      text: 'Total', value: 'total', dataType: 'text'
+    }],
     dialog: {
       add: false
     },
@@ -550,12 +556,11 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
-        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
-        { text: 'Kurensi', value: 'currCode', divider: true, width: '60', excelColWidth:'19' },   
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
-        { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
+        { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
       options: {
@@ -575,17 +580,6 @@ export default {
       ],
       data: []
     },
-    filterfields: [
-      {
-        text: 'Kode Transaksi', value: 'code', dataType: 'text'
-      },
-      {
-        text: 'Tanggal Transaksi', value: 'date', dataType: 'datetime'
-      },
-      {
-        text: 'Total', value: 'total', dataType: 'text'
-      }
-    ],
     valid: false,
     dataStartDate: null,
     accounts: [],
@@ -600,7 +594,7 @@ export default {
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
-    this.$store.commit('app/setFilterFields', this.filterfields)
+    this.$store.commit('app/setFilterFields', this.filterFields)
   },
 
   mounted: function () {

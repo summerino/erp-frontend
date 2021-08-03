@@ -2,22 +2,43 @@
   <div class="w-full">
     <v-card v-if="main">
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row dense>
+        <v-row no-gutters>
           <v-col cols="12" md="3">
             Saldo Awal Nota Debit
           </v-col>
-          <v-col cols="12" md="4">
-            <v-text-field
-              v-model="grid.search"
-              append-icon="mdi-magnify"
-              label="Cari..."
-              class="font-weight-regular mt-0 pt-0"
-              single-line
-              @keyup.enter="getList"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" md="1">
-            <export-excel title="Daftar Saldo Awal Nota Debit" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+          <v-col cols="12" md="5">
+            <v-row no-gutters>
+              <v-text-field
+                v-model="grid.search"
+                :readonly="filter.isAdvancedSearch"
+                label="Cari..."
+                append-icon="mdi-magnify"
+                class="font-weight-regular mt-0 pt-0"
+                single-line
+                @click:append-outer="advancedSearch"
+                @keyup.enter="getList(false)"
+              ></v-text-field>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    color="blue darken-2 ml-1"
+                    class="font-weight-regular"
+                    dark
+                    small
+                    tile
+                    @click="advancedSearch"
+                  >
+                    <v-icon>
+                      mdi-magnify-plus-outline
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <span class="text-caption">Pencarian lanjutan</span>
+              </v-tooltip>
+              <export-excel title="Daftar Saldo Awal Nota Debit" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
+            </v-row>
           </v-col>
           <v-col cols="12" md="4" class="text-right">
             <v-tooltip bottom>
@@ -44,6 +65,10 @@
           </v-col>
         </v-row>
       </v-card-title>
+
+      <v-card-text v-if="true" class="pb-1">
+        <advanced-search @search="search"></advanced-search>
+      </v-card-text>
 
       <v-data-table
         :headers="grid.columns"
@@ -299,17 +324,35 @@ import { add, format, parseISO }  from 'date-fns'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
 
+import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 
 export default {
   components:{
+    AdvancedSearch,
     ExportExcel,
     Confirm
   },
 
   data: () => ({
     main: true,
+    filterFields: [{
+      text: 'Kode', value: 'code', dataType: 'text'
+    }, {
+      text: 'Tanggal', value: 'date', dataType: 'datetime'
+    }, {
+      text: 'Tipe', value: 'type', dataType: 'bit',
+      options: [{ 
+        text: 'Deposit',
+        value: 1
+      }, { 
+        text: 'Retur',
+        value: 2
+      }]
+    }, {
+      text: 'Pemasok', value: 'supName', dataType: 'text'
+    }],
     menu: {
       date: false
     },
@@ -317,8 +360,9 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'18' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+        { text: 'Tipe', value: 'typeName', divider: true, width: '100', excelColWidth:'13' },
         { text: 'Pemasok', value: 'supName', divider: true, width: '220', excelColWidth:'35' },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true  },
         { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
         { text: 'Digunakan', value: 'used', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
         { text: 'Saldo', value: 'remaining', align: 'right', width: '120', excelColWidth:'15', isNumber: true }
@@ -346,6 +390,7 @@ export default {
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
+    this.$store.commit('app/setFilterFields', this.filterFields)
   },
 
   mounted: function () {
@@ -353,7 +398,7 @@ export default {
       this.$store.commit('app/setBreadcrumbs', [{
         text: 'Akuntansi'
       }, {
-        text: 'Tranksasi'
+        text: 'Transaksi'
       }, {
         text: 'Saldo Awal'
       }, {
@@ -377,6 +422,7 @@ export default {
       gridDefOpts: state => state.app.grid,
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
+      filter: state => state.app.filter,
       auth: state => state.api.authorization,
       action: state => state.api.action,
       menuId: state => state.api.menus
@@ -408,7 +454,18 @@ export default {
         }, 0)
       }
     },
-    getList(bindToForm = false) {
+    advancedSearch() {
+      this.grid.search = null
+      this.$store.commit('app/advSearch')
+      if (this.filter.isAdvancedSearch) {
+        this.$store.commit('app/addSearch')
+      }
+    },
+    search(vm) {
+      this.grid.search = vm.search
+      this.getList(vm.bindToForm, vm.filters)
+    },
+    getList(bindToForm = false, filters = []) {
       const sorts = []
       for (let i = 0; i < this.grid.options.sortBy.length; i++) {
         sorts.push({
@@ -422,14 +479,8 @@ export default {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
           take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
-          sorts: JSON.stringify(sorts),
-          filters: JSON.stringify([
-            {
-              field: 'isActive',
-              operator: 'eq',
-              keyword: 'true'
-            }
-          ])
+          filters: JSON.stringify(filters),
+          sorts: JSON.stringify(sorts)
         }
       })
         .then(response => {
@@ -546,8 +597,4 @@ export default {
     }
   }
 }
-
 </script>
-
-<style>
-</style>

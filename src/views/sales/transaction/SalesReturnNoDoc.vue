@@ -2,11 +2,11 @@
   <div class="w-full">
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row dense>
+        <v-row no-gutters>
           <v-col cols="12" md="2">
             Retur Penjualan
           </v-col>
-          <v-col cols="12" md="4" >
+          <v-col cols="12" md="6">
             <v-row no-gutters>
               <v-text-field
                 append-icon="mdi-magnify"
@@ -40,8 +40,7 @@
               <export-excel title="Daftar Retur Penjualan" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
-          <v-spacer></v-spacer>
-          <v-col cols="12" md="6" class="text-right">
+          <v-col cols="12" md="4" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -904,6 +903,21 @@ export default {
   },
 
   data: () => ({
+    filterFields: [{
+      text: 'Kode', value: 'code', dataType: 'text'
+    }, {
+      text: 'Tanggal', value: 'date', dataType: 'datetime'
+    }, {
+      text: 'Tipe', value: 'returnType', dataType: 'text'
+    }, {
+      text: 'Kd. Pelanggan', value: 'custCode', dataType: 'text'
+    }, {
+      text: 'Nama Pelanggan', value: 'custName', dataType: 'text'
+    }, {
+      text: 'Gudang', value: 'warehouseCode', dataType: 'text'
+    }, {
+      text: 'Dijual Oleh', value: 'salesInitial', dataType: 'text'
+    }],
     dialog: {
       add: false
     },
@@ -925,7 +939,8 @@ export default {
         { text: 'Tipe', value: 'returnType', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Pelanggan', value: 'custName', divider: true, width: '220', excelColWidth:'35', customValues: ['custCode', 'custName'] },
         { text: 'Gudang', value: 'warehouseCode', divider: true, width: '100', excelColWidth:'13' },
-        { text: 'Dijual Oleh', value: 'salesInitial', width: '180', excelColWidth:'23' }
+        { text: 'Dijual Oleh', value: 'salesInitial', divider: true, width: '180', excelColWidth:'23' },
+        { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
       options: {
@@ -958,26 +973,6 @@ export default {
       ],
       data: []
     },
-    filterfields: [
-      {
-        text: 'Kode', value: 'code', dataType: 'text'
-      },
-      {
-        text: 'Tanggal', value: 'date', dataType: 'datetime'
-      },
-      {
-        text: 'Tipe', value: 'returnType', dataType: 'text'
-      },
-      {
-        text: 'Pelanggan', value: 'custName', dataType: 'text'
-      },
-      {
-        text: 'Gudang', value: 'warehouseCode', dataType: 'text'
-      },
-      {
-        text: 'Dijual Oleh', value: 'salesInitial', dataType: 'text'
-      }      
-    ],
     valid: false,
     dataStartDate: null,
     defTaxInc: false,
@@ -1003,7 +998,7 @@ export default {
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
-    this.$store.commit('app/setFilterFields', this.filterfields)
+    this.$store.commit('app/setFilterFields', this.filterFields)
   },
 
   mounted: function () {
@@ -1013,7 +1008,9 @@ export default {
       }, {
         text: 'Transaksi'
       }, {
-        text: 'Retur Penjualan'
+        text: 'Penjualan'
+      }, {
+        text: 'Retur'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)

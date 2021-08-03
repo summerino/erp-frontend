@@ -2,7 +2,7 @@
   <div class="w-full">
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row dense>
+        <v-row no-gutters>
           <v-col cols="12" md="2">
             Nota Debit
           </v-col>
@@ -38,11 +38,8 @@
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
               <export-excel title="Daftar Note Debit" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
-
             </v-row>
-            
           </v-col>
-          <v-spacer></v-spacer>
           <v-col cols="12" md="4" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -66,16 +63,6 @@
               <span class="text-caption">(Ctrl + Alt + N)</span>
             </v-tooltip>
           </v-col>
-          <!-- <v-col cols="12" md="4">
-            <v-text-field
-              v-model.trim="grid.search"
-              append-icon="mdi-magnify"
-              label="Cari..."
-              class="font-weight-regular mt-0 pt-0"
-              single-line
-              @keyup.enter="getList()"
-            ></v-text-field>
-          </v-col> -->
         </v-row>
       </v-card-title>
       <v-card-text v-if="true" class="pb-1">
@@ -297,7 +284,7 @@
                         <v-text-field
                           ref="code"
                           v-model.trim="data.code"
-                          label="Kode Transaksi"
+                          label="Kode"
                           class="mt-0"
                           readonly
                         ></v-text-field>
@@ -544,6 +531,30 @@ export default {
     Confirm
   },
   data: () => ({
+    filterfields: [{
+      text: 'Kode', value: 'code', dataType: 'text'
+    }, {
+      text: 'Tanggal', value: 'date', dataType: 'datetime'
+    }, {
+      text: 'Pemasok', value: 'supName', dataType: 'text'
+    }, {
+      text: 'Sumber Transaksi', value: 'srcTrans', dataType: 'bit',
+      options: [{ 
+        text: 'Deposit',
+        value: 1
+      }, { 
+        text: 'Retur',
+        value: 2
+      }]
+    }, {
+      text: 'Kd. Transaksi Sumber', value: 'transCode', dataType: 'text'
+    }, {
+      text: 'Nilai', value: 'amount', dataType: 'text'
+    }, {
+      text: 'Digunakan', value: 'used', dataType: 'text'
+    }, {
+      text: 'Saldo', value: 'outstanding', dataType: 'text'
+    }],
     dialog: {
       add: false
     },
@@ -556,16 +567,16 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
-        { text: 'Kode Transaksi', value: 'code', divider: true, width: '160', excelColWidth:'19' },
-        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+        { value: 'action', sortable: false, divider: true, width: '90' },
+        { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
-        { text: 'Sumber Transksi.', value: 'srcTransName', divider: true, width: '100', excelColWidth:'13' },
-        { text: 'Kode Transaksi Sumber', value: 'transCode', divider: true, width: '100', excelColWidth:'13' },
+        { text: 'Sumber Transaksi', value: 'srcTransName', divider: true, width: '100', excelColWidth:'13' },
+        { text: 'Kd. Transaksi Sumber', value: 'transCode', divider: true, width: '100', excelColWidth:'13' },
         { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
         { text: 'Digunakan', value: 'used', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
         { text: 'Saldo', value: 'remaining', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
-        { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
+        { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
       options: {
@@ -583,32 +594,6 @@ export default {
       ],
       data: []
     },
-    filterfields: [
-      {
-        text: 'Kode Transaksi', value: 'code', dataType: 'text'
-      },
-      {
-        text: 'Tanggal Transaksi', value: 'date', dataType: 'datetime'
-      },
-      {
-        text: 'Pemasok', value: 'supName', dataType: 'text'
-      },
-      {
-        text: 'Sumber Transksi', value: 'srcTransName', dataType: 'text'
-      },
-      {
-        text: 'Kode Transaksi Sumber', value: 'transCode', dataType: 'text'
-      },
-      {
-        text: 'Nilai', value: 'amount', dataType: 'text'
-      },
-      {
-        text: 'Digunakan', value: 'used', dataType: 'text'
-      },
-      {
-        text: 'Saldo', value: 'outstanding', dataType: 'text'
-      }
-    ],
     valid: false,
     dataStartDate: null,
     sources: [{ id: 1, name: 'Deposit' }, { id: 2, name: 'Retur' }],

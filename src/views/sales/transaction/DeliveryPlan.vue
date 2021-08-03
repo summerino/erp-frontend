@@ -2,11 +2,11 @@
   <div class="w-full">
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row dense>
+        <v-row no-gutters>
           <v-col cols="12" md="3">
             Rencana Pengiriman
           </v-col>
-          <v-col cols="12" md="4" >
+          <v-col cols="12" md="5" >
             <v-row no-gutters>
               <v-text-field
                 append-icon="mdi-magnify"
@@ -40,7 +40,7 @@
               <export-excel title="Daftar Rencana Pengiriman" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
-          <v-col cols="12" md="5" class="text-right">
+          <v-col cols="12" md="4" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn

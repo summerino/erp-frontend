@@ -2,7 +2,7 @@
   <div class="w-full">
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row dense>
+        <v-row no-gutters>
           <v-col cols="12" md="2">
             Retur Pembelian
           </v-col>
@@ -16,7 +16,6 @@
               @keyup.enter="getList()"
             ></v-text-field>
           </v-col>
-          <v-spacer></v-spacer>
           <v-col cols="12" md="6" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">

@@ -2,11 +2,11 @@
   <div class="w-full">
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row dense>
+        <v-row no-gutters>
           <v-col cols="12" md="2">
             Surat Jalan
           </v-col>
-          <v-col cols="12" md="4" >
+          <v-col cols="12" md="6" >
             <v-row no-gutters>
               <v-text-field
                 append-icon="mdi-magnify"
@@ -40,8 +40,7 @@
               <export-excel title="Daftar Surat Jalan" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
-          <v-spacer></v-spacer>
-          <v-col cols="12" md="6" class="text-right">
+          <v-col cols="12" md="4" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -691,6 +690,19 @@ export default {
   },
 
   data: () => ({
+    filterfields: [{
+      text: 'Kode', value: 'code', dataType: 'text'
+    }, {
+      text: 'Tanggal', value: 'date', dataType: 'datetime'
+    }, {
+      text: 'Kd. Pelanggan', value: 'custCode', dataType: 'text'
+    }, {
+      text: 'Nama Pelanggan', value: 'custName', dataType: 'text'
+    }, {
+      text: 'Kode Trans.', value: 'transCode', dataType: 'text'
+    }, {
+      text: 'Dikirim Oleh', value: 'shippedInitial', dataType: 'text'
+    }],
     dialog: {
       add: false
     },
@@ -751,23 +763,6 @@ export default {
       ],
       data: []
     },
-    filterfields: [
-      {
-        text: 'Kode', value: 'code', dataType: 'text'
-      },
-      {
-        text: 'Tanggal', value: 'date', dataType: 'datetime'
-      },
-      {
-        text: 'Pelanggan', value: 'custName', dataType: 'text'
-      },
-      {
-        text: 'Kode Trans.', value: 'transCode', dataType: 'text'
-      },
-      {
-        text: 'Dikirim Oleh', value: 'shippedInitial', dataType: 'text'
-      }   
-    ],
     valid: false,
     dataStartDate: null,
     employees: [],
@@ -1029,7 +1024,7 @@ export default {
       if (this.data.srcTrans === 1) {
         this.lblTransCode = 'Kode Order Penjualan'
       } else {
-        this.lblTransCode = 'Kode Retur'
+        this.lblTransCode = 'Kode Retur Penjualan'
       }
 
       // Get customer details
@@ -1183,7 +1178,7 @@ export default {
       if (this.data.srcTrans === 1) {
         this.lblTransCode = 'Kode Order Penjualan'
       } else {
-        this.lblTransCode = 'Kode Retur'
+        this.lblTransCode = 'Kode Retur Penjualan'
       }
       this.data.transCode = null
       this.data.custCode = null

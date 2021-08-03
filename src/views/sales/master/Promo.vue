@@ -210,7 +210,7 @@
                         <v-text-field
                           ref="code"
                           v-model.trim="data.code"                          
-                          label="Id Promo"
+                          label="Kode"
                           class="mt-0"
                           readonly
                         ></v-text-field>

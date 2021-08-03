@@ -2,21 +2,11 @@
   <div class="w-full">
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row dense>
+        <v-row no-gutters>
           <v-col cols="12" md="2">
             Penyesuaian
           </v-col>
-          <!-- <v-col cols="12" md="4">
-            <v-text-field
-              v-model="grid.search"
-              append-icon="mdi-magnify"
-              label="Cari..."
-              class="font-weight-regular mt-0 pt-0"
-              single-line
-              @keyup.enter="getList()"
-            ></v-text-field>
-          </v-col> -->
-          <v-col cols="12" md="4" >
+          <v-col cols="12" md="6" >
             <v-row no-gutters>
               <v-text-field
                 append-icon="mdi-magnify"
@@ -47,13 +37,10 @@
                 </template>
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
+              <export-excel title="Daftar Penyesuaian" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
-          <v-spacer></v-spacer>
-          <v-col cols="12" md="1">
-            <export-excel title="Daftar Penyesuaian" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
-          </v-col>
-          <v-col cols="12" md="5" class="text-right">
+          <v-col cols="12" md="4" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -652,6 +639,24 @@ export default {
   },
 
   data: () => ({
+    filterfields: [{
+      text: 'Kode', value: 'code', dataType: 'text'
+    }, {
+      text: 'Tanggal', value: 'date', dataType: 'datetime'
+    }, {
+      text: 'Tipe', value: 'type', dataType: 'bit',
+      options: [{ 
+        text: 'Penyesuaian',
+        value: 1
+      }, { 
+        text: 'Perhitungan Persediaan',
+        value: 2
+      }]
+    }, {
+      text: 'Gudang', value: 'warehouseInitial', dataType: 'text'
+    }, {
+      text: 'Catatan', value: 'notes', dataType: 'text'
+    }],
     dialog: {
       add: false
     },
@@ -663,13 +668,13 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
-        { text: 'Tanggal', value: 'date', divider: true, width: '150', excelColWidth:'18', isDateTime: true },
+        { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Tanggal', value: 'date', divider: true, width: '150', excelColWidth:'18', isDateTime: true },
         { text: 'Tipe', value: 'types', divider: true, width: '150', excelColWidth:'18' },
-        { text: 'Lokasi', value: 'warehouseInitial', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Gudang', value: 'warehouseInitial', divider: true, width: '150', excelColWidth:'18' },
         { text: 'Catatan', value: 'notes', divider: true, width: '200', excelColWidth:'25' },
-        { text: 'Status', value: 'mark', divider: true, width: '200', excelColWidth:'20' }
+        { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
       options: {
@@ -683,35 +688,6 @@ export default {
       columns: [],
       data: []
     },
-    filterfields: [
-      {
-        text: 'Tanggal', value: 'date', dataType: 'datetime'
-      },
-      {
-        text: 'Kode', value: 'code', dataType: 'text'
-      },
-      {
-        text: 'Tipe', 
-        value: 'type', 
-        dataType: 'bit',
-        options: [
-          { 
-            text: 'Penyesuaian',
-            value: '1'
-          },
-          { 
-            text: 'Perhitungan Persediaan',
-            value: '2'
-          }
-        ]
-      },
-      {
-        text: 'Lokasi', value: 'warehouseInitial', dataType: 'text'
-      },
-      {
-        text: 'Catatan', value: 'notes', dataType: 'text'
-      }    
-    ],
     valid: false,
     dataStartDate: null,
     types: [

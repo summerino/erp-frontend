@@ -2,22 +2,43 @@
   <div class="w-full">
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row dense>
+        <v-row no-gutters>
           <v-col cols="12" md="3">
             Perintah Kunjungan
           </v-col>
-          <v-col cols="12" md="4">
-            <v-text-field
-              v-model="grid.search"
-              append-icon="mdi-magnify"
-              label="Cari..."
-              class="font-weight-regular mt-0 pt-0"
-              single-line
-              @keyup.enter="getList()"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12" md="1">
-            <export-excel title="Daftar Perintah Kunjungan" :grid="grid" :gridDefOpts="gridDefOpts"  ref="exportExcel"></export-excel>
+          <v-col cols="12" md="5">
+            <v-row no-gutters>
+              <v-text-field
+                append-icon="mdi-magnify"
+                label="Cari..."
+                class="font-weight-regular mt-0 pt-0"
+                single-line
+                v-model="grid.search"
+                :readonly="filter.isAdvancedSearch"
+                @click:append-outer="advancedSearch"
+                @keyup.enter="getList(false)"
+              ></v-text-field>            
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    color="blue darken-2 ml-1"
+                    class="font-weight-regular"
+                    dark
+                    small
+                    tile
+                    @click="advancedSearch"
+                  >
+                    <v-icon>
+                      mdi-magnify-plus-outline
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <span class="text-caption">Pencarian lanjutan</span>
+              </v-tooltip>
+              <export-excel title="Daftar Perintah Kunjungan" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
+            </v-row>
           </v-col>
           <v-col cols="12" md="4" class="text-right">
             <v-tooltip bottom>
@@ -44,6 +65,10 @@
           </v-col>
         </v-row>
       </v-card-title>
+
+      <v-card-text v-if="true" class="pb-1">
+        <advanced-search @search="search"></advanced-search>
+      </v-card-text>
 
       <v-data-table
         :headers="grid.columns"
@@ -702,6 +727,7 @@ import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
 
+import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 import FindSalesman from '@/components/dialog/sales/FindSalesman'
@@ -710,6 +736,7 @@ import FindInvoice from '@/components/dialog/sales/FindInvoiceVO'
 
 export default {
   components: {
+    AdvancedSearch,
     ExportExcel,
     Confirm,
     FindSalesman,
@@ -718,6 +745,21 @@ export default {
   },
 
   data: () => ({
+    filterFields: [{
+      text: 'Kode', value: 'code', dataType: 'text'
+    }, {
+      text: 'Tanggal', value: 'date', dataType: 'datetime'
+    }, {
+      text: 'Inisial Penjual', value: 'salesmanInitial', dataType: 'text'
+    }, {
+      text: 'Nama Penjual', value: 'salesmanName', dataType: 'text'
+    }, {
+      text: 'Inisial Grup Penjual', value: 'groupInitial', dataType: 'text'
+    }, {
+      text: 'Nama Grup Penjual', value: 'groupName', dataType: 'text'
+    }, {
+      text: 'Sumber Transaksi', value: 'sourceTransaction', dataType: 'text'
+    }],
     dialog: {
       add: false
     },
@@ -734,7 +776,7 @@ export default {
         { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'10' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'30' },
         { text: 'Penjual', value: 'salesmanName', divider: true, width: '250', excelColWidth:'35' },
-        { text: 'Grup', value: 'groupName', divider: true, width: '250', excelColWidth:'20' },
+        { text: 'Grup Penjual', value: 'groupName', divider: true, width: '250', excelColWidth:'20' },
         { text: 'Sumber Transaksi', value: 'sourceTransaction', divider: true, width: '150', excelColWidth:'18' },
         { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
       ],
@@ -803,6 +845,7 @@ export default {
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
+    this.$store.commit('app/setFilterFields', this.filterFields)
   },
 
   mounted: function () {
@@ -832,6 +875,7 @@ export default {
       gridDefOpts: state => state.app.grid,
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
+      filter: state => state.app.filter,
       auth: state => state.api.authorization,
       action: state => state.api.action,
       menuId: state => state.api.menus
@@ -878,7 +922,18 @@ export default {
         }, 0)
       }
     },
-    getList(bindToForm = false) {
+    advancedSearch() {
+      this.grid.search = null
+      this.$store.commit('app/advSearch')
+      if (this.filter.isAdvancedSearch) {
+        this.$store.commit('app/addSearch')
+      }
+    },
+    search(vm) {
+      this.grid.search = vm.search
+      this.getList(vm.bindToForm, vm.filters)
+    },
+    getList(bindToForm = false, filters = []) {
       const sorts = []
       for (let i = 0; i < this.grid.options.sortBy.length; i++) {
         sorts.push({
@@ -892,6 +947,7 @@ export default {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
           take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
+          filters: JSON.stringify(filters),
           sorts: JSON.stringify(sorts)
         }
       })

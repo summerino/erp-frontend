@@ -2,7 +2,7 @@
   <div class="w-full">
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row dense>
+        <v-row no-gutters>
           <v-col cols="12" md="3">
             Pemindahan Dana
           </v-col>
@@ -573,6 +573,19 @@ export default {
   },
 
   data: () => ({
+    filterFields: [{
+      text: 'Kode', value: 'code', dataType: 'text'
+    }, {
+      text: 'Tanggal', value: 'date', dataType: 'datetime'
+    }, {
+      text: 'Kd. Akun Asal', value: 'coaCode', dataType: 'text'
+    }, {
+      text: 'Nama Akun Asal', value: 'coaNameFrom', dataType: 'text'
+    }, {
+      text: 'Kd. Akun Tujuan', value: 'coaDetail', dataType: 'text'
+    }, {
+      text: 'Nama Akun Tujuan', value: 'coaNameTo', dataType: 'text'
+    }],
     dialog: {
       add: false
     },
@@ -601,15 +614,6 @@ export default {
       total: 0,
       search: null
     },
-    filterfields: [{
-      text: 'Kode', value: 'code', dataType: 'text'
-    }, {
-      text: 'Tanggal', value: 'date', dataType: 'datetime'
-    }, {
-      text: 'Akun Asal', value: 'coaNameFrom', dataType: 'text'
-    }, {
-      text: 'Akun Tujuan', value: 'coaNameTo', dataType: 'text'
-    }],
     valid: false,
     dataStartDate: null,
     coaRef: [],
@@ -626,7 +630,7 @@ export default {
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
-    this.$store.commit('app/setFilterFields', this.filterfields)
+    this.$store.commit('app/setFilterFields', this.filterFields)
   },
 
   mounted: function () {

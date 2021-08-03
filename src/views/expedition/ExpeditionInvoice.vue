@@ -2,7 +2,7 @@
   <div class="w-full">
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row dense>
+        <v-row no-gutters>
           <v-col cols="12" md="2">
             Faktur Ekspedisi
           </v-col>
@@ -38,7 +38,6 @@
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
               <export-excel title="Daftar Faktur Ekspedisi" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
-
             </v-row>
           </v-col>
           <v-col cols="12" md="4" class="text-right">
@@ -613,6 +612,17 @@ export default {
     ExportExcel
   },
   data: () => ({
+    filterfields: [{
+      text: 'Kode', value: 'code', dataType: 'text'
+    }, {
+      text: 'Tanggal', value: 'date', dataType: 'datetime'
+    }, {
+      text: 'Tgl. Jatuh Tempo', value: 'dueDate', dataType: 'datetime'
+    }, {
+      text: 'Pemasok', value: 'supplierInitial', dataType: 'text'
+    }, {
+      text: 'Nilai', value: 'amount', dataType: 'text'
+    }],
     dialog: {
       add: false
     },
@@ -626,13 +636,13 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
-        { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
-        { text: 'Tanggal Faktur', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
-        { text: 'Tanggal Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
-        { text: 'Pemasok', value: 'supplierInitial', divider: true, width: '120', excelColWidth:'15' },        
+        { value: 'action', sortable: false, divider: true, width: '90' },
+        { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'18' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+        { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+        { text: 'Pemasok', value: 'supplierInitial', divider: true, width: '200', excelColWidth:'35' },        
         { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
-        { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
+        { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
       options: {
@@ -651,23 +661,6 @@ export default {
       ],
       data: []
     },
-    filterfields: [
-      {
-        text: 'Kode Transaksi', value: 'code', dataType: 'text'
-      },
-      {
-        text: 'Tanggal Transaksi', value: 'date', dataType: 'datetime'
-      },
-      {
-        text: 'Tanggal Jatuh Tempo', value: 'dueDate', dataType: 'datetime'
-      },
-      {
-        text: 'Pemasok', value: 'supplierInitial', dataType: 'text'
-      },
-      {
-        text: 'Nilai', value: 'amount', dataType: 'text'
-      }
-    ],
     valid: false,
     dataStartDate: null,
     sources: [{ id: 1, name: 'Penerimaan Pembelian' }, { id: 2, name: 'Surat Jalan' }],

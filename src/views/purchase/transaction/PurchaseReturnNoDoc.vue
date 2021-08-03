@@ -2,7 +2,7 @@
   <div class="w-full">
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row dense>
+        <v-row no-gutters>
           <v-col cols="12" md="2">
             Retur Pembelian
           </v-col>
@@ -40,7 +40,6 @@
               <export-excel title="Daftar Retur Pembelian" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
-          <v-spacer></v-spacer>
           <v-col cols="12" md="4" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -923,6 +922,15 @@ export default {
   },
 
   data: () => ({
+    filterfields: [{
+      text: 'Kode', value: 'code', dataType: 'text'
+    }, {
+      text: 'Tanggal', value: 'date', dataType: 'datetime'
+    }, {
+      text: 'Pemasok', value: 'supName', dataType: 'text'
+    }, {
+      text: 'Dikirim Oleh', value: 'shippedInitial', dataType: 'text'
+    }],
     dialog: {
       add: false
     },
@@ -935,12 +943,12 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'18' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
-        { text: 'Kode Penerimaan Barang', value: 'rcvCode', divider: true, width: '100', excelColWidth:'13' },
-        { text: 'Dikirim Oleh', value: 'shippedInitial', width: '200', excelColWidth:'23' }
+        { text: 'Dikirim Oleh', value: 'shippedInitial', divider: true, width: '200', excelColWidth:'23' },
+        { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
       options: {
@@ -974,23 +982,6 @@ export default {
       ],
       data: []
     },
-    filterfields: [
-      {
-        text: 'Kode', value: 'code', dataType: 'text'
-      },
-      {
-        text: 'Tanggal', value: 'date', dataType: 'datetime'
-      },
-      {
-        text: 'Pemasok', value: 'supName', dataType: 'text'
-      },
-      {
-        text: 'Kode Penerimaan Barang', value: 'rcvCode', dataType: 'text'
-      },
-      {
-        text: 'Dikirim Oleh', value: 'shippedInitial', dataType: 'text'
-      }
-    ],
     valid: false,
     dataStartDate: null,
     defTaxInc: false,
@@ -1026,7 +1017,9 @@ export default {
       }, {
         text: 'Transaksi'
       }, {
-        text: 'Retur Pembelian'
+        text: 'Pembelian'
+      }, {
+        text: 'Retur'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)

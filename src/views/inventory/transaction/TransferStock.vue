@@ -2,7 +2,7 @@
   <div class="w-full">
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row dense>
+        <v-row no-gutters>
           <v-col cols="12" md="3">
             Transfer Persediaan
           </v-col>
@@ -254,7 +254,7 @@
                         <v-text-field
                           ref="code"
                           v-model="data.code"
-                          label="No. Transfer Persediaan"
+                          label="Kode"
                           class="mt-0"
                           readonly
                         ></v-text-field>
@@ -313,7 +313,7 @@
                         <v-text-field
                           v-model="data.originTransferCode"
                           :rules="isTypeIn ? rules.required : []"
-                          label="No. Transf. Persd. Keluar"
+                          label="Kd. Transf. Persd. Keluar"
                           class="mt-0"
                           :required="isTypeIn"
                           :readonly="!isTypeIn || isComplete"
@@ -682,6 +682,27 @@ export default {
   },
 
   data: () => ({
+    filterfields: [{
+      text: 'Kode', value: 'code', dataType: 'text'
+    }, {
+      text: 'Tanggal', value: 'date', dataType: 'datetime'
+    }, {
+      text: 'Tipe', value: 'type', dataType: 'bit',
+      options: [{ 
+        text: 'Barang Keluar',
+        value: 'OUT'
+      }, { 
+        text: 'Barang Masuk',
+        value: 'IN'
+      }, { 
+        text: 'Transfer Langsung',
+        value: 'DT'
+      }]
+    }, {
+      text: 'Gudang Asal', value: 'warehouseInitialFrom', dataType: 'text'
+    }, {
+      text: 'Gudang Tujuan', value: 'warehouseInitialTo', dataType: 'text'
+    }],
     dialog: {
       add: false
     },
@@ -694,13 +715,13 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
-        { text: 'No. Transf. Persd.', value: 'code', divider: true, width: '160', excelColWidth:'20' },
+        { value: 'action', sortable: false, divider: true, width: '90' },
+        { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Tipe', value: 'typeInitial', divider: true, width: '150', excelColWidth:'18' },
         { text: 'Gudang Asal', value: 'warehouseInitialFrom', divider: true, width: '180', excelColWidth:'20' },
         { text: 'Gudang Tujuan', value: 'warehouseInitialTo', divider: true, width: '180', excelColWidth:'20' },
-        { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
+        { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
       options: {
@@ -723,7 +744,7 @@ export default {
     },
     gridRelated: {
       columns: [
-        { text: 'No. Transf. Persd.', value: 'code', divider: true, width: '160' },
+        { text: 'Kd. Transf. Persd.', value: 'code', divider: true, width: '160' },
         { text: 'Tipe', value: 'typeInitial', divider: true, width: '150' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
         { text: 'Gudang Asal', value: 'warehouseInitialFrom', divider: true, width: '180' },
@@ -733,23 +754,6 @@ export default {
       ],
       data: []
     },
-    filterfields: [
-      {
-        text: 'No. Transf. Persd.', value: 'code', dataType: 'text'
-      },
-      {
-        text: 'Tanggal', value: 'date', dataType: 'datetime'
-      },
-      {
-        text: 'Tipe', value: 'typeInitial', dataType: 'text'
-      },
-      {
-        text: 'Gudang Asal', value: 'warehouseInitialFrom', dataType: 'text'
-      },
-      {
-        text: 'Gudang Tujuan', value: 'warehouseInitialTo', dataType: 'text'
-      }      
-    ],
     valid: false,
     dataStartDate: null,
     typeRef: [{ value: 'OUT', text: 'Barang Keluar' }, { value: 'IN', text: 'Barang Masuk' }, { value: 'DT', text: 'Transfer Langsung' }],

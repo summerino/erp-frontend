@@ -2,11 +2,11 @@
   <div class="w-full">
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row dense>
+        <v-row no-gutters>
           <v-col cols="12" md="2">
             Nota Kredit
           </v-col>
-          <v-col cols="12" md="4" >
+          <v-col cols="12" md="6">
             <v-row no-gutters>
               <v-text-field
                 append-icon="mdi-magnify"
@@ -40,7 +40,6 @@
               <export-excel title="Daftar Nota Kredit" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
-          <v-spacer></v-spacer>
           <v-col cols="12" md="4" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -151,7 +150,7 @@
     </v-card>
 
     <v-dialog
-       v-model="dialog.add"
+      v-model="dialog.add"
       transition="dialog-bottom-transition"
       fullscreen
       hide-overlay
@@ -289,7 +288,7 @@
                         <v-text-field
                           ref="code"
                           v-model.trim="data.code"
-                          label="Kode Transaksi"
+                          label="Kode"
                           class="mt-0"
                           readonly
                         ></v-text-field>
@@ -536,6 +535,32 @@ export default {
     MemoToCashbank
   },
   data: () => ({
+    filterFields: [{
+      text: 'Kode', value: 'code', dataType: 'text'
+    }, {
+      text: 'Tanggal', value: 'date', dataType: 'datetime'
+    }, {
+      text: 'Kd. Pelanggan', value: 'custCode', dataType: 'text'
+    }, {
+      text: 'Nama Pelanggan', value: 'custName', dataType: 'text'
+    }, {
+      text: 'Sumber Transaksi', value: 'srcTrans', dataType: 'bit',
+      options: [{ 
+        text: 'Deposit',
+        value: 1
+      }, { 
+        text: 'Retur',
+        value: 2
+      }]
+    }, {
+      text: 'Kd. Transaksi Sumber', value: 'transCode', dataType: 'text'
+    }, {
+      text: 'Nilai', value: 'amount', dataType: 'text'
+    }, {
+      text: 'Digunakan', value: 'used', dataType: 'text'
+    }, {
+      text: 'Saldo', value: 'outstanding', dataType: 'text'
+    }],
     dialog: {
       add: false
     },
@@ -549,11 +574,11 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
-        { text: 'Kode Transaksi', value: 'code', divider: true, width: '160', excelColWidth:'19' },
-        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+        { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Pelanggan', value: 'custName', divider: true, width: '200', excelColWidth:'35', customValues: ['custCode', 'custName'] },
         { text: 'Sumber Transaksi', value: 'srcTransName', divider: true, width: '100', excelColWidth:'12' },
-        { text: 'Kode Transaksi Sumber', value: 'transCode', divider: true, width: '100', excelColWidth:'12' },
+        { text: 'Kd. Transaksi Sumber', value: 'transCode', divider: true, width: '100', excelColWidth:'12' },
         { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'13', isNumber: true },
         { text: 'Digunakan', value: 'used', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
         { text: 'Saldo', value: 'remaining', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
@@ -575,35 +600,9 @@ export default {
       ],
       data: []
     },
-    filterfields: [
-      {
-        text: 'Kode Transaksi', value: 'code', dataType: 'text'
-      },
-      {
-        text: 'Tanggal Transaksi', value: 'date', dataType: 'datetime'
-      },
-      {
-        text: 'Pelanggan', value: 'custName', dataType: 'text'
-      },
-      {
-        text: 'Sumber Transksi', value: 'srcTransName', dataType: 'text'
-      },
-      {
-        text: 'Kode Transaksi Sumber', value: 'transCode', dataType: 'text'
-      },
-      {
-        text: 'Nilai', value: 'amount', dataType: 'text'
-      },
-      {
-        text: 'Digunakan', value: 'used', dataType: 'text'
-      },
-      {
-        text: 'Nilai', value: 'outstanding', dataType: 'text'
-      }
-    ],
     valid: false,
     dataStartDate: null,
-    sources: [{ id: 1, name: 'Deposit' }, { id: 2, name: 'Retur' }, { id: 2, name: 'Return (Same Item)' }],
+    sources: [{ id: 1, name: 'Deposit' }, { id: 2, name: 'Retur' }],
     data: {},
     customers: [],
     transactionType: '',
@@ -622,7 +621,7 @@ export default {
       .then((response) => {
         this.allowInsertCashBank = response.data.find(x => x === this.action.insert) !== undefined
       })
-    this.$store.commit('app/setFilterFields', this.filterfields)
+    this.$store.commit('app/setFilterFields', this.filterFields)
   },
 
   mounted: function () {

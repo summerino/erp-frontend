@@ -2,7 +2,7 @@
   <div class="w-full">
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row dense>
+        <v-row no-gutters>
           <v-col cols="12" md="2">
             Penerimaan
           </v-col>
@@ -40,7 +40,6 @@
               <export-excel title="Daftar Penerimaan" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
-          <v-spacer></v-spacer>
           <v-col cols="12" md="4" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -683,6 +682,19 @@ export default {
   },
 
   data: () => ({
+    filterfields: [{
+      text: 'Kode', value: 'code', dataType: 'text'
+    }, {
+      text: 'Tanggal', value: 'date', dataType: 'datetime'
+    }, {
+      text: 'Pemasok', value: 'supName', dataType: 'text'
+    }, {
+      text: 'Kode Trans.', value: 'transCode', dataType: 'text'
+    }, {
+      text: 'Diterima Oleh', value: 'receiveInitial', dataType: 'text'
+    }, {
+      text: 'No. Ref.', value: 'refNo', dataType: 'text'
+    }],
     dialog: {
       add: false
     },
@@ -699,7 +711,7 @@ export default {
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
-        { text: 'Kode Transaksi', value: 'transCode', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Kode Trans.', value: 'transCode', divider: true, width: '150', excelColWidth:'18' },
         { text: 'Diterima Oleh', value: 'receiveInitial', divider: true, width: '200', excelColWidth:'23' },
         { text: 'No. Ref.', value: 'refNo', width: '150', excelColWidth:'18' },
         { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
@@ -734,26 +746,6 @@ export default {
       ],
       data: []
     },
-    filterfields: [
-      {
-        text: 'Kode', value: 'code', dataType: 'text'
-      },
-      {
-        text: 'Tanggal', value: 'date', dataType: 'datetime'
-      },
-      {
-        text: 'Pemasok', value: 'supName', dataType: 'text'
-      },
-      {
-        text: 'Kode Transaksi', value: 'transCode', dataType: 'text'
-      },
-      {
-        text: 'Diterima Oleh', value: 'receiveInitial', dataType: 'text'
-      },
-      {
-        text: 'No. Ref.', value: 'refNo', dataType: 'text'
-      }
-    ],
     valid: false,
     dataStartDate: null,
     lblTransCode: null,
@@ -791,7 +783,7 @@ export default {
       }, {
         text: 'Transaksi'
       }, {
-        text: 'Order'
+        text: 'Pembelian'
       }, {
         text: 'Penerimaan'
       }])
@@ -1025,7 +1017,7 @@ export default {
       if (this.data.srcTrans === 1) {
         this.lblTransCode = 'Kode Order Pembelian'
       } else {
-        this.lblTransCode = 'Kode Retur'
+        this.lblTransCode = 'Kode Retur Pembelian'
       }
 
       // Get supplier details
@@ -1173,7 +1165,7 @@ export default {
       if (this.data.srcTrans === 1) {
         this.lblTransCode = 'Kode Order Pembelian'
       } else {
-        this.lblTransCode = 'Kode Retur'
+        this.lblTransCode = 'Kode Retur Pembelian'
       }
       this.data.transCode = null
       this.data.supCode = null
