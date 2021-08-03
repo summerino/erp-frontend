@@ -553,6 +553,8 @@
                               <v-currency-field
                                 label="Total Nilai"
                                 v-model="data.amount"
+                                :min="-Number.MAX_SAFE_INTEGER"
+                                :allow-negative="true"
                                 class="text-body-2 text-right mt-0"
                                 readonly
                               ></v-currency-field>
@@ -898,7 +900,17 @@ export default {
       }
 
       if (this.gridItem.data.length === 0) {
-        this.$store.dispatch('app/showInfo', 'Data detil tidak boleh kosong.')
+        this.$store.dispatch('app/showInfo', 'Data detail tidak boleh kosong.')
+        return
+      }
+
+      if (this.data.type === 'D' && this.data.amount < 0) {
+        this.$store.dispatch('app/showInfo', 'Total nilai tidak boleh minus untuk tipe kas bank masuk.')
+        return
+      } 
+      
+      if (this.data.type === 'C' && this.data.amount > 0) {
+        this.$store.dispatch('app/showInfo', 'Total nilai tidak boleh plus untuk tipe kas bank keluar.')
         return
       }
 
@@ -971,9 +983,8 @@ export default {
           totalHeader -= data[i].amount
         }
       }
-      this.data.amount = Math.abs(totalHeader)
+      this.data.amount = totalHeader
     }
-
   }
 }
 </script>
