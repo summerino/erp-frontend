@@ -40,4 +40,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/purchase/report/ap-report',
+  name: 'ap-report',
+  component: () => import(/* webpackChunkName: "ap-report" */ '@/views/purchase/report/APReport.vue'),
+  meta: {
+    authRequired: true
+  }
 }]

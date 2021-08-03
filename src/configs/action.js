@@ -8,5 +8,6 @@ export default {
   close: 7,
   changeDate: 8,
   approve: 9,
-  post: 10
+  post: 10,
+  print: 41
 }
