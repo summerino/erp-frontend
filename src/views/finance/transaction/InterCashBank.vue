@@ -600,6 +600,8 @@ export default {
       }, {
         text: 'Transaksi'
       }, {
+        text: 'Kas Bank'
+      }, {
         text: 'Pemindahan Dana'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)

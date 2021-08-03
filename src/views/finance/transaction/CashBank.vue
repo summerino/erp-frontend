@@ -4,7 +4,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="2">
-            Kas Bank
+            Kas Bank Umum
           </v-col>
           <v-col cols="12" md="6" >
             <v-row no-gutters>
@@ -37,7 +37,7 @@
                 </template>
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
-              <export-excel title="Daftar Note Debit" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
+              <export-excel title="Daftar Kas Bank Umum" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
           <v-spacer></v-spacer>
@@ -161,7 +161,7 @@
           <v-btn icon dark @click="dialog.add = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Kas Bank</v-toolbar-title>
+          <v-toolbar-title>Kas Bank Umum</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-tooltip bottom>
@@ -616,14 +616,14 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '50', excelColWidth:'10' },
-        { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'19' },
-        // { text: 'Kode Voucher', value: 'vouCode', divider: true, width: '160', excelColWidth:'19' },
+        { value: 'action', sortable: false, divider: true, width: '50' },
+        { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'18' },
+        // { text: 'Kode Voucher', value: 'vouCode', divider: true, width: '160', excelColWidth:'18' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'15', isDateTime: true },
-        { text: 'Nilai', value: 'amount', divider: true, align:'right', width: '100', excelColWidth:'13' },
-        { text: 'Tipe', value: 'typeName', divider: true, width: '90', excelColWidth:'13' },
-        { text: 'Akun', value: 'coaCode', divider: true, width: '130', excelColWidth:'20', customValues: ['coaCode', 'coaName'] },
-        { text: 'Status', value: 'mark', divider: true, width: '50' }
+        { text: 'Nilai', value: 'amount', divider: true, align:'right', width: '100', excelColWidth:'15', isNumber: true },
+        { text: 'Tipe', value: 'typeName', divider: true, width: '90', excelColWidth:'17' },
+        { text: 'Akun', value: 'coaCode', divider: true, width: '130', excelColWidth:'40', customValues: ['coaCode', 'coaName'] },
+        { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
       options: {
@@ -688,6 +688,8 @@ export default {
         text: 'Transaksi'
       }, {
         text: 'Kas Bank'
+      }, {
+        text: 'Umum'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
