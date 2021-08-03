@@ -15,7 +15,8 @@ const state = {
     close: 6,
     changeDate: 8,
     approve: 9,
-    post: 10
+    post: 10,
+    print: 41
   },
   menus,
   authorization: {
@@ -25,7 +26,8 @@ const state = {
     allowVoid: false,
     allowChangeWarehouse: false,
     allowChangeDate: false,
-    allowPost: false
+    allowPost: false,
+    allowPrint: false
   }
 }
 
