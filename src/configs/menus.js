@@ -28,6 +28,7 @@ export default {
   purchaseInvoice: 38,
   purchaseReturn: 39,
   debitMemo: 40,
+  apReport: 92,
 
   // Sales
   area: 42,

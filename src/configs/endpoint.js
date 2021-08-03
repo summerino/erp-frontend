@@ -41,7 +41,8 @@ export default {
     receive: 'purchase-receive',
     invoice: 'purchase-invoice',
     return: 'purchase-return',
-    debitMemo: 'debit-memo'
+    debitMemo: 'debit-memo',
+    apReport: 'ap-report'
   },
 
   sales: {
