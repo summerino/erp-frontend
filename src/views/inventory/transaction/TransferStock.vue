@@ -6,7 +6,7 @@
           <v-col cols="12" md="3">
             Transfer Persediaan
           </v-col>
-          <v-col cols="12" md="4" >
+          <v-col cols="12" md="5" >
             <v-row no-gutters>
               <v-text-field
                 append-icon="mdi-magnify"
@@ -37,12 +37,10 @@
                 </template>
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
-            <export-excel title="Daftar Transfer Persediaan" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
-
+              <export-excel title="Daftar Transfer Persediaan" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
-          <v-spacer></v-spacer>
-          <v-col cols="12" md="5" class="text-right">
+          <v-col cols="12" md="4" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn

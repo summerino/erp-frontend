@@ -6,21 +6,41 @@
           <v-col cols="12" md="3">
             Pemindahan Dana
           </v-col>
-          <v-col cols="12" md="3">
-            <v-text-field
-              v-model="grid.search"
-              append-icon="mdi-magnify"
-              label="Cari..."
-              class="font-weight-regular mt-0 pt-0"
-              single-line
-              @keyup.enter="getList()"
-            ></v-text-field>
+          <v-col cols="12" md="5">
+            <v-row no-gutters>
+              <v-text-field
+                v-model="grid.search"
+                :readonly="filter.isAdvancedSearch"
+                append-icon="mdi-magnify"
+                label="Cari..."
+                class="font-weight-regular mt-0 pt-0"
+                single-line
+                @click:append-outer="advancedSearch"
+                @keyup.enter="getList(false)"
+              ></v-text-field>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    color="blue darken-2 ml-1"
+                    class="font-weight-regular"
+                    dark
+                    small
+                    tile
+                    @click="advancedSearch"
+                  >
+                    <v-icon>
+                      mdi-magnify-plus-outline
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <span class="text-caption">Pencarian lanjutan</span>
+              </v-tooltip>
+              <export-excel title="Daftar Pemindahan Dana" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
+            </v-row>
           </v-col>
-          <v-spacer></v-spacer>
-          <v-col cols="12" md="1">
-            <export-excel title="Daftar Pemindahan Dana" :grid="grid" :gridDefOpts="gridDefOpts"  ref="exportExcel"></export-excel>
-          </v-col>
-          <v-col cols="12" md="5" class="text-right">
+          <v-col cols="12" md="4" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -45,6 +65,10 @@
           </v-col>
         </v-row>
       </v-card-title>
+
+      <v-card-text v-if="true" class="pb-1">
+        <advanced-search @search="search"></advanced-search>
+      </v-card-text>
 
       <v-data-table
         :headers="grid.columns"
@@ -537,11 +561,13 @@ import { format, parseISO }  from 'date-fns'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
 
+import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 
 export default {
   components: {
+    AdvancedSearch,
     ExportExcel,
     Confirm
   },
@@ -575,6 +601,15 @@ export default {
       total: 0,
       search: null
     },
+    filterfields: [{
+      text: 'Kode', value: 'code', dataType: 'text'
+    }, {
+      text: 'Tanggal', value: 'date', dataType: 'datetime'
+    }, {
+      text: 'Akun Asal', value: 'coaNameFrom', dataType: 'text'
+    }, {
+      text: 'Akun Tujuan', value: 'coaNameTo', dataType: 'text'
+    }],
     valid: false,
     dataStartDate: null,
     coaRef: [],
@@ -591,6 +626,7 @@ export default {
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
+    this.$store.commit('app/setFilterFields', this.filterfields)
   },
 
   mounted: function () {
@@ -622,6 +658,7 @@ export default {
       gridDefOpts: state => state.app.grid,
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
+      filter: state => state.app.filter,
       auth: state => state.api.authorization,
       action: state => state.api.action,
       menuId: state => state.api.menus
@@ -687,7 +724,18 @@ export default {
         }, 0)
       }
     },
-    getList(bindToForm = false) {
+    advancedSearch() {
+      this.grid.search = null
+      this.$store.commit('app/advSearch')
+      if (this.filter.isAdvancedSearch) {
+        this.$store.commit('app/addSearch')
+      }
+    },
+    search(vm) {
+      this.grid.search = vm.search
+      this.getList(vm.bindToForm, vm.filters)
+    },
+    getList(bindToForm = false, filters = []) {
       const sorts = []
       for (let i = 0; i < this.grid.options.sortBy.length; i++) {
         sorts.push({
@@ -701,7 +749,8 @@ export default {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
           take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
-          sorts: JSON.stringify(sorts)
+          sorts: JSON.stringify(sorts),
+          filters: JSON.stringify(filters)
         }
       })
         .then(response => {

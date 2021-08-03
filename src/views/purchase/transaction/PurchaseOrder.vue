@@ -17,7 +17,7 @@
                 :readonly="filter.isAdvancedSearch"
                 @click:append-outer="advancedSearch"
                 @keyup.enter="getList(false)"
-              ></v-text-field>            
+              ></v-text-field>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
@@ -64,7 +64,6 @@
             </v-tooltip>
           </v-col>
         </v-row>
-        
       </v-card-title>
       <v-card-text v-if="true" class="pb-1">
         <advanced-search @search="search"></advanced-search>
@@ -1111,7 +1110,6 @@ export default {
 
       // set default warehouse
       this.setDefaultWarehouse()
-
     },
     advancedSearch() {
       this.grid.search = null
