@@ -124,7 +124,6 @@
                   item-value="id"
                   class="mt-0"
                   dense
-                  @change="changeType"
                 >
                 </v-autocomplete>
               </v-col>
@@ -159,11 +158,11 @@
                   v-model="data.supplier"
                   :items="suppliers"
                   :item-text="item => `${item.initial} - ${item.name}`"
-                  :disabled="this.data.type === 1"
                   label="Pemasok"
                   item-value="code"
                   class="mt-0"
                   dense
+                  clearable
                 ></v-autocomplete>
               </v-col>
             </v-row>
@@ -375,11 +374,6 @@ export default {
         this.filter = false
         this.getList()
         this.main = false
-      }
-    },
-    changeType() {
-      if (this.data.type === 1) {
-        this.data.supplier = null
       }
     }
   }
