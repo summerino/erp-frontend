@@ -206,8 +206,6 @@
         </v-card>
       </v-col> 
     </v-row>
-
-    <confirm ref="confirm"></confirm>
   </div>
 </template>
 
@@ -219,12 +217,10 @@ import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
 
 import ExportExcel from '@/components/common/ExportExcel.vue'
-import Confirm from '@/components/dialog/Confirm'
 
 export default {
   components:{
-    ExportExcel,
-    Confirm
+    ExportExcel
   },
 
   data: () => ({
