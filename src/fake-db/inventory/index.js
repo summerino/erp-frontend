@@ -1,6 +1,0 @@
-import './item.category'
-import './item.group'
-import './item'
-import './uom.conversion'
-import './uom'
-import './warehouse'

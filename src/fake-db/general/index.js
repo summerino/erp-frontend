@@ -1,6 +1,0 @@
-import './currency'
-import './customer'
-import './salesman.js'
-import './supplier.js'
-import './tax.js'
-import './worker.js'
