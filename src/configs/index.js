@@ -1,9 +1,7 @@
-import maps from './maps'
 import icons from './icons'
 import theme from './theme'
 import toolbar from './toolbar'
 import locales from './locales'
-import analytics from './analytics'
 import currency from './currency'
 import endpoint from './endpoint'
 import filter from './filter'
@@ -16,9 +14,6 @@ export default {
     version: '1.0.0-dev'
   },
 
-  // google maps
-  maps,
-
   // icon libraries
   icons,
 
@@ -30,9 +25,6 @@ export default {
 
   // locales configs
   locales,
-
-  // analytics configs
-  analytics,
 
   // currency configs
   currency,
