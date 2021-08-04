@@ -94,6 +94,7 @@ export default {
 
   created: function () {
     this.getMenu()
+    this.getAction()
   },
   
   computed: {
@@ -115,6 +116,12 @@ export default {
           this.navigation = {
             menu: response.data
           }
+        })
+    },
+    getAction() {
+      api.getAll(this.endpoint.systemManagement.action)
+        .then(response => {
+          this.$store.commit('api/setAction', response.data)
         })
     }
   }

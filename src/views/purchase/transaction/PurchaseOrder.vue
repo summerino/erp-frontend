@@ -54,7 +54,7 @@
                   tile
                   @click="add"
                   @shortkey="add"
-                  :disabled="!auth.allowInsert"
+                  :disabled="!auth.allowCreate"
                 >
                   <v-icon left>mdi-plus</v-icon>
                   Data Baru
@@ -235,7 +235,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 'alt', 'r']"
-                  :disabled="isSaveNReceiveAble || !allowInsertPurchaseReceive || !auth.allowInsert || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isSaveNReceiveAble || !allowInsertPurchaseReceive || !auth.allowCreate || (data.action === 'edit' && !auth.allowUpdate)"
                   @click="saveRcv()"
                   @shortkey="saveRcv()"
                 >
@@ -257,7 +257,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 'alt', 'i']"
-                  :disabled="isSaveNInvoiceAble || !allowInsertPurchaseInvoice || !auth.allowInsert || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isSaveNInvoiceAble || !allowInsertPurchaseInvoice || !auth.allowCreate || (data.action === 'edit' && !auth.allowUpdate)"
                   @click="saveInv()"
                   @shortkey="saveInv()"
                 >
@@ -518,7 +518,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid || hasRelatedTrans || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
+                                :disabled="isVoid || hasRelatedTrans || (!auth.allowCreate && (data.action === 'edit' && !auth.allowUpdate))"
                                 class="blue--text"
                                 small
                                 tile
@@ -550,7 +550,7 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
-                                  :disabled="isVoid || hasRelatedTrans || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
+                                  :disabled="isVoid || hasRelatedTrans || (!auth.allowCreate && (data.action === 'edit' && !auth.allowUpdate))"
                                   color="red"
                                   icon
                                   small
@@ -893,7 +893,7 @@ export default {
   },
 
   data: () => ({
-    filterfields: [{
+    filterFields: [{
       text: 'Kode', value: 'code', dataType: 'text'
     }, {
       text: 'Tanggal', value: 'date', dataType: 'datetime'
@@ -990,7 +990,7 @@ export default {
       .then((response) => {
         this.allowInsertPurchaseInvoice = response.data.find(x => x === this.action.insert) !== undefined 
       })
-    this.$store.commit('app/setFilterFields', this.filterfields)
+    this.$store.commit('app/setFilterFields', this.filterFields)
   },
 
   mounted: function () {
@@ -1132,8 +1132,8 @@ export default {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
           take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
-          sorts: JSON.stringify(sorts),
-          filters: JSON.stringify(filters)
+          filters: JSON.stringify(filters),
+          sorts: JSON.stringify(sorts)
         }
       })
         .then(response => {

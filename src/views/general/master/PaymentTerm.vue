@@ -26,7 +26,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'alt', 'n']"
-                  :disabled="!auth.allowInsert"
+                  :disabled="!auth.allowCreate"
                   color="green darken-1"
                   class="font-weight-regular"
                   dark

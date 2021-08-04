@@ -54,7 +54,7 @@
                   tile
                   @click="add"
                   @shortkey="add"
-                  :disabled="!auth.allowInsert"
+                  :disabled="!auth.allowCreate"
                 >
                   <v-icon left>mdi-plus</v-icon>
                   Data Baru
@@ -638,7 +638,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid || hasRelatedTrans || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
+                                :disabled="isVoid || hasRelatedTrans || (!auth.allowCreate && (data.action === 'edit' && !auth.allowUpdate))"
                                 class="blue--text"
                                 small
                                 tile
@@ -674,7 +674,7 @@
                                   icon
                                   small
                                   @click="removeItem(item)"
-                                  :disabled="(!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
+                                  :disabled="(!auth.allowCreate && (data.action === 'edit' && !auth.allowUpdate))"
                                 >
                                   <v-icon small>mdi-close-thick</v-icon>
                                 </v-btn>

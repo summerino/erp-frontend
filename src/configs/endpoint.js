@@ -85,7 +85,8 @@ export default {
     user: 'user',
     role: 'role',
     parameter: 'system-parameter',
-    menu: 'menu'
+    menu: 'menu',
+    action: 'action'
   },
   
   assetManagement: {
