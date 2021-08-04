@@ -487,6 +487,7 @@
                         <template v-slot:[`item.action`]="{ item }">
                           <v-checkbox
                             v-model="item.usePromo"
+                            :disabled="hasRelatedTrans"
                             @change="calcPromo()"
                           >
                           </v-checkbox>
@@ -516,6 +517,7 @@
                           :items="paymentTerms"
                           :item-text="item => `${item.initial} - ${item.name}`"
                           :rules="rules.required"
+                          :disabled="hasRelatedTrans"
                           label="Pembayaran"
                           item-value="id"
                           class="mt-0"
@@ -674,7 +676,7 @@
                                   icon
                                   small
                                   @click="removeItem(item)"
-                                  :disabled="(!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
+                                  :disabled="hasRelatedTrans || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
                                 >
                                   <v-icon small>mdi-close-thick</v-icon>
                                 </v-btn>
@@ -701,6 +703,7 @@
                                   color="primary"
                                   icon
                                   x-small
+                                  :disabled="hasRelatedTrans"
                                   @click="showFindItemDialog(item)"
                                 >
                                   <v-icon>
@@ -755,7 +758,7 @@
                             >
                               <template v-slot:append>
                                 <v-btn
-                                  :readonly="hasRelatedTrans"
+                                  :disabled="hasRelatedTrans"
                                   color="primary"
                                   icon
                                   x-small
@@ -950,6 +953,7 @@
                         <v-currency-field
                           v-model="data.finalDiscPercent"
                           :allow-negative="false"
+                          :readonly="hasRelatedTrans"
                           label="Persen Diskon"
                           suffix="%"
                           class="text-right mt-0"
@@ -960,6 +964,7 @@
                         <v-currency-field
                           v-model="data.finalDisc"
                           :allow-negative="false"
+                          :readonly="hasRelatedTrans"
                           label="Diskon Final"
                           class="text-right mt-0"
                           @change="discChange"
