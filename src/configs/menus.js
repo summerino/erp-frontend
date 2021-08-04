@@ -43,6 +43,7 @@ export default {
   creditMemo: 49,
   visitPlan: 54,
   visitOrder: 55,
+  arReport: 93,
 
   // Expedition
   expeditionInvoice: 70,
