@@ -786,7 +786,6 @@ export default {
       })
     auth.getAction(this.endpoint, this.menuId.salesInvoice, [1])
       .then((response) => {
-        console.log(response.data.some(x => x))
         this.allowInsertSalesInvoice = response.data.some(x => x)
       })
     this.$store.commit('app/setFilterFields', this.filterfields)
