@@ -799,6 +799,7 @@
                         <v-currency-field
                           v-model="data.finalDiscPercent"
                           :allow-negative="false"
+                          :readonly="hasRelatedTrans"
                           label="Persen Diskon"
                           suffix="%"
                           class="text-right mt-0"
@@ -809,6 +810,7 @@
                         <v-currency-field
                           v-model="data.finalDisc"
                           :allow-negative="false"
+                          :readonly="hasRelatedTrans"
                           label="Diskon Final"
                           class="text-right mt-0"
                           @change="discChange"

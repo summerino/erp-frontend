@@ -1,33 +1,20 @@
 <template>
   <div class="w-full">
-    <v-row dense>
+    <v-row no-gutters>
       <v-col cols="12">
         <v-card>
           <v-card-title class="indigo--text text--lighten-2 pb-1">
-            <v-row dense>
-              <v-col v-if="main" cols="12" md="2">
+            <v-row v-if="main" no-gutters>
+              <v-col cols="12" md="6">
                 Laporan Hutang
               </v-col>
-              <v-col v-else cols="12" md="6">
-                Laporan Hutang - Detail Berdasarkan Pemasok - {{ this.data.supInitial }} - {{ this.data.supName }} ( {{ this.data.supCode }} )
-              </v-col>
-              <v-col v-if="main" cols="12" md="4">
-                <v-text-field
-                  v-model="grid.search"
-                  append-icon="mdi-magnify"
-                  label="Cari..."
-                  class="font-weight-regular mt-0 pt-0"
-                  single-line
-                  @keyup.enter="getList"
-                ></v-text-field>
-              </v-col>
-              <v-col v-if="main" cols="12" md="6" class="text-right">
+              <v-col cols="12" md="6" class="text-right">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
                       v-bind="attrs"
                       v-on="on"
-                      v-shortkey="['ctrl', 'alt', 'g']"
+                      v-shortkey="['ctrl', 'alt', 's']"
                       color="blue darken-1"
                       class="font-weight-regular"
                       dark
@@ -60,13 +47,13 @@
                       <v-list class="cursor-pointer">
                         <v-list-item>
                           <v-list-item-title>
-                            <export-excel xcel title="Daftar Laporan Hutang" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+                            <export-excel title="Daftar Laporan Hutang" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
                           </v-list-item-title>
                         </v-list-item>
                       </v-list>
                     </v-menu>
                   </template>
-                  <span class="text-caption">(Ctrl + Alt + G)</span>
+                  <span class="text-caption">(Ctrl + Alt + S)</span>
                 </v-tooltip>
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
@@ -89,7 +76,12 @@
                   <span class="text-caption">(Ctrl + Alt + F)</span>
                 </v-tooltip>
               </v-col>
-              <v-col v-else cols="12" md="6" class="text-right">
+            </v-row>
+            <v-row v-else no-gutters>
+              <v-col cols="12" md="6">
+                Laporan Hutang - Detail Berdasarkan Pemasok - {{ this.data.supInitial }} - {{ this.data.supName }} ( {{ this.data.supCode }} )
+              </v-col>
+              <v-col cols="12" md="6" class="text-right">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
@@ -316,6 +308,7 @@ export default {
         date: format(new Date(), 'yyyy-MM-dd'),
         supplier: null
       }
+      this.filter = true
     },
     getList() {
       const sorts = []
