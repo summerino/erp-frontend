@@ -1163,17 +1163,17 @@ export default {
     this.getWarehouseLists()
     this.getTaxLists()
     this.getItemLists()
-    auth.getAction(this.endpoint, this.menuId.salesOrder, [this.action.insert, this.action.update, this.action.void, this.action.changeWarehouse, this.action.changeDate])
+    auth.getAction(this.endpoint, this.menuId.salesOrder)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
-    auth.getAction(this.endpoint, this.menuId.salesDelivery, [this.action.insert])
+    auth.getAction(this.endpoint, this.menuId.salesDelivery, [1])
       .then((response) => {
-        this.allowInsertSalesDelivery = response.data.find(x => x === this.action.insert) !== undefined 
+        this.allowInsertSalesDelivery = response.data.some(x => x)
       })
-    auth.getAction(this.endpoint, this.menuId.salesInvoice, [this.action.insert])
+    auth.getAction(this.endpoint, this.menuId.salesInvoice, [1])
       .then((response) => {
-        this.allowInsertSalesInvoice = response.data.find(x => x === this.action.insert) !== undefined 
+        this.allowInsertSalesInvoice = response.data.some(x => x)
       })
     this.getPromoLists()
     this.getPaymentTermLists()
@@ -1212,7 +1212,6 @@ export default {
       endpoint: state => state.api.endpoint,
       filter: state => state.app.filter,
       auth: state => state.api.authorization,
-      action: state => state.api.action,
       menuId: state => state.api.menus
     }),
     theme() {

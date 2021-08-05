@@ -290,7 +290,7 @@ export default {
     this.getList()
     this.getTypesList()
     this.getDriversList()
-    auth.getAction(this.endpoint, this.menuId.vehicle, [this.action.insert, this.action.update, this.action.delete])
+    auth.getAction(this.endpoint, this.menuId.vehicle)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -324,7 +324,6 @@ export default {
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
       auth: state => state.api.authorization,
-      action: state => state.api.action,
       menuId: state => state.api.menus
     }),
     isActive() {

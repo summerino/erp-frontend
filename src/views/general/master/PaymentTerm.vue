@@ -243,7 +243,7 @@ export default {
 
   created: function () {
     this.getList()
-    auth.getAction(this.endpoint, this.menuId.paymentTerm, [this.action.insert, this.action.update, this.action.delete])
+    auth.getAction(this.endpoint, this.menuId.paymentTerm)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -277,7 +277,6 @@ export default {
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
       auth: state => state.api.authorization,
-      action: state => state.api.action,
       menuId: state => state.api.menus
     })
   },

@@ -437,7 +437,7 @@ export default {
   created: function () {
     this.getList()
     this.loadAction()
-    auth.getAction(this.endpoint, this.menuId.role, [this.action.insert, this.action.update, this.action.delete])
+    auth.getAction(this.endpoint, this.menuId.role)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -479,9 +479,7 @@ export default {
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
       auth: state => state.api.authorization,
-      action: state => state.api.action,
       menuId: state => state.api.menus
-
     }),
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'

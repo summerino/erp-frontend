@@ -980,17 +980,17 @@ export default {
     this.getWarehouseLists()
     this.getTaxLists()
     this.getItemLists()
-    auth.getAction(this.endpoint, this.menuId.purchaseOrder, [this.action.insert, this.action.update, this.action.void, this.action.close, this.action.changeWarehouse, this.action.changeDate])
+    auth.getAction(this.endpoint, this.menuId.purchaseOrder)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
-    auth.getAction(this.endpoint, this.menuId.purchaseReceive, [this.action.insert])
+    auth.getAction(this.endpoint, this.menuId.purchaseReceive, [1])
       .then((response) => {
-        this.allowInsertPurchaseReceive = response.data.find(x => x === this.action.insert) !== undefined 
+        this.allowInsertPurchaseReceive = response.data.some(x => x)
       })
-    auth.getAction(this.endpoint, this.menuId.purchaseInvoice, [this.action.insert])
+    auth.getAction(this.endpoint, this.menuId.purchaseInvoice, [1])
       .then((response) => {
-        this.allowInsertPurchaseInvoice = response.data.find(x => x === this.action.insert) !== undefined 
+        this.allowInsertPurchaseInvoice = response.data.some(x => x)
       })
     this.$store.commit('app/setFilterFields', this.filterFields)
   },
@@ -1026,7 +1026,6 @@ export default {
       endpoint: state => state.api.endpoint,
       filter: state => state.app.filter,
       auth: state => state.api.authorization,
-      action: state => state.api.action,
       menuId: state => state.api.menus
     }),
     theme() {

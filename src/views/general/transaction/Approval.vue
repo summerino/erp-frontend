@@ -174,7 +174,6 @@ export default {
       endpoint: state => state.api.endpoint,
       filter: state => state.app.filter,
       auth: state => state.api.authorization,
-      action: state => state.api.action,
       menuId: state => state.api.menus
     }),
     allowApprove() {

@@ -960,7 +960,7 @@ export default {
     this.getTaxLists()
     this.getItemLists()
     this.defineAction()
-    auth.getAction(this.endpoint, this.menuId.directInvoice, [this.action.insert, this.action.update, this.action.void, this.action.changeWarehouse, this.action.changeDate])
+    auth.getAction(this.endpoint, this.menuId.directInvoice)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -975,7 +975,6 @@ export default {
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
       auth: state => state.api.authorization,
-      action: state => state.api.action,
       menuId: state => state.api.menus
     }),
     theme() {

@@ -613,13 +613,13 @@ export default {
     this.getList()
     this.getSystemParameter()
     this.getCustomerLists()
-    auth.getAction(this.endpoint, this.menuId.creditMemo, [this.action.insert, this.action.update, this.action.void, this.action.changeDate])
+    auth.getAction(this.endpoint, this.menuId.creditMemo)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
-    auth.getAction(this.endpoint, this.menuId.cashBank, [this.action.insert])
+    auth.getAction(this.endpoint, this.menuId.cashBank, [1])
       .then((response) => {
-        this.allowInsertCashBank = response.data.find(x => x === this.action.insert) !== undefined
+        this.allowInsertCashBank = response.data.find(x => x)
       })
     this.$store.commit('app/setFilterFields', this.filterFields)
   },
@@ -651,7 +651,6 @@ export default {
       endpoint: state => state.api.endpoint,
       filter: state => state.app.filter,
       auth: state => state.api.authorization,
-      action: state => state.api.action,
       menuId: state => state.api.menus
     }),
     theme() {

@@ -841,7 +841,7 @@ export default {
     this.getList()
     this.getSystemParameter()
     this.getArea()
-    auth.getAction(this.endpoint, this.menuId.visitOrder, [this.action.insert, this.action.update, this.action.void])
+    auth.getAction(this.endpoint, this.menuId.visitOrder)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -877,7 +877,6 @@ export default {
       endpoint: state => state.api.endpoint,
       filter: state => state.app.filter,
       auth: state => state.api.authorization,
-      action: state => state.api.action,
       menuId: state => state.api.menus
     }),
     theme() {

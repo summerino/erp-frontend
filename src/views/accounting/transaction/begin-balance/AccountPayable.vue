@@ -394,7 +394,7 @@ export default {
     this.getList()
     this.getSystemParameter()
     this.getSupplierLists()
-    auth.getAction(this.endpoint, this.menuId.bbAccountPayable, [this.action.insert, this.action.update, this.action.delete])
+    auth.getAction(this.endpoint, this.menuId.bbAccountPayable)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -432,7 +432,6 @@ export default {
       endpoint: state => state.api.endpoint,
       filter: state => state.app.filter,
       auth: state => state.api.authorization,
-      action: state => state.api.action,
       menuId: state => state.api.menus
     }),
     formatDate() {

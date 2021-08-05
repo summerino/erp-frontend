@@ -99,7 +99,7 @@ export default {
   created: function () {
     this.data.date = format(new Date(), 'yyyy-MM')
     
-    auth.getAction(this.endpoint, this.menuId.postingJournal, [this.action.post])
+    auth.getAction(this.endpoint, this.menuId.postingJournal)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -122,7 +122,6 @@ export default {
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
       auth: state => state.api.authorization,
-      action: state => state.api.action,
       menuId: state => state.api.menus
     }),
     formatDate() {

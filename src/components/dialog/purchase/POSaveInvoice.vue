@@ -170,6 +170,7 @@ export default {
       invDate: false,
       invDueDate: false
     },
+    valid: false,
     fromOrder: false
   }),
   computed: {

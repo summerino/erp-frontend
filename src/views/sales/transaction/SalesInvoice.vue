@@ -880,7 +880,7 @@ export default {
     this.getSystemParameter()
     this.getEmployeeLists()
     this.getPaymentTermLists()
-    auth.getAction(this.endpoint, this.menuId.salesInvoice, [this.action.insert, this.action.update, this.action.void, this.action.changeDate])
+    auth.getAction(this.endpoint, this.menuId.salesInvoice)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -918,7 +918,6 @@ export default {
       endpoint: state => state.api.endpoint,
       filter: state => state.app.filter,
       auth: state => state.api.authorization,
-      action: state => state.api.action,
       menuId: state => state.api.menus
     }),
     theme() {

@@ -292,7 +292,7 @@ export default {
 
   created: function () {
     this.getList()
-    auth.getAction(this.endpoint, this.menuId.companyProfile, [this.action.update])
+    auth.getAction(this.endpoint, this.menuId.companyProfile)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -326,7 +326,6 @@ export default {
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
       auth: state => state.api.authorization,
-      action: state => state.api.action,
       menuId: state => state.api.menus
     }),
     formatPkpDate() {

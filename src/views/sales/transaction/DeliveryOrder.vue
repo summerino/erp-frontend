@@ -780,13 +780,14 @@ export default {
     this.getEmployeeLists()
     this.getWarehouseLists()
     this.getTaxLists()
-    auth.getAction(this.endpoint, this.menuId.salesDelivery, [this.action.insert, this.action.update, this.action.void, this.action.changeWarehouse, this.action.changeDate])
+    auth.getAction(this.endpoint, this.menuId.salesDelivery)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
-    auth.getAction(this.endpoint, this.menuId.salesInvoice, [this.action.insert])
+    auth.getAction(this.endpoint, this.menuId.salesInvoice, [1])
       .then((response) => {
-        this.allowInsertSalesInvoice = response.data.find(x => x === this.action.insert) !== undefined 
+        console.log(response.data.some(x => x))
+        this.allowInsertSalesInvoice = response.data.some(x => x)
       })
     this.$store.commit('app/setFilterFields', this.filterfields)
   },
@@ -822,7 +823,6 @@ export default {
       endpoint: state => state.api.endpoint,
       filter: state => state.app.filter,
       auth: state => state.api.authorization,
-      action: state => state.api.action,
       menuId: state => state.api.menus
     }),
     theme() {

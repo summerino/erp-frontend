@@ -818,7 +818,7 @@ export default {
     this.getSupplierLists()
     this.getAssetType()
     this.getCOAList()
-    auth.getAction(this.endpoint, this.menuId.fixedAsset, [this.action.insert, this.action.update, this.action.void, this.action.close])
+    auth.getAction(this.endpoint, this.menuId.fixedAsset)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -854,7 +854,6 @@ export default {
       endpoint: state => state.api.endpoint,
       filter: state => state.app.filter,
       auth: state => state.api.authorization,
-      action: state => state.api.action,
       menuId: state => state.api.menus
     }),
     theme() {
