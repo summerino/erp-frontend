@@ -174,14 +174,14 @@
         <template v-slot:[`item.fromDirectInvoice`]="{ item }">
           {{ item.fromDirectInvoice ? 'Penjualan Langsung' : 'Faktur Penjualan' }}
         </template>
+        <template v-slot:[`item.total`]="{ item }">
+          {{ item.total | formatCurrency }}
+        </template>
         <template v-slot:[`item.paidAmount`]="{ item }">
           {{ item.paidAmount | formatCurrency }}
         </template>
         <template v-slot:[`item.remaining`]="{ item }">
           {{ item.remaining | formatCurrency }}
-        </template>
-        <template v-slot:[`item.total`]="{ item }">
-          {{ item.total | formatCurrency }}
         </template>
         <template v-slot:[`item.dueDate`]="{ item }">
           {{ item.dueDate | formatDate('dd-MMM-yyyy') }}
@@ -785,7 +785,7 @@ export default {
   },
 
   data: () => ({
-    filterfields: [{
+    filterFields: [{
       text: 'Kode', value: 'code', dataType: 'text'
     }, {
       text: 'Tanggal', value: 'date', dataType: 'datetime'
@@ -831,9 +831,9 @@ export default {
         { text: 'Tipe', value: 'fromDirectInvoice', divider: true, width: '170', excelColWidth:'20', isBool: true, customValues: [{state: true, value: 'Penjualan Langsung'}, {state: false, value: 'Faktur Penjualan'}] },
         { text: 'Pelanggan', value: 'custName', divider: true, width: '270', excelColWidth:'35', customValues: ['custCode', 'custName'] },
         { text: 'Kd. Ord. Penjualan', value: 'soCode', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
         { text: 'Nilai Sudah Dibayar', value: 'paidAmount', align: 'right', divider: true, width: '120', excelColWidth:'15' },
         { text: 'Sisa', value: 'remaining', align: 'right', divider: true, width: '120', excelColWidth:'15' },
-        { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
         { text: 'Dikeluarkan Oleh', value: 'issuedInitial', divider: true, width: '180', excelColWidth:'23' },
         { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'20', isDateTime: true },
         { text: 'Status', value: 'mark', width: '50' }
@@ -884,7 +884,7 @@ export default {
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
-    this.$store.commit('app/setFilterFields', this.filterfields)
+    this.$store.commit('app/setFilterFields', this.filterFields)
   },
 
   mounted: function () {

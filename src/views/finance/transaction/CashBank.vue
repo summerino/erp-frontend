@@ -575,7 +575,7 @@
     <confirm ref="confirm"></confirm>
     <detail-cash-bank
       ref="detailCashBank"
-      :cashBankCode="data.code"
+      :cb-code="data.code"
       @saveItem="saveItem"
     ></detail-cash-bank>
   </div>

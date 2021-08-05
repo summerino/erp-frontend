@@ -141,6 +141,12 @@
         <template v-slot:[`item.amount`]="{ item }">
           {{ item.amount | formatCurrency }}
         </template>
+        <template v-slot:[`item.paidAmount`]="{ item }">
+          {{ item.paidAmount | formatCurrency }}
+        </template>
+        <template v-slot:[`item.remaining`]="{ item }">
+          {{ item.remaining | formatCurrency }}
+        </template>
       </v-data-table>
     </v-card>
 
@@ -612,16 +618,14 @@ export default {
     ExportExcel
   },
   data: () => ({
-    filterfields: [{
+    filterFields: [{
       text: 'Kode', value: 'code', dataType: 'text'
     }, {
       text: 'Tanggal', value: 'date', dataType: 'datetime'
     }, {
       text: 'Tgl. Jatuh Tempo', value: 'dueDate', dataType: 'datetime'
     }, {
-      text: 'Pemasok', value: 'supplierInitial', dataType: 'text'
-    }, {
-      text: 'Nilai', value: 'amount', dataType: 'text'
+      text: 'Pemasok', value: 'supInitial', dataType: 'text'
     }],
     dialog: {
       add: false
@@ -640,8 +644,10 @@ export default {
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'18' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
-        { text: 'Pemasok', value: 'supplierInitial', divider: true, width: '200', excelColWidth:'35' },        
+        { text: 'Pemasok', value: 'supInitial', divider: true, width: '200', excelColWidth:'35' },        
         { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
+        { text: 'Nilai Sudah Dibayar', value: 'paidAmount', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
+        { text: 'Sisa', value: 'remaining', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
@@ -680,7 +686,7 @@ export default {
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
-    this.$store.commit('app/setFilterFields', this.filterfields)
+    this.$store.commit('app/setFilterFields', this.filterFields)
   },
 
   mounted: function () {

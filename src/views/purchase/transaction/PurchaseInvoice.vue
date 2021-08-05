@@ -117,14 +117,14 @@
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
+        <template v-slot:[`item.total`]="{ item }">
+          {{ item.total | formatCurrency }}
+        </template>
         <template v-slot:[`item.paidAmount`]="{ item }">
           {{ item.paidAmount | formatCurrency }}
         </template>
         <template v-slot:[`item.remaining`]="{ item }">
           {{ item.remaining | formatCurrency }}
-        </template>
-        <template v-slot:[`item.total`]="{ item }">
-          {{ item.total | formatCurrency }}
         </template>
         <template v-slot:[`item.dueDate`]="{ item }">
           {{ item.dueDate | formatDate('dd-MMM-yyyy') }}
@@ -755,7 +755,7 @@ export default {
   },
 
   data: () => ({
-    filterfields: [{
+    filterFields: [{
       text: 'Kode', value: 'code', dataType: 'text'
     }, {
       text: 'Tanggal', value: 'date', dataType: 'datetime'
@@ -788,9 +788,9 @@ export default {
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
         { text: 'Kd. Ord. Pembelian', value: 'poCode', divider: true, width: '150', excelColWidth:'18', isNumber: true },
+        { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15' },
         { text: 'Nilai Sudah Dibayar', value: 'paidAmount', align: 'right', divider: true, width: '120', excelColWidth:'15' },
         { text: 'Sisa', value: 'remaining', align: 'right', divider: true, width: '120', excelColWidth:'15' },
-        { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15' },
         { text: 'Dikeluarkan Oleh', value: 'issuedInitial', divider: true, width: '200', excelColWidth:'23' },
         { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'No. Ref.', value: 'refNo', width: '120', excelColWidth:'15' },
@@ -840,7 +840,7 @@ export default {
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
-    this.$store.commit('app/setFilterFields', this.filterfields)
+    this.$store.commit('app/setFilterFields', this.filterFields)
   },
 
   mounted: function () {
