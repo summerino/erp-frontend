@@ -6,6 +6,7 @@ import currency from './currency'
 import endpoint from './endpoint'
 import filter from './filter'
 import menus from './menus'
+import action from './action'
 
 export default {
   // product display information
@@ -34,6 +35,9 @@ export default {
   
   // filter config
   filter,
+
+  // action configs
+  action,
 
   // menu config
   menus

@@ -57,7 +57,8 @@ export default {
     plan: 'delivery-plan',
     creditMemo: 'credit-memo',
     visitPlan: 'visit-plan',
-    visitOrder: 'visit-order'
+    visitOrder: 'visit-order',
+    arReport: 'ar-report'
   },
 
   finance: {
@@ -85,7 +86,8 @@ export default {
     user: 'user',
     role: 'role',
     parameter: 'system-parameter',
-    menu: 'menu'
+    menu: 'menu',
+    action: 'action'
   },
   
   assetManagement: {

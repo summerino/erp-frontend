@@ -54,7 +54,7 @@
                   tile
                   @click="add"
                   @shortkey="add"
-                  :disabled="!auth.allowInsert"
+                  :disabled="!auth.allowCreate"
                 >
                   <v-icon left>mdi-plus</v-icon>
                   Data Baru
@@ -640,7 +640,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid || hasRelatedTrans || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
+                                :disabled="isVoid || hasRelatedTrans || (!auth.allowCreate && (data.action === 'edit' && !auth.allowUpdate))"
                                 class="blue--text"
                                 small
                                 tile
@@ -1982,11 +1982,28 @@ export default {
                 } else if (dataPromo[i].itemDetails[j].promoType === 2) {
                   // Apply to Barang - Promo Method Qty Barang
                   const tierData = dataPromo[i].itemDetails[j].promoTierList.find(x => gridData[k].qty >= x.fromQty && gridData[k].qty <= x.toQty)
-                  if (dataPromo[i].itemDetails[j].isPercentage) {
-                    if (tierData.applyToAllunit) {
-                      const promoUnit = gridData[k].units.find(x => x.id === tierData.saleUnit)
-                      const itemUnit = gridData[k].units.find(x => x.id === gridData[k].unitId)
-                      if (itemUnit.seq >= promoUnit.seq) {
+                  if (tierData) {
+                    if (dataPromo[i].itemDetails[j].isPercentage) {
+                      if (tierData.applyToAllUnit) {
+                        const promoUnit = gridData[k].units.find(x => x.id === tierData.saleUnit)
+                        const itemUnit = gridData[k].units.find(x => x.id === gridData[k].unitId)
+                        if (itemUnit.seq >= promoUnit.seq) {
+                          totalDisc += gridData[k].unitPrice * (tierData.value / 100)
+                          discPromo.push({
+                            id: randomNumber(-1, -1000),
+                            promoDetailId: dataPromo[i].itemDetails[j].id,
+                            promoCode: dataPromo[i].code,
+                            name: dataPromo[i].name, 
+                            promoMethod: 1, 
+                            value: tierData.value, 
+                            nettPrice: 0, 
+                            coaCode: dataPromo[i].coaCost, 
+                            amount: totalDisc, 
+                            fromPromo: true, 
+                            isPercentage: dataPromo[i].itemDetails[j].isPercentage
+                          })
+                        }
+                      } else if (gridData[k].unitId === tierData.saleUnit) {
                         totalDisc += gridData[k].unitPrice * (tierData.value / 100)
                         discPromo.push({
                           id: randomNumber(-1, -1000),
@@ -2002,26 +2019,26 @@ export default {
                           isPercentage: dataPromo[i].itemDetails[j].isPercentage
                         })
                       }
+                    } else if (tierData.applyToAllUnit) {
+                      const promoUnit = gridData[k].units.find(x => x.id === tierData.saleUnit)
+                      const itemUnit = gridData[k].units.find(x => x.id === gridData[k].unitId)
+                      if (itemUnit.seq >= promoUnit.seq) {
+                        totalDisc += tierData.value
+                        discPromo.push({
+                          id: randomNumber(-1, -1000),
+                          promoDetailId: dataPromo[i].itemDetails[j].id,
+                          promoCode: dataPromo[i].code,
+                          name: dataPromo[i].name, 
+                          promoMethod: 2, 
+                          value: tierData.value, 
+                          nettPrice: 0, 
+                          coaCode: dataPromo[i].coaCost, 
+                          amount: totalDisc, 
+                          fromPromo: true, 
+                          isPercentage: dataPromo[i].itemDetails[j].isPercentage
+                        })
+                      }
                     } else if (gridData[k].unitId === tierData.saleUnit) {
-                      totalDisc += gridData[k].unitPrice * (tierData.value / 100)
-                      discPromo.push({
-                        id: randomNumber(-1, -1000),
-                        promoDetailId: dataPromo[i].itemDetails[j].id,
-                        promoCode: dataPromo[i].code,
-                        name: dataPromo[i].name, 
-                        promoMethod: 1, 
-                        value: tierData.value, 
-                        nettPrice: 0, 
-                        coaCode: dataPromo[i].coaCost, 
-                        amount: totalDisc, 
-                        fromPromo: true, 
-                        isPercentage: dataPromo[i].itemDetails[j].isPercentage
-                      })
-                    }
-                  } else if (tierData.applyToAllunit) {
-                    const promoUnit = gridData[k].units.find(x => x.id === tierData.saleUnit)
-                    const itemUnit = gridData[k].units.find(x => x.id === gridData[k].unitId)
-                    if (itemUnit.seq >= promoUnit.seq) {
                       totalDisc += tierData.value
                       discPromo.push({
                         id: randomNumber(-1, -1000),
@@ -2037,21 +2054,6 @@ export default {
                         isPercentage: dataPromo[i].itemDetails[j].isPercentage
                       })
                     }
-                  } else if (gridData[k].unitId === tierData.saleUnit) {
-                    totalDisc += tierData.value
-                    discPromo.push({
-                      id: randomNumber(-1, -1000),
-                      promoDetailId: dataPromo[i].itemDetails[j].id,
-                      promoCode: dataPromo[i].code,
-                      name: dataPromo[i].name, 
-                      promoMethod: 2, 
-                      value: tierData.value, 
-                      nettPrice: 0, 
-                      coaCode: dataPromo[i].coaCost, 
-                      amount: totalDisc, 
-                      fromPromo: true, 
-                      isPercentage: dataPromo[i].itemDetails[j].isPercentage
-                    })
                   }
                 } else if (dataPromo[i].itemDetails[j].promoType === 3) {
                   // Apply to Barang - Promo Method Bonus
@@ -2187,36 +2189,38 @@ export default {
                 } else if (dataPromo[i].itemDetails[j].promoType === 2) {
                   // Apply to Kategori Barang - Promo Method Qty Barang
                   const tierData = dataPromo[i].itemDetails[j].promoTierList.find(x => gridData[k].qty >= x.fromQty && gridData[k].qty <= x.toQty)
-                  if (dataPromo[i].itemDetails[j].isPercentage) {
-                    totalDisc += gridData[k].unitPrice * (tierData.value / 100)
-                    discPromo.push({
-                      id: randomNumber(-1, -1000),
-                      promoDetailId: dataPromo[i].itemDetails[j].id,
-                      promoCode: dataPromo[i].code, 
-                      name: dataPromo[i].name, 
-                      promoMethod: 1, 
-                      value: tierData.value, 
-                      nettPrice: 0, 
-                      coaCode: dataPromo[i].coaCost, 
-                      amount: totalDisc, 
-                      fromPromo: true, 
-                      isPercentage: dataPromo[i].itemDetails[j].isPercentage
-                    })
-                  } else {
-                    totalDisc += tierData.value
-                    discPromo.push({
-                      id: randomNumber(-1, -1000),
-                      promoDetailId: dataPromo[i].itemDetails[j].id,
-                      promoCode: dataPromo[i].code,
-                      name: dataPromo[i].name, 
-                      promoMethod: 2, 
-                      value: tierData.value, 
-                      nettPrice: 0, 
-                      coaCode: dataPromo[i].coaCost, 
-                      amount: totalDisc, 
-                      fromPromo: true, 
-                      isPercentage: dataPromo[i].itemDetails[j].isPercentage
-                    })
+                  if (tierData) {
+                    if (dataPromo[i].itemDetails[j].isPercentage) {
+                      totalDisc += gridData[k].unitPrice * (tierData.value / 100)
+                      discPromo.push({
+                        id: randomNumber(-1, -1000),
+                        promoDetailId: dataPromo[i].itemDetails[j].id,
+                        promoCode: dataPromo[i].code, 
+                        name: dataPromo[i].name, 
+                        promoMethod: 1, 
+                        value: tierData.value, 
+                        nettPrice: 0, 
+                        coaCode: dataPromo[i].coaCost, 
+                        amount: totalDisc, 
+                        fromPromo: true, 
+                        isPercentage: dataPromo[i].itemDetails[j].isPercentage
+                      })
+                    } else {
+                      totalDisc += tierData.value
+                      discPromo.push({
+                        id: randomNumber(-1, -1000),
+                        promoDetailId: dataPromo[i].itemDetails[j].id,
+                        promoCode: dataPromo[i].code,
+                        name: dataPromo[i].name, 
+                        promoMethod: 2, 
+                        value: tierData.value, 
+                        nettPrice: 0, 
+                        coaCode: dataPromo[i].coaCost, 
+                        amount: totalDisc, 
+                        fromPromo: true, 
+                        isPercentage: dataPromo[i].itemDetails[j].isPercentage
+                      })
+                    }
                   }
                 } else if (dataPromo[i].itemDetails[j].promoType === 3) {
                   // Apply to Kategori Barang - Promo Method Bonus
