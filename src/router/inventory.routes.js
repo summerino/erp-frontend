@@ -54,4 +54,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/inventory/report/stock-mutation-report',
+  name: 'stock-mutation-report',
+  component: () => import(/* webpackChunkName: "inventory-report-stock-mutation-report" */ '@/views/inventory/report/SMReport.vue'),
+  meta: {
+    authRequired: true
+  }
 }]

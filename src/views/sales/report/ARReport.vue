@@ -79,7 +79,7 @@
             </v-row>
             <v-row v-else no-gutters>
               <v-col cols="12" md="6">
-                Laporan Piutang - Detail Berdasarkan Pelanggan - {{ this.data.custInitial }} - {{ this.data.custName }} ( {{ this.data.custCode }} )
+                Laporan Piutang - Detail Berdasarkan Pelanggan - {{ this.data.custInitial }} - {{ this.data.custName }} ({{ this.data.custCode }})
               </v-col>
               <v-col cols="12" md="6" class="text-right">
                 <v-tooltip bottom>
@@ -135,6 +135,7 @@
                       label="Sampai Tanggal"
                       class="mt-0"
                       dense
+                      readonly
                     ></v-text-field>
                   </template>
                   <v-date-picker
@@ -188,6 +189,7 @@
             class="elevation-1"
             fixed-header
             hide-default-footer
+            disable-pagination
             @dblclick:row="dblclickRow"
           >
           <template v-slot:[`item.slsName`]="{ item }">
@@ -241,8 +243,7 @@ export default {
         sortBy: ['code'],
         sortDesc: [false]
       },
-      total: 0,
-      search: null
+      total: 0
     },
     filter: false,
     custColumn: [
@@ -340,7 +341,6 @@ export default {
       
       api.getAll(this.endpoint.sales.arReport, {
         params: {
-          search: this.grid.search,
           type: this.data.type,
           date: this.data.date,
           custCode: this.data.customer,

@@ -6,7 +6,7 @@
           <v-card-title class="indigo--text text--lighten-2 pb-1">
             <v-row v-if="main" no-gutters>
               <v-col cols="12" md="6">
-                Laporan Hutang
+                Laporan Stok Mutasi
               </v-col>
               <v-col cols="12" md="6" class="text-right">
                 <v-tooltip bottom>
@@ -47,7 +47,7 @@
                       <v-list class="cursor-pointer">
                         <v-list-item>
                           <v-list-item-title>
-                            <export-excel title="Daftar Laporan Hutang" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+                            <export-excel title="Daftar Laporan Stok Mutasi" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
                           </v-list-item-title>
                         </v-list-item>
                       </v-list>
@@ -79,7 +79,7 @@
             </v-row>
             <v-row v-else no-gutters>
               <v-col cols="12" md="6">
-                Laporan Hutang - Detail Berdasarkan Pemasok - {{ this.data.supInitial }} - {{ this.data.supName }} ({{ this.data.supCode }})
+                Laporan Stok Mutasi - Detail Berdasarkan {{ this.data.filterName }} - {{ this.data.itemInitial }} - {{ this.data.itemName }}
               </v-col>
               <v-col cols="12" md="6" class="text-right">
                 <v-tooltip bottom>
@@ -119,9 +119,9 @@
                 >
                 </v-autocomplete>
               </v-col>
-              <v-col cols="12" md="4" class="pl-1">
+              <v-col cols="12" md="2" class="pl-1">
                 <v-menu
-                  v-model="menu.date"
+                  v-model="menu.startDate"
                   :close-on-content-click="false"
                   transition="scale-transition"
                   min-width="290px"
@@ -131,32 +131,69 @@
                     <v-text-field
                       v-bind="attrs"
                       v-on="on"
-                      :value="formatDate"
-                      label="Sampai Tanggal"
+                      :value="formatStartDate"
+                      label="Tanggal Mulai"
                       class="mt-0"
                       dense
-                      readonly
                     ></v-text-field>
                   </template>
                   <v-date-picker
-                    v-model="data.date"
+                    v-model="data.startDate"
                     no-title
                     scrollable
-                    @change="menu.date = false"
+                    @change="menu.startDate = false"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
-              <v-col cols="12" md="4" class="pl-1">
+              <v-col cols="12" md="2" class="pl-1">
+                <v-menu
+                  v-model="menu.endDate"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  min-width="290px"
+                  offset-y
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-bind="attrs"
+                      v-on="on"
+                      :value="formatEndDate"
+                      label="Tanggal Akhir"
+                      class="mt-0"
+                      dense
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="data.endDate"
+                    no-title
+                    scrollable
+                    @change="menu.endDate = false"
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-col cols="12" md="2" class="pl-1">
                 <v-autocomplete
-                  v-model="data.supplier"
-                  :items="suppliers"
+                  v-model="data.itemId"
+                  :items="items"
                   :item-text="item => `${item.initial} - ${item.name}`"
-                  label="Pemasok"
-                  item-value="code"
+                  label="Barang"
+                  item-value="id"
                   class="mt-0"
                   dense
                   clearable
                 ></v-autocomplete>
+              </v-col>
+              <v-col cols="12" md="2" class="pl-1">
+                <v-autocomplete
+                  v-model="data.typeUnit"
+                  :items="typeUnits"                  
+                  label="Satuan"
+                  item-text="name"
+                  item-value="id"
+                  class="mt-0"
+                  dense
+                >
+                </v-autocomplete>
               </v-col>
             </v-row>
           </v-card-text>
@@ -183,18 +220,6 @@
           <template v-slot:[`item.date`]="{ item }">
             {{ item.date | formatDate('dd-MMM-yyyy') }}
           </template>
-          <template v-slot:[`item.dueDate`]="{ item }">
-            {{ item.dueDate | formatDate('dd-MMM-yyyy') }}
-          </template>
-          <template v-slot:[`item.totalAmount`]="{ item }">
-            {{ item.totalAmount | formatCurrency }}
-          </template>
-          <template v-slot:[`item.paidAmount`]="{ item }">
-            {{ item.paidAmount | formatCurrency }}
-          </template>
-          <template v-slot:[`item.remainderAmount`]="{ item }">
-            {{ item.remainderAmount | formatCurrency }}
-          </template>
           </v-data-table>
         </v-card>
       </v-col> 
@@ -219,46 +244,55 @@ export default {
   data: () => ({
     main: true,
     menu: {
-      date: false
+      startDate: false,
+      endDate: false
     },
     grid: {
       columns: [],
       data: [],
       options: {
-        sortBy: ['code'],
+        sortBy: ['initial'],
         sortDesc: [false]
       },
-      total: 0
+      total: 0,
+      search: null
     },
     filter: false,
-    supColumn: [
+    whColumn: [
       { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nama', value: 'name', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Jumlah Transaksi', value: 'totalTrans', align: 'right', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nilai Transaksi', value: 'totalAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Nilai Bayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Sisa', value: 'remainderAmount', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
+      { text: 'Inisial', value: 'initial', divider: true, width: '100', excelColWidth:'20'},
+      { text: 'Nama', value: 'name', divider: true, width: '100', excelColWidth:'20'},
+      { text: 'Qty Awal', value: 'qtyBegin', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Qty Masuk', value: 'qtyIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Qty Keluar', value: 'qtyOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Qty Akhir', value: 'qtyEnd', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
     ],
-    rcvColumn: [
-      { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true },
-      { text: 'Tanggal Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true },
-      { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Sumber', value: 'srcCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Faktur', value: 'invCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Pemasok', value: 'supCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nama Pemasok', value: 'supName', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nilai Transaksi', value: 'totalAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Nilai Bayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Sisa', value: 'remainderAmount', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
+    itemColumn: [
+      { text: 'Inisial', value: 'initial', divider: true, width: '100', excelColWidth:'20'},
+      { text: 'Nama', value: 'name', divider: true, width: '100', excelColWidth:'20'},
+      { text: 'Satuan', value: 'unit', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Qty Awal', value: 'qtyBegin', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Qty Masuk', value: 'qtyIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Qty Keluar', value: 'qtyOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Qty Akhir', value: 'qtyEnd', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
     ],
-    types: [{ id: 1, name: 'Berdasarkan Penerimaan' }, { id: 2, name: 'Berdasarkan Pemasok' }],
-    suppliers: [],
+    smColumn: [
+      { text: 'Tgl. Transaksi', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true},
+      { text: 'Kode Transaksi', value: 'transCode', divider: true, width: '100', excelColWidth:'20'},
+      { text: 'Tipe Transaksi', value: 'srcTrans', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Qty Masuk', value: 'qtyIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Qty Keluar', value: 'qtyOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Qty Akhir', value: 'qtyEnd', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
+    ],
+    types: [{ id: 1, name: 'Berdasarkan Barang' }, { id: 2, name: 'Berdasarkan Gudang' }],
+    typeUnits: [{ id: 1, name: 'Satuan Terkecil' }, { id: 2, name: 'Satuan Beli' }, { id: 3, name: 'Satuan Jual' }],
+    items: [],
     data: {}  
   }),
 
   created: function () {
     this.reset()
-    this.getSupplierLists()
+    this.getItemLists()
     this.getList()
     auth.getAction(this.endpoint, this.menuId.apReport)
       .then((response) => {
@@ -294,10 +328,14 @@ export default {
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
       auth: state => state.api.authorization,
+      action: state => state.api.action,
       menuId: state => state.api.menus
     }),
-    formatDate() {
-      return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
+    formatStartDate() {
+      return this.data.startDate ? format(parseISO(this.data.startDate), 'dd-MMM-yyyy') : ''
+    },
+    formatEndDate() {
+      return this.data.endDate ? format(parseISO(this.data.endDate), 'dd-MMM-yyyy') : ''
     }
   },
   
@@ -305,10 +343,15 @@ export default {
     reset() {
       this.data = {        
         type: 1,
-        date: format(new Date(), 'yyyy-MM-dd'),
-        supplier: null
+        startDate: format(new Date(), 'yyyy-MM-dd'),
+        endDate: null,
+        whCode: null,
+        itemId: null,
+        typeUnit: 2,
+        isSM: false
       }
       this.filter = true
+      this.grid.columns = this.data.type === 1 ? this.itemColumn : this.whColumn
     },
     getList() {
       const sorts = []
@@ -318,14 +361,18 @@ export default {
           direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
         })
       }
-
-      this.grid.columns = this.data.type === 1 ? this.rcvColumn : this.supColumn
       
-      api.getAll(this.endpoint.purchase.apReport, {
+      this.grid.columns = this.data.type === 1 ? this.itemColumn : this.whColumn
+      
+      api.getAll(this.endpoint.inventory.smReport, {
         params: {
           type: this.data.type,
-          date: this.data.date,
-          supCode: this.data.supplier,
+          startDate: this.data.startDate,
+          endDate: this.data.endDate,
+          whCode: this.data.whCode,
+          itemId: this.data.itemId,
+          typeUnit: this.data.typeUnit,
+          isSM: this.data.isSM,
           sorts: JSON.stringify(sorts)
         }
       })
@@ -336,6 +383,7 @@ export default {
     },
     back() {
       this.reset()
+      this.grid.options.sortBy = ['initial']
       this.main = true
     },
     showfilter() {
@@ -344,28 +392,25 @@ export default {
     async exportExcel() {
       this.exportExcel.export()
     },
-    getSupplierLists() {
-      api.getAll(`${this.endpoint.general.supplier.supplier}/lists`, {
-        params: {
-          sorts: JSON.stringify([{
-            field: 'initial',
-            direction: 'asc'
-          }])
-        }
-      })
+    getItemLists() {
+      api.getAll(this.endpoint.inventory.item.item)  
         .then(response => {
-          this.suppliers = response.data.tableData
+          this.items = response.data.tableData
         })
     },
     dblclickRow(event, { item }) {
-      if (this.data.type === 2) {
-        this.data.supCode = item.code
-        this.data.supInitial = item.initial
-        this.data.supName = item.name
+      if (this.data.type === 1) {
+        this.data.filterName = 'Barang'
+        this.data.itemInitial = item.initial
+        this.data.itemName = item.name
         this.data.type = 1
+        this.data.itemId = item.id
+        this.data.isSM = true
         this.filter = false
+        this.grid.options.sortBy = ['date']
         this.getList()
         this.main = false
+        this.grid.columns = this.smColumn
       }
     }
   }
