@@ -23,7 +23,7 @@
                       @click="getList"
                       @shortkey="getList"
                     >
-                      <v-icon left>mdi-magnify-plus-outline</v-icon>
+                      <v-icon left>mdi-magnify</v-icon>
                       Cari Berdasarkan Filter
                     </v-btn>
                     <v-menu
@@ -47,7 +47,7 @@
                       <v-list class="cursor-pointer">
                         <v-list-item>
                           <v-list-item-title>
-                            <export-excel title="Daftar Laporan Piutang" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+                            <export-excel title="Daftar Laporan Piutang" :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
                           </v-list-item-title>
                         </v-list-item>
                       </v-list>
@@ -270,7 +270,17 @@ export default {
     types: [{ id: 1, name: 'Berdasarkan Surat Jalan / Penjualan Langsung' }, { id: 2, name: 'Berdasarkan Pelanggan' }],
     customers: [],
     salesman: [],
-    data: {}  
+    data: {},
+    exportFilter:{
+      fields : [
+        {text: 'Tipe Laporan', value: 'type'},
+        {text: 'Sampai Tanggal', value: 'date'},
+        {text: 'Pelanggan', value: 'customer'},
+        {text: 'Penjual', value: 'sales'}
+      ],
+      operator: [{ text: 'Sama dgn.', value: 'eq'}],
+      searches: []
+    }  
   }),
 
   created: function () {
@@ -351,6 +361,7 @@ export default {
         .then(response => {
           this.grid.data = response.data.tableData
           this.grid.total = response.data.rowCount
+          this.appendFilter()
         })
     },
     back() {
@@ -403,6 +414,50 @@ export default {
         this.filter = false
         this.getList()
         this.main = false
+      }
+    },
+    appendFilter() {
+      this.exportFilter.searches = []
+      const searchType = {
+        field: 'type',
+        keyword: '',
+        operator: 'eq'
+      }
+      const searchDate = {
+        field: 'date',
+        keyword: '',
+        operator: 'eq'
+      }
+
+      const report = this.types.find(x => x.id === this.data.type)
+      searchType.keyword = report.name
+      this.exportFilter.searches.push(searchType)
+
+      searchDate.keyword = this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
+      this.exportFilter.searches.push(searchDate)
+
+      const cust = this.customers.find(x => x.code === this.data.customer)
+      if (cust) {
+        const searchCust = {
+          field: '',
+          keyword: '',
+          operator: 'eq'
+        }
+        searchCust.field = 'customer'
+        searchCust.keyword = cust.name
+        this.exportFilter.searches.push(searchCust)
+      }
+
+      const sls = this.salesman.find(x => x.id === this.data.sales)
+      if (sls) {
+        const searchSls = {
+          field: '',
+          keyword: '',
+          operator: 'eq'
+        }
+        searchSls.field = 'sales'
+        searchSls.keyword = sls.firstName
+        this.exportFilter.searches.push(searchSls)
       }
     }
   }

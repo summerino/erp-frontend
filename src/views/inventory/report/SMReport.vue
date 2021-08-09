@@ -6,7 +6,7 @@
           <v-card-title class="indigo--text text--lighten-2 pb-1">
             <v-row v-if="main" no-gutters>
               <v-col cols="12" md="6">
-                Laporan Stok Mutasi
+                Laporan Mutasi Stok
               </v-col>
               <v-col cols="12" md="6" class="text-right">
                 <v-tooltip bottom>
@@ -23,7 +23,7 @@
                       @click="getList"
                       @shortkey="getList"
                     >
-                      <v-icon left>mdi-magnify-plus-outline</v-icon>
+                      <v-icon left>mdi-magnify</v-icon>
                       Cari Berdasarkan Filter
                     </v-btn>
                     <v-menu
@@ -47,7 +47,7 @@
                       <v-list class="cursor-pointer">
                         <v-list-item>
                           <v-list-item-title>
-                            <export-excel title="Daftar Laporan Stok Mutasi" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+                            <export-excel title="Daftar Laporan Mutasi Stok" :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
                           </v-list-item-title>
                         </v-list-item>
                       </v-list>
@@ -79,7 +79,7 @@
             </v-row>
             <v-row v-else no-gutters>
               <v-col cols="12" md="6">
-                Laporan Stok Mutasi - Detail Berdasarkan {{ this.data.filterName }} - {{ this.data.itemInitial }} - {{ this.data.itemName }}
+                Laporan Mutasi Stok - Detail Berdasarkan {{ this.data.filterName }} - {{ this.data.initial }} - {{ this.data.name }}
               </v-col>
               <v-col cols="12" md="6" class="text-right">
                 <v-tooltip bottom>
@@ -135,6 +135,7 @@
                       label="Tanggal Mulai"
                       class="mt-0"
                       dense
+                      readonly
                     ></v-text-field>
                   </template>
                   <v-date-picker
@@ -161,6 +162,8 @@
                       label="Tanggal Akhir"
                       class="mt-0"
                       dense
+                      readonly
+                      clearable
                     ></v-text-field>
                   </template>
                   <v-date-picker
@@ -219,6 +222,9 @@
           >
           <template v-slot:[`item.date`]="{ item }">
             {{ item.date | formatDate('dd-MMM-yyyy') }}
+          </template>
+          <template v-slot:[`item.hpp`]="{ item }">
+            {{ item.hpp | formatCurrency }}
           </template>
           </v-data-table>
         </v-card>
@@ -282,12 +288,24 @@ export default {
       { text: 'Tipe Transaksi', value: 'srcTrans', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Qty Masuk', value: 'qtyIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Keluar', value: 'qtyOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Qty Akhir', value: 'qtyEnd', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
+      { text: 'Qty Akhir', value: 'qtyEnd', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'HPP', value: 'hpp', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
     ],
     types: [{ id: 1, name: 'Berdasarkan Barang' }, { id: 2, name: 'Berdasarkan Gudang' }],
     typeUnits: [{ id: 1, name: 'Satuan Terkecil' }, { id: 2, name: 'Satuan Beli' }, { id: 3, name: 'Satuan Jual' }],
     items: [],
-    data: {}  
+    data: {},
+    exportFilter:{
+      fields : [
+        {text: 'Tipe Laporan', value: 'type'},
+        {text: 'Tanggal Mulai', value: 'startDate'},
+        {text: 'Tanggal Akhir', value: 'endDate'},
+        {text: 'Barang', value: 'item'},
+        {text: 'Satuan', value: 'unit'}
+      ],
+      operator: [{ text: 'Sama dgn.', value: 'eq'}],
+      searches: []
+    }  
   }),
 
   created: function () {
@@ -303,11 +321,11 @@ export default {
   mounted: function () {
     setTimeout(() => {
       this.$store.commit('app/setBreadcrumbs', [{
-        text: 'Pembelian'
+        text: 'Persediaan'
       }, {
         text: 'Laporan'
       }, {
-        text: 'Hutang'
+        text: 'Mutasi Stok'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
@@ -362,7 +380,7 @@ export default {
         })
       }
       
-      this.grid.columns = this.data.type === 1 ? this.itemColumn : this.whColumn
+      this.grid.columns = this.data.type === 1 ? this.data.isSM ? this.smColumn : this.itemColumn : this.whColumn
       
       api.getAll(this.endpoint.inventory.smReport, {
         params: {
@@ -379,6 +397,7 @@ export default {
         .then(response => {
           this.grid.data = response.data.tableData
           this.grid.total = response.data.rowCount
+          this.appendFilter()
         })
     },
     back() {
@@ -401,8 +420,8 @@ export default {
     dblclickRow(event, { item }) {
       if (this.data.type === 1) {
         this.data.filterName = 'Barang'
-        this.data.itemInitial = item.initial
-        this.data.itemName = item.name
+        this.data.initial = item.initial
+        this.data.name = item.name
         this.data.type = 1
         this.data.itemId = item.id
         this.data.isSM = true
@@ -410,8 +429,69 @@ export default {
         this.grid.options.sortBy = ['date']
         this.getList()
         this.main = false
-        this.grid.columns = this.smColumn
+      } else {
+        this.data.filterName = 'Gudang'
+        this.data.initial = item.initial
+        this.data.name = item.name
+        this.data.type = 1
+        this.data.whCode = item.code
+        this.data.isSM = false
+        this.filter = false
+        this.grid.options.sortBy = ['initial']
+        this.getList()
+        this.main = false
       }
+    },
+    appendFilter() {
+      this.exportFilter.searches = []
+      const searchType = {
+        field: 'type',
+        keyword: '',
+        operator: 'eq'
+      }
+      const searchStartDate = {
+        field: 'startDate',
+        keyword: '',
+        operator: 'eq'
+      }
+      const searchEndDate = {
+        field: 'endDate',
+        keyword: '',
+        operator: 'eq'
+      }
+      const searchUnit = {
+        field: 'unit',
+        keyword: '',
+        operator: 'eq'
+      }
+
+      const report = this.types.find(x => x.id === this.data.type)
+      searchType.keyword = report.name
+      this.exportFilter.searches.push(searchType)
+
+      searchStartDate.keyword = this.data.startDate ? format(parseISO(this.data.startDate), 'dd-MMM-yyyy') : ''
+      this.exportFilter.searches.push(searchStartDate)
+
+      searchEndDate.keyword = this.data.endDate ? format(parseISO(this.data.endDate), 'dd-MMM-yyyy') : ''
+      if (searchEndDate.keyword !== '') {
+        this.exportFilter.searches.push(searchEndDate)
+      }
+
+      const item = this.items.find(x => x.id === this.data.itemId)
+      if (item) {
+        const searchItem = {
+          field: '',
+          keyword: '',
+          operator: 'eq'
+        }
+        searchItem.field = 'item'
+        searchItem.keyword = item.name
+        this.exportFilter.searches.push(searchItem)
+      }
+
+      const unitType = this.typeUnits.find(x => x.id === this.data.typeUnit)
+      searchUnit.keyword = unitType.name
+      this.exportFilter.searches.push(searchUnit)
     }
   }
 }
