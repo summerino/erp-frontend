@@ -215,7 +215,7 @@
             :options.sync="grid.options"
             :sort-by="grid.options.sortBy"
             :sort-desc="grid.options.sortDesc"
-            class="elevation-1"
+            :class="['elevation-1', this.data.type === 2 ? 'row-pointer' : !this.data.isSM ? 'row-pointer' : '']"
             fixed-header
             hide-default-footer
             disable-pagination
@@ -423,6 +423,7 @@ export default {
     back() {
       this.reset()
       this.grid.options.sortBy = ['initial']
+      this.getList()
       this.main = true
     },
     showfilter() {
