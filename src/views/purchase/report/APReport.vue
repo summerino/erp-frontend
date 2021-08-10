@@ -175,7 +175,7 @@
             :options.sync="grid.options"
             :sort-by="grid.options.sortBy"
             :sort-desc="grid.options.sortDesc"
-            class="elevation-1"
+            :class="['elevation-1', this.data.type === 2 ? 'row-pointer' : '']"
             fixed-header
             hide-default-footer
             disable-pagination
@@ -347,6 +347,7 @@ export default {
     },
     back() {
       this.reset()
+      this.getList()
       this.main = true
     },
     showfilter() {
@@ -373,6 +374,7 @@ export default {
         this.data.supCode = item.code
         this.data.supInitial = item.initial
         this.data.supName = item.name
+        this.data.supplier = item.code
         this.data.type = 1
         this.filter = false
         this.getList()
