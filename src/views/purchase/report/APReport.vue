@@ -24,37 +24,37 @@
                       @shortkey="getList"
                     >
                       <v-icon left>mdi-magnify</v-icon>
-                      Cari Berdasarkan Filter
+                      Cari
                     </v-btn>
-                    <v-menu
-                      bottom
-                      open-on-hover
-                      offset-y
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          v-bind="attrs"
-                          v-on="on"
-                          color="blue darken-1"
-                          dark
-                          tile
-                          small
-                          :disabled="!auth.allowPrint"
-                        >
-                          <v-icon>mdi-menu-down</v-icon>
-                        </v-btn>
-                      </template>
-                      <v-list class="cursor-pointer">
-                        <v-list-item>
-                          <v-list-item-title>
-                            <export-excel title="Daftar Laporan Hutang" :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
-                          </v-list-item-title>
-                        </v-list-item>
-                      </v-list>
-                    </v-menu>
                   </template>
                   <span class="text-caption">(Ctrl + Alt + S)</span>
                 </v-tooltip>
+                <v-menu
+                  bottom
+                  open-on-hover
+                  offset-y
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      v-bind="attrs"
+                      v-on="on"
+                      color="blue darken-1"
+                      dark
+                      tile
+                      small
+                      :disabled="!auth.allowPrint"
+                    >
+                      <v-icon>mdi-menu-down</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list class="cursor-pointer">
+                    <v-list-item>
+                      <v-list-item-title>
+                        <export-excel title="Daftar Laporan Hutang" :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
+                      </v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
@@ -116,6 +116,7 @@
                   item-value="id"
                   class="mt-0"
                   dense
+                  @change="clearTable()"
                 >
                 </v-autocomplete>
               </v-col>
@@ -409,6 +410,9 @@ export default {
         searchSup.keyword = sup.name
         this.exportFilter.searches.push(searchSup)
       }
+    },
+    clearTable() {
+      this.grid.data = []
     }
   }
 }

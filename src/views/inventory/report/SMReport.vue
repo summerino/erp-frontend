@@ -24,37 +24,37 @@
                       @shortkey="getList"
                     >
                       <v-icon left>mdi-magnify</v-icon>
-                      Cari Berdasarkan Filter
+                      Cari
                     </v-btn>
-                    <v-menu
-                      bottom
-                      open-on-hover
-                      offset-y
-                    >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                          v-bind="attrs"
-                          v-on="on"
-                          color="blue darken-1"
-                          dark
-                          tile
-                          small
-                          :disabled="!auth.allowPrint"
-                        >
-                          <v-icon>mdi-menu-down</v-icon>
-                        </v-btn>
-                      </template>
-                      <v-list class="cursor-pointer">
-                        <v-list-item>
-                          <v-list-item-title>
-                            <export-excel title="Daftar Laporan Mutasi Stok" :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
-                          </v-list-item-title>
-                        </v-list-item>
-                      </v-list>
-                    </v-menu>
                   </template>
                   <span class="text-caption">(Ctrl + Alt + S)</span>
                 </v-tooltip>
+                <v-menu
+                  bottom
+                  open-on-hover
+                  offset-y
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      v-bind="attrs"
+                      v-on="on"
+                      color="blue darken-1"
+                      dark
+                      tile
+                      small
+                      :disabled="!auth.allowPrint"
+                    >
+                      <v-icon>mdi-menu-down</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list class="cursor-pointer">
+                    <v-list-item>
+                      <v-list-item-title>
+                        <export-excel title="Daftar Laporan Mutasi Stok" :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
+                      </v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
@@ -116,6 +116,7 @@
                   item-value="id"
                   class="mt-0"
                   dense
+                  @change="clearTable()"
                 >
                 </v-autocomplete>
               </v-col>
@@ -223,8 +224,17 @@
           <template v-slot:[`item.date`]="{ item }">
             {{ item.date | formatDate('dd-MMM-yyyy') }}
           </template>
-          <template v-slot:[`item.hpp`]="{ item }">
-            {{ item.hpp | formatCurrency }}
+          <template v-slot:[`item.invBegin`]="{ item }">
+            {{ item.invBegin | formatCurrency }}
+          </template>
+          <template v-slot:[`item.invIn`]="{ item }">
+            {{ item.invIn | formatCurrency }}
+          </template>
+          <template v-slot:[`item.invOut`]="{ item }">
+            {{ item.invOut | formatCurrency }}
+          </template>
+          <template v-slot:[`item.invEnd`]="{ item }">
+            {{ item.invEnd | formatCurrency }}
           </template>
           </v-data-table>
         </v-card>
@@ -271,7 +281,11 @@ export default {
       { text: 'Qty Awal', value: 'qtyBegin', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Masuk', value: 'qtyIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Keluar', value: 'qtyOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Qty Akhir', value: 'qtyEnd', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
+      { text: 'Qty Akhir', value: 'qtyEnd', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Persediaan Awal', value: 'invBegin', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Persediaan Masuk', value: 'invIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Persediaan Keluar', value: 'invOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Persediaan Akhir', value: 'invEnd', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
     ],
     itemColumn: [
       { text: 'Inisial', value: 'initial', divider: true, width: '100', excelColWidth:'20'},
@@ -280,7 +294,11 @@ export default {
       { text: 'Qty Awal', value: 'qtyBegin', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Masuk', value: 'qtyIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Keluar', value: 'qtyOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Qty Akhir', value: 'qtyEnd', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
+      { text: 'Qty Akhir', value: 'qtyEnd', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Persediaan Awal', value: 'invBegin', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Persediaan Masuk', value: 'invIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Persediaan Keluar', value: 'invOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Persediaan Akhir', value: 'invEnd', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
     ],
     smColumn: [
       { text: 'Tgl. Transaksi', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true},
@@ -289,7 +307,9 @@ export default {
       { text: 'Qty Masuk', value: 'qtyIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Keluar', value: 'qtyOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Akhir', value: 'qtyEnd', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'HPP', value: 'hpp', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
+      { text: 'Persediaan Masuk', value: 'invIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Persediaan Keluar', value: 'invOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Persediaan Akhir', value: 'invEnd', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
     ],
     types: [{ id: 1, name: 'Berdasarkan Barang' }, { id: 2, name: 'Berdasarkan Gudang' }],
     typeUnits: [{ id: 1, name: 'Satuan Terkecil' }, { id: 2, name: 'Satuan Beli' }, { id: 3, name: 'Satuan Jual' }],
@@ -418,28 +438,30 @@ export default {
         })
     },
     dblclickRow(event, { item }) {
-      if (this.data.type === 1) {
-        this.data.filterName = 'Barang'
-        this.data.initial = item.initial
-        this.data.name = item.name
-        this.data.type = 1
-        this.data.itemId = item.id
-        this.data.isSM = true
-        this.filter = false
-        this.grid.options.sortBy = ['date']
-        this.getList()
-        this.main = false
-      } else {
-        this.data.filterName = 'Gudang'
-        this.data.initial = item.initial
-        this.data.name = item.name
-        this.data.type = 1
-        this.data.whCode = item.code
-        this.data.isSM = false
-        this.filter = false
-        this.grid.options.sortBy = ['initial']
-        this.getList()
-        this.main = false
+      if (!this.data.isSM) {
+        if (this.data.type === 1) {
+          this.data.filterName = 'Barang'
+          this.data.initial = item.initial
+          this.data.name = item.name
+          this.data.type = 1
+          this.data.itemId = item.id
+          this.data.isSM = true
+          this.filter = false
+          this.grid.options.sortBy = ['date']
+          this.getList()
+          this.main = false
+        } else {
+          this.data.filterName = 'Gudang'
+          this.data.initial = item.initial
+          this.data.name = item.name
+          this.data.type = 1
+          this.data.whCode = item.code
+          this.data.isSM = false
+          this.filter = false
+          this.grid.options.sortBy = ['initial']
+          this.getList()
+          this.main = false
+        }
       }
     },
     appendFilter() {
@@ -492,6 +514,9 @@ export default {
       const unitType = this.typeUnits.find(x => x.id === this.data.typeUnit)
       searchUnit.keyword = unitType.name
       this.exportFilter.searches.push(searchUnit)
+    },
+    clearTable() {
+      this.grid.data = []
     }
   }
 }
