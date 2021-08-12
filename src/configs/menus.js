@@ -21,6 +21,7 @@ export default {
   transferStock: 33,
   consignee: 91,
   adjustment: 34,
+  smReport: 94,
 
   // Purchase
   purchaseOrder: 36,
@@ -51,6 +52,7 @@ export default {
   // Finance
   cashBank: 82,
   interCashBank: 83,
+  cbReport: 96,
 
   // Accounting
   coa: 66,

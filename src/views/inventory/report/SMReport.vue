@@ -332,7 +332,7 @@ export default {
     this.reset()
     this.getItemLists()
     this.getList()
-    auth.getAction(this.endpoint, this.menuId.apReport)
+    auth.getAction(this.endpoint, this.menuId.smReport)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
