@@ -525,7 +525,7 @@ export default {
       const data_i = this.items.find(i => i.id === item)
       this.data.freeItemName = data_i.name
 
-      api.getAll('uom-conversion', {
+      api.getAll(`${this.endpoint.inventory.uom}/item`, {
         params: { uomId: data_i.uomId }
       })
         .then(response => {
