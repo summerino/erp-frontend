@@ -124,7 +124,6 @@
           </v-col>
         </v-row>
         <v-card v-if="data.type !== 'TU'">
-          
           <v-row no-gutters>
             <v-col cols="12" md="12">
               <v-data-table
@@ -175,10 +174,8 @@
               </v-data-table>
             </v-col>
           </v-row>
-          <v-row no-gutters class="pt-2">
-            <v-col md="6" class="text-right">
-            </v-col>
-            <v-col md="6" class="text-right">
+          <v-row no-gutters class="pt-2 px-2">
+            <v-col cols="12" md="6" offset-md="6">
               <v-currency-field
                 label="Total"
                 v-model="data.total"
@@ -188,55 +185,57 @@
             </v-col>
           </v-row>
         </v-card>
-        <v-card v-if="data.type === 'TU' ">
-          <v-form ref="form" v-model="valid">
-            <v-row no-gutters>
-              <v-col cols="12" md="4">
-                <v-autocomplete
-                  v-model="data.typeAmount"
-                  :items="transType"
-                  label="D/C"
-                  class="mt-0"
-                  :rules="rules.required"
-                  required
-                ></v-autocomplete>
-              </v-col>
-              <v-col cols="12" md="4" class="pl-md-1">
-                <v-autocomplete
-                  v-model="data.coaCode"
-                  :items="coas"
-                  :item-text="item => `${item.code} - ${item.name}`"
-                  label="Akun"
-                  item-value="code"
-                  class="mt-0"
-                  :rules="rules.required"
-                  required
-                ></v-autocomplete>
-              </v-col>
-              <v-col cols="12" md="4" class="pl-md-1">
-                <v-currency-field
-                  v-model="data.amount"
-                  label="Nilai"
-                  class="text-right mt-0"
-                  :rules="rules.required"
-                  required
-                ></v-currency-field>
-              </v-col>
-            </v-row>
-            <v-row no-gutters>
-              <v-col cols="12" md="12" class="pl-md-1">
-                <v-textarea
-                  v-model="data.notes"
-                  label="Catatan"
-                  counter="256"
-                  class="mt-0"
-                  rows="4"
-                  :rules="rules.required"
-                  required
-                ></v-textarea>
-              </v-col>
-            </v-row>
-          </v-form>
+        <v-card v-if="data.type === 'TU'">
+          <v-card-text>
+            <v-form ref="form" v-model="valid">
+              <v-row no-gutters>
+                <v-col cols="12" md="4">
+                  <v-autocomplete
+                    v-model="data.typeAmount"
+                    :items="transType"
+                    label="D/C"
+                    class="mt-0"
+                    :rules="rules.required"
+                    required
+                  ></v-autocomplete>
+                </v-col>
+                <v-col cols="12" md="4" class="pl-md-1">
+                  <v-autocomplete
+                    v-model="data.coaCode"
+                    :items="coas"
+                    :item-text="item => `${item.code} - ${item.name}`"
+                    label="Akun"
+                    item-value="code"
+                    class="mt-0"
+                    :rules="rules.required"
+                    required
+                  ></v-autocomplete>
+                </v-col>
+                <v-col cols="12" md="4" class="pl-md-1">
+                  <v-currency-field
+                    v-model="data.amount"
+                    label="Nilai"
+                    class="text-right mt-0"
+                    :rules="rules.required"
+                    required
+                  ></v-currency-field>
+                </v-col>
+              </v-row>
+              <v-row no-gutters>
+                <v-col cols="12" md="12" class="pl-md-1">
+                  <v-textarea
+                    v-model="data.notes"
+                    label="Catatan"
+                    counter="256"
+                    class="mt-0"
+                    rows="4"
+                    :rules="rules.required"
+                    required
+                  ></v-textarea>
+                </v-col>
+              </v-row>
+            </v-form>
+          </v-card-text>
         </v-card>
       </v-card-text>
     </v-card>
@@ -412,7 +411,7 @@ export default {
     search() {
       const url = this.getUrl()
       const filter = this.getFilters()
-      
+
       api.getAll(`${url}`, {
         params: {
           cbCode: this.cbCode,
