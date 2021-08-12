@@ -13,5 +13,12 @@ export default [
     meta: {
       authRequired: true
     }
+  }, {
+    path: '/finance/report/cb-report',
+    name: 'cb-report',
+    component: () => import(/* webpackChunkName: "finance-cb-report" */ '@/views/finance/report/CBReport.vue'),
+    meta: {
+      authRequired: true
+    }
   }
 ]
