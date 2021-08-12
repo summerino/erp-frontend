@@ -55,6 +55,13 @@ export default [{
     authRequired: true
   }
 }, {
+  path: '/inventory/transaction/beginning-balance',
+  name: 'consignee',
+  component: () => import(/* webpackChunkName: "inventory-begining-balance" */ '@/views/inventory/transaction/BeginningBalance.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
   path: '/inventory/report/stock-mutation-report',
   name: 'stock-mutation-report',
   component: () => import(/* webpackChunkName: "inventory-report-stock-mutation-report" */ '@/views/inventory/report/SMReport.vue'),
