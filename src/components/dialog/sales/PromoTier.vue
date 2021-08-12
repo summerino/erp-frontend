@@ -486,7 +486,7 @@ export default {
     },
     async getItemUnitLists(item) {
       const data_i = this.items.find(i => i.id === item)
-      const response = await api.getAll('uom-conversion', {
+      const response = await api.getAll(`${this.endpoint.inventory.uom}/item`, {
         params: { uomId: data_i.uomId }
       })
       return response.data.tableData
