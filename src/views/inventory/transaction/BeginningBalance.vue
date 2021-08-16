@@ -939,7 +939,6 @@ export default {
       this.isButtonShowItemDisabled()
     },
     unitItemChange(item) {
-      debugger
       const oldUnit = item.units.find(u => u.id === item.oldUnitId)
       const unit = item.units.find(u => u.id === item.unitId)
       if (oldUnit && unit) {
