@@ -1,0 +1,1034 @@
+<template>
+  <div class="w-full">
+    <v-card>
+      <v-card-title class="indigo--text text--lighten-2 pb-1">
+        <v-row no-gutters>
+          <v-col cols="12" md="2">
+            Saldo Awal Persediaan
+          </v-col>
+          <v-col cols="12" md="6" >
+            <v-row no-gutters>
+              <v-text-field
+                append-icon="mdi-magnify"
+                label="Cari..."
+                class="font-weight-regular mt-0 pt-0"
+                single-line
+                v-model="grid.search"
+                :readonly="filter.isAdvancedSearch"
+                @click:append-outer="advancedSearch"
+                @keyup.enter="getList()"
+              ></v-text-field>            
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    color="blue darken-2 ml-1"
+                    class="font-weight-regular"
+                    dark
+                    small
+                    tile
+                    @click="advancedSearch"
+                  >
+                    <v-icon>
+                      mdi-magnify-plus-outline
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <span class="text-caption">Pencarian lanjutan</span>
+              </v-tooltip>
+              <export-excel title="Daftar Saldo Awal Persediaan" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
+            </v-row>
+          </v-col>
+          <v-col cols="12" md="4" class="text-right">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'n']"
+                  color="green darken-1"
+                  class="font-weight-regular"
+                  dark
+                  small
+                  tile
+                  @click="add"
+                  @shortkey="add"
+                  :disabled="!auth.allowCreate"
+                >
+                  <v-icon left>mdi-plus</v-icon>
+                  Data Baru
+                </v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Alt + N)</span>
+            </v-tooltip>
+          </v-col>
+        </v-row>
+      </v-card-title>
+      <v-card-text v-if="true" class="pb-1">
+        <advanced-search @search="search"></advanced-search>
+      </v-card-text>
+      <v-data-table
+        :headers="grid.columns"
+        :footer-props="{ itemsPerPageOptions: gridDefOpts.pageSizes }"
+        :height="gridDefOpts.height"
+        :items="grid.data"
+        :items-per-page="gridDefOpts.pageSize"
+        :server-items-length="grid.total"
+        :options.sync="grid.options"
+        :sort-by="grid.options.sortBy"
+        :sort-desc="grid.options.sortDesc"
+        class="elevation-1"
+        fixed-header
+      >
+        <template v-slot:[`item.action`]="{ item }">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                color="orange lighten-1"
+                icon
+                small
+                @click="edit(item)"
+              >
+                <v-icon small>mdi-pencil</v-icon>
+              </v-btn>
+            </template>
+            <span class="text-caption">Ubah</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                :disabled="!auth.allowDelete"
+                color="red"
+                icon
+                small
+                @click="remove(item)"
+              >
+                <v-icon small>mdi-close-thick</v-icon>
+              </v-btn>
+            </template>
+            <span class="text-caption">Hapus</span>
+          </v-tooltip>
+        </template>
+        <template v-slot:[`item.date`]="{ item }">
+          {{ item.date | formatDate('dd-MMM-yyyy') }}
+        </template>
+        <template v-slot:[`item.mark`]="{ item }">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <!-- <v-chip
+                v-bind="attrs"
+                v-on="on"
+                :color="item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
+                class="px-1"
+                dark
+                small
+              > -->
+              <v-chip
+                v-bind="attrs"
+                v-on="on"
+                class="px-1"
+                dark
+                small
+              >
+                {{ item.mark }}
+              </v-chip>
+            </template>
+            <span class="text-caption">{{ item.status }}</span>
+          </v-tooltip>
+        </template>
+      </v-data-table>
+    </v-card>
+     <v-dialog
+      v-model="dialog.add"
+      transition="dialog-bottom-transition"
+      fullscreen
+      hide-overlay
+      persistent
+      scrollable
+      @keydown.esc="close"
+    >
+      <v-card :style="{ background: $vuetify.theme.themes[theme].surface }">
+        <v-toolbar
+          color="primary"
+          max-height="64"
+          dark
+        >
+          <v-btn icon dark @click="close">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <v-toolbar-title>Saldo Awal Persediaan</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-toolbar-items>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'enter']"
+                  dark
+                  text
+                  @click="save(true)"
+                  @shortkey="save(true)"
+                  :disabled="data.action === 'edit' && !auth.allowUpdate"
+                >Simpan & Tutup</v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Enter)</span>
+            </v-tooltip>
+            <v-divider vertical></v-divider>
+            <v-menu
+              bottom
+              eager
+              left
+              open-on-hover
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  dark
+                  icon
+                >
+                  <v-icon>mdi-menu-down</v-icon>
+                </v-btn>
+              </template>
+              <v-list class="cursor-pointer">
+                <v-list-item
+                  v-shortkey="['ctrl', 's']"
+                  @click="save(false)"
+                  @shortkey="save(false)"
+                  :disabled="data.action === 'edit' && !auth.allowUpdate"
+                >
+                  <v-list-item-title>
+                    <v-tooltip bottom>
+                      <template v-slot:activator="{ on, attrs }">
+                        <span
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          Simpan
+                        </span>
+                      </template>
+                      <span class="text-caption">(Ctrl + S)</span>
+                    </v-tooltip>
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+            <v-divider vertical></v-divider>
+          </v-toolbar-items>
+        </v-toolbar>
+        <v-card-text class="px-2">
+          <v-form
+            ref="form"
+            v-model="valid"
+          >
+            <v-row dense>
+              <v-col cols="12" md="4">
+                <v-card>
+                  <v-card-title>Umum</v-card-title>
+                  <v-card-text>
+                    <v-row no-gutters>
+                      <v-col cols="12" md="6">
+                        <v-text-field
+                          ref="code"
+                          v-model="data.code"
+                          label="Kode"
+                          class="mt-0"
+                          readonly
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" md="6" class="pl-md-1">
+                        <v-menu
+                          v-model="menu.date"
+                          :close-on-content-click="false"
+                          transition="scale-transition"
+                          min-width="290px"
+                          offset-y
+                          :disabled="!auth.allowChangeDate"
+                        >
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-text-field
+                              v-bind="attrs"
+                              v-on="on"
+                              :rules="rules.required"
+                              :value="formatDate"
+                              label="Tanggal"
+                              class="mt-0"
+                              readonly
+                              required
+                            ></v-text-field>
+                          </template>
+                          <v-date-picker
+                            v-model="data.date"
+                            :min="dataStartDate"
+                            no-title
+                            scrollable
+                            @change="menu.date = false"
+                          ></v-date-picker>
+                        </v-menu>
+                      </v-col>
+                    </v-row>
+                    <v-row no-gutters>
+                      <v-col cols="12" md="12">
+                        <v-autocomplete
+                          v-model="data.warehouseCode"
+                          :items="warehouses"
+                          :item-text="item => `${item.initial} - ${item.name}`"
+                          :rules="rules.required"
+                          @change="changeLocation"
+                          label="Gudang"
+                          item-value="code"
+                          class="mt-0"
+                          :disabled="!auth.allowChangeWarehouse"
+                        ></v-autocomplete>
+                      </v-col>
+                    </v-row>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+              <v-col cols="12" md="8">
+                <v-card>
+                  <v-tabs v-model="tab.bb">
+                    <v-tab key="notes">Catatan</v-tab>
+                    <v-tab key="user">Pengguna</v-tab>
+                  </v-tabs>
+                  <v-tabs-items v-model="tab.bb" class="pa-2">
+                    
+                    <v-tab-item
+                      key="notes"
+                      transition="false"
+                    >
+                      <v-textarea
+                      v-model="data.notes"
+                      :rules="rules.max256chars"
+                      label="Catatan"
+                      counter="256"
+                      class="mt-0"
+                      rows="4"
+                    ></v-textarea>
+                    </v-tab-item>
+                    <v-tab-item
+                      key="user"
+                      transition="false"
+                      eager
+                    >
+                      <v-row no-gutters>
+                        <v-col cols="6">
+                          <v-text-field
+                            v-model.trim="data.createdInitial"
+                            label="Dibuat Oleh"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="6" class="pl-1">
+                          <v-text-field
+                            v-model.trim="data.createdDate"
+                            label="Tanggal Dibuat"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                      <v-row no-gutters>
+                        <v-col cols="6">
+                          <v-text-field
+                            v-model.trim="data.updatedInitial"
+                            label="Diperbarui Oleh"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="6" class="pl-1">
+                          <v-text-field
+                            v-model.trim="data.updatedDate"
+                            label="Tanggal Diperbarui"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-tab-item>
+                  </v-tabs-items>
+                </v-card>
+              </v-col>
+            </v-row>
+
+            <v-row dense>
+              <v-col cols="12">
+                <v-card>
+                  
+                  <v-app-bar dense flat>
+                    <v-spacer></v-spacer>
+                    <v-tooltip bottom >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                          v-bind="attrs"
+                          v-on="on"
+                          v-shortkey="['ctrl', 'i']"
+                          class="blue--text"
+                          small
+                          tile
+                          @click="addItem"
+                          @shortkey="addItem"
+                          :disabled="(!auth.allowCreate && (data.action === 'edit' && !auth.allowUpdate))"
+                          >
+                          <v-icon left>mdi-plus</v-icon>
+                          Tambah
+                        </v-btn>
+                        
+                      </template>
+                      <span class="text-caption">(Ctrl + I)</span>
+                    </v-tooltip>
+                   
+                  </v-app-bar>
+                  <!-- <v-data-table
+                    :headers="gridItem.columns"
+                    :items="gridItem.data"
+                    :items-per-page="-1"
+                    height="300"
+                    class="elevation-1"
+                    dense
+                    disable-sort
+                    fixed-header
+                    hide-default-footer
+                  > -->
+                  <v-data-table
+                    :headers="gridItem.columns"
+                    :items="gridItem.data"
+                    :items-per-page="gridDefOpts.pageSize"
+                    :footer-props="{ itemsPerPageOptions: gridDefOpts.pageSizes}"
+                    height="300"
+                    class="elevation-1"
+                    dense
+                    fixed-header
+                  >
+                    <template v-slot:[`item.action`]="{ item }">
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                          <v-btn
+                            v-bind="attrs"
+                            v-on="on"
+                            color="red"
+                            icon
+                            small
+                            @click="removeItem(item)"
+                            :disabled="(!auth.allowCreate && (data.action === 'edit' && !auth.allowUpdate))"
+                          >
+                              <v-icon small>mdi-close-thick</v-icon>
+                          </v-btn>
+                        </template>
+                        <span class="text-caption">Hapus</span>
+                      </v-tooltip>
+                    </template>
+                    <template v-slot:[`item.itemId`]="{ item }">
+                      <v-autocomplete
+                        ref="itemId"
+                        v-model="item.itemId"
+                        :items="items"
+                        :rules="rules.required"
+                        item-text="initial"
+                        item-value="id"
+                        class="text-body-2 mt-0"
+                        dense
+                        required
+                        @change="itemIdChange(item)"
+                      >
+                        <template v-slot:append>
+                          <v-btn
+                            color="primary"
+                            icon
+                            x-small
+                            @click="showFindItemDialog(item)"
+                          >
+                            <v-icon>
+                              mdi-settings-helper
+                            </v-icon>
+                          </v-btn>
+                        </template>
+                      </v-autocomplete>
+                    </template>
+                    <!-- <template v-slot:[`item.itemId`]="{ item }">
+                        <v-autocomplete
+                            ref="itemId"
+                            v-model="item.itemId"
+                            :items="items"
+                            :rules="rules.required"
+                            item-value="id"
+                            class="text-body-2 mt-0"
+                            dense
+                            required
+                            @change="itemIdChange(item)"
+                        >
+                            <template v-slot:append>
+                                <v-btn
+                                    color="primary"
+                                    icon
+                                    x-small
+                                    @click="showFindItemDialog(item)"
+                                >
+                                    <v-icon>
+                                    mdi-settings-helper
+                                    </v-icon>
+                                </v-btn>
+                            </template>
+                        </v-autocomplete>
+                    </template> -->
+                    <!-- <template v-slot:[`item.unit`]="{ item }">
+                        <v-autocomplete
+                            v-model="item.unit"
+                            :items="item.units"
+                            :rules="rules.required"
+                            class="text-body-2 mt-0"
+                            dense
+                            required
+                            ref="itemId"
+                            @change="changeUnit(item)"
+                        >
+                        </v-autocomplete>
+                    </template> -->
+                    <template v-slot:[`item.unitName`]="{ item }">
+                      <v-autocomplete
+                        v-model="item.unitId"
+                        :items="item.units"
+                        :rules="rules.required"
+                        item-text="unitEquivalent"
+                        item-value="id"
+                        class="text-body-2 mt-0"
+                        dense
+                        required
+                        @change="unitItemChange(item)"
+                      ></v-autocomplete>
+                    </template>
+                    <template v-slot:[`item.qty`]="{ item }">
+                        <v-currency-field
+                          :min="-Number.MAX_SAFE_INTEGER"
+                          :max="Number.MAX_SAFE_INTEGER"
+                          :allow-negative="false"
+                          v-model="item.qty"
+                          :rules="rules.cannot0"
+                          @change="changeQty(item)"
+                          class="text-body-2 text-right mt-0"
+                          dense
+                        ></v-currency-field>
+                    </template>
+                    <template v-slot:[`item.amount`]="{ item }">
+                        <v-currency-field
+                            v-model="item.amount"
+                            class="text-body-2 text-right mt-0"
+                            dense
+                        ></v-currency-field>
+                    </template>
+                    <template v-slot:[`item.notes`]="{ item }">
+                        <v-text-field
+                            v-model="item.notes"
+                            :rules="rules.max256chars"
+                            class="text-body-2 mt-0"
+                            dense
+                        ></v-text-field>
+                    </template>
+                  </v-data-table>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-card-text>
+      </v-card>
+      
+    </v-dialog>
+    <confirm ref="confirm"></confirm>
+    <!-- <find-item-adjustment
+      ref="findItem"
+      :warehouseCode="data.warehouseCode"
+      :fromAdjustment="true"
+      @dblclick:row="bindItemData"
+      
+    ></find-item-adjustment> -->
+    <find-item
+      ref="findItem"
+      :warehouseCode="data.warehouseCode"
+      @dblclick:row="bindItemData"
+    ></find-item>
+    
+  </div>
+</template>
+
+<script>
+import { mapState } from 'vuex'
+import { format, parseISO }  from 'date-fns'
+
+import { randomNumber } from '@/helpers/math-helpers'
+import api from '@/services/axios.service'
+import auth from '@/services/authorization.service'
+
+import AdvancedSearch from '@/components/common/AdvancedSearch'
+import ExportExcel from '@/components/common/ExportExcel.vue'
+import Confirm from '@/components/dialog/Confirm'
+import FindItem from '@/components/dialog/inventory/FindItem'
+export default {
+  components:{
+    AdvancedSearch,
+    ExportExcel,
+    Confirm,
+    FindItem
+  },
+
+  data: () => ({
+    filterfields: [{
+      text: 'Kode', value: 'code', dataType: 'text'
+    }, {
+      text: 'Tanggal', value: 'date', dataType: 'datetime'
+    }, {
+      text: 'Gudang', value: 'warehouseInitial', dataType: 'text'
+    }, {
+      text: 'Catatan', value: 'notes', dataType: 'text'
+    }],
+    dialog: {
+      add: false
+    },
+    menu: {
+      date: false
+    },
+    tab: {
+      bb: null
+    },
+    grid: {
+      columns: [
+        { value: 'action', sortable: false, divider: true, width: '90' },
+        { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Tanggal', value: 'date', divider: true, width: '150', excelColWidth:'18', isDateTime: true },
+        { text: 'Gudang', value: 'warehouseInitial', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Catatan', value: 'notes', divider: true, width: '200', excelColWidth:'25' }
+      ],
+      data: [],
+      options: {
+        sortBy: ['code'],
+        sortDesc: [false]
+      },
+      total: 0,
+      search: null
+    },
+    gridItem: {
+      columns: [
+        { value: 'action', sortable: false, divider: true, width: '90'},
+        { text: 'Inisial', value: 'itemId', divider: true, width: '120' },
+        { text: 'Nama', value: 'itemName', divider: true, width: '300' },
+        { text: 'Satuan', value: 'unitName', sortable: false, divider: true, width: '100'},
+        { text: 'Qty', value: 'qty', sortable: false, align: 'right', divider: true, width: '75'},
+        { text: 'Amount', value: 'amount', sortable: false, divider: true, width: '75'},
+        { text: 'Catatan', value: 'notes', sortable: false, divider: true, width: '250'}
+      ],
+      data: []
+
+    },
+    valid: false,
+    dataStartDate: null,
+    locations: [],
+    data: {},
+    items: [],
+    warehouses: [],
+    uoms: [],
+    showItemDisabled: false,
+    userInfo: {}
+  }),
+
+  created: function () {
+    this.getList()
+    this.getSystemParameter()
+    this.getWarehouseLists()
+    this.getUomLists()
+    auth.getAction(this.endpoint, this.menuId.bbStock)
+      .then((response) => {
+        this.$store.commit('api/setAuth', response.data)
+      })
+    this.$store.commit('app/setFilterFields', this.filterfields)
+  },
+
+  mounted: function () {
+    setTimeout(() => {
+      this.$store.commit('app/setBreadcrumbs', [{
+        text: 'Persediaan'
+      }, {
+        text: 'Transaksi'
+      }, {
+        text: 'Saldo Awal'
+      }])
+      this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
+    }, 0)
+  },
+
+  watch: {
+    'grid.options': {
+      handler() {
+        this.getList()
+      },
+      deep: true
+    }
+  },
+
+  computed: {
+    ...mapState({
+      gridDefOpts: state => state.app.grid,
+      rules: state => state.app.rules,
+      endpoint: state => state.api.endpoint,
+      filter: state => state.app.filter,
+      auth: state => state.api.authorization,
+      menuId: state => state.api.menus
+    }),
+    theme() {
+      return this.$vuetify.theme.isDark ? 'dark' : 'light'
+    },
+    formatDate() {
+      return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
+    }
+  },
+  
+  methods:{
+    getUnitItemLists(item) {
+      const units = this.uoms.filter(x => x.uomId === item.uomId)
+      item.units = units
+      const baseUnit = units.find(x => x.seq === 1)
+      item.baseUnitId = baseUnit.id
+      this.unitItemChange(item)
+    },
+    reset(resetValidation = true) {
+      this.data = {
+        code: null,
+        type: 1,
+        date: format(new Date(), 'yyyy-MM-dd'),
+        warehouseCode: null,
+        notes: ''
+      }
+      this.gridItem.data = []
+      this.tab.bb = 0
+      
+      // set default warehouse
+      this.setDefaultWarehouse()
+
+      // Reset form validation
+      if (resetValidation) {
+        setTimeout(() => {
+          this.$refs.form.resetValidation()
+        }, 0)
+      }
+    },
+    advancedSearch() {
+      this.grid.search = null
+      this.$store.commit('app/advSearch')
+      if (this.filter.isAdvancedSearch) {
+        this.$store.commit('app/addSearch')
+      }
+    },
+    search(vm) {
+      this.grid.search = vm.search
+      this.getList(vm.bindToForm, vm.filters)
+    },
+    getList(bindToForm = false, filters = []) {
+      const sorts = []
+
+      for (let i = 0; i < this.grid.options.sortBy.length; i++) {
+        sorts.push({
+          field: this.grid.options.sortBy[i],
+          direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
+        })
+      }
+      api.getAll(this.endpoint.inventory.beginBalanceStock, {
+        params: {
+          search: this.grid.search,
+          skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
+          take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
+          sorts: JSON.stringify(sorts),
+          filters: JSON.stringify(filters)
+        }
+      })
+        .then(response => {
+          this.grid.data = response.data.tableData
+          this.grid.total = response.data.rowCount
+          if (bindToForm) {
+            const item = this.grid.data.find(h => h.code === this.data.code)
+            this.edit(item)
+          }
+        })
+    },
+    getSystemParameter() {
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: 'DATA_START_DATE'
+          }])
+        }
+      })
+        .then(response => {
+          this.dataStartDate = response.data.tableData[0].value
+        })
+    },
+    getItemLists() {      
+      api.getAll(this.endpoint.inventory.item.item, {
+        params: {
+          warehouseCode: this.data.warehouseCode
+        }
+      })
+        .then(response => {
+          this.items = response.data.tableData
+        })      
+    },
+    getUomLists() {
+      api.getAll(`${this.endpoint.inventory.uom}/item`, {})  
+        .then(response => {
+          this.uoms = response.data.tableData
+        })
+    },
+    getWarehouseLists() {
+      api.getAll(`${this.endpoint.inventory.warehouse}/lists`, {
+        params: {
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.warehouses = response.data.tableData
+        })
+    },
+    back() {
+      this.main = true
+    },
+    add() {
+      if (this.dialog.add) return
+      this.dialog.add = true
+      this.reset(false)
+      this.data.action = 'add'
+      this.data.type = 1
+      this.getItemLists()
+
+      setTimeout(() => {
+        // Validate form first
+        this.$refs.form.validate()
+      }, 0)
+    },
+    addItem() {
+      if (!this.data.warehouseCode) {
+        this.$store.dispatch('app/showInfo', 'Mohon pilih gudang terlebih dahulu.')
+        return
+      }
+      if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemId ?? null)) {
+        const item = {
+          id: randomNumber(-1, -1000),
+          itemId: 0,
+          name: null,
+          units: [],
+          uomId: 0,
+          oldUnitId: 0,
+          oldUnitName: null,
+          oldQty: 0,
+          unitId: 0,
+          unitName: null,
+          qty: 0,
+          amount: 0,
+          notes: ''
+        } 
+        this.gridItem.data.push(item)
+        setTimeout(() => {
+          this.$refs.itemId.focus()
+        }, 0)
+          
+      }
+    },
+    edit(item) {
+      if (!item) return
+      this.isButtonShowItemDisabled()
+      this.dialog.add = true
+      this.reset()
+
+      this.data = {
+        ...item,
+        action: 'edit',
+        originalDate: item.date,
+        createdDate: (item.createdDate === null) ? null : format(parseISO(item.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
+        updatedDate: (item.updatedDate === null) ? null : format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
+      }
+      this.getItemLists()
+      // Get item details
+      api.getAll(`${this.endpoint.inventory.beginBalanceStock}/item`, {
+        params: { code: item.code }
+      })
+        .then(response => {
+          this.bindGridItemsData(response.data.tableData)
+        })
+
+      // Set focus to order code field
+      setTimeout(() => {
+        this.$refs.code.focus()
+      }, 0)
+    },
+    async remove(item) {
+      if (
+        await this.$refs.confirm.open(
+          'Hapus?',
+          'Apakah anda yakin ingin membuat hapus data ini?')
+      ) {
+        api.delete(this.endpoint.inventory.beginBalanceStock, item.code, {data: item})
+          .then(response => {
+            if (response.data.success) {
+              this.$store.dispatch('app/showSuccess', response.data.message)
+              this.getList()
+            }
+          })
+      }
+    },
+    async removeItem(item) {
+      if (
+        await this.$refs.confirm.open(
+          'Hapus?',
+          'Apakah anda yakin ingin menghapus data ini?')
+      ) {
+        const idx = this.gridItem.data.findIndex(i => i.id === item.id)
+        this.gridItem.data.splice(idx, 1)
+      }
+    },
+    async save(closeDialog) {
+      if (!this.$refs.form.validate()) {
+        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
+        return
+      }      
+      
+      const data = this.data
+      data.itemDetails = this.gridItem.data
+
+      if (data.itemDetails.length === 0) {
+        this.$store.dispatch('app/showInfo', 'Detil tidak boleh kosong.')
+        return
+      }
+      let result = { success: false, message: '' }
+      if (this.data.action === 'add') {
+        const resp = await api.create(this.endpoint.inventory.beginBalanceStock, this.data)
+        result = resp.data
+      } else if (this.data.action === 'edit') {
+        const resp = await api.update(this.endpoint.inventory.beginBalanceStock, this.data.code, this.data)
+        result = resp.data
+      }
+
+      if (result.success) {
+        this.$store.dispatch('app/showSuccess', result.message)
+        if (closeDialog) {
+          this.dialog.add = false
+        } else {
+          this.data.code = result.data
+        }
+        this.getList(!closeDialog)
+      }
+    },
+    close() {
+      this.reset()
+      this.dialog.add = false
+    },
+    changeQty(item) {
+      item.amount = item.initAmount * item.qty
+    },
+    changeLocation() {
+      this.gridItem.data = []
+      this.getItemLists()
+      this.isButtonShowItemDisabled()
+    },
+    unitItemChange(item) {
+      debugger
+      const oldUnit = item.units.find(u => u.id === item.oldUnitId)
+      const unit = item.units.find(u => u.id === item.unitId)
+      if (oldUnit && unit) {
+        item.oldUnitId = item.unitId
+        this.convertUOM(item, oldUnit.seq, unit.seq)
+      }
+    },
+    itemIdChange(item) {
+      const data_i = this.items.find(i => i.id === item.itemId)
+      if (data_i) {
+        item.itemId = data_i.id
+        item.uomId = data_i.uomId
+        item.itemName = data_i.name
+        item.oldUomId = item.uomId
+        item.unitId = data_i.uomBuyId
+        item.oldUnitId = data_i.uomBuyId
+        item.unitName = data_i.uomBuyName
+        item.notes = null
+        item.qty = 1
+        item.initAmount = data_i.buyPrice
+        item.amount = data_i.buyPrice
+        if (item.state !== 'A') {
+          item.state = 'M'
+        }
+      }
+      this.getUnitItemLists(item)
+    },
+    convertUOM(item, fromSequence, toSequence) {
+      let depth = 0
+      let direction = ''
+      let different = 1
+      let itterateSeq = 0
+      if (fromSequence < toSequence) {
+        depth = toSequence - fromSequence
+        direction = 'up'
+        itterateSeq = fromSequence
+      } else {
+        depth = fromSequence - toSequence
+        direction = 'down'
+        itterateSeq = toSequence
+      }
+      for (let i = 0; i < depth; i++) {
+        itterateSeq++
+        const data = item.units.find(u => u.seq === itterateSeq)
+        different *=  data.conversion
+      }
+      if (direction === 'up') {
+        item.qty = Number((item.qty / different).toFixed(6))
+        item.initAmount = item.amount / different
+        item.amount = item.initAmount
+      } else {
+        item.qty = item.qty * different
+        item.initAmount = item.amount * different
+        item.amount = item.initAmount
+      }
+      item.baseQtyOnHand = 0 // base qty will be set on stored procedure
+    },
+    
+    isButtonShowItemDisabled() {
+      this.showItemDisabled =  this.gridItem.data.length > 0 && this.data.type === 2
+    },
+    bindItemData(rowItem) {
+      this.itemIdChange(rowItem)
+    },
+    bindGridItemsData(data) {
+      this.gridItem.data = data
+    },
+    showFindItemDialog(item) {
+      this.$refs.findItem.open(item, this.data.warehouseCode)
+    },
+    showFindUnitDialog(item) {
+      this.$refs.findUnit.open(item)
+    },
+    async exportExcel() {
+      this.exportExcel.export()
+    },
+    setDefaultWarehouse() {
+      const userInfo = this.userInfo = auth.getUserInfo()
+      const defWarehouse = this.warehouses.find(w => w.isDefault)
+      if (userInfo) {
+        const userDefaultWarehouse = userInfo.WarehouseCode
+        if (userDefaultWarehouse) {
+          this.data.warehouseCode = userDefaultWarehouse
+        } else if (defWarehouse) {
+          this.data.warehouseCode = defWarehouse.code
+        }
+      }
+    }
+  }
+}
+
+</script>

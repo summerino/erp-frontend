@@ -34,7 +34,8 @@ export default {
     adjustment: 'adjustment',
     warehouseQuantity: 'warehouse-quantity',
     consignee: 'consignee',
-    smReport: 'sm-report'
+    smReport: 'sm-report',
+    beginBalanceStock: 'bb'
   },
 
   purchase: {
