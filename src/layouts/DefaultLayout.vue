@@ -118,11 +118,14 @@ export default {
           }
         })
     },
-    getAction() {
-      api.getAll(this.endpoint.systemManagement.action)
-        .then(response => {
-          this.$store.commit('api/setAction', response.data)
-        })
+    async getAction() {
+      const resp = await api.getAll(this.endpoint.systemManagement.action)
+      this.$store.commit('api/setAction', resp.data)
+      // api.getAll(this.endpoint.systemManagement.action)
+      //   .then(response => {
+      //     console.log(response.data, 'asd')
+      //     this.$store.commit('api/setAction', response.data)
+      //   })
     }
   }
 }
