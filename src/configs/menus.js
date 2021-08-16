@@ -21,6 +21,7 @@ export default {
   transferStock: 33,
   consignee: 91,
   adjustment: 34,
+  bbStock: 87,
 
   // Purchase
   purchaseOrder: 36,

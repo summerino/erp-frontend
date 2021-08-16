@@ -35,7 +35,7 @@ export default {
     warehouseQuantity: 'warehouse-quantity',
     consignee: 'consignee',
     smReport: 'sm-report',
-    beginningBalance: 'bb'
+    beginBalanceStock: 'bb'
   },
 
   purchase: {
