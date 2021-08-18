@@ -143,7 +143,7 @@
                     v-model="data.startDate"
                     no-title
                     scrollable
-                    @change="menu.startDate = false"
+                    @change="menu.startDate = false; clearTable();"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
@@ -171,7 +171,7 @@
                     v-model="data.endDate"
                     no-title
                     scrollable
-                    @change="menu.endDate = false"
+                    @change="menu.endDate = false; clearTable();"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
@@ -185,6 +185,7 @@
                   class="mt-0"
                   dense
                   clearable
+                  @change="clearTable()"
                 ></v-autocomplete>
               </v-col>
               <v-col cols="12" md="2" class="pl-1">
@@ -196,6 +197,7 @@
                   item-value="id"
                   class="mt-0"
                   dense
+                  @change="clearTable()"
                 >
                 </v-autocomplete>
               </v-col>
@@ -518,6 +520,7 @@ export default {
     },
     clearTable() {
       this.grid.data = []
+      this.grid.columns = []
     }
   }
 }
