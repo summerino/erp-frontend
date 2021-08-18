@@ -143,7 +143,7 @@
                     v-model="data.date"
                     no-title
                     scrollable
-                    @change="menu.date = false"
+                    @change="menu.date = false; clearTable();"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
@@ -157,6 +157,7 @@
                   class="mt-0"
                   dense
                   clearable
+                  @change="clearTable()"
                 ></v-autocomplete>
               </v-col>
               <v-col cols="12" md="3" class="pl-1">
@@ -169,6 +170,7 @@
                   class="mt-0"
                   dense
                   clearable
+                  @change="clearTable()"
                 ></v-autocomplete>
               </v-col>
             </v-row>
@@ -465,6 +467,7 @@ export default {
     },
     clearTable() {
       this.grid.data = []
+      this.grid.columns = []
     }
   }
 }

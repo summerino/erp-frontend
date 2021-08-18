@@ -118,7 +118,7 @@
                     v-model="data.startDate"
                     no-title
                     scrollable
-                    @change="menu.startDate = false"
+                    @change="menu.startDate = false; clearTable();"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
@@ -140,13 +140,14 @@
                       dense
                       readonly
                       clearable
+                      @change="clearTable()"
                     ></v-text-field>
                   </template>
                   <v-date-picker
                     v-model="data.endDate"
                     no-title
                     scrollable
-                    @change="menu.endDate = false"
+                    @change="menu.endDate = false; clearTable();"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
