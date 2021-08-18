@@ -5,4 +5,11 @@ export default [{
   meta: {
     authRequired: false
   }
+}, {
+  path: '/expedition/report/ep-ap-report',
+  name: 'ep-ap-report',
+  component: () => import(/* webpackChunkName: "ep-ap-report" */ '@/views/expedition/report/EPAPReport.vue'),
+  meta: {
+    authRequired: false
+  }
 }]
