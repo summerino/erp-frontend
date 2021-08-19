@@ -376,6 +376,7 @@ export default {
       this.getCOALists()
     },
     getCOALists() {
+      
       api.getAll(`${this.endpoint.accounting.coa}/lists`, {
         params: {
           filters: JSON.stringify([{
@@ -394,6 +395,7 @@ export default {
         })
     },
     getTypeCoaCode() {
+      
       const type = this.types.find(x => x.code === this.data.type)
       this.typeCoaCode = type?.coaCode
       this.typeCoaName = type?.coaName
@@ -548,6 +550,7 @@ export default {
       this.data.startDate = format(new Date(tempStartDate), 'yyyy-MM-dd')
     },
     save() {
+      
       if (this.data.type === 'TU') {
         if (!this.$refs.form.validate()) {
           this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
@@ -577,10 +580,11 @@ export default {
       if (this.data.type !== 'TU') {
         const field = this.getFieldForNote()
         for (let i = 0; i < this.selected.length; i++) {
-          this.selected[i].id = randomNumber(-1, -1000)
-          this.selected[i].notes = this.selected[i][field]
+
           this.selected[i].coaCode = this.typeCoaCode
           this.selected[i].coaName = this.typeCoaName
+          this.selected[i].id = randomNumber(-1, -1000)
+          this.selected[i].notes = this.selected[i][field]
           this.selected[i].type = this.data.type
           this.selected[i].typeAmount = this.getTypeAmount()
           this.selected[i].transAmount = this.selected[i].remaining

@@ -170,26 +170,29 @@ export default {
         createdFrom = `Debit Memo ${this.memo.code}`
         custOrSup = this.memo.supName
         type = 'DPS'
+        this.data.amount = -this.memo.amount
       } else if (this.source === 'debit-memo' && this.transactionType === 'retur') {
         this.data.type = 'D'
         this.data.itemDetails[0].typeAmount = 'C'
         createdFrom = `Debit Memo ${this.memo.code}`
         custOrSup = this.memo.supName
         type = 'RDPS'
+        this.data.amount = -this.memo.amount
       } else if (this.source === 'credit-memo' && this.transactionType === 'payment') {
         this.data.type = 'D'
         this.data.itemDetails[0].typeAmount = 'C'
         createdFrom = `Credit Memo ${this.memo.code}`
         custOrSup = this.memo.custName
         type = 'DPC'
+        this.data.amount = this.memo.amount
       } else if (this.source === 'credit-memo' && this.transactionType === 'retur') {
         this.data.type = 'C'
         this.data.itemDetails[0].typeAmount = 'D'
         createdFrom = `Credit Memo ${this.memo.code}`
         custOrSup = this.memo.custName
         type = 'RDPC'
+        this.data.amount = this.memo.amount
       }
-      this.data.amount = this.memo.amount
       this.data.date = this.memo.date
       this.data.notes = `Automatically created by ${createdFrom}`
       this.data.itemDetails[0].transCode = this.memo.code

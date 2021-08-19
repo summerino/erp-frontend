@@ -568,6 +568,7 @@
                 <v-card>
                   <v-tabs v-model="tab.det">
                     <v-tab key="detail-trans">Detail</v-tab>
+                    <v-tab key="memo">Nota</v-tab>
                     <v-tab key="related-trans">Transaksi Terkait</v-tab>
 
                     <v-tab-item
@@ -674,7 +675,73 @@
                         </v-data-table>
                       </v-card>
                     </v-tab-item>
-
+                    <v-tab-item
+                      key="memo"
+                      transition="false"
+                    >
+                      <v-card>
+                        <v-app-bar dense flat>
+                          <v-spacer></v-spacer>
+                          <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                v-bind="attrs"
+                                v-on="on"
+                                v-shortkey="['ctrl', 'm']"
+                                :disabled="isVoid || hasRelatedTrans || (!auth.allowCreate && (data.action === 'edit' && !auth.allowUpdate))"
+                                class="blue--text"
+                                small
+                                tile
+                                @click="addMemo"
+                                @shortkey="addMemo"
+                              >
+                                <v-icon left>mdi-plus</v-icon>
+                                Tambah
+                              </v-btn>
+                            </template>
+                            <span class="text-caption">(Ctrl + M)</span>
+                          </v-tooltip>
+                        </v-app-bar>
+                      </v-card>
+                      <v-data-table
+                        :headers="gridMemo.columns"
+                        :items="gridMemo.data"
+                        :items-per-page="-1"
+                        height="300"
+                        class="elevation-1"
+                        dense
+                        disable-sort
+                        fixed-header
+                        hide-default-footer
+                      >
+                        <template v-slot:[`item.action`]="{ item }">
+                          <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                v-bind="attrs"
+                                v-on="on"
+                                color="red"
+                                icon
+                                small
+                                @click="removeMemo(item)"
+                              >
+                                <v-icon small>mdi-close-thick</v-icon>
+                              </v-btn>
+                            </template>
+                            <span class="text-caption">Hapus</span>
+                          </v-tooltip>
+                        </template>
+                        <template v-slot:[`item.date`]="{ item }">
+                          {{ item.date | formatDate('dd-MMM-yyyy') }}
+                        </template>
+                        <template v-slot:[`item.type`]="{ item }">
+                          {{ item.type === 1 ? 'Saldo Awal' : 'Retur' }}
+                        </template>
+                        <template v-slot:[`item.creditMemoAmount`]="{ item }">
+                          {{ item.creditMemoAmount | formatCurrency }}
+                        </template>
+                      </v-data-table>
+                    </v-tab-item>
                     <v-tab-item
                       key="related-trans"
                       transition="false"
@@ -757,6 +824,13 @@
       :so-code="data.soCode"
       @dblclick:row="bindDOData"
     ></find-do>
+    <memo
+      ref="memo"
+      :supOrCustCode="data.custCode"
+      :amount="data.total"
+      transType="credit"
+      @bindMemo="bindMemo"
+    ></memo>
   </div>
 </template>
 
@@ -774,6 +848,7 @@ import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 import FindSo from '@/components/dialog/sales/FindSO'
 import FindDo from '@/components/dialog/sales/FindDO'
+import Memo from '@/components/dialog/Memo.vue'
 
 export default {
   components: {
@@ -781,7 +856,8 @@ export default {
     ExportExcel,
     Confirm,
     FindSo,
-    FindDo
+    FindDo,
+    Memo
   },
 
   data: () => ({
@@ -864,6 +940,16 @@ export default {
         { text: 'Tipe Trans.', value: 'type', divider: true },
         { text: 'Tgl. Trans.', value: 'date', align: 'right', divider: true },
         { text: 'Nilai', value: 'total', align: 'right', divider: true }
+      ],
+      data: []
+    },
+    gridMemo: {
+      columns: [
+        { value: 'action', sortable: false, divider: true, width: '1%' },
+        { text: 'Kode', value: 'creditMemoCode', divider: true },
+        { text: 'Tanggal', value: 'date', divider: true },
+        { text: 'Tipe', value: 'type', divider: true },
+        { text: 'Nilai', value: 'creditMemoAmount', align: 'right', divider: true }
       ],
       data: []
     },
@@ -957,6 +1043,7 @@ export default {
         total: 0
       }
       this.gridDet.data = []
+      this.gridMemo.data = []
       this.tab.cust = 0
       this.tab.det = 0
       // this.tab.foot = 0
@@ -1136,6 +1223,14 @@ export default {
           this.gridRelated.data = response.data.tableData
         })
 
+      // Get Memo List
+      api.getAll(`${this.endpoint.sales.invoice}/memo`, {
+        params: { code: item.code }
+      })
+        .then(response => {
+          this.gridMemo.data = response.data.tableData
+        })
+
       // Set focus to invoice code field
       setTimeout(() => {
         this.$refs.code.focus()
@@ -1171,6 +1266,7 @@ export default {
       
       const data = this.data
       data.details = this.gridDet.data
+      data.memos = this.gridMemo.data
       
       let result = { success: false, message: '' }
       if (data.action === 'add') {
@@ -1218,6 +1314,13 @@ export default {
         }, 0)
       }
     },
+    addMemo() {
+      if (!this.data.soCode) {
+        this.$store.dispatch('app/showInfo', 'Silahkan pilih order penjualan terlebih dahulu.')
+        return
+      }
+      this.$refs.memo.open()
+    },
     async removeItem(item) {
       if (
         await this.$refs.confirm.open(
@@ -1229,6 +1332,16 @@ export default {
 
         // Calc price
         this.calcPrice()
+      }
+    },
+    async removeMemo(item) {
+      if (
+        await this.$refs.confirm.open(
+          'Hapus?',
+          'Apakah anda yakin ingin menghapus data ini?')
+      ) {
+        const idx = this.gridMemo.data.findIndex(i => i.code === item.code)
+        this.gridMemo.data.splice(idx, 1)
       }
     },
     soCodeChange() {
@@ -1315,6 +1428,16 @@ export default {
     },
     bindDOData(rowItem) {
       this.doCodeChange(rowItem)
+    },
+    bindMemo(data) {
+      for (let i = 0; i < data.length; i++) {
+        this.gridMemo.data.push({
+          creditMemoCode: data[i].code,
+          date: data[i].date,
+          type: data[i].type,
+          creditMemoAmount: data[i].transAmount          
+        })
+      }
     },
     async exportExcel() {
       this.exportExcel.export()
