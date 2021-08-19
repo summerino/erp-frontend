@@ -350,7 +350,6 @@ export default {
       this.close()
     },
     bindAdditionalData() {
-      debugger
       let temp = Number(this.amount)
       for (let i = 0; i < this.grid.data.length; i++) {
         this.grid.data[i].transAmount = 0
