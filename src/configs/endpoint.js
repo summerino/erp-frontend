@@ -81,7 +81,8 @@ export default {
       dm: 'bb-debit-memo',
       cm: 'bb-credit-memo'
     },
-    closingMonth: 'closing-month'
+    closingMonth: 'closing-month',
+    journalReport: 'journal-report'
   },
   
   systemManagement:{

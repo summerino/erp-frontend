@@ -68,5 +68,12 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/accounting/report/journal-report',
+  name: 'journal-report',
+  component: () => import(/* webpackChunkName: "journal-report" */ '@/views/accounting/report/JournalReport.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
   

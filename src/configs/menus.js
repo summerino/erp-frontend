@@ -49,6 +49,7 @@ export default {
 
   // Expedition
   expeditionInvoice: 70,
+  epApReport: 98,
 
   // Finance
   cashBank: 82,
@@ -66,6 +67,7 @@ export default {
   bbCreditMemo: 90,
   postingJournal: 86,
   closingMonth: 88,
+  journalReport: 100,
 
   // Asset Management
   assetType: 62,
