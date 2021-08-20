@@ -114,16 +114,7 @@
             <span class="text-caption">Void</span>
           </v-tooltip>
           <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <!-- <v-btn
-                v-bind="attrs"
-                v-on="on"
-                :disabled="item.mark.toUpperCase() !== 'PR' && item.mark.toUpperCase() !== 'A' && !auth.allowClose"
-                color="blue darken-2"
-                icon
-                small
-                @click="closeOrder(item)"
-              > -->
+            <template v-slot:activator="{ on, attrs }">            
               <v-btn
                 v-bind="attrs"
                 v-on="on"
@@ -1740,6 +1731,21 @@ export default {
         await this.calcPromo()
         // Calc price
         this.calcPrice()
+      }
+    },
+    async closeOrder(item) {
+      if (
+        await this.$refs.confirm.open(
+          'Hapus?',
+          'Apakah anda yakin ingin menutup  data ini?')
+      ) {
+        api.update(`${this.endpoint.sales.order}/close`, item.code, item)
+          .then(response => {
+            if (response.data.success) {
+              this.$store.dispatch('app/showSuccess', response.data.message)
+              this.getList()
+            }
+          })
       }
     },
     custCodeChange() {

@@ -822,7 +822,6 @@ export default {
       }, 0)
     },
     edit(item) {
-      debugger
       if (!item) return
 
       this.main = false
@@ -845,8 +844,6 @@ export default {
         action: 'edit',
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
-      console.log(this.data)
-      console.log(item)
     },
     async remove(item) {
       if (
