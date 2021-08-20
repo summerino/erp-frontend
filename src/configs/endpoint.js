@@ -101,6 +101,7 @@ export default {
   },
 
   expedition: {
-    invoice: 'expedition-invoice'
+    invoice: 'expedition-invoice',
+    epApReport: 'ep-ap-report'
   }
 }

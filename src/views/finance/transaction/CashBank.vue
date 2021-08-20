@@ -47,9 +47,9 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'alt', 'n']"
+                  :disabled="!auth.allowCreate"
                   color="green darken-1"
                   class="font-weight-regular"
-                  :disabled="!auth.allowCreate"
                   dark
                   small
                   tile
