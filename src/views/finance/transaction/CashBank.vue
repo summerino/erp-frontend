@@ -50,6 +50,7 @@
                   :disabled="!auth.allowCreate"
                   color="green darken-1"
                   class="font-weight-regular"
+                  :disabled="!auth.allowCreate"
                   dark
                   small
                   tile
@@ -986,9 +987,9 @@ export default {
       for (let i = 0; i < data.length; i++) {
         data[i].transAmount = data[i].amount
         if (data[i].typeAmount === 'C') {
-          totalHeader -= data[i].amount
-        } else {
           totalHeader += data[i].amount
+        } else {
+          totalHeader -= data[i].amount
         }
       }
       this.data.amount = totalHeader
