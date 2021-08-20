@@ -50,7 +50,6 @@
                   :disabled="!auth.allowCreate"
                   color="green darken-1"
                   class="font-weight-regular"
-                  :disabled="!auth.allowCreate"
                   dark
                   small
                   tile
