@@ -307,6 +307,39 @@
                   ></v-checkbox>
                 </v-col>
               </v-row>
+              <v-row no-gutters>
+                <v-col cols="12" md="6" class="pr-md-3">
+                  <v-checkbox
+                    v-model="data.mobileSignIn"
+                    label="Akses Mobile?"
+                  ></v-checkbox>
+                </v-col>
+              </v-row>
+              <v-row no-gutters v-if="data.mobileSignIn">
+                <v-col cols="12" md="6" class="pr-md-3">
+                  <v-text-field
+                    ref="username"
+                    v-model="data.mobileUsername"
+                    :rules="[rules.required[0], rules.max50chars[0]]"
+                    :counter="50"
+                    label="Username"
+                    class="mt-0"
+                    required
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" md="6" class="pl-md-3">
+                  <v-text-field
+                    v-model="data.mobilePassword"
+                    :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+                    :required="data.action === 'add'"
+                    :rules="data.catalogUserId === null && data.mobileSignIn ? rules.required : []"
+                    :type="show ? 'text' : 'password'"
+                    label="Kata Sandi"
+                    class="mt-0"
+                    @click:append="show = !show"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
             </v-container>
           </v-card>
           <br/>
@@ -703,7 +736,11 @@ export default {
         areaId2: null,
         areaId3: null,
         areaId4: null,
-        areaId5: null
+        areaId5: null,
+        catalogUserId: null,
+        mobileSignIn: true,
+        mobileUsername: null,
+        mobilePassword: null
       }
       this.gridItem.data = []
       this.tab.advancedItem = 0

@@ -114,11 +114,11 @@
             <span class="text-caption">Void</span>
           </v-tooltip>
           <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
+            <template v-slot:activator="{ on, attrs }">            
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="item.mark.toUpperCase() !== 'PR' && item.mark.toUpperCase() !== 'A' && !auth.allowClose"
+                :disabled="(item.mark.toUpperCase() !== 'A' && item.mark.toUpperCase() !== 'PS') || !auth.allowClose"
                 color="blue darken-2"
                 icon
                 small
@@ -640,7 +640,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid || hasRelatedTrans || (!auth.allowCreate && (data.action === 'edit' && !auth.allowUpdate))"
+                                :disabled="isVoid || hasRelatedTrans || (data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
                                 class="blue--text"
                                 small
                                 tile
@@ -1731,6 +1731,21 @@ export default {
         await this.calcPromo()
         // Calc price
         this.calcPrice()
+      }
+    },
+    async closeOrder(item) {
+      if (
+        await this.$refs.confirm.open(
+          'Hapus?',
+          'Apakah anda yakin ingin menutup  data ini?')
+      ) {
+        api.update(`${this.endpoint.sales.order}/close`, item.code, item)
+          .then(response => {
+            if (response.data.success) {
+              this.$store.dispatch('app/showSuccess', response.data.message)
+              this.getList()
+            }
+          })
       }
     },
     custCodeChange() {

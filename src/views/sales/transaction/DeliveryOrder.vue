@@ -555,7 +555,7 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
-                                  :disabled="item.type == 0 || isVoid || hasRelatedTrans || (!auth.allowCreate && (data.action === 'edit' && !auth.allowUpdate))"
+                                  :disabled="item.type == 0 || isVoid || hasRelatedTrans || (data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
                                   color="red"
                                   icon
                                   small
@@ -1251,7 +1251,7 @@ export default {
       }
     },
     calcItemPrice(item, calcPrice = true) {
-      this.calcItemTax(item)
+      //this.calcItemTax(item)
       item.total = item.qty * item.nettPrice
       item.totTax = item.qty * item.taxAmount
       item.totDPP = item.qty * item.dpp
