@@ -421,7 +421,7 @@
                       :item-text="item => `${item.name}`"
                       :rules="data.type === 2 ? rules.required : []"
                       :readonly="data.type !== 2"
-                      label="Sales Grup"
+                      label="Grup Penjual"
                       item-value="id"
                       class="mt-0"
                       required
