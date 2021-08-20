@@ -1,56 +1,56 @@
 export default [{
   path: '/sales/master/area',
   name: 'area',
-  component: () => import(/* webpackChunkName: "sales-master-area" */ '@/views/sales/master/Area.vue'),
+  component: () => import(/* webpackChunkName: "area" */ '@/views/sales/master/Area.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/sales/master/salesman-group',
   name: 'salesman-group',
-  component: () => import(/* webpackChunkName: "sales-master-salesman-group" */ '@/views/sales/master/SalesmanGroup.vue'),
+  component: () => import(/* webpackChunkName: "salesman-group" */ '@/views/sales/master/SalesmanGroup.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/sales/master/promo',
   name: 'promo',
-  component: () => import(/* webpackChunkName: "sales-master-promo" */ '@/views/sales/master/Promo.vue'),
+  component: () => import(/* webpackChunkName: "promo" */ '@/views/sales/master/Promo.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/sales/transaction/sales-order',
   name: 'sales-order',
-  component: () => import(/* webpackChunkName: "sales-trans-order" */ '@/views/sales/transaction/SalesOrder.vue'),
+  component: () => import(/* webpackChunkName: "sales-order" */ '@/views/sales/transaction/SalesOrder.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/sales/transaction/sales-delivery',
   name: 'delivery-order',
-  component: () => import(/* webpackChunkName: "sales-trans-delivery" */ '@/views/sales/transaction/DeliveryOrder.vue'),
+  component: () => import(/* webpackChunkName: "delivery-order" */ '@/views/sales/transaction/DeliveryOrder.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/sales/transaction/sales-invoice',
   name: 'sales-invoice',
-  component: () => import(/* webpackChunkName: "sales-trans-invoice" */ '@/views/sales/transaction/SalesInvoice.vue'),
+  component: () => import(/* webpackChunkName: "sales-invoice" */ '@/views/sales/transaction/SalesInvoice.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/sales/transaction/direct-invoice/:action?/:code?',
   name: 'direct-invoice',
-  component: () => import(/* webpackChunkName: "sales-trans-direct-invoice" */ '@/views/sales/transaction/DirectInvoice.vue'),
+  component: () => import(/* webpackChunkName: "direct-invoice" */ '@/views/sales/transaction/DirectInvoice.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/sales/transaction/sales-return-wo-doc',
   name: 'sales-return-wo-doc',
-  component: () => import(/* webpackChunkName: "sales-trans-return-wo-doc" */ '@/views/sales/transaction/SalesReturnNoDoc.vue'),
+  component: () => import(/* webpackChunkName: "sales-return-wo-doc" */ '@/views/sales/transaction/SalesReturnNoDoc.vue'),
   meta: {
     authRequired: true
   }

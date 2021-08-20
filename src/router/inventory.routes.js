@@ -1,71 +1,70 @@
 export default [{
   path: '/inventory/master/item/item',
   name: 'item',
-  component: () => import(/* webpackChunkName: "inventory-master-item" */ '@/views/inventory/master/Item.vue'),
+  component: () => import(/* webpackChunkName: "item" */ '@/views/inventory/master/Item.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/inventory/master/item-category',
   name: 'item-category',
-  component: () => import(/* webpackChunkName: "inventory-master-item-category" */ '@/views/inventory/master/ItemCategory.vue'),
+  component: () => import(/* webpackChunkName: "item-category" */ '@/views/inventory/master/ItemCategory.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/inventory/master/item-group',
   name: 'item-group',
-  component: () => import(/* webpackChunkName: "inventory-master-item-group" */ '@/views/inventory/master/ItemGroup.vue'),
-  meta: {
-    authRequired: true
-  }
-}, {
-  path: '/inventory/master/warehouse',
-  name: 'warehouse',
-  component: () => import(/* webpackChunkName: "inventory-master-warehouse" */ '@/views/inventory/master/Warehouse.vue'),
+  component: () => import(/* webpackChunkName: "item-group" */ '@/views/inventory/master/ItemGroup.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/inventory/master/unit-of-measurement',
   name: 'unit-of-measurement',
-  component: () => import(/* webpackChunkName: "inventory-master-unit-of-measurement" */ '@/views/inventory/master/UnitOfMeasurement.vue'),
+  component: () => import(/* webpackChunkName: "unit-of-measurement" */ '@/views/inventory/master/UnitOfMeasurement.vue'),
   meta: {
     authRequired: true
   }
 }, {
-  path: '/inventory/transaction/adjustment',
-  name: 'adjustment',
-  component: () => import(/* webpackChunkName: "inventory-trans-adjustment" */ '@/views/inventory/transaction/Adjustment.vue'),
+  path: '/inventory/master/warehouse',
+  name: 'warehouse',
+  component: () => import(/* webpackChunkName: "warehouse" */ '@/views/inventory/master/Warehouse.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/inventory/transaction/transfer-stock',
   name: 'transfer-stock',
-  component: () => import(/* webpackChunkName: "inventory-trans-transfer-stock" */ '@/views/inventory/transaction/TransferStock.vue'),
+  component: () => import(/* webpackChunkName: "transfer-stock" */ '@/views/inventory/transaction/TransferStock.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/inventory/transaction/consignee',
   name: 'consignee',
-  component: () => import(/* webpackChunkName: "inventory-trans-consignee" */ '@/views/inventory/transaction/Consignee.vue'),
+  component: () => import(/* webpackChunkName: "consignee" */ '@/views/inventory/transaction/Consignee.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/inventory/transaction/adjustment',
+  name: 'adjustment',
+  component: () => import(/* webpackChunkName: "adjustment" */ '@/views/inventory/transaction/Adjustment.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/inventory/transaction/begin-balance-stock',
   name: 'begin-balance-stock',
-  component: () => import(/* webpackChunkName: "inventory-begin-balance-stock" */ '@/views/inventory/transaction/BeginningBalance.vue'),
+  component: () => import(/* webpackChunkName: "begin-balance-stock" */ '@/views/inventory/transaction/BeginningBalance.vue'),
   meta: {
     authRequired: true
   }
-}, 
-{
+}, {
   path: '/inventory/report/stock-mutation-report',
   name: 'stock-mutation-report',
-  component: () => import(/* webpackChunkName: "inventory-report-stock-mutation-report" */ '@/views/inventory/report/SMReport.vue'),
+  component: () => import(/* webpackChunkName: "stock-mutation-report" */ '@/views/inventory/report/SMReport.vue'),
   meta: {
     authRequired: true
   }
