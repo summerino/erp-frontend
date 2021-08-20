@@ -280,6 +280,15 @@
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-checkbox
+                  v-model="data.showInMobile"
+                  label="Tampilkan di mobile?"
+                ></v-checkbox>
+              </v-col>
+            </v-row>
+
+            <v-row no-gutters>
+              <v-col cols="12" md="6">
+                <v-checkbox
                   v-model="data.isActive"
                   label="Aktif"
                   :readonly="isCBEdit"
@@ -401,6 +410,7 @@ export default {
         currCode: null,
         cbType: null,
         vouCode: null,
+        showInMobile: false,
         isActive: true
       }
 
@@ -454,6 +464,7 @@ export default {
       }, 0)
     },
     edit(item) {
+      debugger
       if (!item) return
 
       this.main = false

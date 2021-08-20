@@ -115,10 +115,19 @@
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
-              <v-btn
+              <!-- <v-btn
                 v-bind="attrs"
                 v-on="on"
                 :disabled="item.mark.toUpperCase() !== 'PR' && item.mark.toUpperCase() !== 'A' && !auth.allowClose"
+                color="blue darken-2"
+                icon
+                small
+                @click="closeOrder(item)"
+              > -->
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                :disabled="(item.mark.toUpperCase() !== 'A' && item.mark.toUpperCase() !== 'PS') || !auth.allowClose"
                 color="blue darken-2"
                 icon
                 small
@@ -640,7 +649,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid || hasRelatedTrans || (!auth.allowCreate && (data.action === 'edit' && !auth.allowUpdate))"
+                                :disabled="isVoid || hasRelatedTrans || (data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
                                 class="blue--text"
                                 small
                                 tile

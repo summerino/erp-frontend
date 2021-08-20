@@ -308,7 +308,7 @@
                             tile
                             @click="addItem"
                             @shortkey="addItem"
-                            :disabled="(!auth.allowCreate && (data.action === 'edit' && !auth.allowUpdate))"
+                            :disabled="(data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
                             >
                             <v-icon left>mdi-plus</v-icon>
                             Tambah
@@ -339,7 +339,7 @@
                                 icon
                                 small
                                 @click="removeItem(item)"
-                                :disabled="(!auth.allowCreate && (data.action === 'edit' && !auth.allowUpdate))"
+                                :disabled="(data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
                             >
                                 <v-icon small>mdi-close-thick</v-icon>
                             </v-btn>

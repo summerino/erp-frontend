@@ -584,7 +584,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid || hasRelatedTrans || (!auth.allowCreate && (data.action === 'edit' && !auth.allowUpdate))"
+                                :disabled="isVoid || hasRelatedTrans || (data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
                                 class="blue--text"
                                 small
                                 tile
@@ -616,7 +616,7 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
-                                  :disabled="isVoid || hasRelatedTrans || (!auth.allowCreate && (data.action === 'edit' && !auth.allowUpdate))"
+                                  :disabled="isVoid || hasRelatedTrans || (data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
                                   color="red"
                                   icon
                                   small
@@ -688,7 +688,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'm']"
-                                :disabled="isVoid || hasRelatedTrans || (!auth.allowCreate && (data.action === 'edit' && !auth.allowUpdate))"
+                                :disabled="isVoid || hasRelatedTrans || (data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
                                 class="blue--text"
                                 small
                                 tile
