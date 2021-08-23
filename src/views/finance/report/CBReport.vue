@@ -81,21 +81,6 @@
           <v-card-text v-if="this.filter" class="pa-2">
             <v-row no-gutters>
               <v-col cols="12" md="3">
-                <v-autocomplete
-                  v-model="data.type"
-                  :items="types"
-                  :disabled="this.data.coaCode === null"                  
-                  label="Tipe Laporan"
-                  item-text="name"
-                  item-value="id"
-                  class="mt-0"
-                  clearable
-                  dense
-                  @change="clearTable()"
-                >
-                </v-autocomplete>
-              </v-col>
-              <v-col cols="12" md="3" class="pl-1">
                 <v-menu
                   v-model="menu.startDate"
                   :close-on-content-click="false"
@@ -163,6 +148,21 @@
                   dense
                   @change="changeCoa()"
                 ></v-autocomplete>
+              </v-col>
+              <v-col cols="12" md="3" class="pl-1">
+                <v-autocomplete
+                  v-model="data.type"
+                  :items="types"
+                  :disabled="this.data.coaCode === null"                  
+                  label="Tipe Laporan"
+                  item-text="name"
+                  item-value="id"
+                  class="mt-0"
+                  clearable
+                  dense
+                  @change="clearTable()"
+                >
+                </v-autocomplete>
               </v-col>
             </v-row>
           </v-card-text>
