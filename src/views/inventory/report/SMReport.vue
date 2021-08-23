@@ -223,20 +223,51 @@
             disable-pagination
             @dblclick:row="dblclickRow"
           >
+          <template v-slot:[`item.transCode`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.transCode }}
+            </span>
+          </template>
           <template v-slot:[`item.date`]="{ item }">
-            {{ item.date | formatDate('dd-MMM-yyyy') }}
+            <span v-if="!item.isBold">
+              {{ item.date | formatDate('dd-MMM-yyyy') }}
+            </span>
+            <span v-else>
+              
+            </span>
+          </template>
+          <template v-slot:[`item.qtyIn`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.qtyIn }}
+            </span>
+          </template>
+          <template v-slot:[`item.qtyOut`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.qtyOut }}
+            </span>
+          </template>
+          <template v-slot:[`item.qtyEnd`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.qtyEnd }}
+            </span>
           </template>
           <template v-slot:[`item.invBegin`]="{ item }">
             {{ item.invBegin | formatCurrency }}
           </template>
           <template v-slot:[`item.invIn`]="{ item }">
-            {{ item.invIn | formatCurrency }}
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.invIn | formatCurrency }}
+            </span>
           </template>
           <template v-slot:[`item.invOut`]="{ item }">
-            {{ item.invOut | formatCurrency }}
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.invOut | formatCurrency }}
+            </span>
           </template>
           <template v-slot:[`item.invEnd`]="{ item }">
-            {{ item.invEnd | formatCurrency }}
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.invEnd | formatCurrency }}
+            </span>
           </template>
           </v-data-table>
         </v-card>
