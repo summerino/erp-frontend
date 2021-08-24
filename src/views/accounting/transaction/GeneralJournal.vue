@@ -845,7 +845,7 @@ export default {
       }
     },
     getAccountLists() {
-      api.getAll(`${this.endpoint.accounting.coa}/lists`, {
+      api.getAll(`${this.endpoint.accounting.coa}/lists-non-syspar`, {
         params: {
           // filters: JSON.stringify([{
           //   field: 'type',
