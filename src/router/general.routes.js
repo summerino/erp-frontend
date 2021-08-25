@@ -1,77 +1,77 @@
 export default [{
   path: '/general/master/customer',
   name: 'customer',
-  component: () => import(/* webpackChunkName: "general-master-customer" */ '@/views/general/master/Customer.vue'),
+  component: () => import(/* webpackChunkName: "customer" */ '@/views/general/master/Customer.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/general/master/customer-type',
   name: 'customer-type',
-  component: () => import(/* webpackChunkName: "general-master-customer-type" */ '@/views/general/master/CustomerType.vue'),
+  component: () => import(/* webpackChunkName: "customer-type" */ '@/views/general/master/CustomerType.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/general/master/supplier',
   name: 'supplier',
-  component: () => import(/* webpackChunkName: "general-master-supplier" */ '@/views/general/master/Supplier.vue'),
+  component: () => import(/* webpackChunkName: "supplier" */ '@/views/general/master/Supplier.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/general/master/supplier-type',
   name: 'supplier-type',
-  component: () => import(/* webpackChunkName: "general-master-supplier-type" */ '@/views/general/master/SupplierType.vue'),
+  component: () => import(/* webpackChunkName: "supplier-type" */ '@/views/general/master/SupplierType.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/general/master/employee',
   name: 'employee',
-  component: () => import(/* webpackChunkName: "general-master-employee" */ '@/views/general/master/Employee.vue'),
+  component: () => import(/* webpackChunkName: "employee" */ '@/views/general/master/Employee.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/general/master/currency',
   name: 'currency',
-  component: () => import(/* webpackChunkName: "general-master-currency" */ '@/views/general/master/Currency.vue'),
+  component: () => import(/* webpackChunkName: "currency" */ '@/views/general/master/Currency.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/general/master/vehicle',
   name: 'vehicle',
-  component: () => import(/* webpackChunkName: "general-master-vehicle" */ '@/views/general/master/Vehicle.vue'),
+  component: () => import(/* webpackChunkName: "vehicle" */ '@/views/general/master/Vehicle.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/general/master/vehicle-type',
   name: 'vehicle-type',
-  component: () => import(/* webpackChunkName: "general-master-vehicle-type" */ '@/views/general/master/VehicleType.vue'),
+  component: () => import(/* webpackChunkName: "vehicle-type" */ '@/views/general/master/VehicleType.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/general/master/tax',
   name: 'tax',
-  component: () => import(/* webpackChunkName: "general-tax" */ '@/views/general/master/Tax.vue'),
+  component: () => import(/* webpackChunkName: "tax" */ '@/views/general/master/Tax.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/general/master/payment-term',
   name: 'payment-term',
-  component: () => import(/* webpackChunkName: "general-payment-term" */ '@/views/general/master/PaymentTerm.vue'),
+  component: () => import(/* webpackChunkName: "payment-term" */ '@/views/general/master/PaymentTerm.vue'),
   meta: {
     authRequired: true
   }
 }, {
   path: '/general/approval',
   name: 'approval',
-  component: () => import(/* webpackChunkName: "general-approval" */ '@/views/general/transaction/Approval.vue'),
+  component: () => import(/* webpackChunkName: "approval" */ '@/views/general/transaction/Approval.vue'),
   meta: {
     authRequired: true
   }

@@ -6,7 +6,7 @@
           <v-card-title class="indigo--text text--lighten-2 pb-1">
             <v-row no-gutters>
               <v-col cols="12" md="6">
-                Laporan Kas Bank
+                Laporan Jurnal
               </v-col>
               <v-col cols="12" md="6" class="text-right">
                 <v-tooltip bottom>
@@ -50,7 +50,7 @@
                   <v-list class="cursor-pointer">
                     <v-list-item>
                       <v-list-item-title>
-                        <export-excel title="Daftar Laporan Kas Bank" :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
+                        <export-excel title="Daftar Laporan Jurnal" :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
                       </v-list-item-title>
                     </v-list-item>
                   </v-list>
@@ -81,8 +81,21 @@
           <v-card-text v-if="this.filter" class="pa-2">
             <v-row no-gutters>
               <v-col cols="12" md="3">
+                <v-autocomplete
+                  v-model="data.rptBy"
+                  :items="types"                  
+                  label="Tipe Laporan"
+                  item-text="name"
+                  item-value="id"
+                  class="mt-0"
+                  dense
+                  @change="clearTable()"
+                >
+                </v-autocomplete>
+              </v-col>
+              <v-col v-if="this.data.rptBy === 'DT'" cols="12" md="2" class="pl-1">
                 <v-menu
-                  v-model="menu.startDate"
+                  v-model="menu.dateFrom"
                   :close-on-content-click="false"
                   transition="scale-transition"
                   min-width="290px"
@@ -92,7 +105,7 @@
                     <v-text-field
                       v-bind="attrs"
                       v-on="on"
-                      :value="formatStartDate"
+                      :value="formatDateFrom"
                       label="Tanggal Mulai"
                       class="mt-0"
                       dense
@@ -100,16 +113,16 @@
                     ></v-text-field>
                   </template>
                   <v-date-picker
-                    v-model="data.startDate"
+                    v-model="data.dateFrom"
                     no-title
                     scrollable
-                    @change="menu.startDate = false; clearTable();"
+                    @change="menu.dateFrom = false; clearTable();"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
-              <v-col cols="12" md="3" class="pl-1">
+              <v-col v-if="this.data.rptBy === 'DT'" cols="12" md="2" class="pl-1">
                 <v-menu
-                  v-model="menu.endDate"
+                  v-model="menu.dateTo"
                   :close-on-content-click="false"
                   transition="scale-transition"
                   min-width="290px"
@@ -119,22 +132,43 @@
                     <v-text-field
                       v-bind="attrs"
                       v-on="on"
-                      :value="formatEndDate"
+                      :value="formatDateTo"
                       label="Tanggal Akhir"
                       class="mt-0"
                       dense
                       readonly
-                      clearable
                       @change="clearTable()"
                     ></v-text-field>
                   </template>
                   <v-date-picker
-                    v-model="data.endDate"
+                    v-model="data.dateTo"
                     no-title
                     scrollable
-                    @change="menu.endDate = false; clearTable();"
+                    @change="menu.dateTo = false; clearTable();"
                   ></v-date-picker>
                 </v-menu>
+              </v-col>
+              <v-col v-if="this.data.rptBy === 'N'" cols="12" md="2" class="pl-1">
+                 <v-text-field
+                  v-model="data.vouFrom"
+                  class="mt-0"
+                  label="Kode Jurnal"
+                  required
+                  dense
+                ></v-text-field>
+              </v-col>
+              <v-col v-if="this.data.rptBy === 'N'" cols="12" md="2" class="pl-1">
+                 <v-autocomplete
+                  v-model="data.rptDet"
+                  :items="detTypes"                  
+                  label="Detail"
+                  item-text="name"
+                  item-value="id"
+                  class="mt-0"
+                  dense
+                  @change="clearTable()"
+                >
+                </v-autocomplete>
               </v-col>
               <v-col cols="12" md="3" class="pl-1">
                 <v-autocomplete
@@ -146,19 +180,17 @@
                   class="mt-0"
                   clearable
                   dense
-                  @change="changeCoa()"
+                  @change="clearTable()"
                 ></v-autocomplete>
               </v-col>
-              <v-col cols="12" md="3" class="pl-1">
+              <v-col cols="12" md="2" class="pl-1">
                 <v-autocomplete
-                  v-model="data.type"
-                  :items="types"
-                  :disabled="this.data.coaCode === null"                  
-                  label="Tipe Laporan"
+                  v-model="data.sort"
+                  :items="sortTypes"                  
+                  label="Urutkan"
                   item-text="name"
                   item-value="id"
                   class="mt-0"
-                  clearable
                   dense
                   @change="clearTable()"
                 >
@@ -177,39 +209,30 @@
             :headers="grid.columns"
             :height="gridDefOpts.height"
             :items="grid.data"
-            :options.sync="grid.options"
-            :sort-by="this.data.type === null ? grid.options.sortBy : null"
-            :sort-desc="this.data.type === null ? grid.options.sortDesc : null"
-            :disable-sort="this.data.type === null ? false : true"
             class="elevation-1"
+            disable-sort
             fixed-header
             hide-default-footer
             disable-pagination
           >
-          <template v-slot:[`item.code`]="{ item }">
+          <template v-slot:[`item.accCode`]="{ item }">
             <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.code }}
+              {{ item.accCode }}
             </span>
           </template>
-          <template v-slot:[`item.date`]="{ item }">
-            {{ item.date | formatDate('dd-MMM-yyyy') }}
-          </template>
-          <template v-slot:[`item.beginningBalance`]="{ item }">
-            {{ item.beginningBalance | formatCurrency }}
-          </template>
-          <template v-slot:[`item.incomingBalance`]="{ item }">
+          <template v-slot:[`item.accName`]="{ item }">
             <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.incomingBalance | formatCurrency }}
+              {{ item.accName }}
             </span>
           </template>
-          <template v-slot:[`item.outgoingBalance`]="{ item }">
+          <template v-slot:[`item.debetOc`]="{ item }">
             <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.outgoingBalance | formatCurrency }}
+              {{ item.debetOc | formatCurrency }}
             </span>
           </template>
-          <template v-slot:[`item.endingBalance`]="{ item }">
+          <template v-slot:[`item.creditOc`]="{ item }">
             <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.endingBalance | formatCurrency }}
+              {{ item.creditOc | formatCurrency }}
             </span>
           </template>
           </v-data-table>
@@ -235,56 +258,38 @@ export default {
 
   data: () => ({
     menu: {
-      startDate: false,
-      endDate: false
+      dateFrom: false,
+      dateTo: false
     },
     grid: {
-      columns: [],
-      data: [],
-      options: {
-        sortBy: ['code'],
-        sortDesc: [false]
-      },
-      total: 0,
-      search: null
+      columns: [
+        { text: 'Kode Akun', value: 'accCode', divider: true, width: '100', excelColWidth:'20' },
+        { text: 'Nama Akun', value: 'accName', divider: true, width: '100', excelColWidth:'20' },
+        { text: 'Catatan', value: 'notes', divider: true, width: '100', excelColWidth:'20' },
+        { text: 'Kode Ref 1', value: 'refCode1', divider: true, width: '100', excelColWidth:'20' },
+        { text: 'Debit', value: 'debetOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+        { text: 'Kredit', value: 'creditOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+        { text: 'Kode Ref 2', value: 'refCode2', divider: true, width: '100', excelColWidth:'20' },
+        { text: 'Kode Ref 3', value: 'refCode3', divider: true, width: '100', excelColWidth:'20' },
+        { text: 'Kode Ref 4', value: 'refCode4', width: '100', excelColWidth:'20' }
+      ],
+      data: []
     },
-    filter: false,
-    acColumn: [
-      { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nama', value: 'name', divider: true, width: '100', excelColWidth:'20'},
-      { text: 'Saldo Awal', value: 'beginningBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Saldo Masuk', value: 'incomingBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Saldo Keluar', value: 'outgoingBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Saldo Akhir', value: 'endingBalance', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
-    ],
-    aColumn: [
-      { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true},
-      { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'20'},
-      { text: 'Catatan', value: 'notes', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Saldo Masuk', value: 'incomingBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Saldo Keluar', value: 'outgoingBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Saldo Akhir', value: 'endingBalance', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
-    ],
-    adColumn: [
-      { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true},
-      { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'20'},
-      { text: 'Catatan', value: 'notes', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Trans.', value: 'transCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Akun', value: 'coaCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nama Akun', value: 'coaName', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Saldo Masuk', value: 'incomingBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Saldo Keluar', value: 'outgoingBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Saldo Akhir', value: 'endingBalance', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
-    ],
     coas: [],
-    types: [{ id: 1, name: 'Rekapan' }, { id: 2, name: 'Terperinci' }],
+    filter: false,
+    types: [{ id: 'N', name: 'Berdasarkan Kode' }, { id: 'DT', name: 'Berdasarkan Tanggal' }],
+    detTypes: [{ id: 'C', name: 'Kode' }, { id: 'CR', name: 'Kode dan Ref' }],
+    sortTypes: [{ id: 'N', name: 'Kode Jurnal' }, { id: 'DT', name: 'Tanggal Jurnal' }],
     data: {},
     exportFilter:{
       fields : [
-        {text: 'Tipe Laporan', value: 'type'},
-        {text: 'Tanggal Mulai', value: 'startDate'},
-        {text: 'Tanggal Akhir', value: 'endDate'},
-        {text: 'Akun', value: 'coa'}
+        {text: 'Tipe Laporan', value: 'rptBy'},
+        {text: 'Tanggal Mulai', value: 'dateFrom'},
+        {text: 'Tanggal Akhir', value: 'dateTo'},
+        {text: 'Kode Jurnal', value: 'vouFrom'},
+        {text: 'Detail', value: 'rptDet'},
+        {text: 'Akun', value: ' coa'},
+        {text: 'Urutkan', value: 'sort'}
       ],
       operator: [{ text: 'Sama dgn.', value: 'eq'}],
       searches: []
@@ -294,8 +299,7 @@ export default {
   created: function () {
     this.reset()
     this.getCOAList()
-    this.getList()
-    auth.getAction(this.endpoint, this.menuId.cbReport)
+    auth.getAction(this.endpoint, this.menuId.journalReport)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -304,24 +308,15 @@ export default {
   mounted: function () {
     setTimeout(() => {
       this.$store.commit('app/setBreadcrumbs', [{
-        text: 'Keuangan'
+        text: 'Akuntansi'
       }, {
         text: 'Laporan'
       }, {
-        text: 'Kas Bank'
+        text: 'Jurnal'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
   },
-
-  // watch: {
-  //   'grid.options': {
-  //     handler() {
-  //       this.getList()
-  //     },
-  //     deep: true
-  //   }
-  // },
 
   computed: {
     ...mapState({
@@ -329,54 +324,51 @@ export default {
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
       auth: state => state.api.authorization,
-      action: state => state.api.action,
       menuId: state => state.api.menus
     }),
-    formatStartDate() {
-      return this.data.startDate ? format(parseISO(this.data.startDate), 'dd-MMM-yyyy') : ''
+    formatDateFrom() {
+      return this.data.dateFrom ? format(parseISO(this.data.dateFrom), 'dd-MMM-yyyy') : ''
     },
-    formatEndDate() {
-      return this.data.endDate ? format(parseISO(this.data.endDate), 'dd-MMM-yyyy') : ''
+    formatDateTo() {
+      return this.data.dateTo ? format(parseISO(this.data.dateTo), 'dd-MMM-yyyy') : ''
     }
   },
   
   methods:{
     reset() {
       this.data = {        
-        type: null,
-        startDate: format(new Date(), 'yyyy-MM-dd'),
-        endDate: null,
-        coaCode: null
+        rptBy: 'N',
+        dateFrom: format(new Date(), 'yyyy-MM-dd'),
+        dateTo:  format(new Date(), 'yyyy-MM-dd'),
+        vouFrom: null,
+        rptDet: 'C',
+        coaCode: null,
+        sort: 'N'
       }
       this.filter = true
     },
     getList() {
-      if ((this.data.type === 1 && this.data.coaCode === null) || (this.data.type === 2 && this.data.coaCode === null)) {
-        this.$store.dispatch('app/showInfo', 'Akun tidak boleh kosong jika tipe dipilih')
+      if (this.data.rptBy === 'N' && this.data.vouFrom === null) {
+        this.$store.dispatch('app/showInfo', 'Kode jurnal harus diisi jika tipe laporan berdasarkan kode.')
         return
       }
-      const sorts = []
-      for (let i = 0; i < this.grid.options.sortBy.length; i++) {
-        sorts.push({
-          field: this.grid.options.sortBy[i],
-          direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
-        })
-      }
-      
-      this.grid.columns = this.data.type === 1 ? this.aColumn : this.data.type === 2 ? this.adColumn : this.acColumn
-      
-      api.getAll(this.endpoint.finance.cbReport, {
-        params: {
-          type: this.data.type,
-          startDate: this.data.startDate,
-          endDate: this.data.endDate,
-          coaCode: this.data.coaCode,
-          sorts: JSON.stringify(sorts)
-        }
-      })
+
+      api.create(`${this.endpoint.accounting.journalReport}/lists`, this.data)
         .then(response => {
-          this.grid.data = response.data.tableData
-          this.grid.total = response.data.rowCount
+          for (let index = 0; index < response.data.length; index++) {
+            if (response.data[index].accCode !== null) {
+              if (response.data[index].accCode.indexOf(' ') === -1) {
+                response.data[index].debetOc = Number(response.data[index].debetOc)
+                response.data[index].creditOc = Number(response.data[index].creditOc)
+              }
+            } else if (response.data[index].accCode === null) {
+              if (response.data[index].accName !== null && response.data[index].accName.includes('Total')) {
+                response.data[index].debetOc = Number(response.data[index].debetOc)
+                response.data[index].creditOc = Number(response.data[index].creditOc)
+              }
+            }
+          }
+          this.grid.data = response.data
           this.appendFilter()
         })
     },
@@ -387,51 +379,34 @@ export default {
       this.exportExcel.export()
     },
     getCOAList() {
-      api.getAll(`${this.endpoint.accounting.coa}/lists`, {
-        params: {
-          filters: JSON.stringify([{
-            field: 'typeid',
-            operator: 'eq',
-            keyword: 2
-          }])
-        }
-      })
+      api.getAll(`${this.endpoint.accounting.coa}/lists`)
         .then(response => {
           this.coas = response.data.tableData
         })
     },
     appendFilter() {
       this.exportFilter.searches = []
+
       const searchType = {
-        field: 'type',
-        keyword: '',
-        operator: 'eq'
-      }
-      const searchStartDate = {
-        field: 'startDate',
-        keyword: '',
-        operator: 'eq'
-      }
-      const searchEndDate = {
-        field: 'endDate',
+        field: 'rptBy',
         keyword: '',
         operator: 'eq'
       }
 
-      const report = this.types.find(x => x.id === this.data.type)
-      if (report) {
-        searchType.keyword = report.name
-        this.exportFilter.searches.push(searchType)
+      const searchSort = {
+        field: 'sort',
+        keyword: '',
+        operator: 'eq'
       }
 
-      searchStartDate.keyword = this.data.startDate ? format(parseISO(this.data.startDate), 'dd-MMM-yyyy') : ''
-      this.exportFilter.searches.push(searchStartDate)
+      const report = this.types.find(x => x.id === this.data.rptBy)
+      searchType.keyword = report.name
+      this.exportFilter.searches.push(searchType)
 
-      searchEndDate.keyword = this.data.endDate ? format(parseISO(this.data.endDate), 'dd-MMM-yyyy') : ''
-      if (searchEndDate.keyword !== '') {
-        this.exportFilter.searches.push(searchEndDate)
-      }
-
+      const sort = this.sortTypes.find(x => x.id === this.data.sort)
+      searchSort.keyword = sort.name
+      this.exportFilter.searches.push(searchSort)
+      
       const coa = this.coas.find(x => x.code === this.data.coaCode)
       if (coa) {
         const searchCoa = {
@@ -440,21 +415,50 @@ export default {
           operator: 'eq'
         }
         searchCoa.field = 'coa'
-        searchCoa.keyword = `${coa.code} - ${coa.name}`
+        searchCoa.keyword = coa.name
         this.exportFilter.searches.push(searchCoa)
+      }
+
+      if (this.data.rptBy === 'DT') {
+        const searchDateFrom = {
+          field: 'dateFrom',
+          keyword: '',
+          operator: 'eq'
+        }
+        const searchDateTo = {
+          field: 'dateTo',
+          keyword: '',
+          operator: 'eq'
+        }
+
+        searchDateFrom.keyword = this.data.dateFrom ? format(parseISO(this.data.dateFrom), 'dd-MMM-yyyy') : ''
+        this.exportFilter.searches.push(searchDateFrom)
+
+        searchDateTo.keyword = this.data.dateTo ? format(parseISO(this.data.dateTo), 'dd-MMM-yyyy') : ''
+        this.exportFilter.searches.push(searchDateTo)
+
+      } else if (this.data.rptBy === 'N') {
+        const searchJournalCode = {
+          field: 'vouFrom',
+          keyword: '',
+          operator: 'eq'
+        }
+        const searchDetail = {
+          field: 'rptDet',
+          keyword: '',
+          operator: 'eq'
+        }
+
+        searchJournalCode.keyword = this.data.vouFrom
+        this.exportFilter.searches.push(searchJournalCode)
+
+        const detail = this.detTypes.find(x => x.id === this.data.rptDet)
+        searchDetail.keyword = detail.name
+        this.exportFilter.searches.push(searchDetail)
       }
     },
     clearTable() {
       this.grid.data = []
-      this.grid.columns = []
-    },
-    changeCoa() {
-      if (this.data.coaCode !== null) {
-        this.data.type = 1
-      } else {
-        this.data.type = null
-      }
-      this.clearTable()
     }
   }
 }
