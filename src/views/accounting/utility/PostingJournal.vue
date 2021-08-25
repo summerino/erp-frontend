@@ -118,6 +118,7 @@ export default {
   }),
 
   created: function () {
+    this.reset()
     auth.getAction(this.endpoint, this.menuId.postingJournal)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -149,6 +150,11 @@ export default {
   },
   
   methods:{
+    reset() {
+      this.data = {        
+        date: format(new Date(), 'yyyy-MM-dd')
+      }
+    },
     async save(endyear = false) {
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Tolong cek kembali bagian formulir yang wajib diisi atau yang terdapat kesalahan.')
