@@ -97,13 +97,15 @@
                       class="mt-0"
                       dense
                       readonly
+                      clearable
+                      @click:clear="clearDate('start')"
                     ></v-text-field>
                   </template>
                   <v-date-picker
                     v-model="data.startDate"
                     no-title
                     scrollable
-                    @change="menu.startDate = false; clearTable();"
+                    @change="menu.startDate = false; changeStartDate();"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
@@ -124,15 +126,13 @@
                       class="mt-0"
                       dense
                       readonly
-                      clearable
-                      @change="clearTable()"
                     ></v-text-field>
                   </template>
                   <v-date-picker
                     v-model="data.endDate"
                     no-title
                     scrollable
-                    @change="menu.endDate = false; clearTable();"
+                    @change="menu.endDate = false; changeEndDate();"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
@@ -314,15 +314,6 @@ export default {
     }, 0)
   },
 
-  // watch: {
-  //   'grid.options': {
-  //     handler() {
-  //       this.getList()
-  //     },
-  //     deep: true
-  //   }
-  // },
-
   computed: {
     ...mapState({
       gridDefOpts: state => state.app.grid,
@@ -345,7 +336,7 @@ export default {
       this.data = {        
         type: null,
         startDate: format(new Date(), 'yyyy-MM-dd'),
-        endDate: null,
+        endDate: format(new Date(), 'yyyy-MM-dd'),
         coaCode: null
       }
       this.filter = true
@@ -453,6 +444,24 @@ export default {
         this.data.type = 1
       } else {
         this.data.type = null
+      }
+      this.clearTable()
+    },
+    changeStartDate() {
+      if (this.data.startDate > this.data.endDate) {
+        this.data.endDate = this.data.startDate
+      }
+      this.clearTable()
+    },
+    changeEndDate() {
+      if (this.data.endDate < this.data.startDate) {
+        this.data.startDate = this.data.endDate
+      }
+      this.clearTable()
+    },
+    clearDate(item) {
+      if (item === 'start') {
+        this.data.startDate = null
       }
       this.clearTable()
     }

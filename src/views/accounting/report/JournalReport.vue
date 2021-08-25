@@ -89,7 +89,7 @@
                   item-value="id"
                   class="mt-0"
                   dense
-                  @change="clearTable()"
+                  @change="changeRptBy()"
                 >
                 </v-autocomplete>
               </v-col>
@@ -116,7 +116,7 @@
                     v-model="data.dateFrom"
                     no-title
                     scrollable
-                    @change="menu.dateFrom = false; clearTable();"
+                    @change="menu.dateFrom = false; changeDateFrom();"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
@@ -137,14 +137,13 @@
                       class="mt-0"
                       dense
                       readonly
-                      @change="clearTable()"
                     ></v-text-field>
                   </template>
                   <v-date-picker
                     v-model="data.dateTo"
                     no-title
                     scrollable
-                    @change="menu.dateTo = false; clearTable();"
+                    @change="menu.dateTo = false; changeDateTo();"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
@@ -459,6 +458,24 @@ export default {
     },
     clearTable() {
       this.grid.data = []
+    },
+    changeDateFrom() {
+      if (this.data.dateFrom > this.data.dateTo) {
+        this.data.dateTo = this.data.dateFrom
+      }
+      this.clearTable()
+    },
+    changeDateTo() {
+      if (this.data.dateTo < this.data.dateFrom) {
+        this.data.dateFrom = this.data.dateTo
+      }
+      this.clearTable()
+    },
+    changeRptBy() {
+      this.data.dateFrom = format(new Date(), 'yyyy-MM-dd')
+      this.data.dateTo = format(new Date(), 'yyyy-MM-dd')
+      this.data.vouFrom = null
+      this.clearTable()
     }
   }
 }
