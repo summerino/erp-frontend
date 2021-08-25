@@ -104,5 +104,9 @@ export default {
   expedition: {
     invoice: 'expedition-invoice',
     epApReport: 'ep-ap-report'
+  },
+
+  humanResource: {
+    attendance: 'attendance'
   }
 }

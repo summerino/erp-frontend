@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
+import * as VueGoogleMaps from 'vue2-google-maps'
 
 // Vuex Store
 import store from './store'
@@ -45,6 +46,23 @@ Vue.config.productionTip = false
 | https://vuejs.org/v2/guide/instance.html
 |
 */
+
+// dev account wildan
+// Vue.use(VueGoogleMaps, {
+//   load: {
+//     key: 'AIzaSyD0rOuITAhrCBpsnF6VZnilb3XMSPWxECA',
+//     libraries: 'places' // This is required if you use the Autocomplete plugin
+//   }
+// })
+
+// pro dari user di stack overflow
+Vue.use(VueGoogleMaps, {
+  load: {
+    key: 'AIzaSyA9etM9rqnYas63ypURAkvEFn_W_sU0NM4',
+    libraries: 'places' // This is required if you use the Autocomplete plugin
+  }
+})
+
 export default new Vue({
   i18n,
   vuetify,
