@@ -75,5 +75,8 @@ export default {
   companyProfile: 75,
   user: 51,
   role: 52,
-  parameter: 73
+  parameter: 73,
+
+  // Human Resource
+  attendanceReport: 103
 }

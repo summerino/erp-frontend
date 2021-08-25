@@ -19,6 +19,7 @@ class ExcelService {
           text: column,
           value: grid.columns[i].value,
           isDateTime: grid.columns[i].isDateTime,
+          isTimeOnly: grid.columns[i].isTimeOnly,
           isNumber: grid.columns[i].isNumber,
           isBool: grid.columns[i].isBool,
           customValues: grid.columns[i].customValues
@@ -50,6 +51,7 @@ class ExcelService {
         if (j > 0) {
           const value = grid.data[i][columns[j].value]
           const isDateTime = columns[j].isDateTime
+          const isTimeOnly = columns[j].isTimeOnly
           const isBool = columns[j].isBool
           const customValues = columns[j].customValues
           if (isBool) {
@@ -74,6 +76,8 @@ class ExcelService {
             if (value) {
               if (isDateTime) {
                 temp.push(format(parseISO(value), 'dd-MMM-yyyy'))
+              } else if (isTimeOnly) {
+                temp.push(format(parseISO(value), 'HH:mm'))
               } else if (customValues) {
                 temp.push(`${grid.data[i][customValues[0]]} - ${grid.data[i][customValues[1]]}`)
               } else {
@@ -85,8 +89,6 @@ class ExcelService {
               temp.push('')
             }
           }
-
-          
         }
       }
       result.push(temp)
@@ -233,15 +235,14 @@ class ExcelService {
     for (let i = 0; i <= datas.length; i++) {
       worksheet.getCell(i + firstRow, 1).alignment = { vertical: 'middle', horizontal: 'center' }
     }
-    
     // apply col width
     const col = grid.columns
     for (let i = 0; i < col.length; i++) {
       const colWidth = col[i].excelColWidth
       if (colWidth) {
-        worksheet.columns[i].width = colWidth
+        worksheet.columns[i + 1].width = colWidth
       } else {
-        worksheet.columns[i].width = 10 // default col
+        worksheet.columns[i + 1].width = 10 // default col
       }
     }
     const buf = await workbook.xlsx.writeBuffer()
