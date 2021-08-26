@@ -82,7 +82,8 @@ export default {
       cm: 'bb-credit-memo'
     },
     closingMonth: 'closing-month',
-    journalReport: 'journal-report'
+    journalReport: 'journal-report',
+    generalLedgerReport: 'gl-report'
   },
   
   systemManagement:{

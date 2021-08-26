@@ -75,5 +75,12 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/accounting/report/gl-report',
+  name: 'gl-report',
+  component: () => import(/* webpackChunkName: "gl-report" */ '@/views/accounting/report/GeneralLedgerReport.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
   
