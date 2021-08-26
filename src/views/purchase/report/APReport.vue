@@ -270,7 +270,6 @@ export default {
   created: function () {
     this.reset()
     this.getSupplierLists()
-    this.getList()
     auth.getAction(this.endpoint, this.menuId.apReport)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -288,15 +287,6 @@ export default {
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
-  },
-
-  watch: {
-    'grid.options': {
-      handler() {
-        this.getList()
-      },
-      deep: true
-    }
   },
 
   computed: {
@@ -347,7 +337,10 @@ export default {
         })
     },
     back() {
-      this.reset()
+      this.data.type = this.data.oldType
+      this.data.date = this.data.oldDate
+      this.data.supplier = this.data.oldSupplier
+      this.filter = true
       this.getList()
       this.main = true
     },
@@ -372,6 +365,9 @@ export default {
     },
     dblclickRow(event, { item }) {
       if (this.data.type === 2) {
+        this.data.oldType = this.data.type
+        this.data.oldDate = this.data.date
+        this.data.oldSupplier = this.data.supplier
         this.data.supCode = item.code
         this.data.supInitial = item.initial
         this.data.supName = item.name

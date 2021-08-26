@@ -165,6 +165,7 @@
                       dense
                       readonly
                       clearable
+                      @click:clear="clearDate('end')"
                     ></v-text-field>
                   </template>
                   <v-date-picker
@@ -364,7 +365,6 @@ export default {
   created: function () {
     this.reset()
     this.getItemLists()
-    this.getList()
     auth.getAction(this.endpoint, this.menuId.smReport)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -382,15 +382,6 @@ export default {
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
-  },
-
-  watch: {
-    'grid.options': {
-      handler() {
-        this.getList()
-      },
-      deep: true
-    }
   },
 
   computed: {
@@ -454,8 +445,12 @@ export default {
         })
     },
     back() {
-      this.reset()
+      this.data.isSM = false
+      this.grid.columns = this.data.type === 1 ? this.itemColumn : this.whColumn
       this.grid.options.sortBy = ['initial']
+      this.data.startDate = this.data.oldStartDate
+      this.data.endDate = this.data.oldEndDate
+      this.data.itemId = this.data.oldItemId
       this.getList()
       this.main = true
     },
@@ -473,6 +468,9 @@ export default {
     },
     dblclickRow(event, { item }) {
       if (!this.data.isSM) {
+        this.data.oldStartDate = this.data.startDate
+        this.data.oldEndDate = this.data.endDate
+        this.data.oldItemId = this.data.itemId
         if (this.data.type === 1) {
           this.data.filterName = 'Barang'
           this.data.initial = item.initial
@@ -552,6 +550,12 @@ export default {
     clearTable() {
       this.grid.data = []
       this.grid.columns = []
+    },
+    clearDate(item) {
+      if (item === 'end') {
+        this.data.endDate = null
+      }
+      this.clearTable()
     }
   }
 }

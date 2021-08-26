@@ -294,7 +294,6 @@ export default {
   created: function () {
     this.reset()
     this.getCOAList()
-    this.getList()
     auth.getAction(this.endpoint, this.menuId.cbReport)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)

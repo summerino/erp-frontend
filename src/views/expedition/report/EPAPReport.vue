@@ -268,7 +268,6 @@ export default {
   created: function () {
     this.reset()
     this.getSupplierLists()
-    this.getList()
     auth.getAction(this.endpoint, this.menuId.epApReport)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -286,15 +285,6 @@ export default {
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
-  },
-
-  watch: {
-    'grid.options': {
-      handler() {
-        this.getList()
-      },
-      deep: true
-    }
   },
 
   computed: {
