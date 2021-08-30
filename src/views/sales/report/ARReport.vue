@@ -290,7 +290,6 @@ export default {
     this.reset()
     this.getSalesmanLists()
     this.getCustomerLists()
-    this.getList()
     auth.getAction(this.endpoint, this.menuId.arReport)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -308,15 +307,6 @@ export default {
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
-  },
-
-  watch: {
-    'grid.options': {
-      handler() {
-        this.getList()
-      },
-      deep: true
-    }
   },
 
   computed: {
@@ -337,7 +327,8 @@ export default {
       this.data = {        
         type: 1,
         date: format(new Date(), 'yyyy-MM-dd'),
-        supplier: null
+        customer: null,
+        sales: null
       }
       this.filter = true
     },
@@ -368,7 +359,11 @@ export default {
         })
     },
     back() {
-      this.reset()
+      this.data.type = this.data.oldType 
+      this.data.date = this.data.oldDate
+      this.data.customer = this.data.oldCustomer
+      this.data.sales = this.data.oldSales
+      this.filter = true
       this.getList()
       this.main = true
     },
@@ -411,6 +406,10 @@ export default {
     },
     dblclickRow(event, { item }) {
       if (this.data.type === 2) {
+        this.data.oldType = this.data.type
+        this.data.oldDate = this.data.date
+        this.data.oldCustomer = this.data.customer
+        this.data.oldSales = this.data.sales
         this.data.custCode = item.code
         this.data.custInitial = item.initial
         this.data.custName = item.name

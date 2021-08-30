@@ -68,6 +68,7 @@ export default {
   postingJournal: 86,
   closingMonth: 88,
   journalReport: 100,
+  glReport: 104,
 
   // Asset Management
   assetType: 62,
