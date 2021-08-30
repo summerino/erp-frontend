@@ -164,6 +164,22 @@
             </template>
             <span class="text-caption">Void</span>
           </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                :disabled="item.mark.toUpperCase() === 'V' || !auth.allowPrint"
+                color="teal darken-2"
+                icon
+                small
+                @click="print(item)"
+              >
+                <v-icon small>mdi-printer</v-icon>
+              </v-btn>
+            </template>
+            <span class="text-caption">Cetak</span>
+          </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
@@ -814,6 +830,7 @@
     </v-dialog>
 
     <confirm ref="confirm"></confirm>
+    <report-viewer ref="reportViewer"></report-viewer>
     <find-so
       ref="findSO"
       :mark-exclude="['A', 'V', 'CLS']"
@@ -846,6 +863,7 @@ import auth from '@/services/authorization.service'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
+import ReportViewer from '@/components/dialog/ReportViewer'
 import FindSo from '@/components/dialog/sales/FindSO'
 import FindDo from '@/components/dialog/sales/FindDO'
 import Memo from '@/components/dialog/Memo.vue'
@@ -855,6 +873,7 @@ export default {
     AdvancedSearch,
     ExportExcel,
     Confirm,
+    ReportViewer,
     FindSo,
     FindDo,
     Memo
@@ -901,7 +920,7 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
+        { value: 'action', sortable: false, divider: true, width: '120' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'18' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'20', isDateTime: true },
         { text: 'Tipe', value: 'fromDirectInvoice', divider: true, width: '170', excelColWidth:'20', isBool: true, customValues: [{state: true, value: 'Penjualan Langsung'}, {state: false, value: 'Faktur Penjualan'}] },
@@ -1256,6 +1275,9 @@ export default {
             }
           })
       }
+    },
+    print(item) {
+      this.$refs.reportViewer.open('sales-invoice', item.code)
     },
     async save(closeDialog) {
       if (!this.dialog.add) return

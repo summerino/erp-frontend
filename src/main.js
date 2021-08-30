@@ -1,6 +1,17 @@
 import Vue from 'vue'
+
+import jquery from 'jquery'
+window['jQuery'] = jquery
+window['$'] = jquery
+
 import App from './App.vue'
 import * as VueGoogleMaps from 'vue2-google-maps'
+
+// Bold Reports Common
+// import '@boldreports/javascript-reporting-controls/Scripts/common/ej2-base.min'
+// import '@boldreports/javascript-reporting-controls/Scripts/common/ej2-data.min'
+// import '@boldreports/javascript-reporting-controls/Scripts/common/ej2-pdf-export.min'
+// import '@boldreports/javascript-reporting-controls/Scripts/common/ej2-svg-base.min'
 
 // Vuex Store
 import store from './store'
@@ -32,6 +43,10 @@ import './assets/scss/theme.scss'
 
 // Animation library - https://animate.style/
 import 'animate.css/animate.min.css'
+
+// Bold Reports css
+// import '@boldreports/javascript-reporting-controls/Content/material/bold.reports.all.min.css'
+// import '@boldreports/javascript-reporting-controls/Content/material/bold.reportdesigner.min.css'
 
 // Set this to false to prevent the production tip on Vue startup.
 Vue.config.productionTip = false
