@@ -342,6 +342,7 @@
                       <v-col cols="12" md="6" class="pl-md-1">
                         <v-currency-field
                           v-model="data.amount"
+                          :rules="rules.cannot0"
                           label="Nilai Transaksi"
                           class="text-right mt-0"
                         ></v-currency-field>
