@@ -510,7 +510,7 @@ export default {
       this.clearTable()
     },
     clickDetail(event, { item }) {
-      if (item.accCode !== null && this.main === true) {
+      if (item.accCode !== null && this.main) {
         this.data.oldDateFrom = this.data.dateFrom
         this.data.oldDateTo = this.data.dateTo
         this.data.dateFrom = format(parseISO(`${item.accCode.substring(6, 10)}-${item.accCode.substring(3, 5)}-${item.accCode.substring(0, 2)}T00:00:00`), 'yyyy-MM-dd')
