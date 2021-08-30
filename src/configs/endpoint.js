@@ -83,7 +83,8 @@ export default {
     },
     closingMonth: 'closing-month',
     journalReport: 'journal-report',
-    generalLedgerReport: 'gl-report'
+    generalLedgerReport: 'gl-report',
+    trialBalanceReport: 'tb-report'
   },
   
   systemManagement:{

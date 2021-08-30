@@ -82,5 +82,12 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/accounting/report/tb-report',
+  name: 'tb-report',
+  component: () => import(/* webpackChunkName: "tb-report" */ '@/views/accounting/report/TrialBalanceReport.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
   
