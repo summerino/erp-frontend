@@ -6,7 +6,7 @@
           <v-card-title class="indigo--text text--lighten-2 pb-1">
             <v-row v-if="main" no-gutters>
               <v-col cols="12" md="6">
-                Laporan Buku Besar
+                Laporan Neraca Percobaan
               </v-col>
               <v-col cols="12" md="6" class="text-right">
                 <v-tooltip bottom>
@@ -50,7 +50,7 @@
                   <v-list class="cursor-pointer">
                     <v-list-item>
                       <v-list-item-title>
-                        <export-excel title="Daftar Laporan Buku Besar" :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
+                        <export-excel title="Daftar Laporan Neraca Percobaan" :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
                       </v-list-item-title>
                     </v-list-item>
                   </v-list>
@@ -78,8 +78,11 @@
               </v-col>
             </v-row>
             <v-row v-else no-gutters>
-              <v-col cols="12" md="6">
-                Buku Besar - Detail - {{ this.data.vouFrom }}
+              <v-col v-if="mainDet === 1" cols="12" md="6">
+                Akun Detail - {{ this.data.coaCode }} - {{ this.data.coaName }}
+              </v-col>
+              <v-col v-if="mainDet === 2" cols="12" md="6">
+                Akun Detail - {{ this.data.coaCode }} - {{ this.data.coaName }} - Jurnal Detail - {{ this.data.vouFrom }}
               </v-col>
               <v-col cols="12" md="6" class="text-right">
                 <v-tooltip bottom>
@@ -107,7 +110,7 @@
           </v-card-title>
           <v-card-text v-if="this.filter" class="pa-2">
             <v-row no-gutters>
-              <v-col cols="12" md="2" class="pl-1">
+              <v-col cols="12" md="6" class="pl-1">
                 <v-menu
                   v-model="menu.dateFrom"
                   :close-on-content-click="false"
@@ -136,7 +139,7 @@
                   ></v-date-picker>
                 </v-menu>
               </v-col>
-              <v-col cols="12" md="2" class="pl-1">
+              <v-col cols="12" md="6" class="pl-1">
                 <v-menu
                   v-model="menu.dateTo"
                   :close-on-content-click="false"
@@ -165,47 +168,6 @@
                   ></v-date-picker>
                 </v-menu>
               </v-col>
-              <v-col cols="12" md="3" class="pl-1">
-                <v-autocomplete
-                  v-model="data.acc"
-                  :items="coas"
-                  label="Akun Mulai"
-                  :item-text="item => `${item.code} - ${item.name}`"
-                  item-value="code"
-                  class="mt-0"
-                  clearable
-                  dense
-                  @click:clear="clearCOA('acc')"
-                  @change="clearTable()"
-                ></v-autocomplete>
-              </v-col>
-              <v-col cols="12" md="3" class="pl-1">
-                <v-autocomplete
-                  v-model="data.acc2"
-                  :items="coas"
-                  label="Akun Akhir"
-                  :item-text="item => `${item.code} - ${item.name}`"
-                  item-value="code"
-                  class="mt-0"
-                  clearable
-                  dense
-                  @click:clear="clearCOA('acc2')"
-                  @change="clearTable()"
-                ></v-autocomplete>
-              </v-col>
-              <v-col cols="12" md="2" class="pl-1">
-                <v-autocomplete
-                  v-model="data.sort"
-                  :items="sortTypes"                  
-                  label="Urutkan"
-                  item-text="name"
-                  item-value="id"
-                  class="mt-0"
-                  dense
-                  @change="clearTable()"
-                >
-                </v-autocomplete>
-              </v-col>
             </v-row>
           </v-card-text>
         </v-card>
@@ -219,13 +181,23 @@
             :headers="grid.columns"
             :height="gridDefOpts.height"
             :items="grid.data"
-            :class="['elevation-1', this.main ? 'row-pointer' : '']"
+            :class="['elevation-1', this.mainDet === 0 ? 'row-pointer' : this.mainDet === 1 ? 'row-pointer' : '']"
             disable-sort
             fixed-header
             hide-default-footer
             disable-pagination
             @dblclick:row="clickDetail"
           >
+          <template v-slot:[`item.coaCode`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.coaCode }}
+            </span>
+          </template>
+          <template v-slot:[`item.coaName`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.coaName }}
+            </span>
+          </template>
           <template v-slot:[`item.accCode`]="{ item }">
             <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
               {{ item.accCode }}
@@ -256,6 +228,26 @@
               {{ item.endBalOc | formatCurrency }}
             </span>
           </template>
+          <template v-slot:[`item.debetIdr`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.debetIdr | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.creditIdr`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.creditIdr | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.beginBalIdr`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.beginBalIdr | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.endBalIdr`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.endBalIdr | formatCurrency }}
+            </span>
+          </template>
           </v-data-table>
         </v-card>
       </v-col> 
@@ -279,6 +271,7 @@ export default {
 
   data: () => ({
     main : true,
+    mainDet: 0,
     menu: {
       dateFrom: false,
       dateTo: false
@@ -287,8 +280,15 @@ export default {
       columns: [],
       data: []
     },
-    coas: [],
     defaultColumn: [
+      { text: 'Kode Akun', value: 'coaCode', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Nama Akun', value: 'coaName', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Saldo Awal', value: 'beginBalIdr',  align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Debit', value: 'debetIdr',  align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Kredit', value: 'creditIdr',  align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Saldo Akhir', value: 'endBalIdr',  align: 'right', width: '100', excelColWidth:'20', isNumber: true }
+    ],
+    ledgerColumn: [
       { text: 'Tanggal', value: 'accCode', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Kode', value: 'accName', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Catatan', value: 'notes', divider: true, width: '100', excelColWidth:'20' },
@@ -312,20 +312,11 @@ export default {
       { text: 'Kode Ref 4', value: 'refCode4', width: '100', excelColWidth:'20' }
     ],
     filter: false,
-    // types: [{ id: 'N', name: 'Berdasarkan Kode' }, { id: 'DT', name: 'Berdasarkan Tanggal' }],
-    // detTypes: [{ id: 'C', name: 'Kode' }, { id: 'CR', name: 'Kode dan Ref' }],
-    sortTypes: [{ id: 'N', name: 'Kode Jurnal' }, { id: 'DT', name: 'Tanggal Jurnal' }],
     data: {},
     exportFilter:{
       fields : [
-        // {text: 'Tipe Laporan', value: 'rptBy'},
         {text: 'Tanggal Mulai', value: 'dateFrom'},
-        {text: 'Tanggal Akhir', value: 'dateTo'},
-        // {text: 'Kode Jurnal', value: 'vouFrom'},
-        // {text: 'Detail', value: 'rptDet'},
-        {text: 'Akun Mulai', value: 'acc'},
-        {text: 'Akun Akhir', value: 'acc2'},
-        {text: 'Urutkan', value: 'sort'}
+        {text: 'Tanggal Akhir', value: 'dateTo'}
       ],
       operator: [{ text: 'Sama dgn.', value: 'eq'}],
       searches: []
@@ -334,8 +325,7 @@ export default {
 
   created: function () {
     this.reset()
-    this.getCOAList()
-    auth.getAction(this.endpoint, this.menuId.glReport)
+    auth.getAction(this.endpoint, this.menuId.tbReport)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -348,7 +338,7 @@ export default {
       }, {
         text: 'Laporan'
       }, {
-        text: 'Buku Besar'
+        text: 'Neraca Percobaan'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
@@ -380,12 +370,25 @@ export default {
         rptDet: 'C',
         acc: null,
         acc2: null,
-        sort: 'N'
+        sort: 'N',
+        curr: 'IDR'
       }
       this.filter = true
     },
     getList() {
-      api.create(`${this.endpoint.accounting.generalLedgerReport}/lists`, this.data)
+      api.create(`${this.endpoint.accounting.trialBalanceReport}/lists`, this.data)
+        .then(response => {
+          for (let index = 0; index < response.data.length; index++) {
+            response.data[index].isBold = response.data[index].isBold === '1'
+          }
+          this.grid.columns = this.defaultColumn
+          this.grid.data = response.data
+          this.appendFilter()
+        })
+    },
+    getLedger() {
+      api.create(`${this.endpoint.accounting.generalLedgerReport}/lists`, this.data, {
+        params: { caller: this.menuId.tbReport } })
         .then(response => {
           for (let index = 0; index < response.data.length; index++) {
             if (response.data[index].accCode !== null) {
@@ -402,14 +405,13 @@ export default {
               }
             }
           }
-          this.grid.columns = this.defaultColumn
+          this.grid.columns = this.ledgerColumn
           this.grid.data = response.data
-          this.appendFilter()
         })
     },
     getDetail() {
       api.create(`${this.endpoint.accounting.journalReport}/lists`, this.data, {
-        params: { caller: this.menuId.glReport } })
+        params: { caller: this.menuId.tbReport } })
         .then(response => {
           for (let index = 0; index < response.data.length; index++) {
             if (response.data[index].accCode !== null) {
@@ -434,48 +436,8 @@ export default {
     async exportExcel() {
       this.exportExcel.export()
     },
-    getCOAList() {
-      api.getAll(`${this.endpoint.accounting.coa}/lists`)
-        .then(response => {
-          this.coas = response.data.tableData
-        })
-    },
     appendFilter() {
       this.exportFilter.searches = []
-
-      const searchSort = {
-        field: 'sort',
-        keyword: '',
-        operator: 'eq'
-      }
-
-      const sort = this.sortTypes.find(x => x.id === this.data.sort)
-      searchSort.keyword = sort.name
-      this.exportFilter.searches.push(searchSort)
-      
-      const coa = this.coas.find(x => x.code === this.data.acc)
-      if (coa) {
-        const searchCoa = {
-          field: '',
-          keyword: '',
-          operator: 'eq'
-        }
-        searchCoa.field = 'acc'
-        searchCoa.keyword = coa.name
-        this.exportFilter.searches.push(searchCoa)
-      }
-
-      const coa2 = this.coas.find(x => x.code === this.data.acc2)
-      if (coa2) {
-        const searchCoa2 = {
-          field: '',
-          keyword: '',
-          operator: 'eq'
-        }
-        searchCoa2.field = 'acc2'
-        searchCoa2.keyword = coa2.name
-        this.exportFilter.searches.push(searchCoa2)
-      }
 
       const searchDateFrom = {
         field: 'dateFrom',
@@ -510,13 +472,25 @@ export default {
       this.clearTable()
     },
     clickDetail(event, { item }) {
-      if (item.accCode !== null && this.main) {
+      if (!this.main) {
+        if (item.accCode !== undefined && item.accCode !== null) {
+          this.data.oldDateFrom = this.data.dateFrom
+          this.data.oldDateTo = this.data.dateTo
+          this.data.dateFrom = format(parseISO(`${item.accCode.substring(6, 10)}-${item.accCode.substring(3, 5)}-${item.accCode.substring(0, 2)}T00:00:00`), 'yyyy-MM-dd')
+          this.data.dateTo = format(parseISO(`${item.accCode.substring(6, 10)}-${item.accCode.substring(3, 5)}-${item.accCode.substring(0, 2)}T00:00:00`), 'yyyy-MM-dd')
+          this.data.vouFrom = item.accName
+          this.mainDet = 2
+          this.getDetail()
+        }
+      } else if (item.coaCode !== undefined && item.coaCode !== null)  {
         this.data.oldDateFrom = this.data.dateFrom
         this.data.oldDateTo = this.data.dateTo
-        this.data.dateFrom = format(parseISO(`${item.accCode.substring(6, 10)}-${item.accCode.substring(3, 5)}-${item.accCode.substring(0, 2)}T00:00:00`), 'yyyy-MM-dd')
-        this.data.dateTo = format(parseISO(`${item.accCode.substring(6, 10)}-${item.accCode.substring(3, 5)}-${item.accCode.substring(0, 2)}T00:00:00`), 'yyyy-MM-dd')
-        this.data.vouFrom = item.accName
-        this.getDetail()
+        this.data.acc = item.coaCode
+        this.data.acc2 = item.coaCode
+        this.data.coaCode = item.coaCode
+        this.data.coaName = item.coaName
+        this.mainDet = 1
+        this.getLedger()
         this.main = false
         this.filter = false
       }
@@ -526,6 +500,7 @@ export default {
       this.data.dateTo = this.data.oldDateTo
       this.getList()
       this.main = true
+      this.mainDet = 0
       this.filter = true
     },
     clearDate(item) {

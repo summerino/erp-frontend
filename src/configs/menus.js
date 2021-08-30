@@ -69,6 +69,7 @@ export default {
   closingMonth: 88,
   journalReport: 100,
   glReport: 104,
+  tbReport: 105,
 
   // Asset Management
   assetType: 62,
