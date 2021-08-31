@@ -342,3 +342,4 @@ yarn-error.log*
 
 # Bak files
 *.bak
+gmapkey.txt

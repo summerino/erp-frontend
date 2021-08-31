@@ -23,6 +23,7 @@ import router from './router'
 import vuetify from './plugins/vuetify'
 import i18n from './plugins/vue-i18n'
 import './plugins/v-currency-field'
+import './plugins/vue-google-maps'
 import './plugins/vue-shortkey'
 import './plugins/vue-head'
 import './plugins/apexcharts'
@@ -61,23 +62,6 @@ Vue.config.productionTip = false
 | https://vuejs.org/v2/guide/instance.html
 |
 */
-
-// dev account wildan
-// Vue.use(VueGoogleMaps, {
-//   load: {
-//     key: 'AIzaSyD0rOuITAhrCBpsnF6VZnilb3XMSPWxECA',
-//     libraries: 'places' // This is required if you use the Autocomplete plugin
-//   }
-// })
-
-// pro dari user di stack overflow
-Vue.use(VueGoogleMaps, {
-  load: {
-    key: 'AIzaSyA9etM9rqnYas63ypURAkvEFn_W_sU0NM4',
-    libraries: 'places' // This is required if you use the Autocomplete plugin
-  }
-})
-
 export default new Vue({
   i18n,
   vuetify,

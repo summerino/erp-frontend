@@ -1,3 +1,4 @@
+import maps from './maps'
 import icons from './icons'
 import theme from './theme'
 import toolbar from './toolbar'
@@ -13,6 +14,9 @@ export default {
     name: 'Sahassa ERP',
     version: '1.0.0-dev'
   },
+
+  // google maps
+  maps,
 
   // icon libraries
   icons,
