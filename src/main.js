@@ -5,7 +5,6 @@ window['jQuery'] = jquery
 window['$'] = jquery
 
 import App from './App.vue'
-import * as VueGoogleMaps from 'vue2-google-maps'
 
 // Bold Reports Common
 // import '@boldreports/javascript-reporting-controls/Scripts/common/ej2-base.min'
