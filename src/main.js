@@ -1,16 +1,20 @@
+import './global'
 import Vue from 'vue'
-
-import jquery from 'jquery'
-window['jQuery'] = jquery
-window['$'] = jquery
-
 import App from './App.vue'
 
 // Bold Reports Common
-// import '@boldreports/javascript-reporting-controls/Scripts/common/ej2-base.min'
-// import '@boldreports/javascript-reporting-controls/Scripts/common/ej2-data.min'
-// import '@boldreports/javascript-reporting-controls/Scripts/common/ej2-pdf-export.min'
-// import '@boldreports/javascript-reporting-controls/Scripts/common/ej2-svg-base.min'
+require('@boldreports/javascript-reporting-controls/Scripts/common/ej2-base.min')
+require('@boldreports/javascript-reporting-controls/Scripts/common/ej2-data.min')
+require('@boldreports/javascript-reporting-controls/Scripts/common/ej2-pdf-export.min')
+// require('@boldreports/javascript-reporting-controls/Scripts/common/ej2-svg-base.min')
+
+// Report Viewer source
+import '@boldreports/javascript-reporting-controls/Scripts/bold.report-viewer.min'
+import '@boldreports/javascript-reporting-controls/Scripts/bold.report-designer.min'
+
+// Data Visualization
+import '@boldreports/javascript-reporting-controls/Scripts/data-visualization/ej.bulletgraph.min'
+import '@boldreports/javascript-reporting-controls/Scripts/data-visualization/ej.chart.min'
 
 // Vuex Store
 import store from './store'
@@ -45,8 +49,8 @@ import './assets/scss/theme.scss'
 import 'animate.css/animate.min.css'
 
 // Bold Reports css
-// import '@boldreports/javascript-reporting-controls/Content/material/bold.reports.all.min.css'
-// import '@boldreports/javascript-reporting-controls/Content/material/bold.reportdesigner.min.css'
+import '@boldreports/javascript-reporting-controls/Content/material/bold.reports.all.min.css'
+import '@boldreports/javascript-reporting-controls/Content/material/bold.reportdesigner.min.css'
 
 // Set this to false to prevent the production tip on Vue startup.
 Vue.config.productionTip = false

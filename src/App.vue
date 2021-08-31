@@ -63,16 +63,14 @@ export default {
   head: {
     link: [
       // adds config/icons into the html head tag
-      ...config.icons.map((href) => ({ rel: 'stylesheet', href })),
-      { rel: 'stylesheet', href: 'https://cdn.boldreports.com/3.1.42/content/material/bold.reports.all.min.css'},
-      { rel: 'stylesheet', href: 'https://cdn.boldreports.com/3.1.42/content/material/bold.reportdesigner.min.css'}
-    ],
-    script: [
-      { type: 'text/javascript', src: 'https://cdn.boldreports.com/3.1.42/scripts/common/ej2-base.min.js', body: true},
-      { type: 'text/javascript', src: 'https://cdn.boldreports.com/3.1.42/scripts/common/ej2-data.min.js', body: true},
-      { type: 'text/javascript', src: 'https://cdn.boldreports.com/3.1.42/scripts/common/ej2-pdf-export.min.js', body: true},
-      { type: 'text/javascript', src: 'https://cdn.boldreports.com/3.1.42/scripts/common/ej2-svg-base.min.js', body: true}
+      ...config.icons.map((href) => ({ rel: 'stylesheet', href }))
     ]
+    // script: [
+    //   { type: 'text/javascript', src: 'https://cdn.boldreports.com/3.1.45/scripts/common/ej2-base.min.js', body: true, async: true },
+    //   { type: 'text/javascript', src: 'https://cdn.boldreports.com/3.1.45/scripts/common/ej2-data.min.js', body: true, async: true },
+    //   { type: 'text/javascript', src: 'https://cdn.boldreports.com/3.1.45/scripts/common/ej2-pdf-export.min.js', body: true, async: true },
+    //   { type: 'text/javascript', src: 'https://cdn.boldreports.com/3.1.45/scripts/common/ej2-svg-base.min.js', body: true, async: true }
+    // ]
   }
 }
 </script>

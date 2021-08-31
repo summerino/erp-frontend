@@ -34,14 +34,6 @@
 import { mapState } from 'vuex'
 import $ from 'jquery'
 
-// Report Viewer source
-import '@boldreports/javascript-reporting-controls/Scripts/bold.report-viewer.min'
-import '@boldreports/javascript-reporting-controls/Scripts/bold.report-designer.min'
-
-// Data Visualization
-import '@boldreports/javascript-reporting-controls/Scripts/data-visualization/ej.bulletgraph.min'
-import '@boldreports/javascript-reporting-controls/Scripts/data-visualization/ej.chart.min'
-
 export default {
   data() {
     return {
