@@ -47,7 +47,7 @@
               </v-col>
             </v-row>
             <v-row no-gutters>
-              <v-col cols="1">
+              <v-col cols="2">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
@@ -65,29 +65,6 @@
                     >
                       <v-icon left>mdi-plus</v-icon>
                       Posting
-                    </v-btn>
-                  </template>
-                  <span class="text-caption">(Ctrl + Alt + N)</span>
-                </v-tooltip>
-              </v-col>
-              <v-col cols="1" class="pl-1">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      v-bind="attrs"
-                      v-on="on"
-                      v-shortkey="['ctrl', 'alt', 'n']"
-                      color="green darken-1"
-                      class="font-weight-regular"
-                      dark
-                      small
-                      tile
-                      @click="save(true)"
-                      @shortkey="save(true)"
-                      :disabled="!auth.allowPost"
-                    >
-                      <v-icon left>mdi-plus</v-icon>
-                      Posting Akhir Tahun
                     </v-btn>
                   </template>
                   <span class="text-caption">(Ctrl + Alt + N)</span>
@@ -155,20 +132,15 @@ export default {
         date: format(new Date(), 'yyyy-MM-dd')
       }
     },
-    async save(endyear = false) {
+    async save() {
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Tolong cek kembali bagian formulir yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
 
       let result = { success: false, message: '' }
-      if (endyear) {
-        const resp = await api.create('journal/end-year', this.data)
-        result = resp.data
-      } else {
-        const resp = await api.create('journal', this.data)
-        result = resp.data
-      }
+      const resp = await api.create('journal', this.data)
+      result = resp.data
 
       if (result.success) {
         this.$store.dispatch('app/showSuccess', result.message)
