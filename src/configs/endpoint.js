@@ -110,5 +110,9 @@ export default {
 
   humanResource: {
     attendance: 'attendance'
+  },
+
+  mobileSales: {
+    reason: 'mobile-reason'
   }
 }

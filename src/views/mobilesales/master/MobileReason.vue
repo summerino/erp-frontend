@@ -3,10 +3,10 @@
     <v-card v-if="main">
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
-          <v-col cols="12" md="2">
-            Tipe Akun
+          <v-col cols="12" md="1">
+            Alasan
           </v-col>
-          <v-col cols="12" md="4">
+          <v-col cols="12" md="5">
             <v-text-field
               v-model="grid.search"
               append-icon="mdi-magnify"
@@ -16,9 +16,8 @@
               @keyup.enter="getList"
             ></v-text-field>
           </v-col>
-          <v-spacer></v-spacer>
           <v-col cols="12" md="1">
-            <export-excel title="Daftar Tipe Akun" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+            <export-excel title="Daftar Alasan" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
           </v-col>
           <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
@@ -91,6 +90,22 @@
             <span>Hapus</span>
           </v-tooltip>
         </template>
+        <template v-slot:[`item.isActive`]="{ item }">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon 
+                v-bind="attrs" 
+                v-on="on" 
+                :color="item.isActive === true ? 'green' : 'red'"
+              >
+                {{ item.isActive === true ? 'mdi-toggle-switch-outline' : 'mdi-toggle-switch-off-outline' }}
+              </v-icon>
+            </template>
+            <span class="text-caption">
+                {{ item.isActive === true ? 'Aktif' : 'Nonaktif' }}
+            </span>
+          </v-tooltip>
+        </template>
       </v-data-table>
     </v-card>
 
@@ -98,14 +113,14 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="4">
-            <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' }} Tipe Akun</span>
+            <span>{{ data.action === 'add' ? 'Tambah' : 'Ubah' }} Alasan</span>
           </v-col>
           <v-col cols="12" md="8" class="text-right">
             <label
               v-if="data.action == 'edit'"
               class="text-caption mr-1"
             >
-              Tanggal Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
+              Tanggal Diperbarui: {{ data.updatedDate }} oleh {{ data.updatedInitial }}
             </label>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -115,7 +130,7 @@
                   v-shortkey="['ctrl', 'enter']"
                   color="blue darken-2"
                   class="font-weight-regular"
-                  :disabled="isActive || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="data.action === 'edit' && !auth.allowUpdate"
                   dark
                   small
                   tile
@@ -163,28 +178,38 @@
           <v-container class="px-1 pt-0 pb-1">
             <v-row no-gutters>
               <v-col cols="12" md="6" class="pr-md-3">
-                <v-text-field
-                  ref="initial"
-                  v-model="data.initial"
-                  :rules="[rules.required[0], rules.max20chars[0]]"
-                  :counter="20"
-                  label="Inisial"
+                <v-autocomplete
+                  ref="type"
+                  v-model="data.type"
+                  :items="types"
+                  :rules="rules.required"
+                  label="Tipe"
+                  item-text="name"
+                  item-value="id"
                   class="mt-0"
                   required
-                ></v-text-field>
+                >
+                </v-autocomplete>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-text-field
                   v-model="data.name"
                   :rules="[rules.required[0], rules.max50chars[0]]"
                   :counter="50"
-                  label="Nama"
+                  label="Nama Alasan"
                   class="mt-0"
                   required
                 ></v-text-field>
               </v-col>
             </v-row>
-
+            <v-row no-gutters>
+              <v-col cols="12" md="6">
+                <v-checkbox
+                  v-model="data.isActive"
+                  label="Aktif"
+                ></v-checkbox>
+              </v-col>
+            </v-row>
           </v-container>
         </v-form>
       </v-card-text>
@@ -215,25 +240,26 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
-        { text: 'Inisial', value: 'initial', divider: true, width: '150', excelColWidth:'20' },
-        { text: 'Nama', value: 'name', divider: true, width: '200', excelColWidth:'20' }
+        { text: 'Tipe', value: 'typeName', divider: true, width: '150', excelColWidth:'20' },
+        { text: 'Nama', value: 'name', divider: true, width: '200', excelColWidth:'20' },
+        { text: 'Status', value: 'isActive', width: '90', excelColWidth:'10', isBool: true }
       ],
       data: [],
       options: {
-        sortBy: ['initial'],
+        sortBy: ['typeName'],
         sortDesc: [false]
       },
       total: 0,
       search: null
     },
     valid: false,
-    types: [],
+    types: [{ id: 'V', name: 'Alasan Kunjungan' }, { id: 'NV', name: 'Alasan Tidak Berkunjung' }, { id: 'USV', name: 'Alasan Kunjungan Diluar Rute' }, { id: 'NO', name: 'Alasan Tidak Ada Pemesanan' }],
     data: {}
   }),
 
   created: function () {
     this.getList()
-    auth.getAction(this.endpoint, this.menuId.coaType)
+    auth.getAction(this.endpoint, this.menuId.mobileReason)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -242,13 +268,11 @@ export default {
   mounted: function () {
     setTimeout(() => {
       this.$store.commit('app/setBreadcrumbs', [{
-        text: 'Akuntansi'
+        text: 'Mobile Penjual'
       }, {
         text: 'Data Master'
       }, {
-        text: 'Akun'
-      }, {
-        text: 'Tipe'
+        text: 'Alasan'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
@@ -270,19 +294,16 @@ export default {
       endpoint: state => state.api.endpoint,
       auth: state => state.api.authorization,
       menuId: state => state.api.menus
-    }),
-    isActive() {
-      return (!this.data.isActive)
-    }  
+    })
   },
   
   methods:{
     reset(resetValidation = true) {
       this.data = {
         action: '',
-        initial: null,
+        type: null,
         name: null,
-        isActive: true
+        isActive: false
       }
 
       // Reset form validation
@@ -292,7 +313,7 @@ export default {
         }, 0)
       }
     },
-    getList() {
+    getList(bindToForm = false) {
       const sorts = []
       for (let i = 0; i < this.grid.options.sortBy.length; i++) {
         sorts.push({
@@ -301,24 +322,21 @@ export default {
         })
       }
       
-      api.getAll(this.endpoint.accounting.coaType, {
+      api.getAll(this.endpoint.mobileSales.reason, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
           take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
-          sorts: JSON.stringify(sorts),
-          filters: JSON.stringify([
-            {
-              field: 'isActive',
-              operator: 'eq',
-              keyword: 'true'
-            }
-          ])
+          sorts: JSON.stringify(sorts)
         }
       })
         .then(response => {
           this.grid.data = response.data.tableData
           this.grid.total = response.data.rowCount
+          if (bindToForm) {
+            const item = this.grid.data.find(h => h.id === this.data.id)
+            this.edit(item)
+          }
         })
     },
     back() {
@@ -330,8 +348,8 @@ export default {
       this.data.action = 'add'
 
       setTimeout(() => {
-        // Set focus to initial field
-        this.$refs.initial.focus()
+        // Set focus to type field
+        this.$refs.type.focus()
 
         // Validate form first
         this.$refs.form.validate()
@@ -355,11 +373,7 @@ export default {
           'Hapus Data?',
           'Apakah anda yakin ingin menghapus data ini?')
       ) {
-        if (item.id === 2) {
-          this.$store.dispatch('app/showInfo', 'Tipe akun kas & bank tidak dapat dihapus.')
-          return
-        }
-        api.delete(this.endpoint.accounting.coaType, item.id)
+        api.delete(this.endpoint.mobileSales.reason, item.id)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -376,14 +390,10 @@ export default {
 
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
-        const resp = await api.create(this.endpoint.accounting.coaType, this.data)
+        const resp = await api.create(this.endpoint.mobileSales.reason, this.data)
         result = resp.data
       } else if (this.data.action === 'edit') {
-        if (this.data.id === 2) {
-          this.$store.dispatch('app/showInfo', 'Tipe akun kas & bank tidak dapat diubah.')
-          return
-        }
-        const resp = await api.update(this.endpoint.accounting.coaType, this.data.id, this.data)
+        const resp = await api.update(this.endpoint.mobileSales.reason, this.data.id, this.data)
         result = resp.data
       }
 
