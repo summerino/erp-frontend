@@ -82,5 +82,8 @@ export default {
   parameter: 73,
 
   // Human Resource
-  attendanceReport: 103
+  attendanceReport: 103,
+
+  // Mobile Sales
+  mobileReason: 108
 }

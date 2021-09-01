@@ -10,6 +10,7 @@ import FinanceRoutes from './finance.routes'
 import GeneralRoutes from './general.routes'
 import HumanResourcesRoutes from './humanresource.routes'
 import InventoryRoutes from './inventory.routes'
+import MobileSalesRoutes from './mobilesales.routes'
 import ParameterRoutes from './parameter.routes'
 import PurchaseRoutes from './purchase.routes'
 import SalesRoutes from './sales.routes'
@@ -39,6 +40,7 @@ export const routes = [{
 ...GeneralRoutes,
 ...HumanResourcesRoutes,
 ...InventoryRoutes,
+...MobileSalesRoutes,
 ...ParameterRoutes,
 ...PurchaseRoutes,
 ...SalesRoutes,
