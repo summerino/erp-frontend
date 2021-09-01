@@ -235,16 +235,17 @@ class ExcelService {
     for (let i = 0; i <= datas.length; i++) {
       worksheet.getCell(i + firstRow, 1).alignment = { vertical: 'middle', horizontal: 'center' }
     }
-    // apply col width
-    const col = grid.columns
-    for (let i = 0; i < col.length; i++) {
-      const colWidth = col[i].excelColWidth
+
+    // apply column width
+    for (let i = 0; i < grid.columns.length; i++) {
+      const colWidth = grid.columns[i].excelColWidth
       if (colWidth) {
-        worksheet.columns[i + 1].width = colWidth
+        worksheet.columns[i].width = colWidth
       } else {
-        worksheet.columns[i + 1].width = 10 // default col
+        worksheet.columns[i].width = 10 // default col
       }
     }
+    
     const buf = await workbook.xlsx.writeBuffer()
     saveAs(new Blob([buf]), `${title}.xlsx`)
   }
