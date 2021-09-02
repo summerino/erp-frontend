@@ -59,11 +59,12 @@ export default {
         $('#viewer').boldReportViewer({
           reportServiceUrl: `${process.env.VUE_APP_API_BASE_URL}/report-viewer`,
           reportPath: `${reportName}.rdl`,
+          parameters: [{ name: 'code', values: [code] }],
           toolbarSettings: {
             // eslint-disable-next-line no-undef
-            items: ej.ReportViewer.ToolbarItems.All & ~ej.ReportViewer.ToolbarItems.Parameters
+            items: ej.ReportViewer.ToolbarItems.All & ~ej.ReportViewer.ToolbarItems.Parameters & ~ej.ReportViewer.ToolbarItems.ExportSetup
           },
-          parameters: [{ name: 'code', values: [code] }],
+          printMode: true,
           ajaxBeforeLoad: this.onAjaxRequest
         })
       }, 0)
