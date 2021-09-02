@@ -113,6 +113,22 @@
             </template>
             <span class="text-caption">Void</span>
           </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                :disabled="item.mark.toUpperCase() === 'V' || !auth.allowPrint"
+                color="teal darken-2"
+                icon
+                small
+                @click="print(item)"
+              >
+                <v-icon small>mdi-printer</v-icon>
+              </v-btn>
+            </template>
+            <span class="text-caption">Cetak</span>
+          </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
@@ -785,6 +801,7 @@
     </v-dialog>
 
     <confirm ref="confirm"></confirm>
+    <report-viewer ref="reportViewer"></report-viewer>
     <find-po
       ref="findPO"
       :mark-exclude="['A', 'V', 'CLS']"
@@ -818,6 +835,7 @@ import auth from '@/services/authorization.service'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
+import ReportViewer from '@/components/dialog/ReportViewer'
 import FindPo from '@/components/dialog/purchase/FindPO'
 import FindRcv from '@/components/dialog/purchase/FindRcv'
 import Memo from '@/components/dialog/Memo.vue'
@@ -827,6 +845,7 @@ export default {
     AdvancedSearch,
     ExportExcel,
     Confirm,
+    ReportViewer,
     FindPo,
     FindRcv,
     Memo
@@ -861,7 +880,7 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { value: 'action', sortable: false, divider: true, width: '120' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
@@ -872,7 +891,7 @@ export default {
         { text: 'Dikeluarkan Oleh', value: 'issuedInitial', divider: true, width: '200', excelColWidth:'23' },
         { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'No. Ref.', value: 'refNo', width: '120', excelColWidth:'15' },
-        { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
+        { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
       options: {
@@ -1187,7 +1206,9 @@ export default {
           })
       }
     },
-    
+    print(item) {
+      this.$refs.reportViewer.open('purchase-invoice', item.code)
+    },
     async save(closeDialog) {
       if (!this.dialog.add) return
       if (!this.$refs.form.validate()) {
