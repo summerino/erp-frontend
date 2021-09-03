@@ -53,7 +53,7 @@
                     <v-btn
                       v-bind="attrs"
                       v-on="on"
-                      v-shortkey="['ctrl', 'alt', 'n']"
+                      v-shortkey="['ctrl', 'alt', 'p']"
                       color="green darken-1"
                       class="font-weight-regular"
                       dark
@@ -63,11 +63,11 @@
                       @shortkey="save()"
                       :disabled="!auth.allowPost"
                     >
-                      <v-icon left>mdi-plus</v-icon>
+                      <v-icon left>mdi-alpha-p-box-outline</v-icon>
                       Posting
                     </v-btn>
                   </template>
-                  <span class="text-caption">(Ctrl + Alt + N)</span>
+                  <span class="text-caption">(Ctrl + Alt + P)</span>
                 </v-tooltip>
               </v-col>
             </v-row>
