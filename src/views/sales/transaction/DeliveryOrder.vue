@@ -113,6 +113,22 @@
             </template>
             <span class="text-caption">Void</span>
           </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                :disabled="item.mark.toUpperCase() === 'V' || !auth.allowPrint"
+                color="teal darken-2"
+                icon
+                small
+                @click="print(item)"
+              >
+                <v-icon small>mdi-printer</v-icon>
+              </v-btn>
+            </template>
+            <span class="text-caption">Cetak</span>
+          </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
@@ -646,6 +662,7 @@
     </v-dialog>
 
     <confirm ref="confirm"></confirm>
+    <report-viewer ref="reportViewer"></report-viewer>
     <find-so
       ref="findSO"
       :mark-exclude="['V', 'CLS', 'CMP']"
@@ -675,6 +692,7 @@ import auth from '@/services/authorization.service'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
+import ReportViewer from '@/components/dialog/ReportViewer'
 import FindSo from '@/components/dialog/sales/FindSO'
 import FindReturn from '@/components/dialog/sales/FindReturn'
 import SoSaveInvoice from '@/components/dialog/sales/SOSaveInvoice'
@@ -684,6 +702,7 @@ export default {
     AdvancedSearch,
     ExportExcel,
     Confirm,
+    ReportViewer,
     FindSo,
     FindReturn,
     SoSaveInvoice
@@ -1064,6 +1083,9 @@ export default {
             }
           })
       }
+    },
+    print(item) {
+      this.$refs.reportViewer.open('delivery-order', item.code)
     },
     async save(closeDialog) {
       if (!this.dialog.add) return
