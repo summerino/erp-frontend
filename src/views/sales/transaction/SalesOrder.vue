@@ -129,6 +129,22 @@
             </template>
             <span class="text-caption">Tutup</span>
           </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                :disabled="item.mark.toUpperCase() === 'V' || !auth.allowPrint"
+                color="teal darken-2"
+                icon
+                small
+                @click="print(item)"
+              >
+                <v-icon small>mdi-printer</v-icon>
+              </v-btn>
+            </template>
+            <span class="text-caption">Cetak</span>
+          </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
@@ -1000,6 +1016,7 @@
     </v-dialog>
 
     <confirm ref="confirm"></confirm>
+    <report-viewer ref="reportViewer"></report-viewer>
     <find-customer
       ref="findCust"
       @dblclick:row="bindCustData"
@@ -1035,6 +1052,7 @@ import auth from '@/services/authorization.service'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
+import ReportViewer from '@/components/dialog/ReportViewer'
 import FindCustomer from '@/components/dialog/general/FindCustomer'
 import FindItem from '@/components/dialog/inventory/FindItem'
 import SoSaveDelivery from '@/components/dialog/sales/SOSaveDelivery'
@@ -1046,6 +1064,7 @@ export default {
     AdvancedSearch,
     ExportExcel,
     Confirm,
+    ReportViewer,
     FindCustomer,
     FindItem,
     SoSaveDelivery,
@@ -1079,13 +1098,13 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '120', excelColWidth:'10' },
+        { value: 'action', sortable: false, divider: true, width: '150' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Penjual', value: 'salesInitial', divider: true, width: '180', excelColWidth:'23' },
         { text: 'Pelanggan', value: 'custName', divider: true, width: '220', excelColWidth:'35', customValues: ['custCode', 'custName'] },
         { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
-        { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
+        { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
       options: {
@@ -1612,6 +1631,9 @@ export default {
             }
           })
       }
+    },
+    print(item) {
+      this.$refs.reportViewer.open('sales-order', item.code)
     },
     async save(closeDialog) {
       if (!this.dialog.add) return

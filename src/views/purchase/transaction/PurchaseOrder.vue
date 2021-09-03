@@ -130,6 +130,22 @@
             </template>
             <span class="text-caption">Tutup</span>
           </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                :disabled="item.mark.toUpperCase() === 'V' || !auth.allowPrint"
+                color="teal darken-2"
+                icon
+                small
+                @click="print(item)"
+              >
+                <v-icon small>mdi-printer</v-icon>
+              </v-btn>
+            </template>
+            <span class="text-caption">Cetak</span>
+          </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
@@ -846,6 +862,7 @@
     </v-dialog>
 
     <confirm ref="confirm"></confirm>
+    <report-viewer ref="reportViewer"></report-viewer>
     <find-supplier
       ref="findSup"
       @dblclick:row="bindSupData"
@@ -878,6 +895,7 @@ import auth from '@/services/authorization.service'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
+import ReportViewer from '@/components/dialog/ReportViewer'
 import FindSupplier from '@/components/dialog/general/FindSupplier'
 import FindItem from '@/components/dialog/inventory/FindItem'
 import PoSaveReceive from '@/components/dialog/purchase/POSaveReceive'
@@ -888,6 +906,7 @@ export default {
     AdvancedSearch,
     ExportExcel,
     Confirm,
+    ReportViewer,
     FindSupplier,
     FindItem,
     PoSaveReceive,
@@ -917,7 +936,7 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '120' },
+        { value: 'action', sortable: false, divider: true, width: '150' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'18' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Diminta Oleh', value: 'requestInitial', divider: true, width: '200', excelColWidth:'23' },
@@ -1358,6 +1377,9 @@ export default {
             }
           })
       }
+    },
+    print(item) {
+      this.$refs.reportViewer.open('purchase-order', item.code)
     },
     async save(closeDialog) {
       if (!this.dialog.add) return
