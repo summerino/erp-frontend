@@ -726,14 +726,14 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { value: 'action', sortable: false, divider: true, width: '120' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
-        { text: 'Kode Trans.', value: 'transCode', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Kode Trans.', value: 'transCode', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Diterima Oleh', value: 'receiveInitial', divider: true, width: '200', excelColWidth:'23' },
         { text: 'No. Ref.', value: 'refNo', width: '150', excelColWidth:'18' },
-        { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
+        { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
       options: {
