@@ -683,6 +683,12 @@
                         <template v-slot:[`item.depreciateDate`]="{ item }">
                           {{ item.depreciateDate | formatDate('dd-MMM-yyyy') }}
                         </template>
+                         <template v-slot:[`item.depreciateValue`]="{ item }">
+                          {{ item.depreciateValue | formatCurrency }}
+                        </template>
+                         <template v-slot:[`item.bookValue`]="{ item }">
+                          {{ item.bookValue | formatCurrency }}
+                        </template>
                       </v-data-table>
                     </v-tab-item>
                   </v-tabs>
@@ -759,12 +765,12 @@ export default {
     },
     gridHistory: {
       columns: [
-        { text: 'Tahun Fiskal', value: 'fiscalYear', divider: true },
-        { text: 'Bulan Penyusutan', value: 'numberOfMonth', divider: true },
-        { text: 'Periode', value: 'period', divider: true },
-        { text: 'Tgl. Penyusutan', value: 'depreciateDate', divider: true },
-        { text: 'Depresiasi', value: 'depreciateValue', divider: true },
-        { text: 'Nilai Buku', value: 'bookValue', divider: true }
+        { text: 'Tahun Fiskal', align: 'right', value: 'fiscalYear', divider: true },
+        { text: 'Bulan Penyusutan', align: 'right', value: 'numberOfMonth', divider: true },
+        { text: 'Periode', align: 'right', value: 'period', divider: true },
+        { text: 'Tgl. Penyusutan', align: 'right', value: 'depreciateDate', divider: true },
+        { text: 'Depresiasi', align: 'right', value: 'depreciateValue', divider: true },
+        { text: 'Nilai Buku', align: 'right', value: 'bookValue', divider: true }
       ],
       data: []
     },
@@ -1002,6 +1008,20 @@ export default {
         .then(response => {
           this.coas = response.data.tableData
         })
+    },
+    getListHistory(code) {
+      api.getAll(`${this.endpoint.assetManagement.asset.fixedAsset}/lists-history`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: code
+          }])
+        }
+      })
+        .then(response => {
+          this.gridHistory.data = response.data.tableData
+        })
     }, 
     close() {
       this.dialog.add = false
@@ -1038,6 +1058,9 @@ export default {
 
       // Get supplier details
       this.supCodeChange()
+
+      // Get History
+      this.getListHistory(item.code)
 
       this.typeIdChange()
       // Set focus to order code field
