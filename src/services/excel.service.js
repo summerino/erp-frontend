@@ -189,7 +189,6 @@ class ExcelService {
     this.renderColumnDatas(worksheet, countHeaderRow, grid, columns, firstNumber)
 
     // Header columns style
-    console.log(columns)
     for (let i = 0; i < columns.length; i++) {
       // Border & align
       worksheet.getCell(countHeaderRow, i + 1).fill = {

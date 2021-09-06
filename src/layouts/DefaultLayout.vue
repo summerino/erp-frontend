@@ -123,7 +123,6 @@ export default {
       this.$store.commit('api/setAction', resp.data)
       // api.getAll(this.endpoint.systemManagement.action)
       //   .then(response => {
-      //     console.log(response.data, 'asd')
       //     this.$store.commit('api/setAction', response.data)
       //   })
     }
