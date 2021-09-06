@@ -2,7 +2,7 @@
   <div class="w-full">
     <v-card v-if="main">
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row no-gutters>
+        <v-row v-if="!posting" no-gutters>
           <v-col cols="12" md="3">
             Saldo Awal Nota Debit
           </v-col>
@@ -40,7 +40,28 @@
               <export-excel title="Daftar Saldo Awal Nota Debit" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
             </v-row>
           </v-col>
-          <v-col cols="12" md="4" class="text-right">
+          <v-col cols="12" md="1" class="text-right">
+            <template-excel title="Template Saldo Awal Nota Debit" :grid="grid"></template-excel>
+          </v-col>
+          <v-col cols="12" md="1" class="text-right">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'u']"
+                  icon
+                  color="blue"
+                  @click="openUpload()"
+                  @shortkey="openUpload()"
+                >
+                  <v-icon>mdi-file-upload</v-icon>
+                </v-btn>
+              </template>
+              <span class="text-caption text-center">Import Data Saldo Awal Nota Debit<br/>(Ctrl + Alt + U)</span>
+            </v-tooltip>
+          </v-col>
+          <v-col cols="12" md="2" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -64,6 +85,56 @@
             </v-tooltip>
           </v-col>
         </v-row>
+        <v-row v-else no-gutters>
+          <v-col cols="12" md="4">
+            <span>Import Saldo Awal Nota Debit</span>
+          </v-col>
+          <v-col cols="12" md="8" class="text-right">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'p']"
+                  color="blue darken-2"
+                  class="font-weight-regular"
+                  dark
+                  small
+                  tile
+                  @click="postData"
+                  @shortkey="postData"
+                  
+                >
+                  <v-icon left>
+                    mdi-alpha-p-box-outline
+                  </v-icon>
+                  Post
+                </v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Alt + P)</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['esc']"
+                  class="font-weight-regular ml-1"
+                  small
+                  tile
+                  @click="backPosting"
+                  @shortkey="backPosting"
+                >
+                  <v-icon left>
+                    mdi-undo-variant
+                  </v-icon>
+                  Kembali
+                </v-btn>
+              </template>
+              <span class="text-caption">(Esc)</span>
+            </v-tooltip>
+          </v-col>
+        </v-row>
       </v-card-title>
 
       <v-card-text v-if="true" class="pb-1">
@@ -71,6 +142,7 @@
       </v-card-text>
 
       <v-data-table
+        v-if="!posting"
         :headers="grid.columns"
         :footer-props="{ itemsPerPageOptions: gridDefOpts.pageSizes }"
         :height="gridDefOpts.height"
@@ -128,6 +200,59 @@
           {{ item.remaining | formatCurrency }}
         </template>
       </v-data-table>
+      <v-data-table
+        v-else
+        :headers="grid.template"
+        :height="gridDefOpts.height"
+        :items="grid.data"
+        :sort-by="['kode']"
+        :sort-desc="grid.options.sortDesc"
+        class="elevation-1"
+        disable-pagination
+        fixed-header
+        hide-default-footer
+      >
+        <template v-slot:[`item.no`]="{ item }">
+          <span :class="item.mark ? 'red--text' : 'black--text'">
+            {{ item.no }}
+          </span>
+        </template>
+        <template v-slot:[`item.kode`]="{ item }">
+          <span :class="item.mark ? 'red--text' : 'black--text'">
+            {{ item.kode }}
+          </span>
+        </template>
+        <template v-slot:[`item.kodepemasok`]="{ item }">
+          <span :class="item.mark ? 'red--text' : 'black--text'">
+            {{ item.kodepemasok }}
+          </span>
+        </template>
+        <template v-slot:[`item.tanggal`]="{ item }">
+          <span :class="item.mark ? 'red--text' : 'black--text'">
+            {{ item.tanggal | formatDate('dd-MMM-yyyy') }}
+          </span>
+        </template>
+        <template v-slot:[`item.tipe`]="{ item }">
+          <span :class="item.mark ? 'red--text' : 'black--text'">
+            {{ item.tipe }}
+          </span>
+        </template>
+        <template v-slot:[`item.nilai`]="{ item }">
+          <span :class="item.mark ? 'red--text' : 'black--text'">
+            {{ item.nilai | formatCurrency }}
+          </span>
+        </template>
+        <template v-slot:[`item.catatan`]="{ item }">
+          <span :class="item.mark ? 'red--text' : 'black--text'">
+            {{ item.catatan }}
+          </span>
+        </template>
+      </v-data-table>
+      <v-card-text v-if="posting">
+        <span >
+          * Data yang berwana <span class="red--text">merah</span> tidak akan di proses.
+        </span>
+      </v-card-text>
     </v-card>
 
     <v-card v-else>
@@ -314,6 +439,7 @@
     </v-card>
     
     <confirm ref="confirm"></confirm>
+    <upload-excel ref="upload" type="bb-dm" :grid="grid" @uploadCmp="changePosting"></upload-excel>
   </div>
 </template>
 
@@ -327,16 +453,21 @@ import auth from '@/services/authorization.service'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
+import TemplateExcel from '@/components/common/TemplateExcel.vue'
+import UploadExcel from '@/components/common/UploadExcel.vue'
 
 export default {
   components:{
     AdvancedSearch,
     ExportExcel,
-    Confirm
+    Confirm,
+    TemplateExcel,
+    UploadExcel
   },
 
   data: () => ({
     main: true,
+    posting: false,
     filterFields: [{
       text: 'Kode', value: 'code', dataType: 'text'
     }, {
@@ -366,6 +497,14 @@ export default {
         { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
         { text: 'Digunakan', value: 'used', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
         { text: 'Saldo', value: 'remaining', align: 'right', width: '120', excelColWidth:'15', isNumber: true }
+      ],
+      template: [
+        { text: 'Kode', value: 'kode', divider: true, width: '160', excelColWidth:'25' },
+        { text: 'Tanggal', value: 'tanggal', align: 'right', divider: true, width: '120', excelColWidth:'20', isDateTime: true },
+        { text: 'Tipe', value: 'tipe', divider: true, width: '160', excelColWidth:'25' },
+        { text: 'Kode Pemasok', value: 'kodepemasok', divider: true, width: '220', excelColWidth:'25' },
+        { text: 'Nilai', value: 'nilai', align: 'right', divider: true, width: '120', excelColWidth:'20', isNumber: true },
+        { text: 'Catatan', value: 'catatan', width: '220', excelColWidth:'35' }
       ],
       data: [],
       options: {
@@ -593,6 +732,28 @@ export default {
     },
     nilaiChange() {
       this.data.remaining = this.data.amount - this.data.used
+    },
+    openUpload() {
+      this.$refs.upload.open()
+    },
+    changePosting() {
+      this.posting = !this.posting
+    },
+    backPosting() {
+      this.changePosting()
+      this.getList()
+    },
+    async postData() {
+
+      const data = this.grid.data
+      let result = { success: false, message: '' }
+      const resp = await api.create(`${this.endpoint.accounting.beginBalance.dm}/posting`, data)
+      result = resp.data
+
+      if (result.success) {
+        this.$store.dispatch('app/showSuccess', result.message)
+        this.backPosting()
+      }
     }
   }
 }

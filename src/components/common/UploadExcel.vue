@@ -103,6 +103,18 @@ export default {
         const resp = await api.create(`${this.endpoint.accounting.beginBalance.ap}/upload`, data)
         this.grid.data = resp.data.tableData
         this.grid.total = resp.data.rowCount
+      } else if (this.type === 'bb-ar') {
+        const resp = await api.create(`${this.endpoint.accounting.beginBalance.ar}/upload`, data)
+        this.grid.data = resp.data.tableData
+        this.grid.total = resp.data.rowCount
+      } else if (this.type === 'bb-dm') {
+        const resp = await api.create(`${this.endpoint.accounting.beginBalance.dm}/upload`, data)
+        this.grid.data = resp.data.tableData
+        this.grid.total = resp.data.rowCount
+      } else if (this.type === 'bb-cm') {
+        const resp = await api.create(`${this.endpoint.accounting.beginBalance.cm}/upload`, data)
+        this.grid.data = resp.data.tableData
+        this.grid.total = resp.data.rowCount
       }
       this.close()
       this.$emit('uploadCmp')
