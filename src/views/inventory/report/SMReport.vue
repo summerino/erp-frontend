@@ -316,10 +316,10 @@ export default {
       { text: 'Qty Masuk', value: 'qtyIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Keluar', value: 'qtyOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Akhir', value: 'qtyEnd', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Persediaan Awal', value: 'invBegin', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Persediaan Masuk', value: 'invIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Persediaan Keluar', value: 'invOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Persediaan Akhir', value: 'invEnd', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
+      { text: 'Persediaan Awal', value: 'invBegin', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Persediaan Masuk', value: 'invIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Persediaan Keluar', value: 'invOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Persediaan Akhir', value: 'invEnd', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
     itemColumn: [
       { text: 'Inisial', value: 'initial', divider: true, width: '100', excelColWidth:'20'},
@@ -329,10 +329,10 @@ export default {
       { text: 'Qty Masuk', value: 'qtyIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Keluar', value: 'qtyOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Akhir', value: 'qtyEnd', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Persediaan Awal', value: 'invBegin', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Persediaan Masuk', value: 'invIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Persediaan Keluar', value: 'invOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Persediaan Akhir', value: 'invEnd', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
+      { text: 'Persediaan Awal', value: 'invBegin', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Persediaan Masuk', value: 'invIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Persediaan Keluar', value: 'invOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Persediaan Akhir', value: 'invEnd', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
     smColumn: [
       { text: 'Tgl. Transaksi', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true},
@@ -341,9 +341,9 @@ export default {
       { text: 'Qty Masuk', value: 'qtyIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Keluar', value: 'qtyOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Akhir', value: 'qtyEnd', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Persediaan Masuk', value: 'invIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Persediaan Keluar', value: 'invOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Persediaan Akhir', value: 'invEnd', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
+      { text: 'Persediaan Masuk', value: 'invIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Persediaan Keluar', value: 'invOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Persediaan Akhir', value: 'invEnd', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
     types: [{ id: 1, name: 'Berdasarkan Barang' }, { id: 2, name: 'Berdasarkan Gudang' }],
     typeUnits: [{ id: 1, name: 'Satuan Terkecil' }, { id: 2, name: 'Satuan Beli' }, { id: 3, name: 'Satuan Jual' }],

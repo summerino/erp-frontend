@@ -293,9 +293,9 @@ export default {
       { text: 'Kode', value: 'accName', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Catatan', value: 'notes', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Kode Ref 1', value: 'refCode1', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Debit', value: 'debetOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Kredit', value: 'creditOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Saldo Akhir', value: 'endBalOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Debit', value: 'debetOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Kredit', value: 'creditOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Saldo Akhir', value: 'endBalOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Kode Ref 2', value: 'refCode2', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Kode Ref 3', value: 'refCode3', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Kode Ref 4', value: 'refCode4', width: '100', excelColWidth:'20' }
@@ -305,8 +305,8 @@ export default {
       { text: 'Nama Akun', value: 'accName', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Catatan', value: 'notes', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Kode Ref 1', value: 'refCode1', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Debit', value: 'debetOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Kredit', value: 'creditOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Debit', value: 'debetOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Kredit', value: 'creditOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Kode Ref 2', value: 'refCode2', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Kode Ref 3', value: 'refCode3', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Kode Ref 4', value: 'refCode4', width: '100', excelColWidth:'20' }
@@ -443,15 +443,21 @@ export default {
     appendFilter() {
       this.exportFilter.searches = []
 
-      const searchSort = {
-        field: 'sort',
-        keyword: '',
-        operator: 'eq'
+      if (this.data.dateFrom) {
+        this.exportFilter.searches.push({
+          field: 'dateFrom',
+          keyword: format(parseISO(this.data.dateFrom), 'dd-MMM-yyyy'),
+          operator: 'eq'
+        })
       }
 
-      const sort = this.sortTypes.find(x => x.id === this.data.sort)
-      searchSort.keyword = sort.name
-      this.exportFilter.searches.push(searchSort)
+      if (this.data.dateTo) {
+        this.exportFilter.searches.push({
+          field: 'dateTo',
+          keyword: format(parseISO(this.data.dateTo), 'dd-MMM-yyyy'),
+          operator: 'eq'
+        })
+      }
       
       const coa = this.coas.find(x => x.code === this.data.acc)
       if (coa) {
@@ -476,23 +482,6 @@ export default {
         searchCoa2.keyword = coa2.name
         this.exportFilter.searches.push(searchCoa2)
       }
-
-      const searchDateFrom = {
-        field: 'dateFrom',
-        keyword: '',
-        operator: 'eq'
-      }
-      const searchDateTo = {
-        field: 'dateTo',
-        keyword: '',
-        operator: 'eq'
-      }
-
-      searchDateFrom.keyword = this.data.dateFrom ? format(parseISO(this.data.dateFrom), 'dd-MMM-yyyy') : ''
-      this.exportFilter.searches.push(searchDateFrom)
-
-      searchDateTo.keyword = this.data.dateTo ? format(parseISO(this.data.dateTo), 'dd-MMM-yyyy') : ''
-      this.exportFilter.searches.push(searchDateTo)
     },
     clearTable() {
       this.grid.data = []

@@ -237,9 +237,9 @@ export default {
       { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Nama', value: 'name', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Jumlah Transaksi', value: 'totalTrans', align: 'right', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nilai Transaksi', value: 'totalAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Nilai Bayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Sisa', value: 'remainderAmount', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
+      { text: 'Nilai Transaksi', value: 'totalAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Nilai Bayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Sisa', value: 'remainderAmount', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
     rcvColumn: [
       { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true },
@@ -249,9 +249,9 @@ export default {
       { text: 'Kode Faktur', value: 'invCode', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Kode Pemasok', value: 'supCode', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Nama Pemasok', value: 'supName', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nilai Transaksi', value: 'totalAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Nilai Bayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Sisa', value: 'remainderAmount', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
+      { text: 'Nilai Transaksi', value: 'totalAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Nilai Bayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Sisa', value: 'remainderAmount', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
     types: [{ id: 1, name: 'Berdasarkan Penerimaan' }, { id: 2, name: 'Berdasarkan Pemasok' }],
     suppliers: [],

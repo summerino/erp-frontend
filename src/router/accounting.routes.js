@@ -55,20 +55,6 @@ export default [{
     authRequired: true
   }
 }, {
-  path: '/accounting/utility/posting',
-  name: 'posting',
-  component: () => import(/* webpackChunkName: "posting" */ '@/views/accounting/utility/PostingJournal.vue'),
-  meta: {
-    authRequired: true
-  }
-}, {
-  path: '/accounting/utility/closing-month',
-  name: 'closing-month',
-  component: () => import(/* webpackChunkName: "closing-month" */ '@/views/accounting/utility/ClosingMonth.vue'),
-  meta: {
-    authRequired: true
-  }
-}, {
   path: '/accounting/report/journal-report',
   name: 'journal-report',
   component: () => import(/* webpackChunkName: "journal-report" */ '@/views/accounting/report/JournalReport.vue'),
@@ -86,6 +72,20 @@ export default [{
   path: '/accounting/report/tb-report',
   name: 'tb-report',
   component: () => import(/* webpackChunkName: "tb-report" */ '@/views/accounting/report/TrialBalanceReport.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/accounting/utility/posting',
+  name: 'posting',
+  component: () => import(/* webpackChunkName: "posting" */ '@/views/accounting/utility/PostingJournal.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/accounting/utility/closing-month',
+  name: 'closing-month',
+  component: () => import(/* webpackChunkName: "closing-month" */ '@/views/accounting/utility/ClosingMonth.vue'),
   meta: {
     authRequired: true
   }

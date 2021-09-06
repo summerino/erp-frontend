@@ -252,18 +252,18 @@ export default {
     acColumn: [
       { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Nama', value: 'name', divider: true, width: '100', excelColWidth:'20'},
-      { text: 'Saldo Awal', value: 'beginningBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Saldo Masuk', value: 'incomingBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Saldo Keluar', value: 'outgoingBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Saldo Akhir', value: 'endingBalance', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
+      { text: 'Saldo Awal', value: 'beginningBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Saldo Masuk', value: 'incomingBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Saldo Keluar', value: 'outgoingBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Saldo Akhir', value: 'endingBalance', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
     aColumn: [
       { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true},
       { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'20'},
       { text: 'Catatan', value: 'notes', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Saldo Masuk', value: 'incomingBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Saldo Keluar', value: 'outgoingBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Saldo Akhir', value: 'endingBalance', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
+      { text: 'Saldo Masuk', value: 'incomingBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Saldo Keluar', value: 'outgoingBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Saldo Akhir', value: 'endingBalance', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
     adColumn: [
       { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true},
@@ -272,9 +272,9 @@ export default {
       { text: 'Kode Trans.', value: 'transCode', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Kode Akun', value: 'coaCode', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Nama Akun', value: 'coaName', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Saldo Masuk', value: 'incomingBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Saldo Keluar', value: 'outgoingBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Saldo Akhir', value: 'endingBalance', align: 'right', width: '100', excelColWidth:'20', isNumber: true }
+      { text: 'Saldo Masuk', value: 'incomingBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Saldo Keluar', value: 'outgoingBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Saldo Akhir', value: 'endingBalance', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
     coas: [],
     types: [{ id: 1, name: 'Rekapan' }, { id: 2, name: 'Terperinci' }],

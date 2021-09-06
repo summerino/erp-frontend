@@ -1,7 +1,7 @@
 export default [{
-  path: '/expedition/expedition-invoice',
+  path: '/expedition/transaction/expedition-invoice',
   name: 'expedition-invoice',
-  component: () => import(/* webpackChunkName: "expedition-invoice" */ '@/views/expedition/ExpeditionInvoice.vue'),
+  component: () => import(/* webpackChunkName: "expedition-invoice" */ '@/views/expedition/transaction/ExpeditionInvoice.vue'),
   meta: {
     authRequired: false
   }

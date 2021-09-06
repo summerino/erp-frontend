@@ -283,19 +283,19 @@ export default {
     defaultColumn: [
       { text: 'Kode Akun', value: 'coaCode', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Nama Akun', value: 'coaName', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Saldo Awal', value: 'beginBalIdr',  align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Debit', value: 'debetIdr',  align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Kredit', value: 'creditIdr',  align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Saldo Akhir', value: 'endBalIdr',  align: 'right', width: '100', excelColWidth:'20', isNumber: true }
+      { text: 'Saldo Awal', value: 'beginBalIdr',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Debit', value: 'debetIdr',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Kredit', value: 'creditIdr',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Saldo Akhir', value: 'endBalIdr',  align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
     ledgerColumn: [
       { text: 'Tanggal', value: 'accCode', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Kode', value: 'accName', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Catatan', value: 'notes', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Kode Ref 1', value: 'refCode1', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Debit', value: 'debetOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Kredit', value: 'creditOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Saldo Akhir', value: 'endBalOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Debit', value: 'debetOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Kredit', value: 'creditOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Saldo Akhir', value: 'endBalOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Kode Ref 2', value: 'refCode2', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Kode Ref 3', value: 'refCode3', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Kode Ref 4', value: 'refCode4', width: '100', excelColWidth:'20' }
@@ -305,20 +305,20 @@ export default {
       { text: 'Nama Akun', value: 'accName', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Catatan', value: 'notes', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Kode Ref 1', value: 'refCode1', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Debit', value: 'debetOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
-      { text: 'Kredit', value: 'creditOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Debit', value: 'debetOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Kredit', value: 'creditOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Kode Ref 2', value: 'refCode2', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Kode Ref 3', value: 'refCode3', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Kode Ref 4', value: 'refCode4', width: '100', excelColWidth:'20' }
     ],
     filter: false,
     data: {},
-    exportFilter:{
+    exportFilter: {
       fields : [
-        {text: 'Tanggal Mulai', value: 'dateFrom'},
-        {text: 'Tanggal Akhir', value: 'dateTo'}
+        { text: 'Tanggal Mulai', value: 'dateFrom' },
+        { text: 'Tanggal Akhir', value: 'dateTo' }
       ],
-      operator: [{ text: 'Sama dgn.', value: 'eq'}],
+      operator: [{ text: 'Sama dgn.', value: 'eq' }],
       searches: []
     }  
   }),
@@ -439,22 +439,21 @@ export default {
     appendFilter() {
       this.exportFilter.searches = []
 
-      const searchDateFrom = {
-        field: 'dateFrom',
-        keyword: '',
-        operator: 'eq'
-      }
-      const searchDateTo = {
-        field: 'dateTo',
-        keyword: '',
-        operator: 'eq'
+      if (this.data.dateFrom) {
+        this.exportFilter.searches.push({
+          field: 'dateFrom',
+          keyword: format(parseISO(this.data.dateFrom), 'dd-MMM-yyyy'),
+          operator: 'eq'
+        })
       }
 
-      searchDateFrom.keyword = this.data.dateFrom ? format(parseISO(this.data.dateFrom), 'dd-MMM-yyyy') : ''
-      this.exportFilter.searches.push(searchDateFrom)
-
-      searchDateTo.keyword = this.data.dateTo ? format(parseISO(this.data.dateTo), 'dd-MMM-yyyy') : ''
-      this.exportFilter.searches.push(searchDateTo)
+      if (this.data.dateTo) {
+        this.exportFilter.searches.push({
+          field: 'dateTo',
+          keyword: format(parseISO(this.data.dateTo), 'dd-MMM-yyyy'),
+          operator: 'eq'
+        })
+      }
     },
     clearTable() {
       this.grid.data = []
