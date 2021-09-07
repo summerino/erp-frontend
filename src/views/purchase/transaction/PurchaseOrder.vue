@@ -941,7 +941,7 @@ export default {
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Diminta Oleh', value: 'requestInitial', divider: true, width: '200', excelColWidth:'23' },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
-        { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
+        { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],

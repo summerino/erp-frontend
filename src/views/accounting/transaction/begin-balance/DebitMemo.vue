@@ -494,16 +494,16 @@ export default {
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Tipe', value: 'typeName', divider: true, width: '100', excelColWidth:'13' },
         { text: 'Pemasok', value: 'supName', divider: true, width: '220', excelColWidth:'35' },
-        { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
-        { text: 'Digunakan', value: 'used', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
-        { text: 'Saldo', value: 'remaining', align: 'right', width: '120', excelColWidth:'15', isNumber: true }
+        { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
+        { text: 'Digunakan', value: 'used', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
+        { text: 'Saldo', value: 'remaining', align: 'right', width: '120', excelColWidth:'15', isCurrency: true }
       ],
       template: [
         { text: 'Kode', value: 'kode', divider: true, width: '160', excelColWidth:'25' },
         { text: 'Tanggal', value: 'tanggal', align: 'right', divider: true, width: '120', excelColWidth:'20', isDateTime: true },
         { text: 'Tipe', value: 'tipe', divider: true, width: '160', excelColWidth:'25' },
         { text: 'Kode Pemasok', value: 'kodepemasok', divider: true, width: '220', excelColWidth:'25' },
-        { text: 'Nilai', value: 'nilai', align: 'right', divider: true, width: '120', excelColWidth:'20', isNumber: true },
+        { text: 'Nilai', value: 'nilai', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
         { text: 'Catatan', value: 'catatan', width: '220', excelColWidth:'35' }
       ],
       data: [],

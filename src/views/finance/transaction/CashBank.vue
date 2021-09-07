@@ -638,7 +638,7 @@ export default {
         { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'18' },
         // { text: 'Kode Voucher', value: 'vouCode', divider: true, width: '160', excelColWidth:'18' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'15', isDateTime: true },
-        { text: 'Nilai', value: 'amount', divider: true, align:'right', width: '100', excelColWidth:'15', isNumber: true },
+        { text: 'Nilai', value: 'amount', divider: true, align:'right', width: '100', excelColWidth:'15', isCurrency: true },
         { text: 'Tipe', value: 'typeName', divider: true, width: '90', excelColWidth:'17' },
         { text: 'Akun', value: 'coaCode', divider: true, width: '130', excelColWidth:'40', customValues: ['coaCode', 'coaName'] },
         { text: 'Status', value: 'mark', width: '50' }

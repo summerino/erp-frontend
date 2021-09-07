@@ -579,9 +579,9 @@ export default {
         { text: 'Pelanggan', value: 'custName', divider: true, width: '200', excelColWidth:'35', customValues: ['custCode', 'custName'] },
         { text: 'Sumber Transaksi', value: 'srcTransName', divider: true, width: '100', excelColWidth:'19' },
         { text: 'Kd. Transaksi Sumber', value: 'transCode', divider: true, width: '100', excelColWidth:'22' },
-        { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
-        { text: 'Digunakan', value: 'used', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
-        { text: 'Saldo', value: 'remaining', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
+        { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
+        { text: 'Digunakan', value: 'used', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
+        { text: 'Saldo', value: 'remaining', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
         { text: 'Status', value: 'mark', width: '50', excelColWidth:'10' }
       ],
       data: [],

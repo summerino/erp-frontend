@@ -603,7 +603,7 @@ export default {
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '110', excelColWidth:'15', isDateTime: true },
         { text: 'Akun Asal', value: 'coaCode', divider: true, width: '180', excelColWidth:'40', customValues: ['coaCode', 'coaNameFrom'] },
         { text: 'Akun Tujuan', value: 'coaDetail', divider: true, width: '180', excelColWidth:'40', customValues: ['coaDetail', 'coaNameTo'] },
-        { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
+        { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
         { text: 'Status', value: 'mark', align: 'center', width: '50' }
       ],
       data: [],

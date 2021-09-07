@@ -969,11 +969,11 @@ export default {
         { text: 'Nama', value: 'itemName', divider: true, width: '300' },
         { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
         { text: 'Satuan', value: 'unitName', divider: true, width: '90' },
-        { text: 'Harga Satuan', value: 'unitPrice', align: 'right', divider: true, width: '120', isNumber: true },
-        { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '120', isNumber: true },
-        { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '120', isNumber: true },
-        { text: 'Harga Nett', value: 'nettPrice', align: 'right', divider: true, width: '120', isNumber: true },
-        { text: 'Harga Total', value: 'total', align: 'right', divider: true, width: '120', isNumber: true },
+        { text: 'Harga Satuan', value: 'unitPrice', align: 'right', divider: true, width: '120' },
+        { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '120' },
+        { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '120' },
+        { text: 'Harga Nett', value: 'nettPrice', align: 'right', divider: true, width: '120' },
+        { text: 'Harga Total', value: 'total', align: 'right', divider: true, width: '120' },
         { text: 'Catatan', value: 'notes', width: '200' }
       ]
     },

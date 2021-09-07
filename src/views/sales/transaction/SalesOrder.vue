@@ -1103,7 +1103,7 @@ export default {
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Penjual', value: 'salesInitial', divider: true, width: '180', excelColWidth:'23' },
         { text: 'Pelanggan', value: 'custName', divider: true, width: '220', excelColWidth:'35', customValues: ['custCode', 'custName'] },
-        { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15', isNumber: true },
+        { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
