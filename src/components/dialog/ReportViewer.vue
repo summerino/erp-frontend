@@ -62,7 +62,7 @@ export default {
           parameters: [{ name: 'code', values: [code] }],
           toolbarSettings: {
             // eslint-disable-next-line no-undef
-            items: ej.ReportViewer.ToolbarItems.All & ~ej.ReportViewer.ToolbarItems.Parameters & ~ej.ReportViewer.ToolbarItems.ExportSetup
+            items: ~ej.ReportViewer.ToolbarItems.Stop & ~ej.ReportViewer.ToolbarItems.Parameters & ~ej.ReportViewer.ToolbarItems.ExportSetup
           },
           printMode: true,
           ajaxBeforeLoad: this.onAjaxRequest
