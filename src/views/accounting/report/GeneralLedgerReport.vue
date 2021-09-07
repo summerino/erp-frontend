@@ -350,8 +350,7 @@ export default {
         {text: 'Kode Jurnal', value: 'vouFrom'},
         {text: 'Detail', value: 'rptDet'},
         {text: 'Akun Mulai', value: 'acc'},
-        {text: 'Akun Akhir', value: 'acc2'},
-        {text: 'Urutkan', value: 'sort'}
+        {text: 'Akun Akhir', value: 'acc2'}
       ],
       operator: [{ text: 'Sama dgn.', value: 'eq'}],
       searches: []
@@ -507,18 +506,6 @@ export default {
         searchCoa2.keyword = coa2.name
         this.exportFilter.searches.push(searchCoa2)
       }
-
-      const sortType = this.sortTypes.find(x => x.id === this.data.sort)
-      if (sortType) {
-        const searchSortType = {
-          field: '',
-          keyword: '',
-          operator: 'eq'
-        }
-        searchSortType.field = 'sort'
-        searchSortType.keyword = sortType.name
-        this.exportFilter.searches.push(searchSortType)
-      }
     },
     appendDetailFilter() {
       this.exportFilter.searches = []
@@ -566,18 +553,6 @@ export default {
         searchCoa.field = 'coa'
         searchCoa.keyword = coa.name
         this.exportFilter.searches.push(searchCoa)
-      }
-
-      const sortType = this.sortTypes.find(x => x.id === this.data.sort)
-      if (sortType) {
-        const searchSortType = {
-          field: '',
-          keyword: '',
-          operator: 'eq'
-        }
-        searchSortType.field = 'sort'
-        searchSortType.keyword = sortType.name
-        this.exportFilter.searches.push(searchSortType)
       }
     },
     clearTable() {

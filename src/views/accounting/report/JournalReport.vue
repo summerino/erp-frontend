@@ -287,8 +287,7 @@ export default {
         {text: 'Tanggal Akhir', value: 'dateTo'},
         {text: 'Kode Jurnal', value: 'vouFrom'},
         {text: 'Detail', value: 'rptDet'},
-        {text: 'Akun', value: ' coa'},
-        {text: 'Urutkan', value: 'sort'}
+        {text: 'Akun', value: ' coa'}
       ],
       operator: [{ text: 'Sama dgn.', value: 'eq'}],
       searches: []
@@ -432,18 +431,6 @@ export default {
         searchCoa.field = 'coa'
         searchCoa.keyword = coa.name
         this.exportFilter.searches.push(searchCoa)
-      }
-
-      const sortType = this.sortTypes.find(x => x.id === this.data.sort)
-      if (sortType) {
-        const searchSortType = {
-          field: '',
-          keyword: '',
-          operator: 'eq'
-        }
-        searchSortType.field = 'sort'
-        searchSortType.keyword = sortType.name
-        this.exportFilter.searches.push(searchSortType)
       }
     },
     clearTable() {
