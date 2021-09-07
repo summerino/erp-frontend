@@ -433,6 +433,18 @@ export default {
         searchCoa.keyword = coa.name
         this.exportFilter.searches.push(searchCoa)
       }
+
+      const sortType = this.sortTypes.find(x => x.id === this.data.sort)
+      if (sortType) {
+        const searchSortType = {
+          field: '',
+          keyword: '',
+          operator: 'eq'
+        }
+        searchSortType.field = 'sort'
+        searchSortType.keyword = sortType.name
+        this.exportFilter.searches.push(searchSortType)
+      }
     },
     clearTable() {
       this.grid.data = []

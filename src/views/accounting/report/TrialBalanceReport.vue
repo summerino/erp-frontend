@@ -85,6 +85,32 @@
                 Akun Detail - {{ this.data.coaCode }} - {{ this.data.coaName }} - Jurnal Detail - {{ this.data.vouFrom }}
               </v-col>
               <v-col cols="12" md="6" class="text-right">
+                <v-menu
+                  bottom
+                  open-on-hover
+                  offset-y
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      v-bind="attrs"
+                      v-on="on"
+                      color="blue darken-1"
+                      dark
+                      tile
+                      small
+                      :disabled="!auth.allowPrint"
+                    >
+                      <v-icon>mdi-menu-down</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list class="cursor-pointer">
+                    <v-list-item>
+                      <v-list-item-title>
+                        <export-excel :title=" mainDet === 1 ? 'Daftar Laporan Buku Besar - Neraca Percobaan' : 'Daftar Laporan Jurnal Detail - Buku Besar - Neraca Percobaan'" :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
+                      </v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
@@ -312,11 +338,20 @@ export default {
       { text: 'Kode Ref 4', value: 'refCode4', width: '100', excelColWidth:'20' }
     ],
     filter: false,
+    types: [{ id: 'N', name: 'Berdasarkan Kode' }, { id: 'DT', name: 'Berdasarkan Tanggal' }],
+    detTypes: [{ id: 'C', name: 'Kode' }, { id: 'CR', name: 'Kode dan Ref' }],
+    sortTypes: [{ id: 'N', name: 'Kode Jurnal' }, { id: 'DT', name: 'Tanggal Jurnal' }],
     data: {},
     exportFilter: {
       fields : [
-        { text: 'Tanggal Mulai', value: 'dateFrom' },
-        { text: 'Tanggal Akhir', value: 'dateTo' }
+        {text: 'Tipe Laporan', value: 'rptBy'},
+        {text: 'Tanggal Mulai', value: 'dateFrom'},
+        {text: 'Tanggal Akhir', value: 'dateTo'},
+        {text: 'Kode Jurnal', value: 'vouFrom'},
+        {text: 'Detail', value: 'rptDet'},
+        {text: 'Akun Mulai', value: 'acc'},
+        {text: 'Akun Akhir', value: 'acc2'},
+        {text: 'Urutkan', value: 'sort'}
       ],
       operator: [{ text: 'Sama dgn.', value: 'eq' }],
       searches: []
@@ -392,11 +427,9 @@ export default {
         .then(response => {
           for (let index = 0; index < response.data.length; index++) {
             if (response.data[index].accCode !== null) {
-              if (response.data[index].accCode.indexOf(' ') === -1) {
-                response.data[index].debetOc = Number(response.data[index].debetOc)
-                response.data[index].creditOc = Number(response.data[index].creditOc)
-                response.data[index].endBalOc = Number(response.data[index].endBalOc)
-              }
+              response.data[index].debetOc = Number(response.data[index].debetOc)
+              response.data[index].creditOc = Number(response.data[index].creditOc)
+              response.data[index].endBalOc = Number(response.data[index].endBalOc)
             } else if (response.data[index].accCode === null) {
               if (response.data[index].notes !== null && (response.data[index].notes.includes('Total') || response.data[index].notes.includes('Saldo Awal'))) {
                 response.data[index].debetOc = Number(response.data[index].debetOc)
@@ -407,6 +440,7 @@ export default {
           }
           this.grid.columns = this.ledgerColumn
           this.grid.data = response.data
+          this.appendGLFilter()
         })
     },
     getDetail() {
@@ -428,6 +462,7 @@ export default {
           }
           this.grid.columns = this.detailColumn
           this.grid.data = response.data
+          this.appendDetailFilter()
         })
     },
     showfilter() {
@@ -455,6 +490,121 @@ export default {
         })
       }
     },
+    appendGLFilter() {
+      this.exportFilter.searches = []
+
+      if (this.data.dateFrom) {
+        this.exportFilter.searches.push({
+          field: 'dateFrom',
+          keyword: format(parseISO(this.data.dateFrom), 'dd-MMM-yyyy'),
+          operator: 'eq'
+        })
+      }
+
+      if (this.data.dateTo) {
+        this.exportFilter.searches.push({
+          field: 'dateTo',
+          keyword: format(parseISO(this.data.dateTo), 'dd-MMM-yyyy'),
+          operator: 'eq'
+        })
+      }
+      
+      const coa = this.coas.find(x => x.code === this.data.acc)
+      if (coa) {
+        const searchCoa = {
+          field: '',
+          keyword: '',
+          operator: 'eq'
+        }
+        searchCoa.field = 'acc'
+        searchCoa.keyword = coa.name
+        this.exportFilter.searches.push(searchCoa)
+      }
+
+      const coa2 = this.coas.find(x => x.code === this.data.acc2)
+      if (coa2) {
+        const searchCoa2 = {
+          field: '',
+          keyword: '',
+          operator: 'eq'
+        }
+        searchCoa2.field = 'acc2'
+        searchCoa2.keyword = coa2.name
+        this.exportFilter.searches.push(searchCoa2)
+      }
+
+      const sortType = this.sortTypes.find(x => x.id === this.data.sort)
+      if (sortType) {
+        const searchSortType = {
+          field: '',
+          keyword: '',
+          operator: 'eq'
+        }
+        searchSortType.field = 'sort'
+        searchSortType.keyword = sortType.name
+        this.exportFilter.searches.push(searchSortType)
+      }
+    },
+    appendDetailFilter() {
+      this.exportFilter.searches = []
+
+      if (this.data.dateFrom) {
+        this.exportFilter.searches.push({
+          field: 'dateFrom',
+          keyword: format(parseISO(this.data.dateFrom), 'dd-MMM-yyyy'),
+          operator: 'eq'
+        })
+      }
+
+      if (this.data.dateTo) {
+        this.exportFilter.searches.push({
+          field: 'dateTo',
+          keyword: format(parseISO(this.data.dateTo), 'dd-MMM-yyyy'),
+          operator: 'eq'
+        })
+      }
+      const searchJournalCode = {
+        field: 'vouFrom',
+        keyword: '',
+        operator: 'eq'
+      }
+      const searchDetail = {
+        field: 'rptDet',
+        keyword: '',
+        operator: 'eq'
+      }
+
+      searchJournalCode.keyword = this.data.vouFrom
+      this.exportFilter.searches.push(searchJournalCode)
+
+      const detail = this.detTypes.find(x => x.id === this.data.rptDet)
+      searchDetail.keyword = detail.name
+      this.exportFilter.searches.push(searchDetail)
+      
+      const coa = this.coas.find(x => x.code === this.data.coaCode)
+      if (coa) {
+        const searchCoa = {
+          field: '',
+          keyword: '',
+          operator: 'eq'
+        }
+        searchCoa.field = 'coa'
+        searchCoa.keyword = coa.name
+        this.exportFilter.searches.push(searchCoa)
+      }
+
+      const sortType = this.sortTypes.find(x => x.id === this.data.sort)
+      if (sortType) {
+        const searchSortType = {
+          field: '',
+          keyword: '',
+          operator: 'eq'
+        }
+        searchSortType.field = 'sort'
+        searchSortType.keyword = sortType.name
+        this.exportFilter.searches.push(searchSortType)
+      }
+    },
     clearTable() {
       this.grid.data = []
     },
@@ -475,15 +625,13 @@ export default {
         if (item.accCode !== undefined && item.accCode !== null) {
           this.data.oldDateFrom = this.data.dateFrom
           this.data.oldDateTo = this.data.dateTo
-          this.data.dateFrom = format(parseISO(`${item.accCode.substring(6, 10)}-${item.accCode.substring(3, 5)}-${item.accCode.substring(0, 2)}T00:00:00`), 'yyyy-MM-dd')
-          this.data.dateTo = format(parseISO(`${item.accCode.substring(6, 10)}-${item.accCode.substring(3, 5)}-${item.accCode.substring(0, 2)}T00:00:00`), 'yyyy-MM-dd')
+          this.data.dateFrom = format(parseISO(item.date), 'yyyy-MM-dd')
+          this.data.dateTo = format(parseISO(item.date), 'yyyy-MM-dd')
           this.data.vouFrom = item.accName
           this.mainDet = 2
           this.getDetail()
         }
       } else if (item.coaCode !== undefined && item.coaCode !== null)  {
-        this.data.oldDateFrom = this.data.dateFrom
-        this.data.oldDateTo = this.data.dateTo
         this.data.acc = item.coaCode
         this.data.acc2 = item.coaCode
         this.data.coaCode = item.coaCode
@@ -495,12 +643,16 @@ export default {
       }
     },
     back() {
-      this.data.dateFrom = this.data.oldDateFrom
-      this.data.dateTo = this.data.oldDateTo
-      this.getList()
-      this.main = true
-      this.mainDet = 0
-      this.filter = true
+      this.mainDet = --this.mainDet
+      if (this.mainDet === 1) {
+        this.data.dateFrom = this.data.oldDateFrom
+        this.data.dateTo = this.data.oldDateTo
+        this.getLedger()
+      } else if (this.mainDet === 0) {
+        this.getList()
+        this.main = true
+        this.filter = true
+      }
     },
     clearDate(item) {
       if (item === 'from') {
