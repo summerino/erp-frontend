@@ -1592,8 +1592,6 @@ export default {
       })
         .then(response => {
           this.gridItem.data = response.data.tableData
-          // Find Promo
-          this.findPromo()
         })
       
       // Get item details
@@ -1610,6 +1608,22 @@ export default {
       })
         .then(response => {
           this.gridRelated.data = response.data.tableData
+        })
+      
+      // Get Promo
+      api.getAll(`${this.endpoint.sales.promo}/list`, {
+        params: { code: item.code }
+      })
+        .then(response => {
+          const data = response.data.tableData
+          const obj = new Object()
+          const result = []
+          for (let i = 0; i < data.length; i++) {
+            obj['name'] = data[i]
+            obj['usePromo'] = true
+            result.push(obj)
+          }
+          this.gridPromo.data = result
         })
 
       // Set focus to order code field
