@@ -287,8 +287,7 @@ export default {
         {text: 'Tanggal Akhir', value: 'dateTo'},
         {text: 'Kode Jurnal', value: 'vouFrom'},
         {text: 'Detail', value: 'rptDet'},
-        {text: 'Akun', value: ' coa'},
-        {text: 'Urutkan', value: 'sort'}
+        {text: 'Akun', value: ' coa'}
       ],
       operator: [{ text: 'Sama dgn.', value: 'eq'}],
       searches: []
