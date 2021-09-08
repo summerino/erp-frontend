@@ -38,10 +38,6 @@
 
           <v-spacer class="d-block d-sm-none"></v-spacer>
 
-          <div :class="[$vuetify.rtl ? 'ml-1' : 'mr-1']">
-            <toolbar-notifications />
-          </div>
-
           <toolbar-user />
         </div>
       </v-card>
@@ -76,13 +72,11 @@ import api from '@/services/axios.service'
 
 import MainMenu from '../components/navigation/MainMenu'
 import ToolbarUser from '../components/toolbar/ToolbarUser'
-import ToolbarNotifications from '../components/toolbar/ToolbarNotifications'
 
 export default {
   components: {
     MainMenu,
-    ToolbarUser,
-    ToolbarNotifications
+    ToolbarUser
   },
   
   data() {
@@ -121,10 +115,6 @@ export default {
     async getAction() {
       const resp = await api.getAll(this.endpoint.systemManagement.action)
       this.$store.commit('api/setAction', resp.data)
-      // api.getAll(this.endpoint.systemManagement.action)
-      //   .then(response => {
-      //     this.$store.commit('api/setAction', response.data)
-      //   })
     }
   }
 }
