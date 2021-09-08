@@ -112,7 +112,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="item.id === 1 || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="data.id === 1 || (data.action === 'edit' && !auth.allowUpdate)"
                   color="blue darken-2"
                   class="font-weight-regular"
                   dark
