@@ -78,10 +78,10 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="!auth.allowDelete"
+                :disabled="item.id === 1 || !auth.allowDelete"
+                color="red"
                 icon
                 small
-                color="red"
                 @click="remove(item)"
               >
                 <v-icon small>mdi-close-thick</v-icon>
@@ -112,7 +112,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="data.action === 'edit' && !auth.allowUpdate"
+                  :disabled="item.id === 1 || (data.action === 'edit' && !auth.allowUpdate)"
                   color="blue darken-2"
                   class="font-weight-regular"
                   dark

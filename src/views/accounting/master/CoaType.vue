@@ -79,11 +79,11 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
+                :disabled="item.id === 2 || !auth.allowDelete"
+                color="red"
                 icon
                 small
-                color="red"
                 @click="remove(item)"
-                :disabled="!auth.allowDelete"
               >
                 <v-icon small>mdi-close-thick</v-icon>
               </v-btn>
@@ -113,9 +113,9 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
+                  :disabled="isActive || data.id === 2 || (data.action === 'edit' && !auth.allowUpdate)"
                   color="blue darken-2"
                   class="font-weight-regular"
-                  :disabled="isActive || (data.action === 'edit' && !auth.allowUpdate)"
                   dark
                   small
                   tile
@@ -355,10 +355,6 @@ export default {
           'Hapus Data?',
           'Apakah anda yakin ingin menghapus data ini?')
       ) {
-        if (item.id === 2) {
-          this.$store.dispatch('app/showInfo', 'Tipe akun kas & bank tidak dapat dihapus.')
-          return
-        }
         api.delete(this.endpoint.accounting.coaType, item.id)
           .then(response => {
             if (response.data.success) {
@@ -379,10 +375,6 @@ export default {
         const resp = await api.create(this.endpoint.accounting.coaType, this.data)
         result = resp.data
       } else if (this.data.action === 'edit') {
-        if (this.data.id === 2) {
-          this.$store.dispatch('app/showInfo', 'Tipe akun kas & bank tidak dapat diubah.')
-          return
-        }
         const resp = await api.update(this.endpoint.accounting.coaType, this.data.id, this.data)
         result = resp.data
       }
