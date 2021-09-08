@@ -64,9 +64,9 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
+                color="orange lighten-1"
                 icon
                 small
-                color="orange lighten-1"
                 @click="edit(item)"
               >
                 <v-icon small>mdi-pencil</v-icon>
@@ -121,7 +121,6 @@
                   tile
                   @click="save"
                   @shortkey="save"
-                  
                 >
                   <v-icon left>
                     mdi-content-save
@@ -184,7 +183,6 @@
                 ></v-text-field>
               </v-col>
             </v-row>
-
           </v-container>
         </v-form>
       </v-card-text>

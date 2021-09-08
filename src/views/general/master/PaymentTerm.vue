@@ -63,9 +63,9 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
+                color="orange lighten-1"
                 icon
                 small
-                color="orange lighten-1"
                 @click="edit(item)"
               >
                 <v-icon small>mdi-pencil</v-icon>
@@ -193,7 +193,6 @@
                 ></v-currency-field>
               </v-col>
             </v-row>
-
           </v-container>
         </v-form>
       </v-card-text>
