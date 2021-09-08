@@ -176,11 +176,11 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
+                  :disabled="data.srcTrans === 2 || (data.action === 'edit' && !auth.allowUpdate)"
                   dark
                   text
                   @click="save(true)"
                   @shortkey="save(true)"
-                  :disabled="(data.action === 'edit' && !auth.allowUpdate)"
                 >Simpan & Tutup</v-btn>
               </template>
               <span class="text-caption">(Ctrl + Enter)</span>
@@ -205,9 +205,9 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
+                  :disabled="data.srcTrans === 2 || (data.action === 'edit' && !auth.allowUpdate)"
                   @click="save(false)"
                   @shortkey="save(false)"
-                  :disabled="(data.action === 'edit' && !auth.allowUpdate)"
                 >
                   <v-list-item-title>
                     <v-tooltip bottom>
@@ -297,10 +297,10 @@
                         <v-menu
                           v-model="menu.date"
                           :close-on-content-click="false"
+                          :disabled="data.srcTrans === 2 || !auth.allowChangeDate"
                           transition="scale-transition"
                           min-width="290px"
                           offset-y
-                          :disabled="!auth.allowChangeDate"
                         >
                           <template v-slot:activator="{ on, attrs }">
                             <v-text-field
@@ -308,7 +308,6 @@
                               v-on="on"
                               :rules="rules.required"
                               :value="formatDate"
-                              :disabled="!auth.allowChangeDate"
                               label="Tanggal"
                               class="mt-0"
                               readonly
@@ -404,6 +403,7 @@
                             v-model="data.custCode"
                             :items="customers"
                             :item-text="item => `${item.code} - ${item.initial}`"
+                            :readonly="data.srcTrans === 2"
                             :rules="rules.required"
                             label="Kode"
                             item-value="code"
@@ -459,6 +459,7 @@
                     >
                       <v-textarea
                         v-model="data.notes"
+                        :readonly="data.srcTrans === 2"
                         :rules="rules.max256chars"
                         label="Catatan"
                         counter="256"
