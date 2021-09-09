@@ -70,6 +70,7 @@ export default {
   journalReport: 100,
   glReport: 104,
   tbReport: 105,
+  bsReport: 109,
 
   // Asset Management
   assetType: 62,
