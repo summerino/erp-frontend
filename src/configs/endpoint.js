@@ -84,7 +84,8 @@ export default {
     closingMonth: 'closing-month',
     journalReport: 'journal-report',
     generalLedgerReport: 'gl-report',
-    trialBalanceReport: 'tb-report'
+    trialBalanceReport: 'tb-report',
+    balanceSheetReport: 'bs-report'
   },
   
   systemManagement:{

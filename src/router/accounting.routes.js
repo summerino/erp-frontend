@@ -89,5 +89,12 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/accounting/report/bs-report',
+  name: 'bs-report',
+  component: () => import(/* webpackChunkName: "bs-report" */ '@/views/accounting/report/BalanceSheetReport.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
   
