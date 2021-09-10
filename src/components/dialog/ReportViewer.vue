@@ -60,6 +60,10 @@ export default {
           reportServiceUrl: `${process.env.VUE_APP_API_BASE_URL}/report-viewer`,
           reportPath: `${reportName}.rdl`,
           parameters: [{ name: 'code', values: [code] }],
+          exportSettings: {
+            // eslint-disable-next-line no-undef
+            exportOptions: ej.ReportViewer.ExportOptions.Pdf | ej.ReportViewer.ExportOptions.Excel
+          },
           toolbarSettings: {
             // eslint-disable-next-line no-undef
             items: ~ej.ReportViewer.ToolbarItems.Stop & ~ej.ReportViewer.ToolbarItems.Parameters & ~ej.ReportViewer.ToolbarItems.ExportSetup
