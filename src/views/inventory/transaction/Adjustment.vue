@@ -74,8 +74,8 @@
         :height="gridDefOpts.height"
         :items="grid.data"
         :items-per-page="gridDefOpts.pageSize"
-        :server-items-length="grid.total"
         :options.sync="grid.options"
+        :server-items-length="grid.total"
         :sort-by="grid.options.sortBy"
         :sort-desc="grid.options.sortDesc"
         class="elevation-1"
@@ -425,7 +425,7 @@
                     :headers="gridItem.columns"
                     :items="gridItem.data"
                     :items-per-page="gridDefOpts.pageSize"
-                    :footer-props="{ itemsPerPageOptions: gridDefOpts.pageSizes}"
+                    :footer-props="{ itemsPerPageOptions: gridDefOpts.pageSizes }"
                     height="300"
                     class="elevation-1"
                     dense
@@ -837,7 +837,7 @@ export default {
           this.dataStartDate = response.data.tableData[0].value
         })
     },
-    getItemLists() {      
+    getItemLists() {
       api.getAll(this.endpoint.inventory.item.item, {
         params: {
           warehouseCode: this.data.warehouseCode
@@ -845,7 +845,7 @@ export default {
       })
         .then(response => {
           this.items = response.data.tableData
-        })      
+        })
     },
     getUomLists() {
       api.getAll(`${this.endpoint.inventory.uom}/item`, {})  

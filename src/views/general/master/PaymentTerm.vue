@@ -52,6 +52,7 @@
         :items="grid.data"
         :items-per-page="gridDefOpts.pageSize"
         :options.sync="grid.options"
+        :server-items-length="grid.total"
         :sort-by="grid.options.sortBy"
         :sort-desc="grid.options.sortDesc"
         class="elevation-1"
