@@ -896,11 +896,11 @@ export default {
     getAccountLists() {
       api.getAll(`${this.endpoint.accounting.coa}/lists`, {
         params: {
-          // filters: JSON.stringify([{
-          //   field: 'type',
-          //   operator: 'eq',
-          //   keyword: 3
-          // }]),
+          filters: JSON.stringify([{
+            field: 'typeId',
+            operator: 'neq',
+            keyword: 1
+          }]),
           sorts: JSON.stringify([{
             field: 'code',
             direction: 'asc'

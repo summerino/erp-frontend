@@ -53,6 +53,7 @@
         :items="grid.data"
         :items-per-page="gridDefOpts.pageSize"
         :options.sync="grid.options"
+        :server-items-length="grid.total"
         :sort-by="grid.options.sortBy"
         :sort-desc="grid.options.sortDesc"
         class="elevation-1"
@@ -79,7 +80,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="item.id === 2 || !auth.allowDelete"
+                :disabled="item.id === 1 || !auth.allowDelete"
                 color="red"
                 icon
                 small
@@ -113,7 +114,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="isActive || data.id === 2 || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isActive || data.id === 1 || (data.action === 'edit' && !auth.allowUpdate)"
                   color="blue darken-2"
                   class="font-weight-regular"
                   dark

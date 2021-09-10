@@ -382,7 +382,7 @@ export default {
           filters: JSON.stringify([{
             field: 'typeId',
             operator: 'neq',
-            keyword: 2
+            keyword: 1
           }, {
             field: 'code',
             operator: 'doesnotcontain',

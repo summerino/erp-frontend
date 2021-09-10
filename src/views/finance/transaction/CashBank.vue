@@ -824,7 +824,7 @@ export default {
           filters: JSON.stringify([{
             field: 'typeid',
             operator: 'eq',
-            keyword: 2
+            keyword: 1
           }])
         }
       })

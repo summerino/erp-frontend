@@ -139,9 +139,9 @@ export default {
       api.getAll(`${this.endpoint.accounting.coa}/lists`, {
         params: {
           filters: JSON.stringify([{
-            field: 'typeid',
+            field: 'typeId',
             operator: 'eq',
-            keyword: 2
+            keyword: 1
           }])
         }
       })

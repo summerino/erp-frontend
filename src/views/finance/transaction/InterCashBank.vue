@@ -875,7 +875,7 @@ export default {
           filters: JSON.stringify([{
             field: 'typeId',
             operator: 'eq',
-            keyword: 2
+            keyword: 1
           }]),
           sorts: JSON.stringify([{
             field: 'code',

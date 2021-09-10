@@ -52,6 +52,7 @@
         :items="grid.data"
         :items-per-page="gridDefOpts.pageSize"
         :options.sync="grid.options"
+        :server-items-length="grid.total"
         :sort-by="grid.options.sortBy"
         :sort-desc="grid.options.sortDesc"
         class="elevation-1"
@@ -238,29 +239,29 @@
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-autocomplete
                     v-model="data.currCode"
-                    :disabled="(data.typeId !== 2) || (data.typeId === 2 && data.parentId === null)"
+                    :disabled="(data.typeId !== 1) || (data.typeId === 1 && data.parentId === null)"
                     :items="currencies"
                     :item-text="item => `${item.code} - ${item.name}`"
-                    :rules="data.typeId === 2 && data.parentId !== null ? rules.required : []"
+                    :rules="data.typeId === 1 && data.parentId !== null ? rules.required : []"
                     :readonly="isCBEdit"
                     label="Kurensi"
                     item-value="code"
                     class="mt-0"
-                    :required="data.typeId === 2 && data.parentId !== null ? true : false"
+                    :required="data.typeId === 1 && data.parentId !== null ? true : false"
                   ></v-autocomplete>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-autocomplete
                     v-model="data.cbType"
-                    :disabled="(data.typeId !== 2) || (data.typeId === 2 && data.parentId === null)"
+                    :disabled="(data.typeId !== 1) || (data.typeId === 1 && data.parentId === null)"
                     :items="cbTypes"
-                    :rules="data.typeId === 2 && data.parentId !== null ? rules.required : []"
+                    :rules="data.typeId === 1 && data.parentId !== null ? rules.required : []"
                     :readonly="isCBEdit"
                     label="Kas / Bank Tipe"
                     item-text="name"
                     item-value="id"
                     class="mt-0"
-                    :required="data.typeId === 2 && data.parentId !== null ? true : false"
+                    :required="data.typeId === 1 && data.parentId !== null ? true : false"
                   ></v-autocomplete>
               </v-col>
             </v-row>
@@ -269,13 +270,13 @@
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-text-field
                   v-model="data.vouCode"
-                  :disabled="(data.typeId !== 2) || (data.typeId === 2 && data.parentId === null)"
-                  :rules="data.typeId === 2 && data.parentId !== null ? [rules.required[0],rules.max4chars[0]] : []"
+                  :disabled="(data.typeId !== 1) || (data.typeId === 1 && data.parentId === null)"
+                  :rules="data.typeId === 1 && data.parentId !== null ? [rules.required[0],rules.max4chars[0]] : []"
                   :counter="4"
                   :readonly="isCBEdit"
                   label="Kode Voucher"
                   class="mt-0"
-                  :required="data.typeId === 2 && data.parentId !== null ? true : false"
+                  :required="data.typeId === 1 && data.parentId !== null ? true : false"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
@@ -325,12 +326,12 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
-        { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'20' },
-        { text: 'Nama', value: 'name', divider: true, width: '200', excelColWidth:'20' },
-        { text: 'Tipe', value: 'typeName', divider: true, width: '200', excelColWidth:'20' },
-        { text: 'Mata Uang', value: 'currCode', divider: true, width: '120', excelColWidth:'20' },
-        { text: 'Tipe Kas & Bank', value: 'cbType', divider: true, width: '100', excelColWidth:'20' },
-        { text: 'Kode Voucher', value: 'vouCode', divider: true, width: '100', excelColWidth:'20' }
+        { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'10' },
+        { text: 'Nama', value: 'name', divider: true, width: '420', excelColWidth:'50' },
+        { text: 'Tipe', value: 'typeName', divider: true, width: '200', excelColWidth:'26' },
+        { text: 'Mata Uang', value: 'currCode', divider: true, width: '100', excelColWidth:'12' },
+        { text: 'Tipe Kas & Bank', value: 'cbType', divider: true, width: '100', excelColWidth:'17' }
+        // { text: 'Kode Voucher', value: 'vouCode', divider: true, width: '100', excelColWidth:'20' }
       ],
       data: [],
       options: {
@@ -393,7 +394,7 @@ export default {
       return (!this.data.isActive)
     },
     isCBEdit() {
-      return (this.data.typeId === 2 && this.data.action === 'edit')
+      return (this.data.typeId === 1 && this.data.action === 'edit')
     }  
   },
   
@@ -569,14 +570,14 @@ export default {
         })
     },
     typeChange() {
-      if (this.data.typeId !== 2) {
+      if (this.data.typeId !== 1) {
         this.data.currCode = null
         this.data.cbType = null
         this.data.vouCode = null
       }
     },
     parentChange() {
-      if (this.data.typeId === 2 && this.data.parentId !== null) {
+      if (this.data.typeId === 1 && this.data.parentId !== null) {
         this.data.currCode = null
         this.data.cbType = null
         this.data.vouCode = null

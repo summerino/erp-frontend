@@ -1080,9 +1080,9 @@ export default {
       api.getAll(`${this.endpoint.accounting.coa}/lists`, {
         params: {
           filters: JSON.stringify([{
-            field: 'typeid',
+            field: 'typeId',
             operator: 'neq',
-            keyword: 2
+            keyword: 1
           }]),
           sorts: JSON.stringify([{
             field: 'code',
