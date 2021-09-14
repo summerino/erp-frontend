@@ -142,6 +142,7 @@ export default {
     },
     close() {
       this.dialog = false
+      this.data.isPoRcv = false
     },
     async save() {
       let result = { success: false, message: '' }
