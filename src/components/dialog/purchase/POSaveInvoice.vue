@@ -230,6 +230,7 @@ export default {
     },
     close() {
       this.dialog = false
+      this.data.isPoInv = false
     },
     async save() {
       if (!this.$refs.form.validate()) {

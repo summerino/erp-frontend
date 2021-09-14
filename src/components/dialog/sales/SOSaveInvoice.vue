@@ -211,6 +211,7 @@ export default {
     },
     close() {
       this.dialog = false
+      this.data.isSoInv = false
     },
     async save() {
       if (!this.$refs.form.validate()) {
