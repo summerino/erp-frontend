@@ -71,6 +71,7 @@ export default {
   glReport: 104,
   tbReport: 105,
   bsReport: 109,
+  isReport: 110,
 
   // Asset Management
   assetType: 62,

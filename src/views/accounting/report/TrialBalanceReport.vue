@@ -448,7 +448,7 @@ export default {
         .then(response => {
           for (let index = 0; index < response.data.length; index++) {
             if (response.data[index].accCode !== null) {
-              if (response.data[index].accCode.indexOf(' ') === -1) {
+              if (response.data[index].accCode.indexOf('-') === -1) {
                 response.data[index].debetOc = Number(response.data[index].debetOc)
                 response.data[index].creditOc = Number(response.data[index].creditOc)
               }
