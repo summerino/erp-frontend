@@ -85,7 +85,8 @@ export default {
     journalReport: 'journal-report',
     generalLedgerReport: 'gl-report',
     trialBalanceReport: 'tb-report',
-    balanceSheetReport: 'bs-report'
+    balanceSheetReport: 'bs-report',
+    incomeStatementReport: 'is-report'
   },
   
   systemManagement:{

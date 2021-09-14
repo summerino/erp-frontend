@@ -96,5 +96,12 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/accounting/report/is-report',
+  name: 'is-report',
+  component: () => import(/* webpackChunkName: "is-report" */ '@/views/accounting/report/IncomeStatementReport.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
   
