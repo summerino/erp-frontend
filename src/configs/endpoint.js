@@ -31,11 +31,11 @@ export default {
     uom: 'uom',
     warehouse: 'warehouse',
     transferStock: 'transfer-stock',
-    adjustment: 'adjustment',
-    warehouseQuantity: 'warehouse-quantity',
     consignee: 'consignee',
-    smReport: 'sm-report',
-    beginBalanceStock: 'bb'
+    adjustment: 'adjustment',
+    beginBalanceStock: 'bb',
+    warehouseQuantity: 'warehouse-quantity',
+    smReport: 'sm-report'
   },
 
   purchase: {
@@ -63,6 +63,11 @@ export default {
     arReport: 'ar-report'
   },
 
+  expedition: {
+    invoice: 'expedition-invoice',
+    epApReport: 'ep-ap-report'
+  },
+
   finance: {
     cashBank: 'general-cash-bank',
     interCashBank: 'inter-cash-bank',
@@ -81,21 +86,12 @@ export default {
       dm: 'bb-debit-memo',
       cm: 'bb-credit-memo'
     },
-    closingMonth: 'closing-month',
     journalReport: 'journal-report',
     generalLedgerReport: 'gl-report',
     trialBalanceReport: 'tb-report',
     balanceSheetReport: 'bs-report',
-    incomeStatementReport: 'is-report'
-  },
-  
-  systemManagement:{
-    companyProfile: 'company-profile',
-    user: 'user',
-    role: 'role',
-    parameter: 'system-parameter',
-    menu: 'menu',
-    action: 'action'
+    incomeStatementReport: 'is-report',
+    closingMonth: 'closing-month'
   },
   
   assetManagement: {
@@ -105,16 +101,20 @@ export default {
     }
   },
 
-  expedition: {
-    invoice: 'expedition-invoice',
-    epApReport: 'ep-ap-report'
-  },
-
   humanResource: {
-    attendance: 'attendance'
+    attendanceReport: 'attendance-report'
   },
 
   mobileSales: {
     reason: 'mobile-reason'
+  },
+  
+  systemManagement:{
+    companyProfile: 'company-profile',
+    user: 'user',
+    role: 'role',
+    parameter: 'system-parameter',
+    menu: 'menu',
+    action: 'action'
   }
 }

@@ -122,15 +122,17 @@
                       :value="formatStartDate"
                       label="Tanggal Mulai"
                       class="mt-0"
+                      clearable
                       dense
                       readonly
+                      @click:clear="clearDate('start')"
                     ></v-text-field>
                   </template>
                   <v-date-picker
                     v-model="data.startDate"
                     no-title
                     scrollable
-                    @change="menu.startDate = false; clearTable();"
+                    @change="changeDate()"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
@@ -149,16 +151,17 @@
                       :value="formatEndDate"
                       label="Tanggal Akhir"
                       class="mt-0"
+                      clearable
                       dense
                       readonly
-                      clearable
+                      @click:clear="clearDate('end')"
                     ></v-text-field>
                   </template>
                   <v-date-picker
                     v-model="data.endDate"
                     no-title
                     scrollable
-                    @change="menu.endDate = false; clearTable();"
+                    @change="changeDate('end')"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
@@ -395,7 +398,7 @@ export default {
       this.data = {        
         employeeType: 1,
         startDate: format(new Date(), 'yyyy-MM-dd'),
-        endDate: null,
+        endDate:  format(new Date(), 'yyyy-MM-dd'),
         salesGroupId: null,
         employee: null
       }
@@ -410,7 +413,7 @@ export default {
         })
       }
       
-      api.getAll(`${this.endpoint.humanResource.attendance}/getdatareport`, {
+      api.getAll(this.endpoint.humanResource.attendanceReport, {
         params: {
           employee: this.data.employee,
           employeeType: this.data.employeeType,
@@ -510,6 +513,28 @@ export default {
       if (searchSalesGroup.keyword) {
         this.exportFilter.searches.push(searchSalesGroup)
       }
+    },
+    clearDate(called) {
+      if (called === 'end') {
+        this.data.endDate = null
+      } else {
+        this.data.startDate = null
+      }
+      this.clearTable()
+    },
+    changeDate(called = null) {
+      if (called === 'end') {
+        this.menu.endDate = false
+        if (this.data.endDate < this.data.startDate) {
+          this.data.startDate = this.data.endDate
+        }
+      } else {
+        this.menu.startDate = false
+        if (this.data.startDate > this.data.endDate) {
+          this.data.endDate = this.data.startDate
+        }
+      }
+      this.clearTable()
     },
     clearTable() {
       this.grid.data = []
