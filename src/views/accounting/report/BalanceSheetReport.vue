@@ -1,6 +1,6 @@
 <template>
   <div class="w-full">
-    <v-row no-gutters>
+    <v-row ref="filter" no-gutters>
       <v-col cols="12">
         <v-card>
           <v-card-title class="indigo--text text--lighten-2 pb-1">
@@ -78,13 +78,13 @@
               </v-col>
             </v-row>
             <v-row v-else no-gutters>
-              <v-col v-if="mainDet === 1" cols="12" md="6">
+              <v-col v-if="mainDet === 1" cols="12" md="10">
                 Akun Detail - {{ this.data.coaCode }} - {{ this.data.coaName }}
               </v-col>
-              <v-col v-if="mainDet === 2" cols="12" md="6">
+              <v-col v-if="mainDet === 2" cols="12" md="10">
                 Akun Detail - {{ this.data.coaCode }} - {{ this.data.coaName }} - Jurnal Detail - {{ this.data.vouFrom }}
               </v-col>
-              <v-col cols="12" md="6" class="text-right">
+              <v-col cols="12" md="2" class="text-right">
                 <v-menu
                   bottom
                   open-on-hover
@@ -172,10 +172,10 @@
 
     <v-row dense>
       <v-col cols="12">
-          <v-card>
+        <v-card>
           <v-data-table  
             :headers="grid.columns"
-            :height="gridDefOpts.height"
+            :height="grid.height"
             :items="grid.data"
             :class="['elevation-1', this.mainDet === 0 ? 'row-pointer' : this.mainDet === 1 ? 'row-pointer' : '']"
             disable-sort
@@ -184,75 +184,75 @@
             disable-pagination
             @dblclick:row="clickDetail"
           >
-          <template v-slot:[`item.coaCode`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.coaCode }}
-            </span>
-          </template>
-          <template v-slot:[`item.coaName`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.coaName }}
-            </span>
-          </template>
-          <template v-slot:[`item.accCode`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.accCode }}
-            </span>
-          </template>
-          <template v-slot:[`item.accName`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.accName }}
-            </span>
-          </template>
-          <template v-slot:[`item.notes`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.notes }}
-            </span>
-          </template>
-          <template v-slot:[`item.debetOc`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.debetOc | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.creditOc`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.creditOc | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.endBalOc`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.endBalOc | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.debetIdr`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.debetIdr | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.creditIdr`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.creditIdr | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.beginBalIdr`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.beginBalIdr | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.endBalIdr`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.endBalIdr | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.amount`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.amount | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.name`]="{ item }">
-          <span v-html="getSpaceName(item)" :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-          </span>
-        </template>
+            <template v-slot:[`item.coaCode`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.coaCode }}
+              </span>
+            </template>
+            <template v-slot:[`item.coaName`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.coaName }}
+              </span>
+            </template>
+            <template v-slot:[`item.accCode`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.accCode }}
+              </span>
+            </template>
+            <template v-slot:[`item.accName`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.accName }}
+              </span>
+            </template>
+            <template v-slot:[`item.notes`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.notes }}
+              </span>
+            </template>
+            <template v-slot:[`item.debetOc`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.debetOc | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.creditOc`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.creditOc | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.endBalOc`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.endBalOc | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.debetIdr`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.debetIdr | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.creditIdr`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.creditIdr | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.beginBalIdr`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.beginBalIdr | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.endBalIdr`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.endBalIdr | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.amount`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.amount | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.name`]="{ item }">
+              <span v-html="getSpaceName(item)" :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              </span>
+            </template>
           </v-data-table>
         </v-card>
       </v-col> 
@@ -281,6 +281,7 @@ export default {
       date: false
     },
     grid: {
+      height: 100,
       columns: [],
       data: []
     },
@@ -350,7 +351,7 @@ export default {
       }, {
         text: 'Neraca Keuangan'
       }])
-      this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
+      this.setGridDefaultHeight()
     }, 0)
   },
 
@@ -368,6 +369,12 @@ export default {
   },
   
   methods:{
+    setGridDefaultHeight() {
+      this.grid.height = 100
+      setTimeout(() => {
+        this.grid.height = this.$el.clientHeight - this.$refs.filter.clientHeight - 61
+      }, 0)
+    },
     reset() {
       this.data = {        
         rptBy: 'DT',
@@ -565,6 +572,7 @@ export default {
         this.getLedger()
         this.main = false
         this.filter = false
+        this.setGridDefaultHeight()
       }
     },
     back() {
@@ -577,6 +585,7 @@ export default {
         this.getList()
         this.main = true
         this.filter = true
+        this.setGridDefaultHeight()
       }
     },
     changeDate() {
@@ -595,5 +604,4 @@ export default {
     }
   }
 }
-
 </script>

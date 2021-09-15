@@ -1,6 +1,6 @@
 <template>
   <div class="w-full">
-    <v-row no-gutters>
+    <v-row ref="filter" no-gutters>
       <v-col cols="12">
         <v-card>
           <v-card-title class="indigo--text text--lighten-2 pb-1">
@@ -206,7 +206,7 @@
           <v-card>
           <v-data-table  
             :headers="grid.columns"
-            :height="gridDefOpts.height"
+            :height="grid.height"
             :items="grid.data"
             class="elevation-1"
             disable-sort
@@ -261,6 +261,7 @@ export default {
       dateTo: false
     },
     grid: {
+      height: 100,
       columns: [
         { text: 'Kode Akun', value: 'accCode', divider: true, width: '120', excelColWidth:'15' },
         { text: 'Nama Akun', value: 'accName', divider: true, width: '200', excelColWidth:'36' },
@@ -312,7 +313,7 @@ export default {
       }, {
         text: 'Jurnal'
       }])
-      this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
+      this.setGridDefaultHeight()
     }, 0)
   },
 
@@ -333,6 +334,12 @@ export default {
   },
   
   methods:{
+    setGridDefaultHeight() {
+      this.grid.height = 100
+      setTimeout(() => {
+        this.grid.height = this.$el.clientHeight - this.$refs.filter.clientHeight - 61
+      }, 0)
+    },
     reset() {
       this.data = {        
         rptBy: 'N',

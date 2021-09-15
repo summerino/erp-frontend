@@ -1,12 +1,12 @@
 <template>
   <div class="w-full">
-    <v-row no-gutters>
+    <v-row ref="filter" no-gutters>
       <v-col cols="12">
         <v-card>
           <v-card-title class="indigo--text text--lighten-2 pb-1">
             <v-row v-if="main" no-gutters>
               <v-col cols="12" md="6">
-                Laporan Mutasi Stok
+                Laporan Mutasi Barang
               </v-col>
               <v-col cols="12" md="6" class="text-right">
                 <v-tooltip bottom>
@@ -50,7 +50,7 @@
                   <v-list class="cursor-pointer">
                     <v-list-item>
                       <v-list-item-title>
-                        <export-excel title="Daftar Laporan Mutasi Stok" :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
+                        <export-excel title="Daftar Laporan Mutasi Barang" :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
                       </v-list-item-title>
                     </v-list-item>
                   </v-list>
@@ -78,10 +78,10 @@
               </v-col>
             </v-row>
             <v-row v-else no-gutters>
-              <v-col cols="12" md="6">
-                Laporan Mutasi Stok - Detail Berdasarkan {{ this.data.filterName }} - {{ this.data.initial }} - {{ this.data.name }}
+              <v-col cols="12" md="10">
+                Laporan Mutasi Barang - Detail Berdasarkan {{ this.data.filterName }} - {{ this.data.initial }} - {{ this.data.name }}
               </v-col>
-              <v-col cols="12" md="6" class="text-right">
+              <v-col cols="12" md="2" class="text-right">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
@@ -213,7 +213,7 @@
           <v-card>
           <v-data-table  
             :headers="grid.columns"
-            :height="gridDefOpts.height"
+            :height="grid.height"
             :items="grid.data"
             :options.sync="grid.options"
             :sort-by="grid.options.sortBy"
@@ -298,6 +298,7 @@ export default {
       endDate: false
     },
     grid: {
+      height: 100,
       columns: [],
       data: [],
       options: {
@@ -378,9 +379,9 @@ export default {
       }, {
         text: 'Laporan'
       }, {
-        text: 'Mutasi Stok'
+        text: 'Mutasi Barang'
       }])
-      this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
+      this.setGridDefaultHeight()
     }, 0)
   },
 
@@ -402,6 +403,12 @@ export default {
   },
   
   methods:{
+    setGridDefaultHeight() {
+      this.grid.height = 100
+      setTimeout(() => {
+        this.grid.height = this.$el.clientHeight - this.$refs.filter.clientHeight - 61
+      }, 0)
+    },
     reset() {
       this.data = {        
         type: 1,
@@ -445,14 +452,17 @@ export default {
         })
     },
     back() {
+      this.data.type = this.data.oldType
       this.data.isSM = false
       this.grid.columns = this.data.type === 1 ? this.itemColumn : this.whColumn
       this.grid.options.sortBy = ['initial']
       this.data.startDate = this.data.oldStartDate
       this.data.endDate = this.data.oldEndDate
       this.data.itemId = this.data.oldItemId
+      this.filter = true
       this.getList()
       this.main = true
+      this.setGridDefaultHeight()
     },
     showfilter() {
       this.filter = !this.filter
@@ -468,6 +478,7 @@ export default {
     },
     dblclickRow(event, { item }) {
       if (!this.data.isSM) {
+        this.data.oldType = this.data.type
         this.data.oldStartDate = this.data.startDate
         this.data.oldEndDate = this.data.endDate
         this.data.oldItemId = this.data.itemId
@@ -494,6 +505,7 @@ export default {
           this.getList()
           this.main = false
         }
+        this.setGridDefaultHeight()
       }
     },
     appendFilter() {

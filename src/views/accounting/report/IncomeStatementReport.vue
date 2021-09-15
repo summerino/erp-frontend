@@ -1,6 +1,6 @@
 <template>
   <div class="w-full">
-    <v-row no-gutters>
+    <v-row ref="filter" no-gutters>
       <v-col cols="12">
         <v-card>
           <v-card-title class="indigo--text text--lighten-2 pb-1">
@@ -78,16 +78,16 @@
               </v-col>
             </v-row>
             <v-row v-else no-gutters>
-              <v-col v-if="mainDet === 1" cols="12" md="6">
+              <v-col v-if="mainDet === 1" cols="12" md="10">
                 Detail - {{ this.data.coaName }} - {{ this.data.currM }}
               </v-col>
-              <v-col v-if="mainDet === 2" cols="12" md="6">
+              <v-col v-if="mainDet === 2" cols="12" md="10">
                 Akun Detail - {{ this.data.coaCode }} - {{ this.data.coaName }} 
               </v-col>
-              <v-col v-if="mainDet === 3" cols="12" md="6">
+              <v-col v-if="mainDet === 3" cols="12" md="10">
                 Akun Detail - {{ this.data.coaCode }} - {{ this.data.coaName }} - Jurnal Detail - {{ this.data.vouFrom }}
               </v-col>
-              <v-col cols="12" md="6" class="text-right">
+              <v-col cols="12" md="2" class="text-right">
                 <v-menu
                   bottom
                   open-on-hover
@@ -194,7 +194,7 @@
           <v-card>
           <v-data-table  
             :headers="grid.columns"
-            :height="gridDefOpts.height"
+            :height="grid.height"
             :items="grid.data"
             :class="['elevation-1', this.mainDet < 3 ? 'row-pointer' : '']"
             disable-sort
@@ -315,6 +315,7 @@ export default {
       date: false
     },
     grid: {
+      height: 100,
       columns: [],
       data: []
     },
@@ -391,7 +392,7 @@ export default {
       }, {
         text: 'Laba Rugi'
       }])
-      this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
+      this.setGridDefaultHeight()
     }, 0)
   },
 
@@ -409,6 +410,13 @@ export default {
   },
   
   methods:{
+    setGridDefaultHeight() {
+      this.grid.height = 100
+      setTimeout(() => {
+        console.log(this.$refs.filter.clientHeight)
+        this.grid.height = this.$el.clientHeight - this.$refs.filter.clientHeight - 61
+      }, 0)
+    },
     reset() {
       this.data = {        
         rptBy: '1S',
@@ -652,6 +660,7 @@ export default {
         this.getDetail()
         this.main = false
         this.filter = false
+        this.setGridDefaultHeight()
       } else if (this.mainDet === 1)  {
         this.data.oldAcc = this.data.acc
         this.data.acc = item.coaCode
@@ -681,6 +690,7 @@ export default {
         this.getList()
         this.main = true
         this.filter = true
+        this.setGridDefaultHeight()
       } else if (this.mainDet === 1) {
         this.data.rptBy = this.data.oldRptBy
         this.data.acc = this.data.oldAcc
@@ -709,5 +719,4 @@ export default {
     }
   }
 }
-
 </script>

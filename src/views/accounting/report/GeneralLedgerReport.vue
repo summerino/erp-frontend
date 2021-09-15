@@ -1,6 +1,6 @@
 <template>
   <div class="w-full">
-    <v-row no-gutters>
+    <v-row ref="filter" no-gutters>
       <v-col cols="12">
         <v-card>
           <v-card-title class="indigo--text text--lighten-2 pb-1">
@@ -78,10 +78,10 @@
               </v-col>
             </v-row>
             <v-row v-else no-gutters>
-              <v-col cols="12" md="6">
+              <v-col cols="12" md="10">
                 Buku Besar - Detail - {{ this.data.vouFrom }}
               </v-col>
-              <v-col cols="12" md="6" class="text-right">
+              <v-col cols="12" md="2" class="text-right">
                 <v-menu
                   bottom
                   open-on-hover
@@ -243,7 +243,7 @@
           <v-card>
           <v-data-table  
             :headers="grid.columns"
-            :height="gridDefOpts.height"
+            :height="grid.height"
             :items="grid.data"
             :class="['elevation-1', this.main ? 'row-pointer' : '']"
             disable-sort
@@ -310,6 +310,7 @@ export default {
       dateTo: false
     },
     grid: {
+      height: 100,
       columns: [],
       data: []
     },
@@ -375,7 +376,7 @@ export default {
       }, {
         text: 'Buku Besar'
       }])
-      this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
+      this.setGridDefaultHeight()
     }, 0)
   },
 
@@ -396,6 +397,12 @@ export default {
   },
   
   methods:{
+    setGridDefaultHeight() {
+      this.grid.height = 100
+      setTimeout(() => {
+        this.grid.height = this.$el.clientHeight - this.$refs.filter.clientHeight - 61
+      }, 0)
+    },
     reset() {
       this.data = {        
         rptBy: 'DT',
@@ -580,6 +587,7 @@ export default {
         this.getDetail()
         this.main = false
         this.filter = false
+        this.setGridDefaultHeight()
       }
     },
     back() {
@@ -588,6 +596,7 @@ export default {
       this.getList()
       this.main = true
       this.filter = true
+      this.setGridDefaultHeight()
     },
     clearDate(item) {
       if (item === 'from') {
