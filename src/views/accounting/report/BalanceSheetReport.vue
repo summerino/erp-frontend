@@ -6,7 +6,7 @@
           <v-card-title class="indigo--text text--lighten-2 pb-1">
             <v-row v-if="main" no-gutters>
               <v-col cols="12" md="6">
-                Laporan Neraca Keuangan
+                Laporan Neraca
               </v-col>
               <v-col cols="12" md="6" class="text-right">
                 <v-tooltip bottom>
@@ -38,11 +38,11 @@
                     <v-btn
                       v-bind="attrs"
                       v-on="on"
+                      :disabled="!auth.allowPrint"
                       color="blue darken-1"
                       dark
                       tile
                       small
-                      :disabled="!auth.allowPrint"
                     >
                       <v-icon>mdi-menu-down</v-icon>
                     </v-btn>
@@ -50,7 +50,7 @@
                   <v-list class="cursor-pointer">
                     <v-list-item>
                       <v-list-item-title>
-                        <export-excel title="Daftar Laporan Neraca Keuangan" :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
+                        <export-excel title="Daftar Laporan Neraca" :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
                       </v-list-item-title>
                     </v-list-item>
                   </v-list>
@@ -286,31 +286,31 @@ export default {
     },
     defaultColumn: [
       { text: 'Kode Akun', value: 'code', divider: true, width: '60', excelColWidth:'15' },
-      { text: 'Nama Akun', value: 'name', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nilai', value: 'amount',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true }
+      { text: 'Nama Akun', value: 'name', divider: true, width: '400', excelColWidth:'50' },
+      { text: 'Nilai', value: 'amount',  align: 'right', divider: true, width: '160', excelColWidth:'20', isCurrency: true }
     ],
     ledgerColumn: [
-      { text: 'Tanggal', value: 'accCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode', value: 'accName', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Catatan', value: 'notes', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Ref 1', value: 'refCode1', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Debit', value: 'debetOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Kredit', value: 'creditOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Saldo Akhir', value: 'endBalOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Kode Ref 2', value: 'refCode2', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Ref 3', value: 'refCode3', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Ref 4', value: 'refCode4', width: '100', excelColWidth:'20' }
+      { text: 'Tanggal', value: 'accCode', divider: true, width: '120', excelColWidth:'15' },
+      { text: 'Kode', value: 'accName', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Catatan', value: 'notes', divider: true, width: '300', excelColWidth:'50' },
+      { text: 'Kode Ref 1', value: 'refCode1', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Debit', value: 'debetOc',  align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
+      { text: 'Kredit', value: 'creditOc',  align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
+      { text: 'Saldo Akhir', value: 'endBalOc',  align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
+      { text: 'Kode Ref 2', value: 'refCode2', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kode Ref 3', value: 'refCode3', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kode Ref 4', value: 'refCode4', width: '160', excelColWidth:'20' }
     ],
     detailColumn : [
-      { text: 'Kode Akun', value: 'accCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nama Akun', value: 'accName', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Catatan', value: 'notes', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Ref 1', value: 'refCode1', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Debit', value: 'debetOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Kredit', value: 'creditOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Kode Ref 2', value: 'refCode2', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Ref 3', value: 'refCode3', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Ref 4', value: 'refCode4', width: '100', excelColWidth:'20' }
+      { text: 'Kode Akun', value: 'accCode', divider: true, width: '120', excelColWidth:'15' },
+      { text: 'Nama Akun', value: 'accName', divider: true, width: '200', excelColWidth:'36' },
+      { text: 'Catatan', value: 'notes', divider: true, width: '300', excelColWidth:'50' },
+      { text: 'Kode Ref 1', value: 'refCode1', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Debit', value: 'debetOc',  align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
+      { text: 'Kredit', value: 'creditOc',  align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
+      { text: 'Kode Ref 2', value: 'refCode2', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kode Ref 3', value: 'refCode3', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kode Ref 4', value: 'refCode4', width: '160', excelColWidth:'20' }
     ],
     filter: false,
     types: [{ id: 'N', name: 'Berdasarkan Kode' }, { id: 'DT', name: 'Berdasarkan Tanggal' }],
