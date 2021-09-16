@@ -870,7 +870,6 @@
                           :readonly="true"
                           label="Harga Barang Keluar"
                         ></v-currency-field>   
-                        {{ data.totalOut }}
                       </v-col>
                       <v-col cols="12" md="4">
                         <v-currency-field
@@ -879,7 +878,6 @@
                           :readonly="true"
                           label="Harga Barang Masuk"
                         ></v-currency-field>
-                        {{ data.totalIn }}
                       </v-col>
                       <v-col cols="12" md="4">
                         <v-currency-field
@@ -890,7 +888,6 @@
                           class="text-right"
                           label="Selisih"
                         ></v-currency-field>
-                        {{ data.difference }}
                       </v-col>
                     </v-row>
                   </v-card-text>
@@ -1097,8 +1094,9 @@ export default {
         subTotal: 0,
         includeTax: this.defTaxInc,
         taxAmount: 0,
-        totalIn: null,
-        totalOut: null,
+        totalIn: 0,
+        totalOut: 0,
+        total: 0,
         difference: null,
         nonTax: this.defNonTax,
         taxIncluded: this.defTaxInc
@@ -1674,14 +1672,19 @@ export default {
     },
     calcGrandTotal() {
       
-      if (this.data.includeTax) {
-        this.data.totalOut = this.data.subTotalOut 
-        this.data.totalIn = this.data.subTotalIn 
-      } else {
-        this.data.totalOut = this.data.subTotalOut + this.data.taxAmountOut
-        this.data.totalIn = this.data.subTotalIn  + this.data.taxAmountIn
-      }
+      // if (this.data.includeTax) {
+      //   this.data.totalOut = this.data.subTotalOut 
+      //   this.data.totalIn = this.data.subTotalIn 
+      // } else {
+      //   this.data.totalOut = this.data.subTotalOut + this.data.taxAmountOut
+      //   this.data.totalIn = this.data.subTotalIn  + this.data.taxAmountIn
+      // }
+
+      this.data.totalOut = this.data.subTotalOut 
+      this.data.totalIn = this.data.subTotalIn 
+
       this.data.difference = this.data.totalOut - this.data.totalIn
+      this.data.total = this.data.difference
     },
     showFindSupDialog() {
       this.$refs.findSup.open()

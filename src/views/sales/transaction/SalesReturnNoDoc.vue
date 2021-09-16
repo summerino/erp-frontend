@@ -1092,6 +1092,7 @@ export default {
         taxInvoiceNo: null,
         totalIn: 0,
         totalOut: 0,
+        total: 0,
         difference: 0
       }
       this.gridItem.data = []
@@ -1682,14 +1683,19 @@ export default {
     },
     calcGrandTotal() {
       
-      if (this.data.taxIncluded) {
-        this.data.totalIn = this.data.subTotalIn 
-        this.data.totalOut = this.data.subTotalOut 
-      } else {
-        this.data.totalIn = this.data.subTotalIn  + this.data.taxAmountIn
-        this.data.totalOut = this.data.subTotalOut + this.data.taxAmountOut
-      }
+      // if (this.data.taxIncluded) {
+      //   this.data.totalIn = this.data.subTotalIn 
+      //   this.data.totalOut = this.data.subTotalOut 
+      // } else {
+      //   this.data.totalIn = this.data.subTotalIn  + this.data.taxAmountIn
+      //   this.data.totalOut = this.data.subTotalOut + this.data.taxAmountOut
+      // }
+
+      this.data.totalOut = this.data.subTotalOut 
+      this.data.totalIn = this.data.subTotalIn 
+
       this.data.difference = this.data.totalIn - this.data.totalOut
+      this.data.total = this.data.difference
     },
     showFindItemDialog(item) {
       this.$refs.findItem.open(item)
