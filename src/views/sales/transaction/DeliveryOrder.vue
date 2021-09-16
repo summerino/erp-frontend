@@ -1310,7 +1310,7 @@ export default {
         this.$refs.findReturn.open()
       }
     },
-    bindTransData(item) {
+    async bindTransData(item) {
       if (item) {
         this.data.transCode = item.code
         this.data.custCode = item.custCode
@@ -1350,16 +1350,14 @@ export default {
                 this.calcPrice()
               })
 
-            api.getAll(`${this.endpoint.sales.order}/free-item`, {
-              params: { code: item.code }
+            const response = await api.getAll(`${this.endpoint.sales.order}/free-item`, {
+              params: { code: item.code, fullDlv: false }
             })
-              .then(response => {
-                this.gridBonus.data = response.data.tableData
-                for (let i = 0; i < this.gridBonus.data.length; i++) {
-                  this.gridBonus.data[i].bonusQty = this.gridBonus.data[i].qty 
-                  this.gridBonus.data[i].outstandingQty = this.gridBonus.data[i].qty - this.gridBonus.data[i].qtyClosed 
-                }
-              })
+            for (let i = 0; i < response.data.tableData.length; i++) {
+              response.data.tableData[i].bonusQty = response.data.tableData[i].qty 
+              response.data.tableData[i].outstandingQty = response.data.tableData[i].qty - response.data.tableData[i].qtyClosed 
+            }
+            this.gridBonus.data = response.data.tableData
           } else {
             // Get sales return item details
             api.getAll(`${this.endpoint.sales.return}/item`, {
