@@ -112,8 +112,7 @@ class ExcelService {
     const num = totalRow < Math.ceil(currentPage * pageSize) ? totalRow : Math.ceil(currentPage * pageSize)
     return `${firstNumber} - ${num} dari ${totalRow} data`
   }
-  async export(title, grid, gridDefOpts, filter = null, fromSwift = false) {
-    const company = 'Sahassa'
+  async export(company, title, grid, gridDefOpts, filter = null, fromSwift = false) {
     const currentPage = grid?.options?.page
     const pageSize = gridDefOpts.pageSize
 

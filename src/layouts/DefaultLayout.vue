@@ -69,6 +69,7 @@
 import { mapState } from 'vuex'
 
 import api from '@/services/axios.service'
+import auth from '@/services/authorization.service'
 
 import MainMenu from '../components/navigation/MainMenu'
 import ToolbarUser from '../components/toolbar/ToolbarUser'
@@ -87,6 +88,7 @@ export default {
   },
 
   created: function () {
+    this.getCompanyInfo()
     this.getMenu()
     this.getAction()
   },
@@ -104,6 +106,20 @@ export default {
   },
 
   methods: {
+    getCompanyInfo() {
+      api.getAll(this.endpoint.systemManagement.companyProfile, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'catalogTenantId',
+            operator: 'eq',
+            keyword: auth.getUserInfo()?.TenantId ?? 0
+          }])
+        }
+      })
+        .then(response => {
+          this.$store.commit('api/setCompanyInfo', response.data.tableData[0])
+        })
+    },
     getMenu() {
       api.getAll(`${this.endpoint.systemManagement.menu}/navigation`, {})
         .then(response => {

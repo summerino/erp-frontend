@@ -37,7 +37,14 @@
                 </template>
                 <span class="text-caption">Pencarian lanjutan</span>
               </v-tooltip>
-              <export-excel title="Daftar Jurnal Umum" :grid="grid" :gridDefOpts="gridDefOpts" :filters="filter" ref="exportExcel"></export-excel>
+              <export-excel
+                ref="exportExcel"
+                :company="companyName"
+                :filters="filter"
+                :grid="grid"
+                :gridDefOpts="gridDefOpts"
+                title="Daftar Jurnal Umum"
+              ></export-excel>
             </v-row>
           </v-col>
           <v-col cols="12" md="4" class="text-right">
@@ -622,6 +629,7 @@ export default {
       gridDefOpts: state => state.app.grid,
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
+      companyName: state => state.api.companyName,
       filter: state => state.app.filter,
       auth: state => state.api.authorization,
       menuId: state => state.api.menus

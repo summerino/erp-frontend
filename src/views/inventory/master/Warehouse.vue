@@ -19,7 +19,13 @@
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" md="1">
-            <export-excel title="Daftar Gudang" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+            <export-excel
+              ref="exportExcel"
+              :company="companyName"
+              :grid="grid"
+              :gridDefOpts="gridDefOpts"
+              title="Daftar Gudang"
+            ></export-excel>
           </v-col>
           <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
@@ -351,6 +357,7 @@ export default {
       gridDefOpts: state => state.app.grid,
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
+      companyName: state => state.api.companyName,
       auth: state => state.api.authorization,
       menuId: state => state.api.menus
     })  

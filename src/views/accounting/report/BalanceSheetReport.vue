@@ -50,7 +50,14 @@
                   <v-list class="cursor-pointer">
                     <v-list-item>
                       <v-list-item-title>
-                        <export-excel title="Daftar Laporan Neraca" :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
+                        <export-excel
+                          ref="exportExcel"
+                          :company="companyName"
+                          :filters="exportFilter"
+                          :grid="grid"
+                          :gridDefOpts="gridDefOpts"
+                          title="Daftar Laporan Neraca"
+                        ></export-excel>
                       </v-list-item-title>
                     </v-list-item>
                   </v-list>
@@ -106,7 +113,14 @@
                   <v-list class="cursor-pointer">
                     <v-list-item>
                       <v-list-item-title>
-                        <export-excel :title=" mainDet === 1 ? 'Daftar Laporan Buku Besar - Neraca Keuangan' : 'Daftar Laporan Jurnal Detail - Buku Besar - Neraca Keuangan'" :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
+                        <export-excel
+                          ref="exportExcel"
+                          :company="companyName"
+                          :filters="exportFilter"
+                          :grid="grid"
+                          :gridDefOpts="gridDefOpts"
+                          :title="mainDet === 1 ? 'Daftar Laporan Buku Besar - Neraca Keuangan' : 'Daftar Laporan Jurnal Detail - Buku Besar - Neraca Keuangan'"
+                        ></export-excel>
                       </v-list-item-title>
                     </v-list-item>
                   </v-list>
@@ -360,6 +374,7 @@ export default {
       gridDefOpts: state => state.app.grid,
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
+      companyName: state => state.api.companyName,
       auth: state => state.api.authorization,
       menuId: state => state.api.menus
     }),

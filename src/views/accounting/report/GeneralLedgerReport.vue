@@ -50,7 +50,14 @@
                   <v-list class="cursor-pointer">
                     <v-list-item>
                       <v-list-item-title>
-                        <export-excel title="Daftar Laporan Buku Besar" :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
+                        <export-excel
+                          ref="exportExcel"
+                          :company="companyName"
+                          :filters="exportFilter"
+                          :grid="grid"
+                          :gridDefOpts="gridDefOpts"
+                          title="Daftar Laporan Buku Besar"
+                        ></export-excel>
                       </v-list-item-title>
                     </v-list-item>
                   </v-list>
@@ -103,7 +110,14 @@
                   <v-list class="cursor-pointer">
                     <v-list-item>
                       <v-list-item-title>
-                        <export-excel title="Daftar Laporan Jurnal Detail Buku Besar" :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
+                        <export-excel
+                          ref="exportExcel"
+                          :company="companyName"
+                          :filters="exportFilter"
+                          :grid="grid"
+                          :gridDefOpts="gridDefOpts"
+                          title="Daftar Laporan Jurnal Detail Buku Besar"
+                        ></export-excel>
                       </v-list-item-title>
                     </v-list-item>
                   </v-list>
@@ -385,6 +399,7 @@ export default {
       gridDefOpts: state => state.app.grid,
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
+      companyName: state => state.api.companyName,
       auth: state => state.api.authorization,
       menuId: state => state.api.menus
     }),

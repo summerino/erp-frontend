@@ -5,6 +5,7 @@ import mutations from './mutations'
 // state initial values
 const state = {
   endpoint,
+  companyName: null,
   menus,
   action: [],
   authorization: {}

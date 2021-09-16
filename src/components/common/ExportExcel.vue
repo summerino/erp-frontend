@@ -5,8 +5,8 @@
         v-bind="attrs"
         v-on="on"
         v-shortkey="['ctrl', 'alt', 'p']"
-          icon
         color="green"
+        icon
         @click="exportExcel"
         @shortkey="exportExcel"
       >
@@ -22,11 +22,11 @@
 import excelService from '@/services/excel.service.js'
 
 export default {
-  props: ['title', 'grid', 'gridDefOpts', 'filters'],
+  props: ['company', 'title', 'grid', 'gridDefOpts', 'filters'],
   
   methods: {
     async exportExcel() {
-      excelService.export(this.title, this.grid, this.gridDefOpts, this.filters)
+      excelService.export(this.company, this.title, this.grid, this.gridDefOpts, this.filters)
     }
   }  
 }
