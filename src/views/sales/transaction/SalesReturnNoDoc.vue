@@ -1092,6 +1092,7 @@ export default {
         taxInvoiceNo: null,
         totalIn: 0,
         totalOut: 0,
+        total: 0,
         difference: 0
       }
       this.gridItem.data = []
@@ -1615,18 +1616,36 @@ export default {
       }
     },
     calcItemTax(item) {
+      // const tax = this.taxes.find(t => t.id === item.taxId)
+      // if (tax) {
+      //   if (this.data.includeTax) {
+      //     item.taxAmount = Math.round((item.unitPrice) - ((item.unitPrice) / (1 + (tax.rate / 100))))
+      //     item.taxAmountTemp = item.taxAmount
+      //     item.nettPrice = item.unitPrice 
+      //     item.dpp = item.unitPrice - item.taxAmount
+      //   } else {
+      //     item.taxAmount = Math.round((item.unitPrice) * (tax.rate / 100))
+      //     item.taxAmountTemp = item.taxAmount
+      //     item.nettPrice = item.unitPrice + item.taxAmount
+      //     item.dpp = item.unitPrice 
+      //   }
+      // }
+
       const tax = this.taxes.find(t => t.id === item.taxId)
       if (tax) {
-        if (this.data.includeTax) {
+        if (this.data.taxIncluded) {
           item.taxAmount = Math.round((item.unitPrice) - ((item.unitPrice) / (1 + (tax.rate / 100))))
           item.taxAmountTemp = item.taxAmount
-          item.nettPrice = item.unitPrice 
+          item.nettPrice = item.unitPrice
           item.dpp = item.unitPrice - item.taxAmount
+        } else if (!this.data.taxIncluded && this.data.nonTax) {
+          item.nettPrice = item.unitPrice + item.taxAmount
+          item.dpp = item.unitPrice
         } else {
           item.taxAmount = Math.round((item.unitPrice) * (tax.rate / 100))
           item.taxAmountTemp = item.taxAmount
           item.nettPrice = item.unitPrice + item.taxAmount
-          item.dpp = item.unitPrice 
+          item.dpp = item.unitPrice
         }
       }
     },
@@ -1664,14 +1683,19 @@ export default {
     },
     calcGrandTotal() {
       
-      if (this.data.taxIncluded) {
-        this.data.totalIn = this.data.subTotalIn 
-        this.data.totalOut = this.data.subTotalOut 
-      } else {
-        this.data.totalIn = this.data.subTotalIn  + this.data.taxAmountIn
-        this.data.totalOut = this.data.subTotalOut + this.data.taxAmountOut
-      }
+      // if (this.data.taxIncluded) {
+      //   this.data.totalIn = this.data.subTotalIn 
+      //   this.data.totalOut = this.data.subTotalOut 
+      // } else {
+      //   this.data.totalIn = this.data.subTotalIn  + this.data.taxAmountIn
+      //   this.data.totalOut = this.data.subTotalOut + this.data.taxAmountOut
+      // }
+
+      this.data.totalOut = this.data.subTotalOut 
+      this.data.totalIn = this.data.subTotalIn 
+
       this.data.difference = this.data.totalIn - this.data.totalOut
+      this.data.total = this.data.difference
     },
     showFindItemDialog(item) {
       this.$refs.findItem.open(item)

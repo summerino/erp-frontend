@@ -413,7 +413,6 @@ export default {
     setGridDefaultHeight() {
       this.grid.height = 100
       setTimeout(() => {
-        console.log(this.$refs.filter.clientHeight)
         this.grid.height = this.$el.clientHeight - this.$refs.filter.clientHeight - 61
       }, 0)
     },
