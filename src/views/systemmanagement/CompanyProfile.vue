@@ -18,7 +18,13 @@
           </v-col>
           <v-spacer></v-spacer>
           <v-col cols="12" md="6">
-            <export-excel title="Daftar Profil Perusahaan" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+            <export-excel
+              ref="exportExcel"
+              :company="companyName"
+              :grid="grid"
+              :gridDefOpts="gridDefOpts"
+              title="Daftar Profil Perusahaan"
+            ></export-excel>
           </v-col>
         </v-row>
       </v-card-title>
@@ -326,6 +332,7 @@ export default {
       gridDefOpts: state => state.app.grid,
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
+      companyName: state => state.api.companyName,
       auth: state => state.api.authorization,
       menuId: state => state.api.menus
     }),

@@ -1,4 +1,7 @@
 export default {
+  setCompanyInfo: (state, company) => {
+    state.companyName = company?.name ?? ''
+  },
   setAction: (state, actions) => {
     state.action = actions
   },

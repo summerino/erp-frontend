@@ -17,7 +17,13 @@
             ></v-text-field>
           </v-col>
           <v-col cols="12" md="1">
-            <export-excel title="Daftar Tutup Bulan" :grid="grid" :gridDefOpts="gridDefOpts" ref="exportExcel"></export-excel>
+            <export-excel
+              ref="exportExcel"
+              :company="companyName"
+              :grid="grid"
+              :gridDefOpts="gridDefOpts"
+              title="Daftar Tutup Bulan"
+            ></export-excel>
           </v-col>
           <v-col cols="12" md="5" class="text-right">
             <v-tooltip bottom>
@@ -105,7 +111,6 @@
                   tile
                   @click="save"
                   @shortkey="save"
-                  
                 >
                   <v-icon left>
                     mdi-content-save
@@ -148,60 +153,60 @@
             <v-row no-gutters>
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-menu
-                    v-model="menu.startDate"
-                    :close-on-content-click="false"
-                    transition="scale-transition"
-                    min-width="290px"
-                    offset-y
+                  v-model="menu.startDate"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  min-width="290px"
+                  offset-y
                 >
-                    <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                        v-bind="attrs"
-                        v-on="on"
-                        :value="formatStartDate"
-                        :rules="rules.required"
-                        label="Tanggal Mulai"
-                        class="mt-0"
-                        readonly
-                        required
-                    ></v-text-field>
-                    </template>
-                    <v-date-picker
-                        v-model="data.startDate"
-                        no-title
-                        scrollable
-                        type="month"
-                        @change="menu.startDate = false"
-                    ></v-date-picker>
+                  <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-bind="attrs"
+                    v-on="on"
+                    :value="formatStartDate"
+                    :rules="rules.required"
+                    label="Tanggal Mulai"
+                    class="mt-0"
+                    readonly
+                    required
+                  ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="data.startDate"
+                    no-title
+                    scrollable
+                    type="month"
+                    @change="menu.startDate = false"
+                  ></v-date-picker>
                 </v-menu>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-menu
-                    v-model="menu.endDate"
-                    :close-on-content-click="false"
-                    transition="scale-transition"
-                    min-width="290px"
-                    offset-y
+                  v-model="menu.endDate"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  min-width="290px"
+                  offset-y
                 >
-                    <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                        v-bind="attrs"
-                        v-on="on"
-                        :value="formatEndDate"
-                        :rules="rules.required"
-                        label="Tanggal Akhir"
-                        class="mt-0"
-                        readonly
-                        required
-                    ></v-text-field>
-                    </template>
-                    <v-date-picker
-                        v-model="data.endDate"
-                        no-title
-                        scrollable
-                        type="month"
-                        @change="menu.endDate = false"
-                    ></v-date-picker>
+                  <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    v-bind="attrs"
+                    v-on="on"
+                    :value="formatEndDate"
+                    :rules="rules.required"
+                    label="Tanggal Akhir"
+                    class="mt-0"
+                    readonly
+                    required
+                  ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="data.endDate"
+                    no-title
+                    scrollable
+                    type="month"
+                    @change="menu.endDate = false"
+                  ></v-date-picker>
                 </v-menu>
               </v-col>
             </v-row>
@@ -226,9 +231,7 @@
             <span>Ubah Tutup Bulan</span>
           </v-col>
           <v-col cols="12" md="8" class="text-right">
-            <label
-              class="text-caption mr-1"
-            >
+            <label class="text-caption mr-1">
               Tanggal Diperbarui: {{ data.updatedDate }} oleh {{ data.updatedInitial }}
             </label>
             <v-tooltip bottom>
@@ -245,7 +248,6 @@
                   tile
                   @click="save"
                   @shortkey="save"
-                  
                 >
                   <v-icon left>
                     mdi-content-save
@@ -288,14 +290,14 @@
             <v-row no-gutters>
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-text-field
-                    v-bind="attrs"
-                    v-on="on"
-                    :value="formatPeriod"
-                    :rules="rules.required"
-                    label="Periode"
-                    class="mt-0"
-                    readonly
-                    required
+                  v-bind="attrs"
+                  v-on="on"
+                  :value="formatPeriod"
+                  :rules="rules.required"
+                  label="Periode"
+                  class="mt-0"
+                  readonly
+                  required
                 ></v-text-field>
               </v-col>
               <v-col cols="12" md="6" class="pl-md-3">
@@ -387,6 +389,7 @@ export default {
       gridDefOpts: state => state.app.grid,
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint,
+      companyName: state => state.api.companyName,
       auth: state => state.api.authorization,
       menuId: state => state.api.menus
     }),
