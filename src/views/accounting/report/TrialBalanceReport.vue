@@ -1,6 +1,6 @@
 <template>
   <div class="w-full">
-    <v-row no-gutters>
+    <v-row ref="filter" no-gutters>
       <v-col cols="12">
         <v-card>
           <v-card-title class="indigo--text text--lighten-2 pb-1">
@@ -205,7 +205,7 @@
           <v-card>
           <v-data-table  
             :headers="grid.columns"
-            :height="gridDefOpts.height"
+            :height="grid.height"
             :items="grid.data"
             :class="['elevation-1', this.mainDet === 0 ? 'row-pointer' : this.mainDet === 1 ? 'row-pointer' : '']"
             disable-sort
@@ -303,39 +303,40 @@ export default {
       dateTo: false
     },
     grid: {
+      height: 100,
       columns: [],
       data: []
     },
     defaultColumn: [
-      { text: 'Kode Akun', value: 'coaCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nama Akun', value: 'coaName', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Saldo Awal', value: 'beginBalIdr',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Debit', value: 'debetIdr',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Kredit', value: 'creditIdr',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Saldo Akhir', value: 'endBalIdr',  align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
+      { text: 'Kode Akun', value: 'coaCode', divider: true, width: '100', excelColWidth:'15' },
+      { text: 'Nama Akun', value: 'coaName', divider: true, width: '300', excelColWidth:'40' },
+      { text: 'Saldo Awal', value: 'beginBalIdr',  align: 'right', divider: true, width: '160', excelColWidth:'20', isCurrency: true },
+      { text: 'Debit', value: 'debetIdr',  align: 'right', divider: true, width: '160', excelColWidth:'20', isCurrency: true },
+      { text: 'Kredit', value: 'creditIdr',  align: 'right', divider: true, width: '160', excelColWidth:'20', isCurrency: true },
+      { text: 'Saldo Akhir', value: 'endBalIdr',  align: 'right', width: '160', excelColWidth:'20', isCurrency: true }
     ],
     ledgerColumn: [
-      { text: 'Tanggal', value: 'accCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode', value: 'accName', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Catatan', value: 'notes', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Ref 1', value: 'refCode1', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Debit', value: 'debetOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Kredit', value: 'creditOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Saldo Akhir', value: 'endBalOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Kode Ref 2', value: 'refCode2', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Ref 3', value: 'refCode3', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Ref 4', value: 'refCode4', width: '100', excelColWidth:'20' }
+      { text: 'Tanggal', value: 'accCode', divider: true, width: '120', excelColWidth:'15' },
+      { text: 'Kode', value: 'accName', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Catatan', value: 'notes', divider: true, width: '300', excelColWidth:'50' },
+      { text: 'Kode Ref 1', value: 'refCode1', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Debit', value: 'debetOc',  align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
+      { text: 'Kredit', value: 'creditOc',  align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
+      { text: 'Saldo Akhir', value: 'endBalOc',  align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
+      { text: 'Kode Ref 2', value: 'refCode2', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kode Ref 3', value: 'refCode3', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kode Ref 4', value: 'refCode4', width: '160', excelColWidth:'20' }
     ],
     detailColumn : [
-      { text: 'Kode Akun', value: 'accCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nama Akun', value: 'accName', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Catatan', value: 'notes', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Ref 1', value: 'refCode1', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Debit', value: 'debetOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Kredit', value: 'creditOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Kode Ref 2', value: 'refCode2', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Ref 3', value: 'refCode3', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Ref 4', value: 'refCode4', width: '100', excelColWidth:'20' }
+      { text: 'Kode Akun', value: 'accCode', divider: true, width: '120', excelColWidth:'15' },
+      { text: 'Nama Akun', value: 'accName', divider: true, width: '200', excelColWidth:'36' },
+      { text: 'Catatan', value: 'notes', divider: true, width: '300', excelColWidth:'50' },
+      { text: 'Kode Ref 1', value: 'refCode1', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Debit', value: 'debetOc',  align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
+      { text: 'Kredit', value: 'creditOc',  align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
+      { text: 'Kode Ref 2', value: 'refCode2', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kode Ref 3', value: 'refCode3', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kode Ref 4', value: 'refCode4', width: '160', excelColWidth:'20' }
     ],
     filter: false,
     types: [{ id: 'N', name: 'Berdasarkan Kode' }, { id: 'DT', name: 'Berdasarkan Tanggal' }],
@@ -374,7 +375,7 @@ export default {
       }, {
         text: 'Neraca Percobaan'
       }])
-      this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
+      this.setGridDefaultHeight()
     }, 0)
   },
 
@@ -395,6 +396,12 @@ export default {
   },
   
   methods:{
+    setGridDefaultHeight() {
+      this.grid.height = 100
+      setTimeout(() => {
+        this.grid.height = this.$el.clientHeight - this.$refs.filter.clientHeight - 61
+      }, 0)
+    },
     reset() {
       this.data = {        
         rptBy: 'DT',
@@ -448,7 +455,7 @@ export default {
         .then(response => {
           for (let index = 0; index < response.data.length; index++) {
             if (response.data[index].accCode !== null) {
-              if (response.data[index].accCode.indexOf(' ') === -1) {
+              if (response.data[index].accCode.indexOf('-') === -1) {
                 response.data[index].debetOc = Number(response.data[index].debetOc)
                 response.data[index].creditOc = Number(response.data[index].creditOc)
               }
@@ -615,6 +622,7 @@ export default {
         this.getLedger()
         this.main = false
         this.filter = false
+        this.setGridDefaultHeight()
       }
     },
     back() {
@@ -627,6 +635,7 @@ export default {
         this.getList()
         this.main = true
         this.filter = true
+        this.setGridDefaultHeight()
       }
     },
     clearDate(item) {

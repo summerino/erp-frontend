@@ -65,26 +65,27 @@ export default {
   bbAccountReceivable: 79,
   bbDebitMemo: 89,
   bbCreditMemo: 90,
-  postingJournal: 86,
-  closingMonth: 88,
   journalReport: 100,
   glReport: 104,
   tbReport: 105,
-  bsReport: 109,
+  bsReport: 110,
+  isReport: 111,
+  postingJournal: 86,
+  closingMonth: 88,
 
   // Asset Management
   assetType: 62,
-  fixedAsset: 63, 
-
-  // System Management
-  companyProfile: 75,
-  user: 51,
-  role: 52,
-  parameter: 73,
+  fixedAsset: 63,
 
   // Human Resource
   attendanceReport: 103,
 
   // Mobile Sales
-  mobileReason: 108
+  mobileReason: 108, 
+
+  // System Management
+  companyProfile: 75,
+  user: 51,
+  role: 52,
+  parameter: 73
 }

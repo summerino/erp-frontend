@@ -6,7 +6,7 @@
           <v-card-title class="indigo--text text--lighten-2 pb-1">
             <v-row v-if="main" no-gutters>
               <v-col cols="12" md="6">
-                Laporan Neraca
+                Laporan Laba Rugi
               </v-col>
               <v-col cols="12" md="6" class="text-right">
                 <v-tooltip bottom>
@@ -38,11 +38,11 @@
                     <v-btn
                       v-bind="attrs"
                       v-on="on"
-                      :disabled="!auth.allowPrint"
                       color="blue darken-1"
                       dark
                       tile
                       small
+                      :disabled="!auth.allowPrint"
                     >
                       <v-icon>mdi-menu-down</v-icon>
                     </v-btn>
@@ -50,7 +50,7 @@
                   <v-list class="cursor-pointer">
                     <v-list-item>
                       <v-list-item-title>
-                        <export-excel title="Daftar Laporan Neraca" :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
+                        <export-excel title="Daftar Laporan Laba Rugi" :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
                       </v-list-item-title>
                     </v-list-item>
                   </v-list>
@@ -79,9 +79,12 @@
             </v-row>
             <v-row v-else no-gutters>
               <v-col v-if="mainDet === 1" cols="12" md="10">
-                Akun Detail - {{ this.data.coaCode }} - {{ this.data.coaName }}
+                Detail - {{ this.data.coaName }} - {{ this.data.currM }}
               </v-col>
               <v-col v-if="mainDet === 2" cols="12" md="10">
+                Akun Detail - {{ this.data.coaCode }} - {{ this.data.coaName }} 
+              </v-col>
+              <v-col v-if="mainDet === 3" cols="12" md="10">
                 Akun Detail - {{ this.data.coaCode }} - {{ this.data.coaName }} - Jurnal Detail - {{ this.data.vouFrom }}
               </v-col>
               <v-col cols="12" md="2" class="text-right">
@@ -106,7 +109,10 @@
                   <v-list class="cursor-pointer">
                     <v-list-item>
                       <v-list-item-title>
-                        <export-excel :title=" mainDet === 1 ? 'Daftar Laporan Buku Besar - Neraca Keuangan' : 'Daftar Laporan Jurnal Detail - Buku Besar - Neraca Keuangan'" :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
+                        <export-excel :title="mainDet === 1 ? `Detail - ${ this.data.coaName } - ${ this.data.currM }` 
+                        : mainDet === 2 ? `Akun Detail - ${ this.data.coaCode } - ${ this.data.coaName }` 
+                        : mainDet === 3 ? `Akun Detail - ${ this.data.coaCode } - ${ this.data.coaName } - Jurnal Detail - ${ this.data.vouFrom }` : ''" 
+                        :grid="grid" :gridDefOpts="gridDefOpts" :filters="exportFilter" ref="exportExcel"></export-excel>
                       </v-list-item-title>
                     </v-list-item>
                   </v-list>
@@ -136,7 +142,20 @@
           </v-card-title>
           <v-card-text v-if="this.filter" class="pa-2">
             <v-row no-gutters>
-              <v-col cols="12" class="pl-1">
+              <v-col cols="12" md="6" class="pl-1">
+                <v-autocomplete
+                  v-model="data.rptBy"
+                  :items="types"                  
+                  label="Tipe Laporan"
+                  item-text="name"
+                  item-value="id"
+                  class="mt-0"
+                  dense
+                  @change="clearTable()"
+                >
+                </v-autocomplete>
+              </v-col>
+              <v-col cols="12" md="6" class="pl-1">
                 <v-menu
                   v-model="menu.date"
                   :close-on-content-click="false"
@@ -160,7 +179,7 @@
                     type="month"
                     no-title
                     scrollable
-                    @change="menu.date = false; changeDate();"
+                    @change="menu.date = false; changeDate(); clearTable();"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
@@ -172,87 +191,102 @@
 
     <v-row dense>
       <v-col cols="12">
-        <v-card>
+          <v-card>
           <v-data-table  
             :headers="grid.columns"
             :height="grid.height"
             :items="grid.data"
-            :class="['elevation-1', this.mainDet === 0 ? 'row-pointer' : this.mainDet === 1 ? 'row-pointer' : '']"
+            :class="['elevation-1', this.mainDet < 3 ? 'row-pointer' : '']"
             disable-sort
             fixed-header
             hide-default-footer
             disable-pagination
             @dblclick:row="clickDetail"
           >
-            <template v-slot:[`item.coaCode`]="{ item }">
-              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-                {{ item.coaCode }}
-              </span>
-            </template>
-            <template v-slot:[`item.coaName`]="{ item }">
-              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-                {{ item.coaName }}
-              </span>
-            </template>
-            <template v-slot:[`item.accCode`]="{ item }">
-              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-                {{ item.accCode }}
-              </span>
-            </template>
-            <template v-slot:[`item.accName`]="{ item }">
-              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-                {{ item.accName }}
-              </span>
-            </template>
-            <template v-slot:[`item.notes`]="{ item }">
-              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-                {{ item.notes }}
-              </span>
-            </template>
-            <template v-slot:[`item.debetOc`]="{ item }">
-              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-                {{ item.debetOc | formatCurrency }}
-              </span>
-            </template>
-            <template v-slot:[`item.creditOc`]="{ item }">
-              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-                {{ item.creditOc | formatCurrency }}
-              </span>
-            </template>
-            <template v-slot:[`item.endBalOc`]="{ item }">
-              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-                {{ item.endBalOc | formatCurrency }}
-              </span>
-            </template>
-            <template v-slot:[`item.debetIdr`]="{ item }">
-              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-                {{ item.debetIdr | formatCurrency }}
-              </span>
-            </template>
-            <template v-slot:[`item.creditIdr`]="{ item }">
-              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-                {{ item.creditIdr | formatCurrency }}
-              </span>
-            </template>
-            <template v-slot:[`item.beginBalIdr`]="{ item }">
-              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-                {{ item.beginBalIdr | formatCurrency }}
-              </span>
-            </template>
-            <template v-slot:[`item.endBalIdr`]="{ item }">
-              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-                {{ item.endBalIdr | formatCurrency }}
-              </span>
-            </template>
-            <template v-slot:[`item.amount`]="{ item }">
-              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-                {{ item.amount | formatCurrency }}
-              </span>
-            </template>
-            <template v-slot:[`item.name`]="{ item }">
-              <span v-html="getSpaceName(item)" :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              </span>
-            </template>
+          <template v-slot:[`item.coaCode`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.coaCode }}
+            </span>
+          </template>
+          <template v-slot:[`item.coaName`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.coaName }}
+            </span>
+          </template>
+          <template v-slot:[`item.accCode`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.accCode }}
+            </span>
+          </template>
+          <template v-slot:[`item.accName`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.accName }}
+            </span>
+          </template>
+          <template v-slot:[`item.notes`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.notes }}
+            </span>
+          </template>
+          <template v-slot:[`item.debetOc`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.debetOc | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.creditOc`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.creditOc | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.endBalOc`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.endBalOc | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.debetIdr`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.debetIdr | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.creditIdr`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.creditIdr | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.beginBalIdr`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.beginBalIdr | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.endBalIdr`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.endBalIdr | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.isName`]="{ item }">
+            <span v-html="getSpaceName(item)" :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+            </span>
+          </template>
+          <template v-slot:[`item.isNowAmountIdr`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.isNowAmountIdr | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.isPrevAmountIdr`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.isPrevAmountIdr | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.isYtdAmountIdr`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.isYtdAmountIdr | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.amountIdr`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.amountIdr | formatCurrency }}
+            </span>
+          </template>
           </v-data-table>
         </v-card>
       </v-col> 
@@ -262,7 +296,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { format, parseISO, startOfMonth, endOfMonth }  from 'date-fns'
+import { format, parseISO, startOfMonth, endOfMonth, sub, getYear }  from 'date-fns'
 
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
@@ -286,6 +320,12 @@ export default {
       data: []
     },
     defaultColumn: [
+      { text: 'Deskripsi', value: 'isName', divider: true, width: '500', excelColWidth:'70' },
+      { text: 'currM', value: 'isNowAmountIdr', align: 'right', divider: true, width: '160', excelColWidth:'20', isCurrency: true },
+      { text: 'lastM', value: 'isPrevAmountIdr',  align: 'right', divider: true, width: '160', excelColWidth:'20', isCurrency: true },
+      { text: 'ytd', value: 'isYtdAmountIdr',  align: 'right', divider: true, width: '160', excelColWidth:'20', isCurrency: true }
+    ],
+    detailColumn: [
       { text: 'Kode Akun', value: 'code', divider: true, width: '60', excelColWidth:'15' },
       { text: 'Nama Akun', value: 'name', divider: true, width: '400', excelColWidth:'50' },
       { text: 'Nilai', value: 'amount',  align: 'right', divider: true, width: '160', excelColWidth:'20', isCurrency: true }
@@ -302,7 +342,7 @@ export default {
       { text: 'Kode Ref 3', value: 'refCode3', divider: true, width: '160', excelColWidth:'20' },
       { text: 'Kode Ref 4', value: 'refCode4', width: '160', excelColWidth:'20' }
     ],
-    detailColumn : [
+    journalColumn : [
       { text: 'Kode Akun', value: 'accCode', divider: true, width: '120', excelColWidth:'15' },
       { text: 'Nama Akun', value: 'accName', divider: true, width: '200', excelColWidth:'36' },
       { text: 'Catatan', value: 'notes', divider: true, width: '300', excelColWidth:'50' },
@@ -314,7 +354,7 @@ export default {
       { text: 'Kode Ref 4', value: 'refCode4', width: '160', excelColWidth:'20' }
     ],
     filter: false,
-    types: [{ id: 'N', name: 'Berdasarkan Kode' }, { id: 'DT', name: 'Berdasarkan Tanggal' }],
+    types: [{ id: '1S', name: 'Ringkasan' }, { id: '1D', name: 'Terperinci' }, { id: '2S', name: 'Ringkasan Berdasarkan Akun' }, { id: '2D', name: 'Terperinci Berdasarkan Akun' }],
     detTypes: [{ id: 'C', name: 'Kode' }, { id: 'CR', name: 'Kode dan Ref' }],
     sortTypes: [{ id: 'N', name: 'Kode Jurnal' }, { id: 'DT', name: 'Tanggal Jurnal' }],
     data: {},
@@ -327,6 +367,7 @@ export default {
         {text: 'Detail', value: 'rptDet'},
         {text: 'Akun Mulai', value: 'acc'},
         {text: 'Akun Akhir', value: 'acc2'},
+        {text: 'Akun', value: 'coa'},
         {text: 'Periode', value: 'date'}
       ],
       operator: [{ text: 'Sama dgn.', value: 'eq' }],
@@ -336,7 +377,7 @@ export default {
 
   created: function () {
     this.reset()
-    auth.getAction(this.endpoint, this.menuId.bsReport)
+    auth.getAction(this.endpoint, this.menuId.isReport)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -349,7 +390,7 @@ export default {
       }, {
         text: 'Laporan'
       }, {
-        text: 'Neraca Keuangan'
+        text: 'Laba Rugi'
       }])
       this.setGridDefaultHeight()
     }, 0)
@@ -372,36 +413,59 @@ export default {
     setGridDefaultHeight() {
       this.grid.height = 100
       setTimeout(() => {
+        console.log(this.$refs.filter.clientHeight)
         this.grid.height = this.$el.clientHeight - this.$refs.filter.clientHeight - 61
       }, 0)
     },
     reset() {
       this.data = {        
-        rptBy: 'DT',
-        dateFrom: format(new Date(), 'yyyy-MM-dd'),
-        dateTo:  format(new Date(), 'yyyy-MM-dd'),
+        rptBy: '1S',
         date: format(new Date(), 'yyyy-MM-dd'),
         vouFrom: null,
         rptDet: 'C',
         acc: null,
         acc2: null,
         sort: 'N',
-        curr: 'IDR'
+        curr: 'IDR',
+        periodType: 'M',
+        plusMinus: null
       }
       this.filter = true
       this.changeDate()
     },
     getList() {
-      api.create(`${this.endpoint.accounting.balanceSheetReport}/lists`, this.data)
+      api.create(`${this.endpoint.accounting.incomeStatementReport}/lists`, this.data)
         .then(response => {
+          const cm = this.defaultColumn.find(x => x.text === 'currM')
+          if (cm) {
+            cm.text = this.data.currM
+          }
+          const lm = this.defaultColumn.find(x => x.text === 'lastM')
+          if (lm) {
+            lm.text = this.data.lastM
+          }
+          const ytd = this.defaultColumn.find(x => x.text === 'ytd')
+          if (ytd) {
+            ytd.text = `Sejauh Thn. ${getYear(parseISO(this.data.date))}`
+          }
+          
           this.grid.columns = this.defaultColumn
-          this.grid.data = response.data.tableData
+          this.grid.data = response.data
           this.appendFilter()
+        })
+    },
+    getDetail() {
+      api.create(`${this.endpoint.accounting.incomeStatementReport}/detail-lists`, this.data)
+        .then(response => {
+          
+          this.grid.columns = this.detailColumn
+          this.grid.data = response.data
+          this.appendDetailFilter()
         })
     },
     getLedger() {
       api.create(`${this.endpoint.accounting.generalLedgerReport}/lists`, this.data, {
-        params: { caller: this.menuId.bsReport } })
+        params: { caller: this.menuId.isReport } })
         .then(response => {
           for (let index = 0; index < response.data.length; index++) {
             if (response.data[index].accCode !== null) {
@@ -421,9 +485,9 @@ export default {
           this.appendGLFilter()
         })
     },
-    getDetail() {
+    getJournal() {
       api.create(`${this.endpoint.accounting.journalReport}/lists`, this.data, {
-        params: { caller: this.menuId.bsReport } })
+        params: { caller: this.menuId.isReport } })
         .then(response => {
           for (let index = 0; index < response.data.length; index++) {
             if (response.data[index].accCode !== null) {
@@ -438,9 +502,9 @@ export default {
               }
             }
           }
-          this.grid.columns = this.detailColumn
+          this.grid.columns = this.journalColumn
           this.grid.data = response.data
-          this.appendDetailFilter()
+          this.appendJournalFilter()
         })
     },
     showfilter() {
@@ -451,6 +515,39 @@ export default {
     },
     appendFilter() {
       this.exportFilter.searches = []
+
+      const searchRpt = {
+        field: 'rptBy',
+        keyword: '',
+        operator: 'eq'
+      }
+
+      const rptBy = this.types.find(x => x.id === this.data.rptBy)
+      searchRpt.keyword = rptBy.name
+      this.exportFilter.searches.push(searchRpt)
+
+      if (this.data.date) {
+        this.exportFilter.searches.push({
+          field: 'date',
+          keyword: format(parseISO(this.data.date), 'MMM-yyyy'),
+          operator: 'eq'
+        })
+      }
+    },
+    appendDetailFilter() {
+      this.exportFilter.searches = []
+
+      const coa = this.coas.find(x => x.code === this.data.acc)
+      if (coa) {
+        const searchCoa = {
+          field: '',
+          keyword: '',
+          operator: 'eq'
+        }
+        searchCoa.field = 'coa'
+        searchCoa.keyword = coa.name
+        this.exportFilter.searches.push(searchCoa)
+      }
 
       if (this.data.date) {
         this.exportFilter.searches.push({
@@ -503,7 +600,7 @@ export default {
         this.exportFilter.searches.push(searchCoa2)
       }
     },
-    appendDetailFilter() {
+    appendJournalFilter() {
       this.exportFilter.searches = []
 
       if (this.data.dateFrom) {
@@ -555,51 +652,69 @@ export default {
       this.grid.data = []
     },
     clickDetail(event, { item }) {
-      if (!this.main) {
-        if (item.accCode !== undefined && item.accCode !== null) {
-          this.data.dateFrom = format(parseISO(item.date), 'yyyy-MM-dd')
-          this.data.dateTo = format(parseISO(item.date), 'yyyy-MM-dd')
-          this.data.vouFrom = item.accName
-          this.mainDet = 2
-          this.getDetail()
-        }
-      } else if (item.code !== undefined && item.code !== null && !item.isBold)  {
-        this.data.acc = item.code
-        this.data.acc2 = item.code
-        this.data.coaCode = item.code
-        this.data.coaName = item.name
-        this.mainDet = 1
-        this.getLedger()
+      if (this.mainDet === 0) {
+        this.data.rptBy = `2${this.data.rptBy[1]}`
+        this.data.acc = item.isCode
+        this.data.coaName = item.isName
+        this.data.plusMinus = item.isPm
+        this.getDetail()
         this.main = false
         this.filter = false
         this.setGridDefaultHeight()
+      } else if (this.mainDet === 1)  {
+        this.data.oldAcc = this.data.acc
+        this.data.acc = item.coaCode
+        this.data.acc2 = item.coaCode
+        this.data.coaCode = item.coaCode
+        this.data.coaName = item.coaName
+        this.data.oldRptBy = this.data.rptBy
+        this.data.rptBy = 'DT'
+        this.getLedger()
+      } else if (this.mainDet === 2)  {
+        this.data.oldDateFrom = this.data.dateFrom
+        this.data.oldDateTo = this.data.dateTo
+        this.data.dateFrom = format(parseISO(item.date), 'yyyy-MM-dd')
+        this.data.dateTo = format(parseISO(item.date), 'yyyy-MM-dd')
+        this.data.vouFrom = item.accName
+        this.getJournal()
       }
+
+      if (this.mainDet < 3) {
+        this.mainDet = ++this.mainDet
+      } 
     },
     back() {
       this.mainDet = --this.mainDet
-      if (this.mainDet === 1) {
-        this.getLedger()
-      } else if (this.mainDet === 0) {
-        this.data.acc = null
-        this.data.acc2 = null
+      if (this.mainDet === 0) {
+        this.data.rptBy = `1${this.data.rptBy[1]}`
         this.getList()
         this.main = true
         this.filter = true
         this.setGridDefaultHeight()
+      } else if (this.mainDet === 1) {
+        this.data.rptBy = this.data.oldRptBy
+        this.data.acc = this.data.oldAcc
+        this.getDetail()
+      } else if (this.mainDet === 2) {
+        this.data.dateFrom = this.data.oldDateFrom
+        this.data.dateTo = this.data.oldDateTo
+        this.getLedger()
       }
     },
     changeDate() {
       this.data.dateFrom = format(startOfMonth(parseISO(this.data.date)), 'yyyy-MM-dd')
       this.data.dateTo = format(endOfMonth(parseISO(this.data.date)), 'yyyy-MM-dd')
+      this.data.currM = format(parseISO(this.data.date), 'MMM-yyyy')
+      this.data.lastM = format(sub(parseISO(this.data.date), { months: 1}), 'MMM-yyyy')
     },
     getSpaceName(item) {
       let space = ''
-      if (item.deep !== null) {
-        for (let i = 0; i < item.deep; i++) {
+      if (item.isDeep !== null) {
+        for (let i = 0; i < item.isDeep; i++) {
           space += '&nbsp;&nbsp;'
         }
       }
-      space += item.name
+      space += item.isName
       return space
     }
   }

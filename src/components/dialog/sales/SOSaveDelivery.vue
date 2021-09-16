@@ -133,6 +133,7 @@ export default {
     },
     close() {
       this.dialog = false
+      this.data.isSoDlv = false
     },
     async save() {
       let result = { success: false, message: '' }

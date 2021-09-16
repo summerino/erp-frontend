@@ -1,6 +1,6 @@
 <template>
   <div class="w-full">
-    <v-row no-gutters>
+    <v-row ref="filter" no-gutters>
       <v-col cols="12">
         <v-card>
           <v-card-title class="indigo--text text--lighten-2 pb-1">
@@ -78,10 +78,10 @@
               </v-col>
             </v-row>
             <v-row v-else no-gutters>
-              <v-col cols="12" md="6">
+              <v-col cols="12" md="10">
                 Buku Besar - Detail - {{ this.data.vouFrom }}
               </v-col>
-              <v-col cols="12" md="6" class="text-right">
+              <v-col cols="12" md="2" class="text-right">
                 <v-menu
                   bottom
                   open-on-hover
@@ -243,7 +243,7 @@
           <v-card>
           <v-data-table  
             :headers="grid.columns"
-            :height="gridDefOpts.height"
+            :height="grid.height"
             :items="grid.data"
             :class="['elevation-1', this.main ? 'row-pointer' : '']"
             disable-sort
@@ -310,32 +310,33 @@ export default {
       dateTo: false
     },
     grid: {
+      height: 100,
       columns: [],
       data: []
     },
     coas: [],
     defaultColumn: [
-      { text: 'Tanggal', value: 'accCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode', value: 'accName', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Catatan', value: 'notes', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Ref 1', value: 'refCode1', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Debit', value: 'debetOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Kredit', value: 'creditOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Saldo Akhir', value: 'endBalOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Kode Ref 2', value: 'refCode2', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Ref 3', value: 'refCode3', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Ref 4', value: 'refCode4', width: '100', excelColWidth:'20' }
+      { text: 'Tanggal', value: 'accCode', divider: true, width: '120', excelColWidth:'15' },
+      { text: 'Kode', value: 'accName', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Catatan', value: 'notes', divider: true, width: '300', excelColWidth:'50' },
+      { text: 'Kode Ref 1', value: 'refCode1', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Debit', value: 'debetOc',  align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
+      { text: 'Kredit', value: 'creditOc',  align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
+      { text: 'Saldo Akhir', value: 'endBalOc',  align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
+      { text: 'Kode Ref 2', value: 'refCode2', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kode Ref 3', value: 'refCode3', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kode Ref 4', value: 'refCode4', width: '160', excelColWidth:'20' }
     ],
     detailColumn : [
-      { text: 'Kode Akun', value: 'accCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nama Akun', value: 'accName', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Catatan', value: 'notes', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Ref 1', value: 'refCode1', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Debit', value: 'debetOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Kredit', value: 'creditOc',  align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Kode Ref 2', value: 'refCode2', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Ref 3', value: 'refCode3', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Ref 4', value: 'refCode4', width: '100', excelColWidth:'20' }
+      { text: 'Kode Akun', value: 'accCode', divider: true, width: '120', excelColWidth:'15' },
+      { text: 'Nama Akun', value: 'accName', divider: true, width: '200', excelColWidth:'36' },
+      { text: 'Catatan', value: 'notes', divider: true, width: '300', excelColWidth:'50' },
+      { text: 'Kode Ref 1', value: 'refCode1', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Debit', value: 'debetOc',  align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
+      { text: 'Kredit', value: 'creditOc',  align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
+      { text: 'Kode Ref 2', value: 'refCode2', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kode Ref 3', value: 'refCode3', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kode Ref 4', value: 'refCode4', width: '160', excelColWidth:'20' }
     ],
     filter: false,
     types: [{ id: 'N', name: 'Berdasarkan Kode' }, { id: 'DT', name: 'Berdasarkan Tanggal' }],
@@ -375,7 +376,7 @@ export default {
       }, {
         text: 'Buku Besar'
       }])
-      this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
+      this.setGridDefaultHeight()
     }, 0)
   },
 
@@ -396,6 +397,12 @@ export default {
   },
   
   methods:{
+    setGridDefaultHeight() {
+      this.grid.height = 100
+      setTimeout(() => {
+        this.grid.height = this.$el.clientHeight - this.$refs.filter.clientHeight - 61
+      }, 0)
+    },
     reset() {
       this.data = {        
         rptBy: 'DT',
@@ -436,7 +443,7 @@ export default {
         .then(response => {
           for (let index = 0; index < response.data.length; index++) {
             if (response.data[index].accCode !== null) {
-              if (response.data[index].accCode.indexOf(' ') === -1) {
+              if (response.data[index].accCode.indexOf('-') === -1) {
                 response.data[index].debetOc = Number(response.data[index].debetOc)
                 response.data[index].creditOc = Number(response.data[index].creditOc)
               }
@@ -580,6 +587,7 @@ export default {
         this.getDetail()
         this.main = false
         this.filter = false
+        this.setGridDefaultHeight()
       }
     },
     back() {
@@ -588,6 +596,7 @@ export default {
       this.getList()
       this.main = true
       this.filter = true
+      this.setGridDefaultHeight()
     },
     clearDate(item) {
       if (item === 'from') {
