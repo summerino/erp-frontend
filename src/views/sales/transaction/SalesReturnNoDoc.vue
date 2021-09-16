@@ -1615,18 +1615,36 @@ export default {
       }
     },
     calcItemTax(item) {
+      // const tax = this.taxes.find(t => t.id === item.taxId)
+      // if (tax) {
+      //   if (this.data.includeTax) {
+      //     item.taxAmount = Math.round((item.unitPrice) - ((item.unitPrice) / (1 + (tax.rate / 100))))
+      //     item.taxAmountTemp = item.taxAmount
+      //     item.nettPrice = item.unitPrice 
+      //     item.dpp = item.unitPrice - item.taxAmount
+      //   } else {
+      //     item.taxAmount = Math.round((item.unitPrice) * (tax.rate / 100))
+      //     item.taxAmountTemp = item.taxAmount
+      //     item.nettPrice = item.unitPrice + item.taxAmount
+      //     item.dpp = item.unitPrice 
+      //   }
+      // }
+
       const tax = this.taxes.find(t => t.id === item.taxId)
       if (tax) {
-        if (this.data.includeTax) {
+        if (this.data.taxIncluded) {
           item.taxAmount = Math.round((item.unitPrice) - ((item.unitPrice) / (1 + (tax.rate / 100))))
           item.taxAmountTemp = item.taxAmount
-          item.nettPrice = item.unitPrice 
+          item.nettPrice = item.unitPrice
           item.dpp = item.unitPrice - item.taxAmount
+        } else if (!this.data.taxIncluded && this.data.nonTax) {
+          item.nettPrice = item.unitPrice + item.taxAmount
+          item.dpp = item.unitPrice
         } else {
           item.taxAmount = Math.round((item.unitPrice) * (tax.rate / 100))
           item.taxAmountTemp = item.taxAmount
           item.nettPrice = item.unitPrice + item.taxAmount
-          item.dpp = item.unitPrice 
+          item.dpp = item.unitPrice
         }
       }
     },
