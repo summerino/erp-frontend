@@ -702,11 +702,11 @@ export default {
       this.data.oldPeriodFrom = this.data.dateFrom
       this.data.oldPeriodTo = this.data.dateTo 
       if (value === 'prv') {
-        this.data.dateFrom = format(startOfMonth(parseISO(this.data.lastM), 'yyyy-MM-dd'))
-        this.data.dateTo = format(endOfMonth(parseISO(this.data.lastM), 'yyyy-MM-dd'))
+        this.data.dateFrom = format(startOfMonth(sub(parseISO(this.data.date), { months: 1})), 'yyyy-MM-dd')
+        this.data.dateTo = format(endOfMonth(sub(parseISO(this.data.date), { months: 1})), 'yyyy-MM-dd')
       } else if (value === 'ytd') {
-        this.data.dateFrom = format(startOfYear(parseISO(this.data.date), 'yyyy-MM-dd'))
-        this.data.dateTo = format(endOfMonth(parseISO(this.data.date), 'yyyy-MM-dd'))
+        this.data.dateFrom = format(startOfYear(parseISO(this.data.date)), 'yyyy-MM-dd')
+        this.data.dateTo = format(endOfMonth(parseISO(this.data.date)), 'yyyy-MM-dd')
       }
       this.data.rptBy = `2${this.data.rptBy[1]}`
       this.data.acc = item.isCode
