@@ -85,10 +85,43 @@
               </v-col>
             </v-row>
             <v-row v-else no-gutters>
-              <v-col cols="12" md="10">
+              <v-col cols="12" md="8">
                 Laporan Hutang Ekspedisi - Detail Berdasarkan Pemasok - {{ this.data.supInitial }} - {{ this.data.supName }} ({{ this.data.supCode }})
               </v-col>
-              <v-col cols="12" md="2" class="text-right">
+              <v-col cols="12" md="4" class="text-right">
+                <v-menu
+                  bottom
+                  open-on-hover
+                  offset-y
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      v-bind="attrs"
+                      v-on="on"
+                      color="blue darken-1"
+                      dark
+                      tile
+                      small
+                      :disabled="!auth.allowPrint"
+                    >
+                      <v-icon>mdi-menu-down</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list class="cursor-pointer">
+                    <v-list-item>
+                      <v-list-item-title>
+                        <export-excel
+                          ref="exportExcel"
+                          :company="companyName"
+                          :filters="exportFilter"
+                          :grid="grid"
+                          :gridDefOpts="gridDefOpts"
+                          title="Daftar Laporan Hutang Ekspedisi - Detail Berdasarkan Pemasok"
+                        ></export-excel>
+                      </v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn
