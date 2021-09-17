@@ -339,9 +339,9 @@ export default {
       { text: 'ytd', value: 'isYtdAmountIdr',  align: 'right', divider: true, width: '160', excelColWidth:'20', isCurrency: true }
     ],
     detailColumn: [
-      { text: 'Kode Akun', value: 'code', divider: true, width: '60', excelColWidth:'15' },
-      { text: 'Nama Akun', value: 'name', divider: true, width: '400', excelColWidth:'50' },
-      { text: 'Nilai', value: 'amount',  align: 'right', divider: true, width: '160', excelColWidth:'20', isCurrency: true }
+      { text: 'Kode Akun', value: 'coaCode', divider: true, width: '60', excelColWidth:'15' },
+      { text: 'Nama Akun', value: 'coaName', divider: true, width: '400', excelColWidth:'50' },
+      { text: 'Nilai', value: 'amountIdr',  align: 'right', divider: true, width: '160', excelColWidth:'20', isCurrency: true }
     ],
     ledgerColumn: [
       { text: 'Tanggal', value: 'accCode', divider: true, width: '120', excelColWidth:'15' },
@@ -366,6 +366,7 @@ export default {
       { text: 'Kode Ref 3', value: 'refCode3', divider: true, width: '160', excelColWidth:'20' },
       { text: 'Kode Ref 4', value: 'refCode4', width: '160', excelColWidth:'20' }
     ],
+    coas: [],
     filter: false,
     types: [{ id: '1S', name: 'Ringkasan' }, { id: '1D', name: 'Terperinci' }, { id: '2S', name: 'Ringkasan Berdasarkan Akun' }, { id: '2D', name: 'Terperinci Berdasarkan Akun' }],
     detTypes: [{ id: 'C', name: 'Kode' }, { id: 'CR', name: 'Kode dan Ref' }],
@@ -390,6 +391,7 @@ export default {
 
   created: function () {
     this.reset()
+    this.getCOAList()
     auth.getAction(this.endpoint, this.menuId.isReport)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -470,7 +472,6 @@ export default {
     getDetail() {
       api.create(`${this.endpoint.accounting.incomeStatementReport}/detail-lists`, this.data)
         .then(response => {
-          
           this.grid.columns = this.detailColumn
           this.grid.data = response.data
           this.appendDetailFilter()
@@ -549,18 +550,15 @@ export default {
     },
     appendDetailFilter() {
       this.exportFilter.searches = []
-
-      const coa = this.coas.find(x => x.code === this.data.acc)
-      if (coa) {
-        const searchCoa = {
-          field: '',
-          keyword: '',
-          operator: 'eq'
-        }
-        searchCoa.field = 'coa'
-        searchCoa.keyword = coa.name
-        this.exportFilter.searches.push(searchCoa)
+      
+      const searchCoa = {
+        field: '',
+        keyword: '',
+        operator: 'eq'
       }
+      searchCoa.field = 'coa'
+      searchCoa.keyword = this.data.coaName
+      this.exportFilter.searches.push(searchCoa)
 
       if (this.data.date) {
         this.exportFilter.searches.push({
@@ -665,7 +663,7 @@ export default {
       this.grid.data = []
     },
     clickDetail(event, { item }) {
-      if (this.mainDet === 0) {
+      if (this.mainDet === 0 && item.isName !== '') {
         this.data.rptBy = `2${this.data.rptBy[1]}`
         this.data.acc = item.isCode
         this.data.coaName = item.isName
@@ -674,6 +672,7 @@ export default {
         this.main = false
         this.filter = false
         this.setGridDefaultHeight()
+        this.mainDet = ++this.mainDet
       } else if (this.mainDet === 1)  {
         this.data.oldAcc = this.data.acc
         this.data.acc = item.coaCode
@@ -683,6 +682,7 @@ export default {
         this.data.oldRptBy = this.data.rptBy
         this.data.rptBy = 'DT'
         this.getLedger()
+        this.mainDet = ++this.mainDet
       } else if (this.mainDet === 2)  {
         this.data.oldDateFrom = this.data.dateFrom
         this.data.oldDateTo = this.data.dateTo
@@ -690,11 +690,8 @@ export default {
         this.data.dateTo = format(parseISO(item.date), 'yyyy-MM-dd')
         this.data.vouFrom = item.accName
         this.getJournal()
-      }
-
-      if (this.mainDet < 3) {
         this.mainDet = ++this.mainDet
-      } 
+      }
     },
     back() {
       this.mainDet = --this.mainDet
@@ -729,6 +726,12 @@ export default {
       }
       space += item.isName
       return space
+    },
+    getCOAList() {
+      api.getAll(`${this.endpoint.accounting.coa}/lists`)
+        .then(response => {
+          this.coas = response.data.tableData
+        })
     }
   }
 }
