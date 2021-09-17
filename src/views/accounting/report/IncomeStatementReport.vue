@@ -205,7 +205,7 @@
     <v-row dense>
       <v-col cols="12">
           <v-card>
-          <v-data-table  
+          <v-data-table
             :headers="grid.columns"
             :height="grid.height"
             :items="grid.data"
@@ -281,19 +281,34 @@
             </span>
           </template>
           <template v-slot:[`item.isNowAmountIdr`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.isNowAmountIdr | formatCurrency }}
-            </span>
+            <v-chip
+            color="white"
+            label
+            link
+            small
+            @click="clickDetailPeriod('now', item)"
+            >
+            {{ item.isNowAmountIdr | formatCurrency }}</v-chip>
           </template>
           <template v-slot:[`item.isPrevAmountIdr`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.isPrevAmountIdr | formatCurrency }}
-            </span>
+            <v-chip
+            color="white"
+            label
+            link
+            small
+            @click="clickDetailPeriod('prv', item)"
+            >
+            {{ item.isPrevAmountIdr | formatCurrency }}</v-chip>
           </template>
           <template v-slot:[`item.isYtdAmountIdr`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.isYtdAmountIdr | formatCurrency }}
-            </span>
+            <v-chip
+            color="white"
+            label
+            link
+            small
+            @click="clickDetailPeriod('ytd', item)"
+            >
+            {{ item.isYtdAmountIdr | formatCurrency }}</v-chip>
           </template>
           <template v-slot:[`item.amountIdr`]="{ item }">
             <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
@@ -309,7 +324,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { format, parseISO, startOfMonth, endOfMonth, sub, getYear }  from 'date-fns'
+import { format, parseISO, startOfMonth, endOfMonth, sub, getYear, startOfYear }  from 'date-fns'
 
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
@@ -663,17 +678,7 @@ export default {
       this.grid.data = []
     },
     clickDetail(event, { item }) {
-      if (this.mainDet === 0 && item.isName !== '') {
-        this.data.rptBy = `2${this.data.rptBy[1]}`
-        this.data.acc = item.isCode
-        this.data.coaName = item.isName
-        this.data.plusMinus = item.isPm
-        this.getDetail()
-        this.main = false
-        this.filter = false
-        this.setGridDefaultHeight()
-        this.mainDet = ++this.mainDet
-      } else if (this.mainDet === 1)  {
+      if (this.mainDet === 1)  {
         this.data.oldAcc = this.data.acc
         this.data.acc = item.coaCode
         this.data.acc2 = item.coaCode
@@ -693,9 +698,31 @@ export default {
         this.mainDet = ++this.mainDet
       }
     },
+    clickDetailPeriod(value, item) {
+      this.data.oldPeriodFrom = this.data.dateFrom
+      this.data.oldPeriodTo = this.data.dateTo 
+      if (value === 'prv') {
+        this.data.dateFrom = format(startOfMonth(parseISO(this.data.lastM), 'yyyy-MM-dd'))
+        this.data.dateTo = format(endOfMonth(parseISO(this.data.lastM), 'yyyy-MM-dd'))
+      } else if (value === 'ytd') {
+        this.data.dateFrom = format(startOfYear(parseISO(this.data.date), 'yyyy-MM-dd'))
+        this.data.dateTo = format(endOfMonth(parseISO(this.data.date), 'yyyy-MM-dd'))
+      }
+      this.data.rptBy = `2${this.data.rptBy[1]}`
+      this.data.acc = item.isCode
+      this.data.coaName = item.isName
+      this.data.plusMinus = item.isPm
+      this.getDetail()
+      this.main = false
+      this.filter = false
+      this.setGridDefaultHeight()
+      this.mainDet = ++this.mainDet
+    },
     back() {
       this.mainDet = --this.mainDet
       if (this.mainDet === 0) {
+        this.data.dateFrom = this.data.oldPeriodFrom
+        this.data.dateTo = this.data.oldPeriodTo
         this.data.rptBy = `1${this.data.rptBy[1]}`
         this.getList()
         this.main = true
