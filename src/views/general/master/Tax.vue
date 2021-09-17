@@ -13,7 +13,7 @@
               label="Cari..."
               class="font-weight-regular mt-0 pt-0"
               single-line
-              @keyup.enter="getList"
+              @keyup.enter="getList()"
             ></v-text-field>
           </v-col>
           <v-spacer></v-spacer>

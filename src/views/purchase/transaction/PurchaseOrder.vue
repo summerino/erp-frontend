@@ -1633,11 +1633,12 @@ export default {
       this.calcGrandTotal()
     },
     calcGrandTotal() {
-      if (this.data.includeTax) {
-        this.data.total = this.data.subTotal - this.data.finalDisc
-      } else {
-        this.data.total = this.data.subTotal - this.data.finalDisc + this.data.taxAmount
-      }
+      this.data.total = this.data.subTotal - this.data.finalDisc
+      // if (this.data.includeTax) {
+      //   this.data.total = this.data.subTotal - this.data.finalDisc
+      // } else {
+      //   this.data.total = this.data.subTotal - this.data.finalDisc + this.data.taxAmount
+      // }
     },
     showFindSupDialog() {
       this.$refs.findSup.open()
