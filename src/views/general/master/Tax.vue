@@ -21,7 +21,6 @@
             <export-excel
               ref="exportExcel"
               :company="companyName"
-              :filters="filter"
               :grid="grid"
               :gridDefOpts="gridDefOpts"
               title="Daftar Pajak"

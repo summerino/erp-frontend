@@ -4,16 +4,17 @@
       <v-btn
         v-bind="attrs"
         v-on="on"
-        v-shortkey="['ctrl', 'alt', 'p']"
+        v-shortkey="['ctrl', 'alt', 'e']"
         color="green"
         icon
+        small
         @click="exportExcel"
         @shortkey="exportExcel"
       >
         <v-icon>mdi-file-excel-outline</v-icon>
       </v-btn>
     </template>
-    <span class="text-caption text-center">Export Excel<br/>(Ctrl + Alt + P)</span>
+    <span class="text-caption text-center">Export Excel<br/>(Ctrl + Alt + E)</span>
   </v-tooltip>
 </template>
 
