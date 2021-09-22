@@ -315,19 +315,19 @@
                     <v-row no-gutters>
                       <v-col cols="6" >
                         <v-checkbox
-                          v-model="data.nonTax"
+                          v-model="data.noTax"
                           label="Tidak Ada Pajak"
                           class="shrink ml-1"
-                          @change="nonTaxChange"
+                          @change="noTaxChange"
                           :disabled="data.type !== 1"
                         ></v-checkbox>
                       </v-col>
                       <v-col cols="6">
                         <v-checkbox
-                          v-model="data.taxIncluded"
+                          v-model="data.includeTax"
                           label="Termasuk Pajak"
                           class="shrink ml-1"
-                          :disabled="data.type !== 1 || data.nonTax"
+                          :disabled="data.type !== 1 || data.noTax"
                           @change="calcTax"
                         ></v-checkbox>
                       </v-col>
@@ -1100,14 +1100,13 @@ export default {
         approveBy: null,
         dpp: 0,
         subTotal: 0,
+        noTax: this.defNonTax,
         includeTax: this.defTaxInc,
         taxAmount: 0,
         totalIn: 0,
         totalOut: 0,
         total: 0,
-        difference: null,
-        nonTax: this.defNonTax,
-        taxIncluded: this.defTaxInc
+        difference: null
       }
       this.gridItem.data = []
       this.gridRelated.data = []
@@ -1520,8 +1519,8 @@ export default {
     },
     typeChange() {
       this.bindColumn()
-      this.data.taxIncluded = this.defTaxInc
-      this.data.nonTax = this.defNonTax
+      this.data.includeTax = this.defTaxInc
+      this.data.noTax = this.defNonTax
       this.gridItem.data = []
       this.gridDiffItem.data = []
       this.data.difference = null
@@ -1529,15 +1528,15 @@ export default {
       this.data.totalOut = null
       this.calcPrice()
     },
-    nonTaxChange() {
-      if (this.data.nonTax) {
+    noTaxChange() {
+      if (this.data.noTax) {
         for (let i = 0; i < this.gridItem.data.length; i++) {
           this.gridItem.data[i].taxAmount = 0 
         }
         for (let i = 0; i < this.gridDiffItem.data.length; i++) {
           this.gridDiffItem.data[i].taxAmount = 0 
         }
-        this.data.taxIncluded = false
+        this.data.includeTax = false
       } else {
         for (let i = 0; i < this.gridItem.data.length; i++) {
           this.gridItem.data[i].taxAmount = this.gridItem.data[i].taxAmountTemp 
@@ -1632,12 +1631,12 @@ export default {
     calcItemTax(item) {
       const tax = this.taxes.find(t => t.id === item.taxId)
       if (tax) {
-        if (this.data.taxIncluded) {
+        if (this.data.includeTax) {
           item.taxAmount = Math.round((item.unitPrice) - ((item.unitPrice) / (1 + (tax.rate / 100))))
           item.taxAmountTemp = item.taxAmount
           item.nettPrice = item.unitPrice
           item.dpp = item.unitPrice - item.taxAmount
-        } else if (!this.data.taxIncluded && this.data.nonTax) {
+        } else if (!this.data.includeTax && this.data.noTax) {
           item.nettPrice = item.unitPrice + item.taxAmount
           item.dpp = item.unitPrice
         } else {
