@@ -91,7 +91,8 @@ export default {
     trialBalanceReport: 'tb-report',
     balanceSheetReport: 'bs-report',
     incomeStatementReport: 'is-report',
-    closingMonth: 'closing-month'
+    closingMonth: 'closing-month',
+    incomeStatementFormat: 'is-format'
   },
   
   assetManagement: {
