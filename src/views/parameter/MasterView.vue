@@ -34,7 +34,7 @@
                     </v-icon>
                   </v-btn>
                 </template>
-                <span class="text-caption">Pencarian lanjutan</span>
+                <span class="text-caption">Pencarian Lanjutan</span>
               </v-tooltip>
             </v-row>
           </v-col>    
