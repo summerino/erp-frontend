@@ -243,6 +243,49 @@
 
             <v-row no-gutters>
               <v-col cols="12" md="6" class="pr-md-3">
+                <v-text-field
+                  v-model="data.isCode"
+                  label="Laba / Rugi Rekapan"
+                  class="mt-0"
+                  readonly
+                >
+                  <template v-slot:append>
+                    <v-btn
+                      color="primary"
+                      icon
+                      @click="openFormat('S')"
+                    >
+                      <v-icon>
+                        mdi-page-layout-header
+                      </v-icon>
+                    </v-btn>
+                  </template>
+                </v-text-field>
+              </v-col>
+              <v-col cols="12" md="6" class="pl-md-3">
+                <v-text-field
+                  v-model="data.isDetCode"
+                  label="Laba / Rugi Terperinci"
+                  class="mt-0"
+                  readonly
+                >
+                  <template v-slot:append>
+                    <v-btn
+                      color="primary"
+                      icon
+                      @click="openFormat('D')"
+                    >
+                      <v-icon>
+                        mdi-page-layout-header
+                      </v-icon>
+                    </v-btn>
+                  </template>
+                </v-text-field>
+              </v-col>
+            </v-row>
+
+            <v-row no-gutters>
+              <v-col cols="12" md="6" class="pr-md-3">
                 <v-autocomplete
                     v-model="data.currCode"
                     :disabled="(data.typeId !== 1) || (data.typeId === 1 && data.parentId === null)"
@@ -250,7 +293,7 @@
                     :item-text="item => `${item.code} - ${item.name}`"
                     :rules="data.typeId === 1 && data.parentId !== null ? rules.required : []"
                     :readonly="isCBEdit"
-                    label="Kurensi"
+                    label="Mata Uang"
                     item-value="code"
                     class="mt-0"
                     :required="data.typeId === 1 && data.parentId !== null ? true : false"
@@ -308,6 +351,7 @@
     </v-card>
     
     <confirm ref="confirm"></confirm>
+    <format-coa ref="formatcoa"></format-coa>
   </div>
 </template>
 
@@ -320,11 +364,13 @@ import auth from '@/services/authorization.service'
 
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
+import FormatCoa from '@/components/dialog/accounting/FormatCOA.vue'
 
 export default {
   components:{
     ExportExcel,
-    Confirm
+    Confirm,
+    FormatCoa
   },
 
   data: () => ({
@@ -352,7 +398,9 @@ export default {
     cbTypes: [{ id: 'C', name: 'Kas' }, { id: 'B', name: 'Bank' }],
     currencies: [],
     types: [],
-    data: {}
+    data: {},
+    formatSummary: [],
+    formatDetail: []
   }),
 
   created: function () {
@@ -360,6 +408,8 @@ export default {
     this.getAccountLists()
     this.getCoaTypeList()
     this.getCurrencyLists()
+    this.getFormatList('S')
+    this.getFormatList('D')
     auth.getAction(this.endpoint, this.menuId.coa)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -482,6 +532,18 @@ export default {
         action: 'edit',
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
+
+      const isCode = this.formatSummary.find(x => x.code === this.data.isCode)
+      if (isCode) {
+        this.data.isCodeValue = isCode.code
+        this.data.isCode = `${isCode.code} - ${isCode.name}`
+      }
+
+      const isDetCode = this.formatDetail.find(x => x.code === this.data.isDetCode)
+      if (isDetCode) {
+        this.data.isDetCodeValue = isDetCode.code
+        this.data.isDetCode = `${isDetCode.code} - ${isDetCode.name}`
+      }
     },
     async remove(item) {
       if (
@@ -503,6 +565,9 @@ export default {
         this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
+
+      this.data.isCode = this.data.isCodeValue
+      this.data.isDetCode = this.data.isDetCodeValue
 
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
@@ -599,6 +664,23 @@ export default {
       }
       space += item.name
       return space
+    },
+    openFormat(type) {
+      const data = this.data
+      data.type = type
+      this.$refs.formatcoa.open(data)
+    },
+    getFormatList(cat) {
+      api.getAll(`${this.endpoint.accounting.incomeStatementFormat}/format-lists`, {
+        params: { category: cat }
+      })
+        .then(response => {
+          if (cat === 'S') {
+            this.formatSummary = response.data
+          } else if (cat === 'D') {
+            this.formatDetail = response.data
+          }
+        })
     }
   }
 }
