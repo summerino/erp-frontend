@@ -256,7 +256,7 @@
                       @click="openFormat('S')"
                     >
                       <v-icon>
-                        mdi-page-layout-header
+                        mdi-file-tree
                       </v-icon>
                     </v-btn>
                   </template>
@@ -276,7 +276,7 @@
                       @click="openFormat('D')"
                     >
                       <v-icon>
-                        mdi-page-layout-header
+                        mdi-file-tree
                       </v-icon>
                     </v-btn>
                   </template>
