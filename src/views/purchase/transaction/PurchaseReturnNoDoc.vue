@@ -1265,6 +1265,9 @@ export default {
           item.units = response.data.tableData
         })
     },
+    close() {
+      this.dialog.add = false
+    },
     add() {
       if (this.dialog.add) return
       this.dialog.add = true

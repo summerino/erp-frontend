@@ -167,7 +167,7 @@
     </v-card>
 
     <v-dialog
-       v-model="dialog.add"
+      v-model="dialog.add"
       transition="dialog-bottom-transition"
       fullscreen
       hide-overlay
@@ -1283,7 +1283,6 @@ export default {
       }, 0)
     },
     edit(item) {
-      
       if (!item) return
 
       this.dialog.add = true
@@ -1298,6 +1297,7 @@ export default {
 
       // get customer data
       this.custCodeChange()
+
       setTimeout(() => {
         // Get item details
         api.getAll(`${this.endpoint.sales.return}/item`, {
@@ -1305,7 +1305,7 @@ export default {
         })
           .then(response => {
             this.gridItem.data = response.data.tableData
-            //this.calcPrice()  
+            //this.calcPrice()
             // Get item details
             api.getAll(`${this.endpoint.sales.return}/diff-item`, {
               params: { code: item.code }
@@ -1315,7 +1315,6 @@ export default {
                 this.calcPrice()  
               })
           })
-        
       }, 0)
       
       // Get related transaction details
@@ -1350,7 +1349,6 @@ export default {
       this.$refs.reportViewer.open('sales-return-wo-doc', item.code)
     },
     async save(closeDialog) {
-      
       if (!this.dialog.add) return
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
@@ -1387,7 +1385,6 @@ export default {
       }
     },
     addItem() {
-      
       if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemId ?? null)) {
         const item = {
           id: randomNumber(-1, -1000),
