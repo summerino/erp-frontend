@@ -951,6 +951,18 @@ export default {
     }, {
       text: 'Tanggal', value: 'date', dataType: 'datetime'
     }, {
+      text: 'Tipe', value: 'type', dataType: 'bit',
+      options: [{ 
+        text: 'Tukar Memo',
+        value: 1
+      }, { 
+        text: 'Tukar Barang Sama',
+        value: 2
+      }, { 
+        text: 'Tukar Barang Beda',
+        value: 3
+      }]
+    }, {
       text: 'Pemasok', value: 'supName', dataType: 'text'
     }, {
       text: 'Dikirim Oleh', value: 'shippedInitial', dataType: 'text'
@@ -970,6 +982,7 @@ export default {
         { value: 'action', sortable: false, divider: true, width: '120' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'18' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+        { text: 'Tipe', value: 'typeName', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
         { text: 'Dikirim Oleh', value: 'shippedInitial', divider: true, width: '200', excelColWidth:'23' },
         { text: 'Status', value: 'mark', width: '50' }

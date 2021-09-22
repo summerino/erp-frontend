@@ -934,7 +934,17 @@ export default {
     }, {
       text: 'Tanggal', value: 'date', dataType: 'datetime'
     }, {
-      text: 'Tipe', value: 'returnType', dataType: 'text'
+      text: 'Tipe', value: 'type', dataType: 'bit',
+      options: [{ 
+        text: 'Tukar Memo',
+        value: 1
+      }, { 
+        text: 'Tukar Barang Sama',
+        value: 2
+      }, { 
+        text: 'Tukar Barang Beda',
+        value: 3
+      }]
     }, {
       text: 'Kd. Pelanggan', value: 'custCode', dataType: 'text'
     }, {
@@ -962,7 +972,7 @@ export default {
         { value: 'action', sortable: false, divider: true, width: '120' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
-        { text: 'Tipe', value: 'returnType', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Tipe', value: 'typeName', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Pelanggan', value: 'custName', divider: true, width: '220', excelColWidth:'35', customValues: ['custCode', 'custName'] },
         { text: 'Gudang', value: 'warehouseCode', divider: true, width: '100', excelColWidth:'13' },
         { text: 'Dijual Oleh', value: 'salesInitial', divider: true, width: '180', excelColWidth:'23' },
