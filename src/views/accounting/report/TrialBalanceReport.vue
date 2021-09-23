@@ -628,7 +628,7 @@ export default {
           this.mainDet = 2
           this.getDetail()
         }
-      } else if (item.coaCode !== undefined && item.coaCode !== null)  {
+      } else if (item.coaCode !== undefined && item.coaCode !== null && item.coaCode !== '')  {
         this.data.acc = item.coaCode
         this.data.acc2 = item.coaCode
         this.data.coaCode = item.coaCode
