@@ -13,6 +13,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'alt', 'n']"
+                  :disabled="!auth.allowCreate"
                   color="green darken-1"
                   class="font-weight-regular"
                   dark
@@ -63,6 +64,7 @@
                     <v-btn
                       v-bind="attrs"
                       v-on="on"
+                      :disabled="!auth.allowUpdate"
                       color="blue"
                       icon
                       small
@@ -78,6 +80,7 @@
                     <v-btn
                       v-bind="attrs"
                       v-on="on"
+                      :disabled="!auth.allowUpdate"
                       color="blue"
                       icon
                       small
@@ -109,6 +112,7 @@
                     <v-btn
                       v-bind="attrs"
                       v-on="on"
+                      :disabled="!auth.allowUpdate"
                       color="orange lighten-1"
                       icon
                       small
@@ -124,6 +128,7 @@
                     <v-btn
                       v-bind="attrs"
                       v-on="on"
+                      :disabled="!auth.allowDelete"
                       color="red"
                       icon
                       small
@@ -396,6 +401,7 @@
             >
               <template v-slot:[`item.action`]="{ item }">
                 <v-btn
+                  :disabled="!auth.allowUpdate"
                   color="green"
                   icon
                   tile
@@ -421,6 +427,7 @@
             >
               <template v-slot:[`item.action`]="{ item }">
                 <v-btn
+                  :disabled="!auth.allowUpdate"
                   color="green"
                   icon
                   tile
@@ -446,7 +453,7 @@ import { mapState } from 'vuex'
 import { format, parseISO }  from 'date-fns'
 
 import api from '@/services/axios.service'
-//import auth from '@/services/authorization.service'
+import auth from '@/services/authorization.service'
 
 import Confirm from '@/components/dialog/Confirm'
 
@@ -504,7 +511,10 @@ export default {
     this.getHierarchy()
     this.getList('S')
     this.getList('D')
-    // TO DO : Auth
+    auth.getAction(this.endpoint, this.menuId.isFormat)
+      .then((response) => {
+        this.$store.commit('api/setAuth', response.data)
+      })
   },
 
   mounted: function () {

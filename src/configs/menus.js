@@ -72,6 +72,7 @@ export default {
   isReport: 111,
   postingJournal: 86,
   closingMonth: 88,
+  isFormat: 112,
 
   // Asset Management
   assetType: 62,
