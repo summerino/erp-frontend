@@ -103,5 +103,12 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/accounting/utility/format-is',
+  name: 'format-is',
+  component: () => import(/* webpackChunkName: "format-is" */ '@/views/accounting/utility/FormatIS.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
   
