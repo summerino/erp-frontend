@@ -179,8 +179,10 @@
                   :rules="[rules.required[0], rules.max6chars[0]]"
                   :counter="6"
                   :readonly="isCBEdit"
-                  label="Kode"
                   class="mt-0"
+                  label="Kode"
+                  min="0"
+                  type="number"
                   required
                 ></v-text-field>
               </v-col>
