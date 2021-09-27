@@ -198,13 +198,11 @@ export default {
         keyword: this.markExclude
       }]
 
-      if (this.type) {
-        filters.push({
-          field: 'type',
-          operator: 'contains',
-          keyword: [2, 3]
-        })
-      }
+      filters.push({
+        field: 'type',
+        operator: 'contains',
+        keyword: [2, 3]
+      })
 
       api.getAll(this.endpoint.sales.return, {
         params: {
