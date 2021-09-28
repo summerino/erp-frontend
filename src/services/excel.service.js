@@ -89,7 +89,10 @@ class ExcelService {
             } else if (isTimeOnly) {
               cellValue = format(parseISO(value), 'HH:mm')
             } else if (customValues) {
-              cellValue = `${grid.data[i][customValues[0]]} - ${grid.data[i][customValues[1]]}`
+              for (let v = 0; v < customValues.length; v++) {
+                cellValue += ` - ${grid.data[i][customValues[v]]}`
+              }
+              cellValue = cellValue.substr(3)
             } else {
               cellValue = value
             }

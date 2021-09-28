@@ -348,7 +348,7 @@ export default {
       data: []
     },
     defaultColumn: [
-      { text: 'Deskripsi', value: 'isName', divider: true, width: '500', excelColWidth:'70' },
+      { text: 'Deskripsi', value: 'isName', divider: true, width: '500', excelColWidth: '70', customValues: ['isNameWithSpace'] },
       { text: 'currM', value: 'isNowAmountIdr', align: 'right', divider: true, width: '160', excelColWidth:'20', isCurrency: true },
       { text: 'lastM', value: 'isPrevAmountIdr',  align: 'right', divider: true, width: '160', excelColWidth:'20', isCurrency: true },
       { text: 'ytd', value: 'isYtdAmountIdr',  align: 'right', divider: true, width: '160', excelColWidth:'20', isCurrency: true }
@@ -401,7 +401,7 @@ export default {
       ],
       operator: [{ text: 'Sama dgn.', value: 'eq' }],
       searches: []
-    }  
+    }
   }),
 
   created: function () {
