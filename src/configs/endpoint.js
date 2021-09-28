@@ -107,7 +107,8 @@ export default {
   },
 
   mobileSales: {
-    reason: 'mobile-reason'
+    reason: 'mobile-reason',
+    customer: 'mobile-customer'
   },
   
   systemManagement:{
