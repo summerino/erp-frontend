@@ -8,7 +8,7 @@ export default [{
 }, {
   path: '/mobilesales/master/customer',
   name: 'mobile-customer',
-  component: () => import(/* webpackChunkName: "customer" */ '@/views/mobilesales/master/MobileCustomer.vue'),
+  component: () => import(/* webpackChunkName: "mobile-customer" */ '@/views/mobilesales/master/MobileCustomer.vue'),
   meta: {
     authRequired: true
   }
