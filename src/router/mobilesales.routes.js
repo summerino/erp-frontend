@@ -5,4 +5,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/mobilesales/master/customer',
+  name: 'mobile-customer',
+  component: () => import(/* webpackChunkName: "mobile-customer" */ '@/views/mobilesales/master/MobileCustomer.vue'),
+  meta: {
+    authRequired: true
+  }
 }]

@@ -82,7 +82,8 @@ export default {
   attendanceReport: 103,
 
   // Mobile Sales
-  mobileReason: 108, 
+  mobileReason: 108,
+  mobileCustomer: 113, 
 
   // System Management
   companyProfile: 75,
