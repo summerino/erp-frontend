@@ -466,15 +466,15 @@ export default {
     getList() {
       api.create(`${this.endpoint.accounting.incomeStatementReport}/lists`, this.data)
         .then(response => {
-          const cm = this.defaultColumn.find(x => x.text === 'currM')
+          const cm = this.defaultColumn.find(x => x.value === 'isNowAmountIdr')
           if (cm) {
             cm.text = this.data.currM
           }
-          const lm = this.defaultColumn.find(x => x.text === 'lastM')
+          const lm = this.defaultColumn.find(x => x.value === 'isPrevAmountIdr')
           if (lm) {
             lm.text = this.data.lastM
           }
-          const ytd = this.defaultColumn.find(x => x.text === 'ytd')
+          const ytd = this.defaultColumn.find(x => x.value === 'isYtdAmountIdr')
           if (ytd) {
             ytd.text = `Sejauh Thn. ${getYear(parseISO(this.data.date))}`
           }
@@ -676,6 +676,7 @@ export default {
     },
     clearTable() {
       this.grid.data = []
+      this.grid.columns = []
     },
     clickDetail(event, { item }) {
       if (this.mainDet === 1)  {
@@ -708,7 +709,7 @@ export default {
         this.data.dateFrom = format(startOfYear(parseISO(this.data.date)), 'yyyy-MM-dd')
         this.data.dateTo = format(endOfMonth(parseISO(this.data.date)), 'yyyy-MM-dd')
       }
-      this.data.rptBy = `2${this.data.rptBy[1]}`
+      this.data.oldRptBy = this.data.rptBy
       this.data.acc = item.isCode
       this.data.coaName = item.isName
       this.data.plusMinus = item.isPm
@@ -723,7 +724,7 @@ export default {
       if (this.mainDet === 0) {
         this.data.dateFrom = this.data.oldPeriodFrom
         this.data.dateTo = this.data.oldPeriodTo
-        this.data.rptBy = `1${this.data.rptBy[1]}`
+        this.data.rptBy = this.data.oldRptBy
         this.getList()
         this.main = true
         this.filter = true
