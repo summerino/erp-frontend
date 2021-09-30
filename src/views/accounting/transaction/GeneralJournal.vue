@@ -547,8 +547,6 @@ export default {
       text: 'Kode', value: 'code', dataType: 'text'
     }, {
       text: 'Tanggal', value: 'date', dataType: 'datetime'
-    }, {
-      text: 'Total', value: 'total', dataType: 'text'
     }],
     dialog: {
       add: false
