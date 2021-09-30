@@ -481,7 +481,7 @@ export default {
         }, 0)
       }
     },
-    getList(bindToForm = false) {
+    getList() {
       const sorts = []
       for (let i = 0; i < this.grid.options.sortBy.length; i++) {
         sorts.push({
@@ -501,10 +501,6 @@ export default {
         .then(response => {
           this.grid.data = response.data.tableData
           this.grid.total = response.data.rowCount
-          if (bindToForm) {
-            const item = this.grid.data.find(h => h.id === this.data.id)
-            this.edit(item)
-          }
         })
     },
     back() {
