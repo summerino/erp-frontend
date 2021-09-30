@@ -12,4 +12,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/mobilesales/master/item-request',
+  name: 'mobile-item-request',
+  component: () => import(/* webpackChunkName: "mobile-item-request" */ '@/views/mobilesales/master/MobileItemRequest.vue'),
+  meta: {
+    authRequired: true
+  }
 }]

@@ -108,7 +108,8 @@ export default {
 
   mobileSales: {
     reason: 'mobile-reason',
-    customer: 'mobile-customer'
+    customer: 'mobile-customer',
+    itemRequest: 'mobile-item-request'
   },
   
   systemManagement:{
