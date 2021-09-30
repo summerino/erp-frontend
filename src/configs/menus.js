@@ -83,7 +83,8 @@ export default {
 
   // Mobile Sales
   mobileReason: 108,
-  mobileCustomer: 113, 
+  mobileCustomer: 113,
+  mobileItemRequest: 114, 
 
   // System Management
   companyProfile: 75,
