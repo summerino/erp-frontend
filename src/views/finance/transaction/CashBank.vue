@@ -120,6 +120,22 @@
             </template>
             <span class="text-caption">Void</span>
           </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                :disabled="item.mark.toUpperCase() === 'V' || !auth.allowPrint"
+                color="teal darken-2"
+                icon
+                small
+                @click="print(item)"
+              >
+                <v-icon small>mdi-printer</v-icon>
+              </v-btn>
+            </template>
+            <span class="text-caption">Cetak</span>
+          </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
@@ -581,6 +597,7 @@
     </v-dialog>
 
     <confirm ref="confirm"></confirm>
+    <report-viewer ref="reportViewer"></report-viewer>
     <detail-cash-bank
       ref="detailCashBank"
       :cb-code="data.code"
@@ -598,6 +615,7 @@ import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
 
 import Confirm from '@/components/dialog/Confirm'
+import ReportViewer from '@/components/dialog/ReportViewer'
 import DetailCashBank from '@/components/dialog/finance/DetailCashBank'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
@@ -607,6 +625,7 @@ export default {
     AdvancedSearch,
     ExportExcel,
     Confirm,
+    ReportViewer,
     DetailCashBank
   },
   data: () => ({
@@ -641,7 +660,7 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '50' },
+        { value: 'action', sortable: false, divider: true, width: '85' },
         { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'18' },
         // { text: 'Kode Voucher', value: 'vouCode', divider: true, width: '160', excelColWidth:'18' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'15', isDateTime: true },
@@ -907,6 +926,9 @@ export default {
         const idx = this.gridItem.data.findIndex(i => i.id === item.id)
         this.gridItem.data.splice(idx, 1)
       }
+    },
+    print(item) {
+      this.$refs.reportViewer.open('cash-bank', item.code)
     },
     async save(closeDialog) {
       if (!this.dialog.add) return

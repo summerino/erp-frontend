@@ -122,6 +122,38 @@
             </template>
             <span class="text-caption">Void</span>
           </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                :disabled="item.mark.toUpperCase() === 'V' || !auth.allowPrint"
+                color="teal darken-2"
+                icon
+                small
+                @click="print('out', item)"
+              >
+                <v-icon small>mdi-printer</v-icon>
+              </v-btn>
+            </template>
+            <span class="text-caption">Cetak Kas Bank Keluar</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                :disabled="item.mark.toUpperCase() === 'V' || !auth.allowPrint"
+                color="teal darken-2"
+                icon
+                small
+                @click="print('in', item)"
+              >
+                <v-icon small>mdi-printer</v-icon>
+              </v-btn>
+            </template>
+            <span class="text-caption">Cetak Kas Bank Masuk</span>
+          </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
@@ -129,8 +161,8 @@
         <template v-slot:[`item.coaCode`]="{ item }">
           {{ `${item.coaCode} - ${item.coaNameFrom}` }}
         </template>
-        <template v-slot:[`item.coaDetail`]="{ item }">
-          {{ `${item.coaDetail} - ${item.coaNameTo}` }}
+        <template v-slot:[`item.coaCodeTo`]="{ item }">
+          {{ `${item.coaCodeTo} - ${item.coaNameTo}` }}
         </template>
         <template v-slot:[`item.amount`]="{ item }">
           {{ item.amount | formatCurrency }}
@@ -558,6 +590,7 @@
     </v-dialog>
 
     <confirm ref="confirm"></confirm>
+    <report-viewer ref="reportViewer"></report-viewer>
   </div>
 </template>
 
@@ -571,12 +604,14 @@ import auth from '@/services/authorization.service'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
+import ReportViewer from '@/components/dialog/ReportViewer'
 
 export default {
   components: {
     AdvancedSearch,
     ExportExcel,
-    Confirm
+    Confirm,
+    ReportViewer
   },
 
   data: () => ({
@@ -589,7 +624,7 @@ export default {
     }, {
       text: 'Nama Akun Asal', value: 'coaNameFrom', dataType: 'text'
     }, {
-      text: 'Kd. Akun Tujuan', value: 'coaDetail', dataType: 'text'
+      text: 'Kd. Akun Tujuan', value: 'coaCodeTo', dataType: 'text'
     }, {
       text: 'Nama Akun Tujuan', value: 'coaNameTo', dataType: 'text'
     }],
@@ -605,11 +640,11 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
+        { value: 'action', sortable: false, divider: true, width: '135' },
         { text: 'Kode', value: 'code', divider: true, width: '130', excelColWidth:'18' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '110', excelColWidth:'15', isDateTime: true },
         { text: 'Akun Asal', value: 'coaCode', divider: true, width: '180', excelColWidth:'40', customValues: ['coaCode', 'coaNameFrom'] },
-        { text: 'Akun Tujuan', value: 'coaDetail', divider: true, width: '180', excelColWidth:'40', customValues: ['coaDetail', 'coaNameTo'] },
+        { text: 'Akun Tujuan', value: 'coaCodeTo', divider: true, width: '180', excelColWidth:'40', customValues: ['coaCodeTo', 'coaNameTo'] },
         { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
         { text: 'Status', value: 'mark', align: 'center', width: '50' }
       ],
@@ -701,12 +736,11 @@ export default {
         notes: null,
         typeDetail: null,
         transCode: null,
-        coaDetail: null,
+        coaCodeTo: null,
         currDetail: null,
         rateDetail: null,
         amountDetail: null,
         typeAmount: null,
-        transAmount: null,
         notesDetail: null,
         coaNameFrom: null,
         coaNameTo: null
@@ -721,7 +755,6 @@ export default {
         rate: null,
         amount: null,
         typeAmount: null,
-        transAmount: null,
         notes: null,
         coaName: null
       }
@@ -843,6 +876,13 @@ export default {
           })
       }
     },
+    print(caller, item) {
+      if (caller === 'in') {
+        this.$refs.reportViewer.open('cash-bank', item.transCode)
+      } else {
+        this.$refs.reportViewer.open('cash-bank', item.code)
+      }
+    },
     async save(closeDialog) {
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
@@ -912,22 +952,21 @@ export default {
         this.details.currCode = items.currCode
         this.details.vouCode = items.vouCode
         this.details.rate = 1
-        this.details.type = 'ICBO'
+        this.details.type = 'D'
       }
     },
     setDetail(data) {
-      for (let i = 0; i < 2; i++) {
+      for (let i = 1; i <= 2; i++) {
         this.itemDetails.push({
-          code: (i === 1) ? this.details.transCode : data.code,
+          code: (i === 2) ? this.details.transCode : data.code,
           lineNo: i,
-          type: (i === 0) ? this.details.type : 'ICBI',
-          transCode: (i === 0) ? this.details.transCode : data.code,
-          coaCode: (i === 0) ? this.details.coaCode : data.coaCode,
-          currCode: (i === 0) ? this.details.currCode : data.currCode,
-          rate: (i === 0) ? this.details.rate : data.rate,
+          type: (i === 1) ? 'ICBO' : 'ICBI',
+          transCode: (i === 1) ? this.details.transCode : data.code,
+          coaCode: (i === 1) ? data.coaCode : this.details.coaCode,
+          currCode: (i === 1) ? data.currCode : this.details.currCode,
+          rate: (i === 1) ? data.rate : this.details.rate,
           amount: data.amount,
-          typeAmount: (i === 0) ? 'D' : 'C',
-          transAmount: 0,
+          typeAmount: (i === 1) ? 'D' : 'C',
           notes: data.notes
         })
       }
@@ -938,12 +977,11 @@ export default {
         code: data.code,
         type: data.typeDetail,
         transCode: data.transCode,
-        coaCode: data.coaDetail,
+        coaCode: data.coaCodeTo,
         currCode: data.currDetail,
         rate: data.rateDetail,
         amount: data.amountDetail,
         typeAmount: data.typeAmount,
-        transAmount: data.transAmount,
         notes: data.notesDetail,
         coaNameFrom: data.coaNameFrom,
         coaNameTo: data.coaNameTo
