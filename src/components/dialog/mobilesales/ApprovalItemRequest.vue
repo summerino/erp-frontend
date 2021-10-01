@@ -22,61 +22,66 @@
       </v-toolbar>
 
       <v-card-text class="px-2 pt-1">
-        <v-row no-gutters>
-          <v-col cols="12" md="6">
-            <v-menu
-              v-model="menu.tsDate"
-              :close-on-content-click="false"
-              transition="scale-transition"
-              min-width="290px"
-              offset-y
-            >
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                v-bind="attrs"
-                v-on="on"
+        <v-form
+          ref="form"
+          v-model="valid"
+        >
+          <v-row no-gutters>
+            <v-col cols="12" md="6">
+              <v-menu
+                v-model="menu.tsDate"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                min-width="290px"
+                offset-y
+              >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-bind="attrs"
+                  v-on="on"
+                  :rules="rules.required"
+                  :value="formatTsDate"
+                  label="Tanggal"
+                  class="mt-0"
+                  readonly
+                  required
+                ></v-text-field>
+              </template>
+              <v-date-picker
+                v-model="data.tsDate"
+                no-title
+                scrollable
+                @change="menu.tsDate = false"
+              ></v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col cols="12" md="6" class="pl-md-1">
+              <v-autocomplete
+                v-model="data.warehouseCodeFrom"
+                :items="warehouses"
+                :item-text="item => `${item.initial} - ${item.name}`"
                 :rules="rules.required"
-                :value="formatTsDate"
-                label="Tanggal"
+                label="Gudang Asal"
+                item-value="code"
                 class="mt-0"
-                readonly
                 required
-              ></v-text-field>
-            </template>
-            <v-date-picker
-              v-model="data.tsDate"
-              no-title
-              scrollable
-              @change="menu.tsDate = false"
-            ></v-date-picker>
-            </v-menu>
-          </v-col>
-          <v-col cols="12" md="6" class="pl-md-1">
-            <v-autocomplete
-              v-model="data.warehouseCodeFrom"
-              :items="warehouses"
-              :item-text="item => `${item.initial} - ${item.name}`"
-              :rules="rules.required"
-              label="Gudang Asal"
-              item-value="code"
-              class="mt-0"
-              required
-            ></v-autocomplete>
-          </v-col>
-        </v-row>
+              ></v-autocomplete>
+            </v-col>
+          </v-row>
 
-        <v-row no-gutters>
-          <v-col cols="12">
-            <v-textarea
-              v-model="data.notes"
-              :rules="rules.max256chars"
-              label="Catatan"
-              counter="256"
-              class="mt-0"
-              rows="3"
-            ></v-textarea>
-          </v-col>
-        </v-row>
+          <v-row no-gutters>
+            <v-col cols="12">
+              <v-textarea
+                v-model="data.notes"
+                :rules="rules.max256chars"
+                label="Catatan"
+                counter="256"
+                class="mt-0"
+                rows="3"
+              ></v-textarea>
+            </v-col>
+          </v-row>
+        </v-form>
       </v-card-text>
 
       <v-card-actions class="justify-end pb-2 pr-2">
@@ -115,7 +120,8 @@ export default {
     menu: {
       tsDate: false
     },
-    warehouses: []
+    warehouses: [],
+    valid: false
   }),
   computed: {
     ...mapState({
@@ -139,6 +145,10 @@ export default {
       this.data.warehouseCodeFrom = null
     },
     async save() {
+      if (!this.$refs.form.validate()) {
+        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
+        return
+      }
       let result = { success: false, message: '' }
       const resp = await api.updatemaster(`${this.endpoint.mobileSales.itemRequest}/approve`, this.selected, {
         params: { date: this.data.tsDate, whCode: this.data.warehouseCodeFrom, notes: this.data.notes }
