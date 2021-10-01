@@ -109,7 +109,8 @@ export default {
   mobileSales: {
     reason: 'mobile-reason',
     customer: 'mobile-customer',
-    itemRequest: 'mobile-item-request'
+    itemRequest: 'mobile-item-request',
+    salesCost: 'mobile-sales-cost'
   },
   
   systemManagement:{

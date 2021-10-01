@@ -13,9 +13,16 @@ export default [{
     authRequired: true
   }
 }, {
-  path: '/mobilesales/master/item-request',
+  path: '/mobilesales/transaction/item-request',
   name: 'mobile-item-request',
   component: () => import(/* webpackChunkName: "mobile-item-request" */ '@/views/mobilesales/transaction/MobileItemRequest.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/mobilesales/transaction/sales-cost',
+  name: 'mobile-sales-cost',
+  component: () => import(/* webpackChunkName: "mobile-sales-cost" */ '@/views/mobilesales/transaction/MobileCost.vue'),
   meta: {
     authRequired: true
   }

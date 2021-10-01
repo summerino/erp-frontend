@@ -4,7 +4,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row no-gutters>
           <v-col cols="12" md="3">
-            Permintaan Barang
+            Biaya Sales
           </v-col>
           <v-col cols="12" md="5" >
             <v-row no-gutters>
@@ -43,7 +43,7 @@
                 :filters="filter"
                 :grid="grid"
                 :gridDefOpts="gridDefOpts"
-                title="Daftar Permintaan Barang"
+                title="Daftar Biaya Sales"
               ></export-excel>
             </v-row>
           </v-col>
@@ -130,6 +130,9 @@
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
+        <template v-slot:[`item.total`]="{ item }">
+          {{ item.total | formatCurrency }}
+        </template>
         <template v-slot:[`item.mark`]="{ item }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -168,7 +171,7 @@
           <v-btn icon dark @click="close">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Permintaan Barang</v-toolbar-title>
+          <v-toolbar-title>Biaya Sales</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-tooltip bottom>
@@ -280,93 +283,31 @@
                         ></v-autocomplete>
                       </v-col>
                     </v-row>
+
+                    <v-row no-gutters>
+                      <v-col cols="12">
+                        <v-currency-field
+                          v-model="data.total"
+                          :decimal-length="0"
+                          :min="1"
+                          class="text-right mt-0"
+                          label="Nilai Total"
+                          readonly
+                          required
+                        ></v-currency-field>
+                      </v-col>
+                    </v-row>
                   </v-card-text>
                 </v-card>
               </v-col>
 
               <v-col cols="12" md="8">
                 <v-card>
-                  <v-tabs v-model="tab.area">
-                    <v-tab key="area">Wilayah</v-tab>
+                  <v-tabs v-model="tab.user">
                     <v-tab key="user">Pengguna</v-tab>
                   </v-tabs>
 
-                  <v-tabs-items v-model="tab.area" class="pa-2">
-                    <v-tab-item
-                      key="area"
-                      transition="false"
-                    >
-                      <v-row no-gutters>
-                        <v-col cols="12">
-                          <v-autocomplete
-                            v-model="data.areaId1"
-                            :items="areas"
-                            label="Wilayah 1"
-                            item-text="name"
-                            item-value="id"
-                            class="mt-0"
-                            readonly
-                          ></v-autocomplete>
-                        </v-col>
-                      </v-row>
-
-                      <v-row no-gutters>
-                        <v-col cols="12">
-                          <v-autocomplete
-                            v-model="data.areaId2"
-                            :items="areas"
-                            label="Wilayah 2"
-                            item-text="name"
-                            item-value="id"
-                            class="mt-0"
-                            readonly
-                          ></v-autocomplete>
-                        </v-col>
-                      </v-row>
-
-                      <v-row no-gutters>
-                        <v-col cols="12">
-                          <v-autocomplete
-                            v-model="data.areaId3"
-                            :items="areas"
-                            label="Wilayah 3"
-                            item-text="name"
-                            item-value="id"
-                            class="mt-0"
-                            readonly
-                          ></v-autocomplete>
-                        </v-col>
-                      </v-row>
-                      
-                      <v-row no-gutters>
-                        <v-col cols="12">
-                          <v-autocomplete
-                            v-model="data.areaId4"
-                            :items="areas"
-                            label="Wilayah 4"
-                            item-text="name"
-                            item-value="id"
-                            class="mt-0"
-                            readonly
-                          ></v-autocomplete>
-                        </v-col>
-                      </v-row>
-
-                      <v-row no-gutters>
-                        <v-col cols="12">
-                          <v-autocomplete
-                            v-model="data.areaId5"
-                            :items="areas"
-                            label="Wilayah 5"
-                            item-text="name"
-                            item-value="id"
-                            class="mt-0"
-                            readonly
-                          ></v-autocomplete>
-                        </v-col>
-                      </v-row>
-                    </v-tab-item>
-
+                  <v-tabs-items v-model="tab.user" class="pa-2">
                     <v-tab-item
                       key="user"
                       transition="false"
@@ -517,46 +458,28 @@
                               <span class="text-caption">Hapus</span>
                             </v-tooltip>
                           </template>
-                          <template v-slot:[`item.itemId`]="{ item }">
+                          <template v-slot:[`item.coaCode`]="{ item }">
                             <v-autocomplete
-                              ref="itemId"
-                              v-model="item.itemId"
-                              :items="items"
-                              :readonly="isRejected"
-                              :rules="rules.required"
-                              item-text="initial"
-                              item-value="id"
+                              v-model="item.coaCode"
+                              :items="coas"
+                              :item-text="item => `${item.code} - ${item.name}`"
+                              label="Akun"
+                              item-value="code"
                               class="text-body-2 mt-0"
-                              dense
+                              :rules="rules.required"
                               required
-                              @change="itemIdChange(item)"
-                            >
-                            </v-autocomplete>
+                              dense
+                            ></v-autocomplete>
                           </template>
-                          <template v-slot:[`item.qty`]="{ item }">
+                          <template v-slot:[`item.amount`]="{ item }">
                             <v-currency-field
-                              ref="qty"
-                              v-model="item.qty"
+                              v-model="item.amount"
                               :decimal-length="0"
                               :min="1"
                               :readonly="isRejected"
                               class="text-body-2 text-right mt-0"
                               dense
                             ></v-currency-field>
-                          </template>
-                          <template v-slot:[`item.unitName`]="{ item }">
-                            <v-autocomplete
-                              v-model="item.unitId"
-                              :items="item.units"
-                              :readonly="isRejected"
-                              :rules="rules.required"
-                              item-text="unitEquivalent"
-                              item-value="id"
-                              class="text-body-2 mt-0"
-                              dense
-                              required
-                              @change="unitItemChange(item)"
-                            ></v-autocomplete>
                           </template>
                         </v-data-table>
                       </v-card>
@@ -571,17 +494,18 @@
     </v-dialog>
 
     <confirm ref="confirm"></confirm>
-    <approval-item-request
+    <approval-cost
     ref="approval"
     @closeApprove="closeApprove"
     :selected="this.selected"
-    ></approval-item-request>
+    ></approval-cost>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
+import { sumBy as _sumBy } from 'lodash'
 
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
@@ -590,14 +514,14 @@ import auth from '@/services/authorization.service'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
-import ApprovalItemRequest from '@/components/dialog/mobilesales/ApprovalItemRequest'
+import ApprovalCost from '@/components/dialog/mobilesales/ApprovalCost'
 
 export default {
   components: {
     AdvancedSearch,
     ExportExcel,
     Confirm,
-    ApprovalItemRequest
+    ApprovalCost
   },
 
   data: () => ({
@@ -610,7 +534,7 @@ export default {
       add: false
     },
     tab: {
-      area: null,
+      user: null,
       det: null
     },
     grid: {
@@ -619,6 +543,7 @@ export default {
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Penjual', value: 'salesmanInitial', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Nilai Total', value: 'total', divider: true, align:'right', width: '100', excelColWidth:'15', isCurrency: true },
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
@@ -632,17 +557,14 @@ export default {
     gridDet: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '1%' },
-        { text: 'Inisial', value: 'itemId', divider: true, width: '50' },
-        { text: 'Nama', value: 'itemName', divider: true, width: '200' },
-        { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '70' },
-        { text: 'Satuan', value: 'unitName', divider: true, width: '70' }
+        { text: 'Akun', value: 'coaCode', divider: true, width: '150' },
+        { text: 'Nilai', value: 'amount', align: 'right', width: '70' }
       ],
       data: []
     },
     valid: false,
-    areas: [],
+    coas: [],
     employees: [],
-    items: [],
     selected: [],
     data: {}
   }),
@@ -650,10 +572,9 @@ export default {
   created: function () {
     this.reset()
     this.getList()
-    this.getAreaLists()
-    this.getItemLists()
+    this.getCOAList()
     this.getSalesmanLists()
-    auth.getAction(this.endpoint, this.menuId.mobileItemRequest)
+    auth.getAction(this.endpoint, this.menuId.mobileCost)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -667,7 +588,7 @@ export default {
       }, {
         text: 'Data Master'
       }, {
-        text: 'Permintaan Barang'
+        text: 'Biaya Sales'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
@@ -677,6 +598,12 @@ export default {
     'grid.options': {
       handler() {
         this.getList()
+      },
+      deep: true
+    },
+    'gridDet.data': {
+      handler() {
+        this.calculateTotal()
       },
       deep: true
     }
@@ -708,19 +635,16 @@ export default {
       this.data = {
         code: null,
         date: format(new Date(), 'yyyy-MM-dd'),
-        tsDate: format(new Date(), 'yyyy-MM-dd'),
-        warehouseCodeFrom: null,
-        warehouseCodeTo: null,
+        cbDate: format(new Date(), 'yyyy-MM-dd'),
+        coaCode: null,
+        currCode: 'IDR',
+        rate: 1,
         notes: null,
         salesmanId: null,
-        areaId1: null,
-        areaId2: null,
-        areaId3: null,
-        areaId4: null,
-        areaId5: null
+        total: 0
       }
       this.gridDet.data = []
-      this.tab.area = 0
+      this.tab.user = 0
       this.tab.det = 0
     },
     advancedSearch() {
@@ -750,7 +674,7 @@ export default {
         keyword: ['A', 'REJ']
       })
 
-      api.getAll(this.endpoint.mobileSales.itemRequest, {
+      api.getAll(this.endpoint.mobileSales.salesCost, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -787,7 +711,7 @@ export default {
       }
 
       // Get item details
-      api.getAll(`${this.endpoint.mobileSales.itemRequest}/item`, {
+      api.getAll(`${this.endpoint.mobileSales.salesCost}/item`, {
         params: { code: item.code }
       })
         .then(response => {
@@ -802,7 +726,7 @@ export default {
       }
 
       if (!(this.gridDet.data.length > 0)) {
-        this.$store.dispatch('app/showInfo', 'Data barang tidak boleh kosong.')
+        this.$store.dispatch('app/showInfo', 'Data akun tidak boleh kosong.')
         return
       }
       
@@ -810,7 +734,7 @@ export default {
       data.itemDetails = this.gridDet.data
       
       let result = { success: false, message: '' }
-      const resp = await api.update(this.endpoint.mobileSales.itemRequest, data.code, data)
+      const resp = await api.update(this.endpoint.mobileSales.salesCost, data.code, data)
       result = resp.data
 
       if (result.success) {
@@ -824,18 +748,12 @@ export default {
       }
     },
     addItem() {
-      if (this.gridDet.data.length === 0 || (this.gridDet.data.slice(-1)[0]?.itemId ?? null)) {
+      if (this.gridDet.data.length === 0 || (this.gridDet.data.slice(-1)[0]?.coaCode ?? null)) {
         const item = {
           id: randomNumber(-1, -1000),
           code: this.data.code,
-          itemId: null,
-          uomId: 0,
-          unitId: 0,
-          qty: 0,
-          notes: null,
-          unitName: null,
-          units: [],
-          state: 'A'
+          coaCode: null,
+          amount: 0
         }
         this.gridDet.data.push(item)
       }
@@ -850,18 +768,22 @@ export default {
         this.gridDet.data.splice(idx, 1)
       }
     },
-    getItemLists() {
-      api.getAll(this.endpoint.inventory.item.item, {
+    getCOAList() {
+      api.getAll(`${this.endpoint.accounting.coa}/lists`, {
         params: {
           filters: JSON.stringify([{
-            field: 'isactive',
+            field: 'isActive',
+            operator: 'eq',
+            keyword: true
+          }, {
+            field: 'showInMobile',
             operator: 'eq',
             keyword: true
           }])
         }
-      })  
+      })
         .then(response => {
-          this.items = response.data.tableData
+          this.coas = response.data.tableData
         })
     },
     getSalesmanLists() {
@@ -882,107 +804,6 @@ export default {
           this.employees = response.data.tableData
         })
     },
-    getAreaLists() {
-      api.getAll(`${this.endpoint.sales.area}/lists`, {
-        params: {
-          filters: JSON.stringify([{
-            field: 'isActive',
-            operator: 'eq',
-            keyword: true
-          }]),
-          sorts: JSON.stringify([{
-            field: 'initial',
-            direction: 'asc'
-          }])
-        }
-      })
-        .then(response => {
-          this.areas = response.data.tableData
-        })
-    },
-    getUnitItemLists(item) {
-      api.getAll(`${this.endpoint.inventory.uom}/item`, {
-        params: { uomId: item.uomId }
-      })
-        .then(response => {
-          item.units = response.data.tableData
-        })
-    },
-    itemIdChange(item) {
-      const data_i = this.items.find(i => i.id === item.itemId)
-      if (data_i) {
-        item.itemId = data_i.id
-        item.itemName = data_i.name
-        item.qty = 1
-        item.length = data_i.length
-        item.width = data_i.width
-        item.height = data_i.height
-        item.weight = data_i.weight
-        item.dimensionMeasurement = data_i.dimensionMeasurement
-        item.weightMeasurement = data_i.weightMeasurement
-        item.qtyRcv = 0
-        item.uomId = data_i.uomId
-        item.oldUnitId = data_i.uomBuyId
-        item.oldUnitName = data_i.uomBuyName
-        item.oldUnitPrice = data_i.buyPrice
-        item.unitId = data_i.uomBuyId
-        item.unitName = data_i.uomBuyName
-        item.unitPrice = data_i.buyPrice
-        item.disc = 0
-        item.taxId = data_i.purchaseTaxId
-        item.taxAmount = 0
-        item.nettPrice = data_i.buyPrice
-        item.total = data_i.buyPrice
-        item.dpp = data_i.buyPrice
-        item.totTax = 0
-        item.totDPP = data_i.buyPrice
-        item.notes = null
-        item.coaInventory = data_i.coaInventory
-        item.coaCogs = data_i.coaCogs
-        item.coaPurc = data_i.coaPurc
-        item.coaPurcDisc = data_i.coaPurcDisc
-        item.coaPurcReturn = data_i.coaPurcReturn
-        if (item.state !== 'A') {
-          item.state = 'M'
-        }
-
-        // Get unit item lists
-        this.getUnitItemLists(item)
-      }
-    },
-    unitItemChange(item) {
-      const oldUnit = item.units.find(u => u.id === item.oldUnitId)
-      const unit = item.units.find(u => u.id === item.unitId)
-
-      if (oldUnit.seq < unit.seq) {
-        item.uomConversion = unit.conversion
-        if (unit.unitToConvert !== item.oldUnitName) {
-          this.calcUomConversion(true, item, unit.unitToConvert)
-        }
-      } else {
-        item.uomConversion = 1
-        if (unit.unitEquivalent !== item.oldUnitName) {
-          this.calcUomConversion(false, item, unit.unitEquivalent)
-        }
-      }
-    },
-    calcUomConversion(seqSmaller, item, unitCode) {
-      if (seqSmaller) {
-        const data = item.units.find(u => u.unitEquivalent === unitCode)
-        item.uomConversion *= data.conversion
-
-        if (data.unitToConvert !== item.oldUnitName) {
-          this.calcUomConversion(seqSmaller, item, data.unitToConvert)
-        }
-      } else {
-        const data = item.units.find(u => u.unitToConvert === unitCode && !u.isBaseUnit)
-        item.uomConversion *= data.conversion
-        
-        if (data.unitEquivalent !== item.oldUnitName) {
-          this.calcUomConversion(seqSmaller, item, data.unitEquivalent)
-        }
-      }
-    },
     async exportExcel() {
       this.exportExcel.export()
     },
@@ -991,13 +812,16 @@ export default {
     },
     async reject() {
       let result = { success: false, message: '' }
-      const resp = await api.updatemaster(`${this.endpoint.mobileSales.itemRequest}/reject`, this.selected)
+      const resp = await api.updatemaster(`${this.endpoint.mobileSales.salesCost}/reject`, this.selected)
       result = resp.data
       if (result.success) {
         this.$store.dispatch('app/showSuccess', result.message)
         this.reset()
         this.getList()
       }
+    },
+    calculateTotal() {
+      this.data.total = _sumBy(this.gridDet.data, 'amount')
     },
     closeApprove() {
       this.reset()

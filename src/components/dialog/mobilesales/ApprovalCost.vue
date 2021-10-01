@@ -11,7 +11,7 @@
         dark
         dense
       >
-        <v-toolbar-title>Persetujuan Penerimaan Barang</v-toolbar-title>
+        <v-toolbar-title>Persetujuan Biaya Sales</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn
           icon
@@ -29,7 +29,7 @@
           <v-row no-gutters>
             <v-col cols="12" md="6">
               <v-menu
-                v-model="menu.tsDate"
+                v-model="menu.cbDate"
                 :close-on-content-click="false"
                 transition="scale-transition"
                 min-width="290px"
@@ -40,7 +40,7 @@
                   v-bind="attrs"
                   v-on="on"
                   :rules="rules.required"
-                  :value="formatTsDate"
+                  :value="formatCbDate"
                   label="Tanggal"
                   class="mt-0"
                   readonly
@@ -48,22 +48,22 @@
                 ></v-text-field>
               </template>
               <v-date-picker
-                v-model="data.tsDate"
+                v-model="data.cbDate"
                 no-title
                 scrollable
-                @change="menu.tsDate = false"
+                @change="menu.cbDate = false"
               ></v-date-picker>
               </v-menu>
             </v-col>
             <v-col cols="12" md="6" class="pl-md-1">
               <v-autocomplete
-                v-model="data.warehouseCodeFrom"
-                :items="warehouses"
-                :item-text="item => `${item.initial} - ${item.name}`"
-                :rules="rules.required"
-                label="Gudang Asal"
+                v-model="data.coaCode"
+                :items="coas"
+                :item-text="item => `${item.code} - ${item.name}`"
+                label="Akun"
                 item-value="code"
-                class="mt-0"
+                class="text-body-2 mt-0"
+                :rules="rules.required"
                 required
               ></v-autocomplete>
             </v-col>
@@ -73,11 +73,12 @@
             <v-col cols="12">
               <v-textarea
                 v-model="data.notes"
-                :rules="rules.max256chars"
+                :rules="[rules.required[0],rules.max256chars[0]]"
                 label="Catatan"
                 counter="256"
                 class="mt-0"
                 rows="3"
+                required
               ></v-textarea>
             </v-col>
           </v-row>
@@ -118,9 +119,9 @@ export default {
     },
     data: {},
     menu: {
-      tsDate: false
+      cbDate: false
     },
-    warehouses: [],
+    coas: [],
     valid: false
   }),
   computed: {
@@ -128,31 +129,33 @@ export default {
       auth: state => state.api.authorization, 
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint }),
-    formatTsDate() {
-      return this.data.tsDate ? format(parseISO(this.data.tsDate), 'dd-MMM-yyyy') : ''
+    formatCbDate() {
+      return this.data.cbDate ? format(parseISO(this.data.cbDate), 'dd-MMM-yyyy') : ''
     }
   },
   methods: {
     open(item) {
       this.dialog = true
       this.data = item
-      this.getWarehouseLists()
+      this.getCOAList()
     },
     close() {
       this.dialog = false
       this.data.notes = null
-      this.data.tsDate = format(new Date(), 'yyyy-MM-dd')
-      this.data.warehouseCodeFrom = null
+      this.data.cbDate = format(new Date(), 'yyyy-MM-dd')
+      this.data.coaCode = null
     },
     async save() {
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
+
       let result = { success: false, message: '' }
-      const resp = await api.updatemaster(`${this.endpoint.mobileSales.itemRequest}/approve`, this.selected, {
-        params: { date: this.data.tsDate, whCode: this.data.warehouseCodeFrom, notes: this.data.notes }
+      const resp = await api.updatemaster(`${this.endpoint.mobileSales.salesCost}/approve`, this.selected, {
+        params: { date: this.data.cbDate, coa: this.data.coaCode, notes: this.data.notes }
       })
+
       result = resp.data
       if (result.success) {
         this.$store.dispatch('app/showSuccess', result.message)
@@ -160,26 +163,18 @@ export default {
         this.$emit('closeApprove')
       }
     },
-    getWarehouseLists() {
-      api.getAll(`${this.endpoint.inventory.warehouse}/lists`, {
+    getCOAList() {
+      api.getAll(`${this.endpoint.accounting.coa}/lists`, {
         params: {
           filters: JSON.stringify([{
-            field: 'custCode',
+            field: 'isActive',
             operator: 'eq',
-            keyword: null
-          }]),
-          sorts: JSON.stringify([{
-            field: 'initial',
-            direction: 'asc'
+            keyword: true
           }])
         }
       })
         .then(response => {
-          this.warehouses = response.data.tableData
-          const defWarehouse = response.data.tableData.find(w => w.isDefault)
-          if (defWarehouse) {
-            this.data.warehouseCodeFrom = defWarehouse.code
-          }
+          this.coas = response.data.tableData
         })
     }
   }
