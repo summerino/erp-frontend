@@ -573,6 +573,7 @@
     <confirm ref="confirm"></confirm>
     <approval-item-request
     ref="approval"
+    @closeApprove="closeApprove"
     :selected="this.selected"
     ></approval-item-request>
   </div>
@@ -997,6 +998,10 @@ export default {
         this.reset()
         this.getList()
       }
+    },
+    closeApprove() {
+      this.reset()
+      this.getList()
     }
   }
 }

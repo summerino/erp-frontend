@@ -157,6 +157,7 @@ export default {
       if (result.success) {
         this.$store.dispatch('app/showSuccess', result.message)
         this.close()
+        this.$emit('closeApprove')
       }
     },
     getWarehouseLists() {
