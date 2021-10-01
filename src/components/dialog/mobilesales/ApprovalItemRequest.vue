@@ -118,7 +118,8 @@ export default {
     warehouses: []
   }),
   computed: {
-    ...mapState({ 
+    ...mapState({
+      auth: state => state.api.authorization, 
       rules: state => state.app.rules,
       endpoint: state => state.api.endpoint }),
     formatTsDate() {
