@@ -81,7 +81,7 @@
 
       <v-card-actions class="justify-end pb-2 pr-2">
         <v-btn
-          :disabled="!allowApprove"
+          :disabled="!auth.allowApprove"
           color="green"
           class="font-weight-regular"
           dark
