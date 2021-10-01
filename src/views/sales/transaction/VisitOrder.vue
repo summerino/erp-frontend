@@ -122,6 +122,22 @@
             </template>
             <span class="text-caption">Void</span>
           </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                :disabled="item.mark.toUpperCase() === 'V' || !auth.allowPrint"
+                color="teal darken-2"
+                icon
+                small
+                @click="print(item)"
+              >
+                <v-icon small>mdi-printer</v-icon>
+              </v-btn>
+            </template>
+            <span class="text-caption">Cetak Daftar Pelanggan</span>
+          </v-tooltip>
         </template>
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
@@ -707,6 +723,7 @@
     </v-dialog>
 
     <confirm ref="confirm"></confirm>
+    <report-viewer ref="reportViewer"></report-viewer>
     <find-salesman
       ref="findSalesman"
       @dblclick:row="bindSalesman"
@@ -737,6 +754,7 @@ import auth from '@/services/authorization.service'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
+import ReportViewer from '@/components/dialog/ReportViewer'
 import FindSalesman from '@/components/dialog/sales/FindSalesman'
 import FindCustomer from '@/components/dialog/sales/FindCustomerVO'
 import FindInvoice from '@/components/dialog/sales/FindInvoiceVO'
@@ -746,6 +764,7 @@ export default {
     AdvancedSearch,
     ExportExcel,
     Confirm,
+    ReportViewer,
     FindSalesman,
     FindCustomer,
     FindInvoice
@@ -779,7 +798,7 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
+        { value: 'action', sortable: false, divider: true, width: '120' },
         { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'10' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'30' },
         { text: 'Penjual', value: 'salesmanName', divider: true, width: '250', excelColWidth:'35' },
@@ -1039,6 +1058,9 @@ export default {
             }
           })
       }
+    },
+    print(item) {
+      this.$refs.reportViewer.open('visit-order-customer', item.code)
     },
     async save(closeDialog) {
       if (!this.$refs.form.validate()) {
