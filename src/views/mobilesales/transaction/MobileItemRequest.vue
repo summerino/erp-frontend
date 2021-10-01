@@ -907,9 +907,6 @@ export default {
           item.units = response.data.tableData
         })
     },
-    bindItemData(rowItem) {
-      this.itemIdChange(rowItem)
-    },
     itemIdChange(item) {
       const data_i = this.items.find(i => i.id === item.itemId)
       if (data_i) {
