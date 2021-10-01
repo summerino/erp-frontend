@@ -652,7 +652,7 @@ export default {
     this.getAreaLists()
     this.getItemLists()
     this.getSalesmanLists()
-    auth.getAction(this.endpoint, this.menuId.transferStock)
+    auth.getAction(this.endpoint, this.menuId.mobileItemRequest)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
