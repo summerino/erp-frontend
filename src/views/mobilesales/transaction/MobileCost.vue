@@ -586,7 +586,7 @@ export default {
       this.$store.commit('app/setBreadcrumbs', [{
         text: 'Mobile Penjual'
       }, {
-        text: 'Data Master'
+        text: 'Transaksi'
       }, {
         text: 'Biaya Sales'
       }])

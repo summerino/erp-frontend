@@ -26,4 +26,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/mobilesales/transaction/visit-log',
+  name: 'mobile-visit-log',
+  component: () => import(/* webpackChunkName: "mobile-visit-log" */ '@/views/mobilesales/transaction/MobileVisitLog.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
