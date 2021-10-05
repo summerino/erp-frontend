@@ -783,8 +783,9 @@ export default {
     },
     gridRelated: {
       columns: [
-        { text: 'Kode', value: 'code', divider: true },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true },
+        { text: 'Kode Trans.', value: 'code', divider: true },
+        { text: 'Tipe Trans.', value: 'type', divider: true },
+        { text: 'Tanggal Trans.', value: 'date', align: 'right', divider: true },
         { text: 'Nilai', value: 'total', align: 'right', divider: true }
       ],
       data: []
