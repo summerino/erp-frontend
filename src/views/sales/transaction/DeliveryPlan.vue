@@ -120,7 +120,11 @@
             </template>
             <span class="text-caption">Void</span>
           </v-tooltip>
-          <v-tooltip bottom>
+          <v-menu
+            bottom
+            eager
+            open-on-hover
+          >
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 v-bind="attrs"
@@ -129,13 +133,37 @@
                 color="teal darken-2"
                 icon
                 small
-                @click="print('picking', item)"
               >
                 <v-icon small>mdi-printer</v-icon>
               </v-btn>
             </template>
-            <span class="text-caption">Cetak Daftar Pengambilan</span>
-          </v-tooltip>
+            <v-list
+              class="cursor-pointer"
+              color="teal darken-2"
+              dark
+            >
+              <v-list-item
+                dense
+                @click="print('packing', item)"
+              >
+                <v-list-item-title>
+                  <span class="text-caption">
+                    Cetak Daftar Pengepakan
+                  </span>
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item
+                dense
+                @click="print('picking', item)"
+              >
+                <v-list-item-title>
+                  <span class="text-caption">
+                    Cetak Daftar Pengambilan
+                  </span>
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </template>
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
