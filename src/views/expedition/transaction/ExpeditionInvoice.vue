@@ -121,6 +121,22 @@
             </template>
             <span class="text-caption">Void</span>
           </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
+                :disabled="item.mark.toUpperCase() === 'V' || !auth.allowPrint"
+                color="teal darken-2"
+                icon
+                small
+                @click="print(item)"
+              >
+                <v-icon small>mdi-printer</v-icon>
+              </v-btn>
+            </template>
+            <span class="text-caption">Cetak</span>
+          </v-tooltip>
         </template>
         <template v-slot:[`item.mark`]="{ item }">
           <v-tooltip bottom>
@@ -604,6 +620,7 @@
       </v-card>
     </v-dialog>
     <confirm ref="confirm"></confirm>
+    <report-viewer ref="reportViewer"></report-viewer>
   </div>
 </template>
 
@@ -615,15 +632,17 @@ import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
 
-
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
+import ReportViewer from '@/components/dialog/ReportViewer'
+
 export default {
   components:{
-    Confirm,
     AdvancedSearch,
-    ExportExcel
+    ExportExcel,
+    Confirm,
+    ReportViewer
   },
   data: () => ({
     filterFields: [{
@@ -648,7 +667,7 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
+        { value: 'action', sortable: false, divider: true, width: '120' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'18' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
@@ -997,6 +1016,9 @@ export default {
         item.date = data_t.date
         item.mark = data_t.mark
       }
+    },
+    print(item) {
+      this.$refs.reportViewer.open('expedition-invoice', item.code)
     },
     async save(closeDialog) {
       if (!this.dialog.add) return
