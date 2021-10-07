@@ -33,4 +33,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/mobilesales/transaction/payment-invoice',
+  name: 'mobile-payment-invoice',
+  component: () => import(/* webpackChunkName: "mobile-payment-invoice" */ '@/views/mobilesales/transaction/MobilePaymentInvoice.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
