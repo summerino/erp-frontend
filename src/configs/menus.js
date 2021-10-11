@@ -84,11 +84,12 @@ export default {
   // Mobile Sales
   mobileReason: 108,
   mobileCustomer: 113,
+  mobilePaymentMethod: 121,
   mobileItemRequest: 115,
   mobileCost: 116,
   mobileVisitLog: 118,
-  mobilePaymentInvoice: 119,
   mobileOrder: 120, 
+  mobilePaymentInvoice: 119,
 
   // System Management
   companyProfile: 75,

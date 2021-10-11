@@ -109,11 +109,12 @@ export default {
   mobileSales: {
     reason: 'mobile-reason',
     customer: 'mobile-customer',
+    paymentMethod: 'mobile-payment-method',
     itemRequest: 'mobile-item-request',
     salesCost: 'mobile-sales-cost',
     visitLog: 'mobile-visit-log',
-    paymentInvoice: 'mobile-payment-invoice',
-    order: 'mobile-order'
+    order: 'mobile-order',
+    paymentInvoice: 'mobile-payment-invoice'
   },
   
   systemManagement:{
