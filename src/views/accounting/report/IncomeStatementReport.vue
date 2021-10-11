@@ -86,7 +86,7 @@
             </v-row>
             <v-row v-else no-gutters>
               <v-col v-if="mainDet === 1" cols="12" md="10">
-                Detail - {{ this.data.coaName }} - {{ this.data.currM }}
+                Detail - {{ this.data.coaName }} - {{ this.data.selectM }}
               </v-col>
               <v-col v-if="mainDet === 2" cols="12" md="10">
                 Akun Detail - {{ this.data.coaCode }} - {{ this.data.coaName }} 
@@ -122,7 +122,7 @@
                           :filters="exportFilter"
                           :grid="grid"
                           :gridDefOpts="gridDefOpts"
-                          :title="mainDet === 1 ? `Detail - ${ this.data.coaName } - ${ this.data.currM }`
+                          :title="mainDet === 1 ? `Detail - ${ this.data.coaName } - ${ this.data.selectM }`
                             : mainDet === 2 ? `Akun Detail - ${ this.data.coaCode } - ${ this.data.coaName }`
                             : mainDet === 3 ? `Akun Detail - ${ this.data.coaCode } - ${ this.data.coaName } - Jurnal Detail - ${ this.data.vouFrom }` : ''"
                         ></export-excel>
@@ -210,111 +210,111 @@
             :height="grid.height"
             :items="grid.data"
             :class="['elevation-1', this.mainDet < 3 ? 'row-pointer' : '']"
+            disable-pagination
             disable-sort
             fixed-header
             hide-default-footer
-            disable-pagination
             @dblclick:row="clickDetail"
           >
-          <template v-slot:[`item.coaCode`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.coaCode }}
-            </span>
-          </template>
-          <template v-slot:[`item.coaName`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.coaName }}
-            </span>
-          </template>
-          <template v-slot:[`item.accCode`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.accCode }}
-            </span>
-          </template>
-          <template v-slot:[`item.accName`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.accName }}
-            </span>
-          </template>
-          <template v-slot:[`item.notes`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.notes }}
-            </span>
-          </template>
-          <template v-slot:[`item.debetOc`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.debetOc | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.creditOc`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.creditOc | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.endBalOc`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.endBalOc | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.debetIdr`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.debetIdr | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.creditIdr`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.creditIdr | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.beginBalIdr`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.beginBalIdr | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.endBalIdr`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.endBalIdr | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.isName`]="{ item }">
-            <span v-html="getSpaceName(item)" :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-            </span>
-          </template>
-          <template v-slot:[`item.isNowAmountIdr`]="{ item }">
-            <v-chip
-            color="white"
-            label
-            link
-            small
-            @click="clickDetailPeriod('now', item)"
-            >
-            {{ item.isNowAmountIdr | formatCurrency }}</v-chip>
-          </template>
-          <template v-slot:[`item.isPrevAmountIdr`]="{ item }">
-            <v-chip
-            color="white"
-            label
-            link
-            small
-            @click="clickDetailPeriod('prv', item)"
-            >
-            {{ item.isPrevAmountIdr | formatCurrency }}</v-chip>
-          </template>
-          <template v-slot:[`item.isYtdAmountIdr`]="{ item }">
-            <v-chip
-            color="white"
-            label
-            link
-            small
-            @click="clickDetailPeriod('ytd', item)"
-            >
-            {{ item.isYtdAmountIdr | formatCurrency }}</v-chip>
-          </template>
-          <template v-slot:[`item.amountIdr`]="{ item }">
-            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.amountIdr | formatCurrency }}
-            </span>
-          </template>
+            <template v-slot:[`item.coaCode`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.coaCode }}
+              </span>
+            </template>
+            <template v-slot:[`item.coaName`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.coaName }}
+              </span>
+            </template>
+            <template v-slot:[`item.accCode`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.accCode }}
+              </span>
+            </template>
+            <template v-slot:[`item.accName`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.accName }}
+              </span>
+            </template>
+            <template v-slot:[`item.notes`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.notes }}
+              </span>
+            </template>
+            <template v-slot:[`item.debetOc`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.debetOc | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.creditOc`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.creditOc | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.endBalOc`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.endBalOc | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.debetIdr`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.debetIdr | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.creditIdr`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.creditIdr | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.beginBalIdr`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.beginBalIdr | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.endBalIdr`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.endBalIdr | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.isName`]="{ item }">
+              <span v-html="getSpaceName(item)" :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              </span>
+            </template>
+            <template v-slot:[`item.isNowAmountIdr`]="{ item }">
+              <v-chip
+                color="white"
+                label
+                link
+                small
+                @click="clickDetailPeriod('now', item)"
+              >
+              {{ item.isNowAmountIdr | formatCurrency }}</v-chip>
+            </template>
+            <template v-slot:[`item.isPrevAmountIdr`]="{ item }">
+              <v-chip
+                color="white"
+                label
+                link
+                small
+                @click="clickDetailPeriod('prv', item)"
+              >
+              {{ item.isPrevAmountIdr | formatCurrency }}</v-chip>
+            </template>
+            <template v-slot:[`item.isYtdAmountIdr`]="{ item }">
+              <v-chip
+                color="white"
+                label
+                link
+                small
+                @click="clickDetailPeriod('ytd', item)"
+              >
+              {{ item.isYtdAmountIdr | formatCurrency }}</v-chip>
+            </template>
+            <template v-slot:[`item.amountIdr`]="{ item }">
+              <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.amountIdr | formatCurrency }}
+              </span>
+            </template>
           </v-data-table>
         </v-card>
       </v-col> 
@@ -702,12 +702,15 @@ export default {
     clickDetailPeriod(value, item) {
       this.data.oldPeriodFrom = this.data.dateFrom
       this.data.oldPeriodTo = this.data.dateTo 
+      this.data.selectM = this.data.currM
       if (value === 'prv') {
         this.data.dateFrom = format(startOfMonth(sub(parseISO(this.data.date), { months: 1})), 'yyyy-MM-dd')
         this.data.dateTo = format(endOfMonth(sub(parseISO(this.data.date), { months: 1})), 'yyyy-MM-dd')
+        this.data.selectM = this.data.lastM
       } else if (value === 'ytd') {
         this.data.dateFrom = format(startOfYear(parseISO(this.data.date)), 'yyyy-MM-dd')
         this.data.dateTo = format(endOfMonth(parseISO(this.data.date)), 'yyyy-MM-dd')
+        this.data.selectM = `Sejauh Thn. ${getYear(parseISO(this.data.date))}`
       }
       this.data.oldRptBy = this.data.rptBy
       this.data.acc = item.isCode
@@ -744,6 +747,7 @@ export default {
       this.data.dateTo = format(endOfMonth(parseISO(this.data.date)), 'yyyy-MM-dd')
       this.data.currM = format(parseISO(this.data.date), 'MMM-yyyy')
       this.data.lastM = format(sub(parseISO(this.data.date), { months: 1}), 'MMM-yyyy')
+      this.data.selectM = null
     },
     getSpaceName(item) {
       let space = ''
