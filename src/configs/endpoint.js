@@ -112,7 +112,8 @@ export default {
     itemRequest: 'mobile-item-request',
     salesCost: 'mobile-sales-cost',
     visitLog: 'mobile-visit-log',
-    paymentInvoice: 'mobile-payment-invoice'
+    paymentInvoice: 'mobile-payment-invoice',
+    order: 'mobile-order'
   },
   
   systemManagement:{

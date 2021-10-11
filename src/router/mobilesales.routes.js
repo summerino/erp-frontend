@@ -40,4 +40,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/mobile-sales/transaction/order',
+  name: 'mobile-order',
+  component: () => import(/* webpackChunkName: "mobile-order" */ '@/views/mobilesales/transaction/MobileOrder.vue'),
+  meta: {
+    authRequired: true
+  }
 }]

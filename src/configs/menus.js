@@ -86,8 +86,9 @@ export default {
   mobileCustomer: 113,
   mobileItemRequest: 115,
   mobileCost: 116,
-  mobileVisitLog: 117,
-  mobilePaymentInvoice: 118, 
+  mobileVisitLog: 118,
+  mobilePaymentInvoice: 119,
+  mobileOrder: 120, 
 
   // System Management
   companyProfile: 75,
