@@ -74,6 +74,43 @@
           </v-container>
         </v-form>
       </v-card-text>
+      <v-divider></v-divider>
+      <v-card-title class="indigo--text text--lighten-2 pt-1">
+        <v-row no-gutters>
+          <v-col cols="12" md="12">
+            Sejarah Posting
+          </v-col>
+        </v-row>
+      </v-card-title>
+      <v-card-text>
+        <v-data-table  
+          :headers="grid.columns"
+          :height="grid.height"
+          :items="grid.data"
+          class="elevation-1"
+          disable-sort
+          fixed-header
+          hide-default-footer
+          disable-pagination
+        >
+          <template v-slot:[`item.isPosted`]="{ item }">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon 
+                  v-bind="attrs" 
+                  v-on="on" 
+                  :color="item.isPosted === true ? 'green' : 'red'"
+                >
+                  {{ item.isPosted === true ? 'mdi-toggle-switch-outline' : 'mdi-toggle-switch-off-outline' }}
+                </v-icon>
+              </template>
+              <span class="text-caption">
+                  {{ item.isPosted === true ? 'Sudah dipost' : 'Belum dipost' }}
+              </span>
+            </v-tooltip>
+          </template>
+        </v-data-table>
+      </v-card-text>
     </v-card>
   </div>
 </template>
@@ -87,6 +124,14 @@ import auth from '@/services/authorization.service'
 
 export default {
   data: () => ({
+    grid: {
+      height: 300,
+      columns: [
+        { text: 'Periode', value: 'period', divider: true, width: '50%'},
+        { text: 'Status Post', value: 'isPosted', width: '50%' }
+      ],
+      data: []
+    },
     menu: {
       date: false
     },
@@ -96,6 +141,7 @@ export default {
 
   created: function () {
     this.reset()
+    this.getHistoryPost()
     auth.getAction(this.endpoint, this.menuId.postingJournal)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -111,6 +157,15 @@ export default {
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
+  },
+
+  watch: {
+    'data': {
+      handler() {
+        this.getHistoryPost()
+      },
+      deep: true
+    }
   },
 
   computed: {
@@ -145,6 +200,12 @@ export default {
       if (result.success) {
         this.$store.dispatch('app/showSuccess', result.message)
       }
+    },
+    getHistoryPost() {
+      api.create('journal/lists', this.data)
+        .then(response => {
+          this.grid.data = response.data.tableData
+        })
     }
   }
 }
