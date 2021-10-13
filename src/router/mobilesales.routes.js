@@ -13,6 +13,13 @@ export default [{
     authRequired: true
   }
 }, {
+  path: '/mobile-sales/master/payment-method',
+  name: 'mobile-payment-method',
+  component: () => import(/* webpackChunkName: "mobile-payment-method" */ '@/views/mobilesales/master/MobilePaymentMethod.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
   path: '/mobile-sales/transaction/item-request',
   name: 'mobile-item-request',
   component: () => import(/* webpackChunkName: "mobile-item-request" */ '@/views/mobilesales/transaction/MobileItemRequest.vue'),
