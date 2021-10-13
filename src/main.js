@@ -29,8 +29,6 @@ import './plugins/v-currency-field'
 import './plugins/vue-google-maps'
 import './plugins/vue-shortkey'
 import './plugins/vue-head'
-import './plugins/apexcharts'
-import './plugins/echarts'
 import './plugins/animate'
 import './plugins/clipboard'
 
