@@ -41,16 +41,16 @@ export default [{
     authRequired: true
   }
 }, {
-  path: '/mobile-sales/transaction/visit-payment',
-  name: 'mobile-payment-invoice',
-  component: () => import(/* webpackChunkName: "mobile-payment-invoice" */ '@/views/mobilesales/transaction/MobilePaymentInvoice.vue'),
+  path: '/mobile-sales/transaction/visit-order',
+  name: 'mobile-order',
+  component: () => import(/* webpackChunkName: "mobile-order" */ '@/views/mobilesales/transaction/MobileOrder.vue'),
   meta: {
     authRequired: true
   }
 }, {
-  path: '/mobile-sales/transaction/order',
-  name: 'mobile-order',
-  component: () => import(/* webpackChunkName: "mobile-order" */ '@/views/mobilesales/transaction/MobileOrder.vue'),
+  path: '/mobile-sales/transaction/visit-payment',
+  name: 'mobile-payment-invoice',
+  component: () => import(/* webpackChunkName: "mobile-payment-invoice" */ '@/views/mobilesales/transaction/MobilePaymentInvoice.vue'),
   meta: {
     authRequired: true
   }

@@ -118,7 +118,8 @@ export default {
   },
 
   mobileWarehouse: {
-    receiveItem: 'mobile-receive-item'
+    receiveItem: 'mobile-receive-item',
+    deliveryItem: 'mobile-delivery-item'
   },
   
   systemManagement:{
