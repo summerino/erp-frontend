@@ -218,35 +218,37 @@ export default {
       this.reset()
       this.dialog = true
       this.accounts = accounts
-      for (let i = 0; i < item.discPromo.length; i++) {
-        if (i === 0) {
-          if (item.discPromo[i].promoMethod === 1) {
-            item.discPromo[i].nettPrice = item.unitPrice - (item.unitPrice * (item.discPromo[i].value / 100))
+      if (item.discPromo) {
+        for (let i = 0; i < item.discPromo.length; i++) {
+          if (i === 0) {
+            if (item.discPromo[i].promoMethod === 1) {
+              item.discPromo[i].nettPrice = item.unitPrice - (item.unitPrice * (item.discPromo[i].value / 100))
+            } else {
+              item.discPromo[i].nettPrice = item.unitPrice - item.discPromo[i].value
+            }
+            item.nettPrice = item.discPromo[i].nettPrice
           } else {
-            item.discPromo[i].nettPrice = item.unitPrice - item.discPromo[i].value
+            if (item.discPromo[i].promoMethod === 1) {
+              item.discPromo[i].nettPrice = item.nettPrice - (item.unitPrice * (item.discPromo[i].value / 100))
+            } else {
+              item.discPromo[i].nettPrice = item.nettPrice - item.discPromo[i].value
+            }
+            item.nettPrice = item.discPromo[i].nettPrice
           }
-          item.nettPrice = item.discPromo[i].nettPrice
-        } else {
-          if (item.discPromo[i].promoMethod === 1) {
-            item.discPromo[i].nettPrice = item.nettPrice - (item.unitPrice * (item.discPromo[i].value / 100))
+          if (item.discPromo[i].isPercentage) {
+            item.discPromo[i].promoMethod = 1
           } else {
-            item.discPromo[i].nettPrice = item.nettPrice - item.discPromo[i].value
+            item.discPromo[i].promoMethod = 2
           }
-          item.nettPrice = item.discPromo[i].nettPrice
+          if (item.discPromo[i].promoCode) {
+            item.discPromo[i].fromPromo = true
+          } else {
+            item.discPromo[i].fromPromo = false
+          }
         }
-        if (item.discPromo[i].isPercentage) {
-          item.discPromo[i].promoMethod = 1
-        } else {
-          item.discPromo[i].promoMethod = 2
-        }
-        if (item.discPromo[i].promoCode) {
-          item.discPromo[i].fromPromo = true
-        } else {
-          item.discPromo[i].fromPromo = false
-        }
+        this.grid.data = item.discPromo
       }
       this.data = item
-      this.grid.data = item.discPromo
       setTimeout(() => {
         this.grid.height = this.$refs.dialog.$refs.content.clientHeight - 158
       }, 100)
