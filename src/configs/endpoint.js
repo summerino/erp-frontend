@@ -116,6 +116,10 @@ export default {
     order: 'mobile-order',
     paymentInvoice: 'mobile-payment-invoice'
   },
+
+  mobileWarehouse: {
+    receiveItem: 'mobile-receive-item'
+  },
   
   systemManagement:{
     companyProfile: 'company-profile',

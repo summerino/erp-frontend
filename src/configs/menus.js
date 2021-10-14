@@ -91,6 +91,9 @@ export default {
   mobileOrder: 120, 
   mobilePaymentInvoice: 119,
 
+  // Mobile Warehouse
+  mobileReceiveItem: 124,
+
   // System Management
   companyProfile: 75,
   user: 51,
