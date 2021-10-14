@@ -1750,7 +1750,8 @@ export default {
           totTax: 0,
           totDPP: 0,
           notes: null,
-          state: 'A'
+          state: 'A',
+          discPromo: []
         }
         this.gridItem.data.push(item)
 
@@ -2379,10 +2380,27 @@ export default {
             }
           }
         }
-        gridData[k].discPromo = discPromo
-        gridData[k].disc = totalDisc 
-        gridData[k].nettPrice = gridData[k].unitPrice - totalDisc 
-        gridData[k].total =  gridData[k].nettPrice * gridData[k].qty
+        
+        if (discPromo.length > 0 && gridData[k].discPromo.length === 0) {
+          gridData[k].discPromo = discPromo
+          gridData[k].disc = totalDisc 
+          gridData[k].nettPrice = gridData[k].unitPrice - totalDisc 
+          gridData[k].total =  gridData[k].nettPrice * gridData[k].qty
+        } else if (discPromo.length > 0 && gridData[k].discPromo.length > 0) {
+          for (let ip = 0; ip < discPromo.length; ip++) {
+            const value = gridData[k].discPromo.find(x => x.promoCode === discPromo[ip].promoCode)
+            if (value !== null) {
+              discPromo.splice(ip, 1)
+            }
+          }
+          
+          if (discPromo.length > 0) {
+            gridData[k].discPromo.push(discPromo)
+            gridData[k].disc += _sumBy(discPromo, 'totalDisc') 
+            gridData[k].nettPrice += gridData[k].unitPrice - _sumBy(discPromo, 'totalDisc') 
+            gridData[k].total +=  gridData[k].nettPrice * gridData[k].qty
+          }
+        }
       }
       this.gridBonus.data = bonusPromo
       this.calcPrice()    
