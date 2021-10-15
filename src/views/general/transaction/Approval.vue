@@ -226,7 +226,7 @@ export default {
       })
         .then(response => {
           this.grid.data = response.data.tableData
-          this.grid.total = response.data.rowCount 
+          this.grid.total = response.data.rowCount
         })
     },   
     async save() {
