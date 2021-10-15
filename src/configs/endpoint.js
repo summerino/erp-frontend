@@ -119,7 +119,8 @@ export default {
 
   mobileWarehouse: {
     receiveItem: 'mobile-receive-item',
-    deliveryItem: 'mobile-delivery-item'
+    deliveryItem: 'mobile-delivery-item',
+    transferStock: 'mobile-transfer-stock'
   },
   
   systemManagement:{
