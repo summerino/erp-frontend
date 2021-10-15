@@ -1126,9 +1126,6 @@ export default {
           this.$refs.form.resetValidation()
         }, 0)
       }
-
-      // Define column
-      this.typeChange()
     },
     advancedSearch() {
       this.grid.search = null
@@ -1284,6 +1281,9 @@ export default {
       this.reset(false)
       this.data.action = 'add'
 
+      // Define column
+      this.bindColumn()
+
       setTimeout(() => {
         // Set focus to return code field
         this.$refs.code.focus()
@@ -1304,6 +1304,9 @@ export default {
         originalDate: item.date,
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
+
+      // Define column
+      this.bindColumn()
 
       // get customer data
       this.custCodeChange()
@@ -1492,8 +1495,7 @@ export default {
         this.gridDiffItem.data.splice(idx, 1)
       }
     },
-    typeChange() {
-      
+    bindColumn() {
       if (this.data.type === 1) {
         this.gridItem.columns = [
           { value: 'action', sortable: false, divider: true, width: '90' },
@@ -1528,6 +1530,9 @@ export default {
           { text: 'Total Harga', value: 'total', align: 'right', divider: true, width: '120' }
         ]
       }
+    },
+    typeChange() {
+      this.bindColumn()
       this.data.includeTax = this.defTaxInc
       this.data.noTax = this.defNonTax
       this.gridItem.data = []

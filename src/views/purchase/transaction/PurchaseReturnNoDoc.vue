@@ -1132,9 +1132,6 @@ export default {
           this.$refs.form.resetValidation()
         }, 0)
       }
-
-      // Define column
-      this.bindColumn()
     },
     advancedSearch() {
       this.grid.search = null
@@ -1285,6 +1282,9 @@ export default {
       this.dialog.add = true
       this.reset(false)
       this.data.action = 'add'
+      
+      // Define column
+      this.bindColumn()
 
       setTimeout(() => {
         // Set focus to return code field
@@ -1306,6 +1306,9 @@ export default {
         originalDate: item.date,
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
+
+      // Define column
+      this.bindColumn()
 
       // Get supplier details
       this.supCodeChange()
