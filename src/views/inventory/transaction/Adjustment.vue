@@ -686,7 +686,7 @@ export default {
       data: [],
       options: {
         sortBy: ['code'],
-        sortDesc: [false]
+        sortDesc: [true]
       },
       total: 0,
       search: null
