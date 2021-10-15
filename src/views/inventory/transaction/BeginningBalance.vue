@@ -780,7 +780,12 @@ export default {
     getItemLists() {      
       api.getAll(this.endpoint.inventory.item.item, {
         params: {
-          warehouseCode: this.data.warehouseCode
+          warehouseCode: this.data.warehouseCode,
+          filters: JSON.stringify([{
+            field: 'isActive',
+            operator: 'eq',
+            keyword: true
+          }])
         }
       })
         .then(response => {

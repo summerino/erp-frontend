@@ -1277,15 +1277,13 @@ export default {
     },
     getItemLists() {
       api.getAll(this.endpoint.inventory.item.item, {
-        // params: {
-        //   param: 'item',
-        //   fieldNames: 'id,initial,name,uomId,uomBuyId,buyPrice,purchaseTaxId',
-        //   sorts: JSON.stringify([{
-        //     field: 'initial',
-        //     direction: 'asc'
-        //   }]),
-        //   includeMetaData: false
-        // }
+        params: {
+          filters: JSON.stringify([{
+            field: 'isActive',
+            operator: 'eq',
+            keyword: true
+          }])
+        }
       })  
         .then(response => {
           this.items = response.data.tableData

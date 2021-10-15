@@ -912,7 +912,15 @@ export default {
         })
     },
     getItemLists() {
-      api.getAll(this.endpoint.inventory.item.item)  
+      api.getAll(this.endpoint.inventory.item.item, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'isActive',
+            operator: 'eq',
+            keyword: true
+          }])
+        }
+      })  
         .then(response => {
           this.items = response.data.tableData
         })

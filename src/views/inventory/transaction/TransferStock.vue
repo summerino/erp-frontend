@@ -1081,7 +1081,7 @@ export default {
         api.getAll(this.endpoint.inventory.item.item, {
           params: {
             filters: JSON.stringify([{
-              field: 'isactive',
+              field: 'isActive',
               operator: 'eq',
               keyword: true
             }])

@@ -526,12 +526,6 @@ export default {
           this.grid.total = response.data.rowCount
         })
     },
-    getItemLists() {
-      api.getAll(this.endpoint.inventory.item.item, { id : '8'})  
-        .then(response => {
-          this.items = response.data.tableData
-        })
-    },
     close() {
       this.dialog.add = false
     },
