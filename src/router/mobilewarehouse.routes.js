@@ -5,4 +5,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/mobile-warehouse/transaction/delivery-item',
+  name: 'mobile-delivery-item',
+  component: () => import(/* webpackChunkName: "mobile-delivery-item" */ '@/views/mobilewarehouse/transaction/MobileDeliveryItem.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
