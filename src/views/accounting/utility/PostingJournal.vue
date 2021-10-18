@@ -93,6 +93,9 @@
           hide-default-footer
           disable-pagination
         >
+          <template v-slot:[`item.postedDate`]="{ item }">
+            {{ item.postedDate | formatDate('dd-MMM-yyyy') }}
+          </template>
           <template v-slot:[`item.isPosted`]="{ item }">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -128,6 +131,7 @@ export default {
       height: 300,
       columns: [
         { text: 'Periode', value: 'period', divider: true, width: '50%'},
+        { text: 'Tanggal Post', value: 'postedDate', divider: true, width: '50%'},
         { text: 'Status Post', value: 'isPosted', width: '50%' }
       ],
       data: []
@@ -199,6 +203,7 @@ export default {
 
       if (result.success) {
         this.$store.dispatch('app/showSuccess', result.message)
+        this.getHistoryPost()
       }
     },
     getHistoryPost() {
