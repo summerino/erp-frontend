@@ -94,6 +94,7 @@ export default {
   // Mobile Warehouse
   mobileReceiveItem: 124,
   mobileDeliveryItem: 125,
+  mobileTransferStock: 126,
 
   // System Management
   companyProfile: 75,

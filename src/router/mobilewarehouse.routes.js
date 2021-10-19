@@ -12,4 +12,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/mobile-warehouse/transaction/transfer-stock',
+  name: 'mobile-transfer-stock',
+  component: () => import(/* webpackChunkName: "mobile-transfer-stock" */ '@/views/mobilewarehouse/transaction/MobileTransferStock.vue'),
+  meta: {
+    authRequired: true
+  }
 }]

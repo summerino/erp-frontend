@@ -4,7 +4,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row no-gutters>
           <v-col cols="12" md="3">
-            Pengeluaran Barang
+            Transfer Stok
           </v-col>
           <v-col cols="12" md="5" >
             <v-row no-gutters>
@@ -43,7 +43,7 @@
                 :filters="filter"
                 :grid="grid"
                 :gridDefOpts="gridDefOpts"
-                title="Daftar Pengeluaran Barang"
+                title="Daftar Transfer Stok"
               ></export-excel>
             </v-row>
           </v-col>
@@ -165,7 +165,7 @@
           <v-btn icon dark @click="close">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Pengeluaran Barang</v-toolbar-title>
+          <v-toolbar-title>Transfer Stok</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-tooltip bottom>
@@ -249,8 +249,8 @@
 
                     <v-row no-gutters>
                       <v-text-field
-                          v-model="data.dlvPlanCode"
-                          label="Kode Rencana Pengiriman"
+                          v-model="data.transCode"
+                          label="Kode Transfer Stok"
                           class="mt-0"
                           readonly
                         ></v-text-field>
@@ -432,7 +432,7 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '120' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
-        { text: 'Kode Rencana Pengiriman', value: 'dlvPlanCode', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Kode Transfer Stok', value: 'transCode', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
@@ -460,7 +460,7 @@ export default {
   created: function () {
     this.reset()
     this.getList()
-    auth.getAction(this.endpoint, this.menuId.mobileDeliveryItem)
+    auth.getAction(this.endpoint, this.menuId.mobileTransferStock)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -474,7 +474,7 @@ export default {
       }, {
         text: 'Transaksi'
       }, {
-        text: 'Pengeluaran Barang'
+        text: 'Transfer Stok'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
@@ -544,7 +544,7 @@ export default {
         keyword: ['A', 'REJ']
       })
 
-      api.getAll(this.endpoint.mobileWarehouse.deliveryItem, {
+      api.getAll(this.endpoint.mobileWarehouse.transferStock, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -581,7 +581,7 @@ export default {
       }
 
       // Get item details
-      api.getAll(`${this.endpoint.mobileWarehouse.deliveryItem}/item`, {
+      api.getAll(`${this.endpoint.mobileWarehouse.transferStock}/item`, {
         params: { code: item.code }
       })
         .then(response => {
@@ -604,7 +604,7 @@ export default {
       data.itemDetails = this.gridItem.data
       
       let result = { success: false, message: '' }
-      const resp = await api.update(this.endpoint.mobileWarehouse.deliveryItem, data.code, data)
+      const resp = await api.update(this.endpoint.mobileWarehouse.transferStock, data.code, data)
       result = resp.data
 
       if (result.success) {
@@ -622,7 +622,7 @@ export default {
     },
     async approve() {
       let result = { success: false, message: '' }
-      const resp = await api.updatemaster(`${this.endpoint.mobileWarehouse.deliveryItem}/approve`, this.selected)
+      const resp = await api.updatemaster(`${this.endpoint.mobileWarehouse.transferStock}/approve`, this.selected)
       result = resp.data
       if (result.success) {
         this.$store.dispatch('app/showSuccess', result.message)
@@ -632,7 +632,7 @@ export default {
     },
     async reject() {
       let result = { success: false, message: '' }
-      const resp = await api.updatemaster(`${this.endpoint.mobileWarehouse.deliveryItem}/reject`, this.selected)
+      const resp = await api.updatemaster(`${this.endpoint.mobileWarehouse.transferStock}/reject`, this.selected)
       result = resp.data
       if (result.success) {
         this.$store.dispatch('app/showSuccess', result.message)
