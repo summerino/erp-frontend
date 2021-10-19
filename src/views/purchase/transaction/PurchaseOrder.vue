@@ -825,7 +825,7 @@
                           label="Persen Diskon"
                           suffix="%"
                           class="text-right mt-0"
-                          @change="discPercentChange"
+                          @blur="discPercentChange()"
                         ></v-currency-field>
                       </v-col>
                       <v-col cols="8" class="pl-1">
