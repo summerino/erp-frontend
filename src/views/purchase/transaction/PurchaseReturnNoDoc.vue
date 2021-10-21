@@ -1656,7 +1656,7 @@ export default {
       const tax = this.taxes.find(t => t.id === item.taxId)
       if (tax) {
         if (this.data.includeTax) {
-          item.taxAmount = Math.round((item.unitPrice) - ((item.unitPrice) / (1 + (tax.rate / 100))))
+          item.taxAmount = (item.unitPrice) - ((item.unitPrice) / (1 + (tax.rate / 100)))
           item.taxAmountTemp = item.taxAmount
           item.nettPrice = item.unitPrice
           item.dpp = item.unitPrice - item.taxAmount
@@ -1664,7 +1664,7 @@ export default {
           item.nettPrice = item.unitPrice + item.taxAmount
           item.dpp = item.unitPrice
         } else {
-          item.taxAmount = Math.round((item.unitPrice) * (tax.rate / 100))
+          item.taxAmount = (item.unitPrice) * (tax.rate / 100)
           item.taxAmountTemp = item.taxAmount
           item.nettPrice = item.unitPrice + item.taxAmount
           item.dpp = item.unitPrice
@@ -1672,7 +1672,6 @@ export default {
       }
     },
     calcItemPrice(item, calcPrice = true) {
-      
       this.calcItemTax(item)
       item.total = item.qty * item.nettPrice
       item.totTax = item.qty * item.taxAmount
@@ -1689,15 +1688,13 @@ export default {
       this.calcPrice()
     },
     calcPrice() {
-      
-
       this.data.subTotalOut = _sumBy(this.gridItem.data, 'total')
-      this.data.taxAmountOut = _sumBy(this.gridItem.data, 'totTax')
-      this.data.dppOut = _sumBy(this.gridItem.data, 'totDPP')
+      this.data.taxAmountOut = Math.round(_sumBy(this.gridItem.data, 'totTax'))
+      this.data.dppOut = Math.round(_sumBy(this.gridItem.data, 'totDPP'))
 
       this.data.subTotalIn = _sumBy(this.gridDiffItem.data, 'total')
-      this.data.taxAmountIn = _sumBy(this.gridDiffItem.data, 'totTax')
-      this.data.dppIn = _sumBy(this.gridDiffItem.data, 'totDPP')
+      this.data.taxAmountIn = Math.round(_sumBy(this.gridDiffItem.data, 'totTax'))
+      this.data.dppIn = Math.round(_sumBy(this.gridDiffItem.data, 'totDPP'))
       
       this.data.taxAmount = this.data.taxAmountIn + this.data.taxAmountOut
       this.data.dpp = this.data.dppOut + this.data.dppIn

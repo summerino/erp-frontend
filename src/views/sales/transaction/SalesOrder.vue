@@ -1900,11 +1900,11 @@ export default {
       const tax = this.taxes.find(t => t.id === item.taxId)
       if (tax) {
         if (this.data.includeTax) {
-          item.taxAmount = Math.round((item.unitPrice - item.disc) - ((item.unitPrice - item.disc) / (1 + (tax.rate / 100))))
+          item.taxAmount = (item.unitPrice - item.disc) - ((item.unitPrice - item.disc) / (1 + (tax.rate / 100)))
           item.nettPrice = item.unitPrice - item.disc
           item.dpp = item.unitPrice - item.disc - item.taxAmount
         } else {
-          item.taxAmount = Math.round((item.unitPrice - item.disc) * (tax.rate / 100))
+          item.taxAmount = (item.unitPrice - item.disc) * (tax.rate / 100)
           item.nettPrice = item.unitPrice - item.disc + item.taxAmount
           item.dpp = item.unitPrice - item.disc
         }
@@ -1936,8 +1936,8 @@ export default {
     },
     calcPrice() {
       this.data.subTotal = _sumBy(this.gridItem.data, 'total')
-      this.data.taxAmount = _sumBy(this.gridItem.data, 'totTax')
-      this.data.dpp = _sumBy(this.gridItem.data, 'totDPP') - this.data.finalDisc
+      this.data.taxAmount = Math.round(_sumBy(this.gridItem.data, 'totTax'))
+      this.data.dpp = Math.round(_sumBy(this.gridItem.data, 'totDPP')) - this.data.finalDisc
       this.calcGrandTotal()
     },
     calcGrandTotal() {
