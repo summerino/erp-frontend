@@ -811,7 +811,8 @@
     <report-viewer ref="reportViewer"></report-viewer>
     <find-po
       ref="findPO"
-      :mark-exclude="['A', 'V', 'CLS']"
+      :invCode="data.code"
+      caller="inv"
       @dblclick:row="bindPOData"
     ></find-po>
     <find-rcv
@@ -1313,8 +1314,8 @@ export default {
             keyword: this.data.poCode
           }, {
             field: 'mark',
-            operator: 'doesnotcontain',
-            keyword: ['A', 'V', 'CLS']
+            operator: 'contains',
+            keyword: ['PR', 'CMP']
           }])
         }
       })

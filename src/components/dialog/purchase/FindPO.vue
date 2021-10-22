@@ -129,10 +129,9 @@ import api from '@/services/axios.service'
 
 export default {
   props: {
-    MarkExclude: {
-      type: Array,
-      required: true
-    }
+    caller: String,
+    MarkExclude: Array,
+    invCode: String
   },
 
   data() {
@@ -189,9 +188,19 @@ export default {
       this.dialog = false
     },
     search() {
-      api.getAll(this.endpoint.purchase.order, {
-        params: {
-          filters: JSON.stringify([{
+      let url = this.endpoint.purchase.order
+      let params = {}
+
+      if (this.caller === 'inv') {
+        url += '/in-complete-invoice'
+        params = {
+          searchBy: this.data.by,
+          search: this.data.value,
+          invCode: this.invCode
+        }
+      } else {
+        params = {
+          filters: JSON.stringify({
             field: this.data.by,
             operator: this.data.by === 'date' ? 'eq' : 'contains',
             keyword: this.data.value
@@ -199,12 +208,16 @@ export default {
             field: 'mark',
             operator: 'doesnotcontain',
             keyword: this.MarkExclude
-          }]),
+          }),
           sorts: JSON.stringify([{
             field: this.data.by,
             direction: 'asc'
           }])
         }
+      }
+
+      api.getAll(url, {
+        params: params
       })
         .then(response => {
           this.grid.data = response.data.tableData

@@ -840,7 +840,8 @@
     <report-viewer ref="reportViewer"></report-viewer>
     <find-so
       ref="findSO"
-      :mark-exclude="['A', 'V', 'CLS']"
+      :invCode="data.code"
+      caller="inv"
       @dblclick:row="bindSOData"
     ></find-so>
     <find-do
