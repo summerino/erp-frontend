@@ -1782,6 +1782,7 @@ export default {
 
         // Calc Promo
         await this.calcPromo()
+        
         // Calc price
         this.calcPrice()
       }
@@ -1899,8 +1900,10 @@ export default {
     calcItemTax(item) {
       const tax = this.taxes.find(t => t.id === item.taxId)
       if (tax) {
+        // console.log(item.disc)
         if (this.data.includeTax) {
           item.taxAmount = (item.unitPrice - item.disc) - ((item.unitPrice - item.disc) / (1 + (tax.rate / 100)))
+          // console.log(item.taxAmount)
           item.nettPrice = item.unitPrice - item.disc
           item.dpp = item.unitPrice - item.disc - item.taxAmount
         } else {
@@ -2388,12 +2391,14 @@ export default {
             }
           }
         }
-        
+
+        console.log(gridData[k])
         if (discPromo.length > 0 && gridData[k].discPromo.length === 0) {
           gridData[k].discPromo = discPromo
-          gridData[k].disc = totalDisc 
-          gridData[k].nettPrice = gridData[k].unitPrice - totalDisc 
-          gridData[k].total =  gridData[k].nettPrice * gridData[k].qty
+          gridData[k].disc = totalDisc
+          this.calcItemPrice(gridData[k], false)
+          // gridData[k].nettPrice = gridData[k].unitPrice - totalDisc 
+          // gridData[k].total =  gridData[k].nettPrice * gridData[k].qty
         } else if (discPromo.length > 0 && gridData[k].discPromo.length > 0) {
           for (let ip = 0; ip < discPromo.length; ip++) {
             const value = gridData[k].discPromo.find(x => x.promoCode === discPromo[ip].promoCode)
@@ -2405,8 +2410,9 @@ export default {
           if (discPromo.length > 0) {
             gridData[k].discPromo.push(discPromo)
             gridData[k].disc += _sumBy(discPromo, 'totalDisc') 
-            gridData[k].nettPrice += gridData[k].unitPrice - _sumBy(discPromo, 'totalDisc') 
-            gridData[k].total +=  gridData[k].nettPrice * gridData[k].qty
+            this.calcItemPrice(gridData[k], false)
+            // gridData[k].nettPrice += gridData[k].unitPrice - _sumBy(discPromo, 'totalDisc') 
+            // gridData[k].total +=  gridData[k].nettPrice * gridData[k].qty
           }
         }
       }
