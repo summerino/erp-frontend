@@ -3,10 +3,10 @@
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row no-gutters>
-          <v-col cols="12" md="2">
+          <v-col cols="12" md="3">
             Saldo Awal Persediaan
           </v-col>
-          <v-col cols="12" md="6" >
+          <v-col cols="12" md="5">
             <v-row no-gutters>
               <v-text-field
                 append-icon="mdi-magnify"
@@ -256,7 +256,6 @@
                           transition="scale-transition"
                           min-width="290px"
                           offset-y
-                          :disabled="!auth.allowChangeDate"
                         >
                           <template v-slot:activator="{ on, attrs }">
                             <v-text-field
@@ -272,7 +271,7 @@
                           </template>
                           <v-date-picker
                             v-model="data.date"
-                            :min="dataStartDate"
+                            :max="dataStartDate"
                             no-title
                             scrollable
                             @change="menu.date = false"
@@ -567,7 +566,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { format, parseISO }  from 'date-fns'
+import { add, format, parseISO }  from 'date-fns'
 
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
@@ -708,7 +707,7 @@ export default {
       this.data = {
         code: null,
         type: 1,
-        date: format(new Date(), 'yyyy-MM-dd'),
+        date: format(parseISO(this.dataStartDate), 'yyyy-MM-dd'),
         warehouseCode: null,
         notes: ''
       }
@@ -774,7 +773,7 @@ export default {
         }
       })
         .then(response => {
-          this.dataStartDate = response.data.tableData[0].value
+          this.dataStartDate = format(add(parseISO(response.data.tableData[0].value), { days: -1 }), 'yyyy-MM-dd')
         })
     },
     getItemLists() {      
