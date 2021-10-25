@@ -200,7 +200,7 @@ export default {
         }
       } else {
         params = {
-          filters: JSON.stringify({
+          filters: JSON.stringify([{
             field: this.data.by,
             operator: this.data.by === 'date' ? 'eq' : 'contains',
             keyword: this.data.value
@@ -208,7 +208,7 @@ export default {
             field: 'mark',
             operator: 'doesnotcontain',
             keyword: this.MarkExclude
-          }),
+          }]),
           sorts: JSON.stringify([{
             field: this.data.by,
             direction: 'asc'
