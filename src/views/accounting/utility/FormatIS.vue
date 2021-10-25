@@ -146,7 +146,7 @@
       </v-card-text>
     </v-card>
 
-    <v-card v-else-if="!main && !sub" >
+    <v-card v-else-if="!main && !sub">
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="4">
@@ -157,50 +157,36 @@
               v-if="data.action === 'edit'"
               class="text-caption mr-1"
             >
-              Tanggal Diperbarui : {{ data.updatedDate }} oleh {{ data.updatedInitial }}
+              Tanggal Diperbarui: {{ data.updatedDate }} oleh {{ data.updatedInitial }}
             </label>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  v-bind="attrs"
-                  v-on="on"
-                  v-shortkey="['ctrl', 'enter']"
-                  color="blue darken-2"
-                  class="font-weight-regular"
-                  dark
-                  small
-                  tile
-                  @click="save"
-                  @shortkey="save"
-                >
-                  <v-icon left>
-                    mdi-content-save
-                  </v-icon>
-                  Simpan
-                </v-btn>
-              </template>
-              <span class="text-caption">(Ctrl + Enter)</span>
-            </v-tooltip>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  v-bind="attrs"
-                  v-on="on"
-                  v-shortkey="['esc']"
-                  class="font-weight-regular ml-1"
-                  small
-                  tile
-                  @click="back"
-                  @shortkey="back"
-                >
-                  <v-icon left>
-                    mdi-undo-variant
-                  </v-icon>
-                  Kembali
-                </v-btn>
-              </template>
-              <span class="text-caption">(Esc)</span>
-            </v-tooltip>
+            <v-btn
+              v-shortkey="['ctrl', 'enter']"
+              color="blue darken-2"
+              class="font-weight-regular"
+              dark
+              small
+              tile
+              @click="save"
+              @shortkey="save"
+            >
+              <v-icon left>
+                mdi-content-save
+              </v-icon>
+              Simpan
+            </v-btn>
+            <v-btn
+              v-shortkey="['esc']"
+              class="font-weight-regular ml-1"
+              small
+              tile
+              @click="back"
+              @shortkey="back"
+            >
+              <v-icon left>
+                mdi-undo-variant
+              </v-icon>
+              Kembali
+            </v-btn>
           </v-col>
         </v-row>
       </v-card-title>
@@ -343,33 +329,26 @@
       </v-card-text>
     </v-card>
 
-    <v-card v-else-if="!main && sub" >
+    <v-card v-else-if="!main && sub">
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row dense>
           <v-col cols="12" md="8">
             <span>Subtotal - {{data.name}}</span>
           </v-col>
           <v-col cols="12" md="4" class="text-right">
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  v-bind="attrs"
-                  v-on="on"
-                  v-shortkey="['esc']"
-                  class="font-weight-regular ml-1"
-                  small
-                  tile
-                  @click="subBack"
-                  @shortkey="subBack"
-                >
-                  <v-icon left>
-                    mdi-undo-variant
-                  </v-icon>
-                  Kembali
-                </v-btn>
-              </template>
-              <span class="text-caption">(Esc)</span>
-            </v-tooltip>
+            <v-btn
+              v-shortkey="['esc']"
+              class="font-weight-regular"
+              small
+              tile
+              @click="subBack"
+              @shortkey="subBack"
+            >
+              <v-icon left>
+                mdi-undo-variant
+              </v-icon>
+              Kembali
+            </v-btn>
           </v-col>
         </v-row>
       </v-card-title>
