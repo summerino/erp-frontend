@@ -11,7 +11,7 @@
         max-height="64"
         dark
       >
-        <v-toolbar-title>{{ this.title }} Peta</v-toolbar-title>
+        <v-toolbar-title>Peta</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn
           icon
@@ -28,11 +28,11 @@
             :center="center"
             style="width:100%  height: 600px"
           >
-              <gmap-marker
-                :key="index"
-                v-for="(m, index) in locationMarkers"
-                :position="m.position"
-              ></gmap-marker>
+            <gmap-marker
+              :key="index"
+              v-for="(m, index) in locationMarkers"
+              :position="m.position"
+            ></gmap-marker>
           </gmap-map>
         </div>
       </v-card-text>
@@ -41,12 +41,8 @@
 </template>
 
 <script>
-
-
 export default {
-
   data: () => ({
-    title: null,
     locationMarkers: [],
     dialog: false,
     center: null,
@@ -54,6 +50,7 @@ export default {
       width: 800
     }
   }),
+
   methods:{
     show(lat, lon) {
       this.dialog = true
@@ -69,17 +66,16 @@ export default {
     }
   }
 }
-
 </script>
+
 <style lang="scss">
-  .vue-map-container,
-  .vue-map-container .vue-map {
-      width: 100%;
-      height: 100%;
-  }
-  .custom-map
-  {
-    width : 100%;
-    height : 100%;
-  }
+.vue-map-container,
+.vue-map-container .vue-map {
+  width: 100%;
+  height: 100%;
+}
+.custom-map {
+  width : 100%;
+  height : 100%;
+}
 </style>

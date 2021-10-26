@@ -112,7 +112,7 @@
               </v-col>
             </v-row>
           </v-card-title>
-          <v-card-text class="pa-2">
+          <v-card-text v-if="this.filter" class="pa-2">
             <v-row no-gutters>
               <v-col cols="12" md="4" class="pl-1">
                 <v-menu
@@ -224,8 +224,8 @@
             :sort-desc="grid.options.sortDesc"
             :class="['elevation-1', this.data.type === 2 ? 'row-pointer' : !this.data.isSM ? 'row-pointer' : '']"
             fixed-header
-            hide-default-footer
             disable-pagination
+            hide-default-footer
           >
             <template v-slot:[`item.date`]="{ item }">
               {{ item.date | formatDate('dd-MMM-yyyy') }}
@@ -248,7 +248,7 @@
               {{ item.coordinatIn }}
             </template>
             <template v-slot:[`item.coordinatOut`]="{ item }">
-              <v-tooltip bottom>
+              <v-tooltip v-if="item.coordinatOut.length > 0" bottom>
                 <template v-slot:activator="{ on, attrs }">
                   <span @click="showMap(item.coordinatOut)" v-bind="attrs" v-on="on">
                     <v-icon small >mdi-eye-outline</v-icon>
@@ -259,7 +259,7 @@
               {{ item.coordinatOut }}
             </template>
             <template v-slot:[`item.checkInImage`]="{ item }">
-              <span v-if="item.checkInImage.length > 0">
+              <span v-if="item.checkInImage != null && item.checkInImage.length > 0">
                 <v-btn small color="blue darken-1" dark @click="showImage(item.checkInImage)">
                   Tampilkan gambar 
                 </v-btn>
@@ -269,7 +269,7 @@
               </span>
             </template>
             <template v-slot:[`item.checkOutImage`]="{ item }">
-              <span v-if="item.checkOutImage.length > 0">
+              <span v-if="item.checkOutImage != null && item.checkOutImage.length > 0">
                 <v-btn small color="blue darken-1" dark @click="showImage(item.checkInImage)">
                   Tampilkan gambar 
                 </v-btn>
@@ -297,6 +297,7 @@ import auth from '@/services/authorization.service'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import AttendanceMap from '@/components/dialog/attendance/AttendanceMap.vue'
 import DisplayImage from '@/components/dialog/attendance/DisplayImage.vue'
+
 export default {
   components:{
     ExportExcel,
