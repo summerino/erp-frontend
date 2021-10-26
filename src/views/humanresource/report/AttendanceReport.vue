@@ -239,24 +239,24 @@
             <template v-slot:[`item.coordinatIn`]="{ item }">
               <v-tooltip bottom>
                 <template v-slot:activator="{ on, attrs }">
-                  <span @click="showMap(item.coordinatOut)" v-bind="attrs" v-on="on">
-                    <v-icon small >mdi-eye-outline</v-icon>
+                  <span @click="showMap(item.checkInLat, item.checkInLng)" v-bind="attrs" v-on="on">
+                    <v-icon small>mdi-eye-outline</v-icon>
+                    {{ item.coordinatIn }}
                   </span>
                 </template>
                 <span class="text-caption">Tampilkan di map</span>
               </v-tooltip>
-              {{ item.coordinatIn }}
             </template>
             <template v-slot:[`item.coordinatOut`]="{ item }">
-              <v-tooltip v-if="item.coordinatOut.length > 0" bottom>
+              <v-tooltip v-if="item.coordinatOut.length > 3" bottom>
                 <template v-slot:activator="{ on, attrs }">
-                  <span @click="showMap(item.coordinatOut)" v-bind="attrs" v-on="on">
+                  <span @click="showMap(item.checkOutLat, item.checkOutLng)" v-bind="attrs" v-on="on">
                     <v-icon small >mdi-eye-outline</v-icon>
+                    {{ item.coordinatOut }}
                   </span>
                 </template>
                 <span class="text-caption">Tampilkan di map</span>
               </v-tooltip>
-              {{ item.coordinatOut }}
             </template>
             <template v-slot:[`item.checkInImage`]="{ item }">
               <span v-if="item.checkInImage != null && item.checkInImage.length > 0">
@@ -548,11 +548,8 @@ export default {
     clearTable() {
       this.grid.data = []
     },
-    showMap(coordinat) {
-      const arr = coordinat.split(' : ')
-      const latitude = Number(arr[0])
-      const longitude = Number(arr[1])
-      this.$refs.attendanceMap.show(latitude, longitude)
+    showMap(lat, lng) {
+      this.$refs.attendanceMap.show(lat, lng)
     },
     showImage(link) {
       this.$refs.displayImage.show(link)
