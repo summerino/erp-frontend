@@ -2129,8 +2129,6 @@ export default {
             gridData[k].discPromo = discPromo
             gridData[k].disc = totalDisc
             this.calcItemPrice(gridData[k], false)
-            // gridData[k].nettPrice = gridData[k].unitPrice - totalDisc 
-            // gridData[k].total =  gridData[k].nettPrice * gridData[k].qty
           } else if (discPromo.length > 0 && gridData[k].discPromo.length > 0) {
             const nDiscPromo = []
             for (let ip = 0; ip < discPromo.length; ip++) {
@@ -2143,13 +2141,10 @@ export default {
                 nDiscPromo.push(gridData[k].discPromo[iq])
               }
             }
-            console.log(nDiscPromo)
             if (nDiscPromo.length > 0) {
               gridData[k].discPromo = nDiscPromo
               gridData[k].disc = _sumBy(gridData[k].discPromo, 'amount') 
               this.calcItemPrice(gridData[k], false)
-              // gridData[k].nettPrice += gridData[k].unitPrice - _sumBy(discPromo, 'totalDisc') 
-              // gridData[k].total +=  gridData[k].nettPrice * gridData[k].qty
             }
           }
         } else {
