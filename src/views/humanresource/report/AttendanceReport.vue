@@ -237,7 +237,7 @@
               {{ item.checkOut | formatDate('HH:mm') }}
             </template>
             <template v-slot:[`item.coordinatIn`]="{ item }">
-              <v-tooltip bottom>
+              <v-tooltip v-if="item.coordinatIn.length > 3" bottom>
                 <template v-slot:activator="{ on, attrs }">
                   <span @click="showMap(item.checkInLat, item.checkInLng)" v-bind="attrs" v-on="on">
                     <v-icon small>mdi-eye-outline</v-icon>
