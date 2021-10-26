@@ -1900,10 +1900,8 @@ export default {
     calcItemTax(item) {
       const tax = this.taxes.find(t => t.id === item.taxId)
       if (tax) {
-        // console.log(item.disc)
         if (this.data.includeTax) {
           item.taxAmount = (item.unitPrice - item.disc) - ((item.unitPrice - item.disc) / (1 + (tax.rate / 100)))
-          // console.log(item.taxAmount)
           item.nettPrice = item.unitPrice - item.disc
           item.dpp = item.unitPrice - item.disc - item.taxAmount
         } else {
@@ -2411,7 +2409,6 @@ export default {
                 nDiscPromo.push(gridData[k].discPromo[iq])
               }
             }
-            console.log(nDiscPromo)
             if (nDiscPromo.length > 0) {
               gridData[k].discPromo = nDiscPromo
               gridData[k].disc = _sumBy(gridData[k].discPromo, 'amount') 
