@@ -512,7 +512,7 @@
                     >
                       <v-card>
                         <v-app-bar dense flat>
-                          <label v-if="data.type === 3">Barang Masuk</label>
+                          <label v-if="data.type === 3">Barang Keluar</label>
                           <v-spacer></v-spacer>
                           <v-tooltip bottom>
                             <template v-slot:activator="{ on, attrs }">
@@ -664,7 +664,7 @@
 
                       <v-card v-if="data.type === 3" class="rounded-t-0 pt-2">
                         <v-app-bar dense flat>
-                          <label v-if="data.type === 3">Barang Keluar</label>
+                          <label v-if="data.type === 3">Barang Masuk</label>
                           <v-spacer></v-spacer>
                           <v-tooltip bottom>
                             <template v-slot:activator="{ on, attrs }">
