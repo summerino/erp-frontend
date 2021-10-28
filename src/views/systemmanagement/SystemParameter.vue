@@ -1,12 +1,12 @@
 <template>
   <div class="w-full">
     <v-card>
-      <v-card-title>
-        <v-row>
-          <v-col>
+      <v-card-title class="indigo--text text--lighten-2 pb-1">
+        <v-row dense>
+          <v-col cols="12" md="4">
             Pengaturan Sistem
           </v-col>
-          <v-col class="text-right">
+          <v-col cols="12" md="8" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -34,11 +34,12 @@
         </v-row>
       </v-card-title>
       <v-card-text>
-        <v-row>
-          <v-col cols="12" md="4">
+        <v-row no-gutters>
+          <v-col cols="12" md="3">
             <v-treeview
               activatable
               :items="items"
+              class="pr-md-1"
               @click="onChangeParam"
             >
               <template slot="label" slot-scope="{ item }">
@@ -46,9 +47,9 @@
               </template>
             </v-treeview>
           </v-col>
-          <v-col cols="12" md="8">
+          <v-col cols="12" md="9">
             <v-form ref="form">
-              <v-row v-for="item in data" :key="item.id">
+              <v-row v-for="item in data" :key="item.id" no-gutters>
                 <template v-if="item.dataType === 'bool'">
                   <v-checkbox  v-model="item.value" :label="item.description" v-if="item.dataType === 'bool'"></v-checkbox>
                 </template>
@@ -56,17 +57,15 @@
                   <v-text-field  
                     v-model="item.value"
                     :label="item.description"
-                    class="mt-0 mr-5"
+                    class="mt-0"
                   ></v-text-field>
                 </template>
               </v-row>
-              
             </v-form>
           </v-col>
         </v-row>
       </v-card-text>
     </v-card>
-    <confirm ref="confirm"></confirm>
   </div>
 </template>
 
@@ -75,13 +74,8 @@ import { mapState } from 'vuex'
 
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
-import Confirm from '@/components/dialog/Confirm'
 
 export default {
-  components: {
-    Confirm
-  },
-
   data: () => ({   
     valid: false,
     data: [],
