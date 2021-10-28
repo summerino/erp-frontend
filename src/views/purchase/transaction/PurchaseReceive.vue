@@ -1387,7 +1387,7 @@ export default {
             })
         } else {
           // Get purchase return item details
-          api.getAll(`${this.endpoint.purchase.return}/item`, {
+          api.getAll(item.type === 2 ? `${this.endpoint.purchase.return}/item` : `${this.endpoint.purchase.return}/diff-item`, {
             params: {
               code: item.code,
               fullReceived: false
