@@ -124,33 +124,9 @@
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
-        <template v-slot:[`item.mark`]="{ item }">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <!-- <v-chip
-                v-bind="attrs"
-                v-on="on"
-                :color="item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
-                class="px-1"
-                dark
-                small
-              > -->
-              <v-chip
-                v-bind="attrs"
-                v-on="on"
-                class="px-1"
-                dark
-                small
-              >
-                {{ item.mark }}
-              </v-chip>
-            </template>
-            <span class="text-caption">{{ item.status }}</span>
-          </v-tooltip>
-        </template>
       </v-data-table>
     </v-card>
-     <v-dialog
+    <v-dialog
       v-model="dialog.add"
       transition="dialog-bottom-transition"
       fullscreen
@@ -177,11 +153,11 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
+                  :disabled="data.action === 'edit' && !auth.allowUpdate"
                   dark
                   text
                   @click="save(true)"
                   @shortkey="save(true)"
-                  :disabled="data.action === 'edit' && !auth.allowUpdate"
                 >Simpan & Tutup</v-btn>
               </template>
               <span class="text-caption">(Ctrl + Enter)</span>
@@ -206,9 +182,9 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
+                  :disabled="data.action === 'edit' && !auth.allowUpdate"
                   @click="save(false)"
                   @shortkey="save(false)"
-                  :disabled="data.action === 'edit' && !auth.allowUpdate"
                 >
                   <v-list-item-title>
                     <v-tooltip bottom>
@@ -283,14 +259,14 @@
                       <v-col cols="12" md="12">
                         <v-autocomplete
                           v-model="data.warehouseCode"
+                          :disabled="!auth.allowChangeWarehouse"
                           :items="warehouses"
                           :item-text="item => `${item.initial} - ${item.name}`"
                           :rules="rules.required"
-                          @change="changeLocation"
                           label="Gudang"
                           item-value="code"
                           class="mt-0"
-                          :disabled="!auth.allowChangeWarehouse"
+                          @change="changeLocation"
                         ></v-autocomplete>
                       </v-col>
                     </v-row>
@@ -304,19 +280,18 @@
                     <v-tab key="user">Pengguna</v-tab>
                   </v-tabs>
                   <v-tabs-items v-model="tab.bb" class="pa-2">
-                    
                     <v-tab-item
                       key="notes"
                       transition="false"
                     >
                       <v-textarea
-                      v-model="data.notes"
-                      :rules="rules.max256chars"
-                      label="Catatan"
-                      counter="256"
-                      class="mt-0"
-                      rows="4"
-                    ></v-textarea>
+                        v-model="data.notes"
+                        :rules="rules.max256chars"
+                        label="Catatan"
+                        counter="256"
+                        class="mt-0"
+                        rows="4"
+                      ></v-textarea>
                     </v-tab-item>
                     <v-tab-item
                       key="user"
@@ -368,7 +343,6 @@
             <v-row dense>
               <v-col cols="12">
                 <v-card>
-                  
                   <v-app-bar dense flat>
                     <v-spacer></v-spacer>
                     <v-tooltip bottom >
@@ -387,23 +361,11 @@
                           <v-icon left>mdi-plus</v-icon>
                           Tambah
                         </v-btn>
-                        
                       </template>
                       <span class="text-caption">(Ctrl + I)</span>
                     </v-tooltip>
-                   
                   </v-app-bar>
-                  <!-- <v-data-table
-                    :headers="gridItem.columns"
-                    :items="gridItem.data"
-                    :items-per-page="-1"
-                    height="300"
-                    class="elevation-1"
-                    dense
-                    disable-sort
-                    fixed-header
-                    hide-default-footer
-                  > -->
+
                   <v-data-table
                     :headers="gridItem.columns"
                     :items="gridItem.data"
@@ -420,11 +382,11 @@
                           <v-btn
                             v-bind="attrs"
                             v-on="on"
+                            :disabled="(data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
                             color="red"
                             icon
                             small
                             @click="removeItem(item)"
-                            :disabled="(data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
                           >
                               <v-icon small>mdi-close-thick</v-icon>
                           </v-btn>
@@ -459,45 +421,15 @@
                         </template>
                       </v-autocomplete>
                     </template>
-                    <!-- <template v-slot:[`item.itemId`]="{ item }">
-                        <v-autocomplete
-                            ref="itemId"
-                            v-model="item.itemId"
-                            :items="items"
-                            :rules="rules.required"
-                            item-value="id"
-                            class="text-body-2 mt-0"
-                            dense
-                            required
-                            @change="itemIdChange(item)"
-                        >
-                            <template v-slot:append>
-                                <v-btn
-                                    color="primary"
-                                    icon
-                                    x-small
-                                    @click="showFindItemDialog(item)"
-                                >
-                                    <v-icon>
-                                    mdi-settings-helper
-                                    </v-icon>
-                                </v-btn>
-                            </template>
-                        </v-autocomplete>
-                    </template> -->
-                    <!-- <template v-slot:[`item.unit`]="{ item }">
-                        <v-autocomplete
-                            v-model="item.unit"
-                            :items="item.units"
-                            :rules="rules.required"
-                            class="text-body-2 mt-0"
-                            dense
-                            required
-                            ref="itemId"
-                            @change="changeUnit(item)"
-                        >
-                        </v-autocomplete>
-                    </template> -->
+                    <template v-slot:[`item.qty`]="{ item }">
+                      <v-currency-field
+                        v-model="item.qty"
+                        :rules="rules.cannot0"
+                        class="text-body-2 text-right mt-0"
+                        dense
+                        @change="calcItemPrice(item)"
+                      ></v-currency-field>
+                    </template>
                     <template v-slot:[`item.unitName`]="{ item }">
                       <v-autocomplete
                         v-model="item.unitId"
@@ -511,32 +443,24 @@
                         @change="unitItemChange(item)"
                       ></v-autocomplete>
                     </template>
-                    <template v-slot:[`item.qty`]="{ item }">
-                        <v-currency-field
-                          :min="-Number.MAX_SAFE_INTEGER"
-                          :max="Number.MAX_SAFE_INTEGER"
-                          :allow-negative="false"
-                          v-model="item.qty"
-                          :rules="rules.cannot0"
-                          @change="changeQty(item)"
-                          class="text-body-2 text-right mt-0"
-                          dense
-                        ></v-currency-field>
+                    <template v-slot:[`item.unitPrice`]="{ item }">
+                      <v-currency-field
+                        v-model="item.unitPrice"
+                        class="text-body-2 text-right mt-0"
+                        dense
+                        @change="calcItemPrice(item)"
+                      ></v-currency-field>
                     </template>
-                    <template v-slot:[`item.amount`]="{ item }">
-                        <v-currency-field
-                            v-model="item.amount"
-                            class="text-body-2 text-right mt-0"
-                            dense
-                        ></v-currency-field>
+                    <template v-slot:[`item.total`]="{ item }">
+                      {{ item.total | formatCurrency }}
                     </template>
                     <template v-slot:[`item.notes`]="{ item }">
-                        <v-text-field
-                            v-model="item.notes"
-                            :rules="rules.max256chars"
-                            class="text-body-2 mt-0"
-                            dense
-                        ></v-text-field>
+                      <v-text-field
+                        v-model="item.notes"
+                        :rules="rules.max256chars"
+                        class="text-body-2 mt-0"
+                        dense
+                      ></v-text-field>
                     </template>
                   </v-data-table>
                 </v-card>
@@ -545,22 +469,14 @@
           </v-form>
         </v-card-text>
       </v-card>
-      
     </v-dialog>
+
     <confirm ref="confirm"></confirm>
-    <!-- <find-item-adjustment
-      ref="findItem"
-      :warehouseCode="data.warehouseCode"
-      :fromAdjustment="true"
-      @dblclick:row="bindItemData"
-      
-    ></find-item-adjustment> -->
     <find-item
       ref="findItem"
       :warehouseCode="data.warehouseCode"
       @dblclick:row="bindItemData"
     ></find-item>
-    
   </div>
 </template>
 
@@ -576,6 +492,7 @@ import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 import FindItem from '@/components/dialog/inventory/FindItem'
+
 export default {
   components:{
     AdvancedSearch,
@@ -621,16 +538,16 @@ export default {
     },
     gridItem: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90'},
+        { value: 'action', sortable: false, divider: true, width: '1%' },
         { text: 'Inisial', value: 'itemId', divider: true, width: '120' },
         { text: 'Nama', value: 'itemName', divider: true, width: '300' },
-        { text: 'Satuan', value: 'unitName', sortable: false, divider: true, width: '100'},
-        { text: 'Qty', value: 'qty', sortable: false, align: 'right', divider: true, width: '75'},
-        { text: 'Amount', value: 'amount', sortable: false, divider: true, width: '75'},
-        { text: 'Catatan', value: 'notes', sortable: false, divider: true, width: '250'}
+        { text: 'Qty', value: 'qty', sortable: false, align: 'right', divider: true, width: '90' },
+        { text: 'Satuan', value: 'unitName', sortable: false, divider: true, width: '90' },
+        { text: 'Harga Satuan', value: 'unitPrice', sortable: false, align: 'right', divider: true, width: '120' },
+        { text: 'Harga Total', value: 'total', sortable: false, align: 'right', divider: true, width: '120' },
+        { text: 'Catatan', value: 'notes', sortable: false, divider: true, width: '200' }
       ],
       data: []
-
     },
     valid: false,
     dataStartDate: null,
@@ -699,9 +616,6 @@ export default {
     getUnitItemLists(item) {
       const units = this.uoms.filter(x => x.uomId === item.uomId)
       item.units = units
-      const baseUnit = units.find(x => x.seq === 1)
-      item.baseUnitId = baseUnit.id
-      this.unitItemChange(item)
     },
     reset(resetValidation = true) {
       this.data = {
@@ -834,17 +748,17 @@ export default {
       if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemId ?? null)) {
         const item = {
           id: randomNumber(-1, -1000),
-          itemId: 0,
+          itemId: null,
           name: null,
-          units: [],
-          uomId: 0,
-          oldUnitId: 0,
-          oldUnitName: null,
-          oldQty: 0,
-          unitId: 0,
-          unitName: null,
           qty: 0,
-          amount: 0,
+          units: [],
+          uomId: null,
+          oldUnitId: null,
+          oldUnitName: null,
+          oldUnitPrice: 0,
+          unitId: null,
+          unitName: null,
+          unitPrice: 0,
           notes: ''
         } 
         this.gridItem.data.push(item)
@@ -856,6 +770,7 @@ export default {
     },
     edit(item) {
       if (!item) return
+
       this.isButtonShowItemDisabled()
       this.dialog.add = true
       this.reset()
@@ -867,7 +782,9 @@ export default {
         createdDate: (item.createdDate === null) ? null : format(parseISO(item.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
         updatedDate: (item.updatedDate === null) ? null : format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
+
       this.getItemLists()
+
       // Get item details
       api.getAll(`${this.endpoint.inventory.beginBalanceStock}/item`, {
         params: { code: item.code }
@@ -942,73 +859,74 @@ export default {
       this.reset()
       this.dialog.add = false
     },
-    changeQty(item) {
-      item.amount = item.initAmount * item.qty
-    },
     changeLocation() {
       this.gridItem.data = []
       this.getItemLists()
       this.isButtonShowItemDisabled()
     },
-    unitItemChange(item) {
-      const oldUnit = item.units.find(u => u.id === item.oldUnitId)
-      const unit = item.units.find(u => u.id === item.unitId)
-      if (oldUnit && unit) {
-        item.oldUnitId = item.unitId
-        this.convertUOM(item, oldUnit.seq, unit.seq)
-      }
-    },
     itemIdChange(item) {
       const data_i = this.items.find(i => i.id === item.itemId)
       if (data_i) {
         item.itemId = data_i.id
-        item.uomId = data_i.uomId
         item.itemName = data_i.name
-        item.oldUomId = item.uomId
-        item.unitId = data_i.uomBuyId
+        item.uomId = data_i.uomId
         item.oldUnitId = data_i.uomBuyId
+        item.oldUnitName = data_i.uomBuyName
+        item.oldUnitPrice = data_i.buyPrice
+        item.unitId = data_i.uomBuyId
         item.unitName = data_i.uomBuyName
         item.notes = null
         item.qty = 1
-        item.initAmount = data_i.buyPrice
-        item.amount = data_i.buyPrice
+        item.unitPrice = data_i.buyPrice
+        item.total = data_i.buyPrice
         if (item.state !== 'A') {
           item.state = 'M'
         }
       }
+
+      // Get unit item lists
       this.getUnitItemLists(item)
     },
-    convertUOM(item, fromSequence, toSequence) {
-      let depth = 0
-      let direction = ''
-      let different = 1
-      let itterateSeq = 0
-      if (fromSequence < toSequence) {
-        depth = toSequence - fromSequence
-        direction = 'up'
-        itterateSeq = fromSequence
+    unitItemChange(item) {
+      const oldUnit = item.units.find(u => u.id === item.oldUnitId)
+      const unit = item.units.find(u => u.id === item.unitId)
+      
+      if (oldUnit.seq < unit.seq) {
+        item.uomConversion = unit.conversion
+        if (unit.unitToConvert !== item.oldUnitName) {
+          this.calcUomConversion(true, item, unit.unitToConvert)
+        }
+        item.unitPrice = item.oldUnitPrice * item.uomConversion
       } else {
-        depth = fromSequence - toSequence
-        direction = 'down'
-        itterateSeq = toSequence
+        item.uomConversion = 1
+        if (unit.unitEquivalent !== item.oldUnitName) {
+          this.calcUomConversion(false, item, unit.unitEquivalent)
+        }
+        item.unitPrice = item.oldUnitPrice / item.uomConversion
       }
-      for (let i = 0; i < depth; i++) {
-        itterateSeq++
-        const data = item.units.find(u => u.seq === itterateSeq)
-        different *=  data.conversion
-      }
-      if (direction === 'up') {
-        item.qty = Number((item.qty / different).toFixed(6))
-        item.initAmount = item.amount / different
-        item.amount = item.initAmount
-      } else {
-        item.qty = item.qty * different
-        item.initAmount = item.amount * different
-        item.amount = item.initAmount
-      }
-      item.baseQtyOnHand = 0 // base qty will be set on stored procedure
+
+      this.calcItemPrice(item)
     },
-    
+    calcUomConversion(seqSmaller, item, unitCode) {
+      if (seqSmaller) {
+        const data = item.units.find(u => u.unitEquivalent === unitCode)
+        item.uomConversion *= data.conversion
+
+        if (data.unitToConvert !== item.oldUnitName) {
+          this.calcUomConversion(seqSmaller, item, data.unitToConvert)
+        }
+      } else {
+        const data = item.units.find(u => u.unitToConvert === unitCode && !u.isBaseUnit)
+        item.uomConversion *= data.conversion
+        
+        if (data.unitEquivalent !== item.oldUnitName) {
+          this.calcUomConversion(seqSmaller, item, data.unitEquivalent)
+        }
+      }
+    },
+    calcItemPrice(item) {
+      item.total = item.qty * item.unitPrice
+    },
     isButtonShowItemDisabled() {
       this.showItemDisabled =  this.gridItem.data.length > 0 && this.data.type === 2
     },
@@ -1041,5 +959,4 @@ export default {
     }
   }
 }
-
 </script>
