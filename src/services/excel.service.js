@@ -22,6 +22,7 @@ class ExcelService {
           text: column,
           value: grid.columns[i].value,
           isDateTime: grid.columns[i].isDateTime,
+          isFullDateTime: grid.columns[i].isFullDateTime,
           isTimeOnly: grid.columns[i].isTimeOnly,
           isNumber: grid.columns[i].isNumber,
           isCurrency: grid.columns[i].isCurrency,
@@ -59,6 +60,7 @@ class ExcelService {
         const value = grid.data[i][columns[j].value]
         const isBold = grid.data[i]['isBold'] ?? false
         const isDateTime = columns[j].isDateTime
+        const isFullDateTime = columns[j].isFullDateTime
         const isTimeOnly = columns[j].isTimeOnly
         const isBool = columns[j].isBool
         const customValues = columns[j].customValues
@@ -86,6 +88,10 @@ class ExcelService {
           if (value) {
             if (isDateTime) {
               cellValue = format(parseISO(value), 'dd-MMM-yyyy')
+              row.getCell(j + 1).alignment = { horizontal: 'right' }
+            } else if (isFullDateTime) {
+              cellValue = format(parseISO(value), 'dd-MMM-yyyy HH:mm:ss')
+              row.getCell(j + 1).alignment = { horizontal: 'right' }
             } else if (isTimeOnly) {
               cellValue = format(parseISO(value), 'HH:mm')
             } else if (customValues) {
@@ -209,9 +215,12 @@ class ExcelService {
         worksheet.getColumn(i + 1).numFmt = '#,##0'
       } else if (columns[i].isCurrency) {
         worksheet.getColumn(i + 1).numFmt = '#,##0.00'
-      } else if (columns[i].isDateTime) {
-        worksheet.getColumn(i + 1).numFmt = 'dd-MMM-yyyy'
-        worksheet.getColumn(i + 1).alignment = { vertical: 'middle', horizontal: 'right' }
+      // } else if (columns[i].isDateTime) {
+      //   worksheet.getColumn(i + 1).numFmt = 'dd-MMM-yyyy'
+      //   worksheet.getColumn(i + 1).alignment = { vertical: 'middle', horizontal: 'right' }
+      // } else if (columns[i].isFullDateTime) {
+      //   worksheet.getColumn(i + 1).numFmt = 'dd-MMM-yyyy HH:mm:ss'
+      //   worksheet.getColumn(i + 1).alignment = { vertical: 'middle', horizontal: 'right' }
       }
     }
     worksheet.getRow(countHeaderRow).height = 27

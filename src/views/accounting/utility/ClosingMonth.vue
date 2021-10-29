@@ -87,6 +87,9 @@
             readonly
           ></v-checkbox>
         </template>
+        <template v-slot:[`item.updatedDate`]="{ item }">
+          {{ item.updatedDate | formatDate('dd-MMM-yyyy HH:mm:ss') }}
+        </template>
       </v-data-table>
     </v-card>
 
@@ -189,16 +192,16 @@
                   offset-y
                 >
                   <template v-slot:activator="{ on, attrs }">
-                  <v-text-field
-                    v-bind="attrs"
-                    v-on="on"
-                    :value="formatEndDate"
-                    :rules="rules.required"
-                    label="Tanggal Akhir"
-                    class="mt-0"
-                    readonly
-                    required
-                  ></v-text-field>
+                    <v-text-field
+                      v-bind="attrs"
+                      v-on="on"
+                      :value="formatEndDate"
+                      :rules="rules.required"
+                      label="Tanggal Akhir"
+                      class="mt-0"
+                      readonly
+                      required
+                    ></v-text-field>
                   </template>
                   <v-date-picker
                     v-model="data.endDate"
@@ -340,14 +343,15 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
-        { text: 'Periode', value: 'periodName', divider: true, width: '150', excelColWidth:'20' },
-        { text: 'Tutup Bulan', value: 'isClose', divider: true, width: '100', isBool: true, excelColWidth:'20', customValues: [{value: 'Ya'}, {value: 'Tidak'}] }
+        { value: 'action', sortable: false, divider: true, width: '90' },
+        { text: 'Periode', value: 'periodName', divider: true, width: '350', excelColWidth:'20' },
+        { text: 'Tutup Bulan', value: 'isClose', divider: true, width: '150', isBool: true, excelColWidth:'20', customValues: [{value: 'Ya'}, {value: 'Tidak'}] },
+        { text: 'Tanggal Diperbarui', value: 'updatedDate', align: 'right', width: '100', excelColWidth:'23', isFullDateTime: true }
       ],
       data: [],
       options: {
         sortBy: ['period'],
-        sortDesc: [false]
+        sortDesc: [true]
       },
       total: 0,
       search: null
