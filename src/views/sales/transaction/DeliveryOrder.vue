@@ -1065,6 +1065,14 @@ export default {
           this.gridItem.data = response.data.tableData
         })
 
+      // Get bonus item details
+      api.getAll(`${this.endpoint.sales.delivery}/free-item`, {
+        params: { code: item.code }
+      })
+        .then(response => {
+          this.gridBonus.data = response.data.tableData
+        })
+
       // Get related transaction details
       api.getAll(`${this.endpoint.sales.delivery}/related-trans`, {
         params: { code: item.code }
