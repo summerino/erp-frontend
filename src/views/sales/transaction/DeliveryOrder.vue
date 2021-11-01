@@ -1362,7 +1362,7 @@ export default {
             this.gridBonus.data = response.data.tableData
           } else {
             // Get sales return item details
-            api.getAll(`${this.endpoint.sales.return}/item`, {
+            api.getAll(item.type === 2 ? `${this.endpoint.sales.return}/item` : `${this.endpoint.sales.return}/diff-item`, {
               params: {
                 code: item.code,
                 fullDelivered: false
