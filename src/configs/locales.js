@@ -1,8 +1,7 @@
-import en from '../translations/en'
 import id from '../translations/id'
 
-const supported = ['en', 'id']
-let locale = 'en'
+const supported = ['id']
+let locale = 'id'
 
 try {
   // get browser default language
@@ -18,15 +17,10 @@ export default {
   locale,
 
   // when translation is not available fallback to that locale
-  fallbackLocale: 'en',
+  fallbackLocale: 'id',
 
   // availabled locales for user selection
   availableLocales: [{
-    code: 'en',
-    flag: 'us',
-    label: 'English',
-    messages: en
-  }, {
     code: 'id',
     flag: 'id',
     label: 'Indonesia',
