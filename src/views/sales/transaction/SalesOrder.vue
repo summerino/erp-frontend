@@ -1600,7 +1600,7 @@ export default {
       }
 
       // Get customer details
-      this.custCodeChange()
+      this.custCodeChange(true)
 
       // Get item details
       api.getAll(`${this.endpoint.sales.order}/item`, {
@@ -1802,14 +1802,16 @@ export default {
           })
       }
     },
-    custCodeChange() {
+    custCodeChange(loadEdit = false) {
       const customer = this.customers.find(s => s.code === this.data.custCode)
       if (customer) {
         this.data.custName = customer.name
         this.data.custAddr = customer.address1
         this.data.custPhone = customer.phone1
         this.data.custFax = customer.fax
-        this.data.paymentTermId = customer.paymentTermId
+        if (!loadEdit) {
+          this.data.paymentTermId = customer.paymentTermId
+        }
         this.data.custTypeId = customer.typeId
         this.getCustomerAddressesLists(customer)
       }
