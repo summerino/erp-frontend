@@ -2404,8 +2404,7 @@ export default {
             }
 
             for (let iq = 0; iq < gridData[k].discPromo.length; iq++) {
-              const value = discPromo.find(x => x.promoDetailId === ('promoDetailId' in gridData[k].discPromo[iq] ? gridData[k].discPromo[iq].promoDetailId : 0))
-              if (value === null || value === undefined) {
+              if (!('promoDetailId' in gridData[k].discPromo[iq])) {
                 nDiscPromo.push(gridData[k].discPromo[iq])
               }
             }
@@ -2416,6 +2415,10 @@ export default {
               // gridData[k].nettPrice += gridData[k].unitPrice - _sumBy(discPromo, 'totalDisc') 
               // gridData[k].total +=  gridData[k].nettPrice * gridData[k].qty
             }
+          } else if (discPromo.length === 0) {
+            gridData[k].discPromo = []
+            gridData[k].disc = 0
+            this.calcItemPrice(gridData[k], false)
           }
         } else {
           gridData[k].discPromo = []
