@@ -441,6 +441,10 @@ export default {
         return
       }
       if (this.data.promoType !== 4) {
+        for (let i = 0; i < this.grid.data.length; i++) {
+          this.grid.data[i].saleUnit = this.data.saleUnit
+          this.grid.data[i].unitFreeGood = this.data.unitFreeGood
+        }
         this.data.promoTierList = this.grid.data
       }
       this.close()
