@@ -525,13 +525,13 @@
                           </v-col>
                         </v-row>
 
-                        <v-row no-gutters>
+                        <!-- <v-row no-gutters>
                           <v-col class="pr-md-1">
                             <v-text-field
                               ref="ChequeNo"
                               v-model="data.chequeNo"
                               :readonly="data.mark !== 'A'"
-                              label="No. Cek"
+                              label="Kode Cek"
                               class="mt-0"
                             ></v-text-field>
                           </v-col>
@@ -559,7 +559,7 @@
                                   v-on="on"
                                   :value="formatChDate"
                                   :readonly="data.mark !== 'A'"
-                                  label="Tanggal No. Cek"
+                                  label="Tanggal Cek"
                                   class="mt-0"
                                 ></v-text-field>
                               </template>
@@ -577,7 +577,7 @@
                           <v-col cols="12" md="6" class="pl-md-1">
                             &nbsp;
                           </v-col>
-                        </v-row>
+                        </v-row> -->
                       </v-col>
                     </v-row>
                   </v-card-text>
@@ -937,7 +937,6 @@ export default {
     },
     onAccountFromChange() {
       const items = this.coaRef.find(x => x.code === this.data.coaCode)
-
       if (items) {
         this.data.currCode = items.currCode
         this.data.vouCode = items.vouCode
@@ -947,7 +946,6 @@ export default {
     },
     onAccountToChange() {
       const items = this.coaRef.find(x => x.code === this.details.coaCode)
-
       if (items) {
         this.details.currCode = items.currCode
         this.details.vouCode = items.vouCode

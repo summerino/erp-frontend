@@ -321,18 +321,25 @@
                         <v-autocomplete
                           v-model="data.coaCode"
                           :items="coas"
-                          label="Akun"
                           :item-text="item => `${item.code} - ${item.name}`"
+                          :rules="rules.required"
+                          label="Akun"
                           item-value="code"
                           class="mt-0"
-                          @change="changeCoaCode"
-                          :rules="rules.required"
                           required
+                          @change="changeCoaCode()"
                         ></v-autocomplete>
                       </v-col>
                     </v-row>
                     <v-row no-gutters v-if="isShowCheque">
                       <v-col cols="12" md="6">
+                        <v-text-field
+                          v-model.trim="data.chequeNo"
+                          label="Kode Cek"
+                          class="mt-0"
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" md="6" class="pl-md-1">
                         <v-menu
                           v-model="menu.chequeDate"
                           :close-on-content-click="false"
@@ -344,7 +351,6 @@
                             <v-text-field
                               v-bind="attrs"
                               v-on="on"
-                              :rules="rules.required"
                               :value="formatChequeDate"
                               label="Tanggal Cek"
                               class="mt-0"
@@ -354,19 +360,12 @@
                           </template>
                           <v-date-picker
                             v-model="data.chequeDate"
+                            :min="dataStartDate"
                             no-title
                             scrollable
                             @change="menu.chequeDate = false"
                           ></v-date-picker>
                         </v-menu>
-                      </v-col>
-                      <v-col cols="12" md="6" class="pl-md-1">
-                        <v-text-field
-                          ref="code"
-                          v-model.trim="data.chequeNo"
-                          label="Kode Cek"
-                          class="mt-0"
-                        ></v-text-field>
                       </v-col>
                     </v-row>
                   </v-card-text>
@@ -777,6 +776,8 @@ export default {
         supPhone: null,
         supFax: null,
         amount: 0,
+        chequeNo: null,
+        chequeDate: null,
         used: 0,
         outstanding: 0,
         transAmountSummary: 0,
@@ -785,6 +786,7 @@ export default {
       this.gridItem.data = []
       this.tab.note = 0
       this.tab.related = 0
+      this.isShowCheque = false
 
       // Reset form validation
       if (resetValidation) {
@@ -882,6 +884,9 @@ export default {
         originalDate: item.date
       }
 
+      // Define show cheque field
+      this.changeCoaCode(false)
+
       // Get item details
       api.getAll(`${this.endpoint.finance.cashBank}/detail`, {
         params: { code: item.code }
@@ -934,6 +939,11 @@ export default {
       if (!this.dialog.add) return
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
+        return
+      }
+
+      if (this.data.chequeNo && !this.data.chequeDate) {
+        this.$store.dispatch('app/showInfo', 'Tanggal Cek wajib diisi.')
         return
       }
 
@@ -994,15 +1004,13 @@ export default {
     showDetailCashBank() {
       this.$refs.detailCashBank.open()
     },
-    changeCoaCode() {
+    changeCoaCode(clearCheque = true) {
       const find = this.coas.find(x => x.code === this.data.coaCode)
       if (find) {
-        if (find.cbType === 'C') {
-          this.isShowCheque = true 
-        } else {
-          this.isShowCheque = false
+        this.isShowCheque = find.cbType === 'B'
+        if (clearCheque) {
+          this.data.chequeNo = null
           this.data.chequeDate = null
-          this.data.chequeNo = ''
         }
       }
     },
