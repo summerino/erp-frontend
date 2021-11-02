@@ -3,6 +3,7 @@
     v-model="dialog"
     width="800"
     persistent
+    scrollable
     @keydown.esc="close"
   >
     <v-card>
@@ -27,7 +28,6 @@
             <v-text-field
               label="Inisial"
               v-model="rowItem.itemId"
-              class="ml-3"
               readonly
             ></v-text-field>
           </v-col>
@@ -35,17 +35,17 @@
             <v-text-field
               label="Nama"
               v-model="rowItem.itemName"
-              class="ml-2 mr-3"
+              class="pl-md-2"
               readonly
             ></v-text-field>
           </v-col>
         </v-row>
+
         <v-row no-gutters>
           <v-col cols="12" md="6">
             <v-text-field
               label="Qty Sistem"
               v-model="rowItem.qtyOnHand"
-              class="ml-3"
               dense
               readonly
             ></v-text-field>
@@ -54,18 +54,18 @@
             <v-text-field
               label="Satuan"
               v-model="rowItem.unitName"
-              class="ml-2 mr-3"
+              class="pl-md-2"
               dense
               readonly
             ></v-text-field>
           </v-col>
         </v-row>
+
         <v-row no-gutters>
           <v-col cols="12" md="6">
             <v-text-field
               label="Total Qty Aktual"
               v-model="rowItem.qtyOpname"
-              class="ml-3"
               dense
               readonly
             ></v-text-field>
@@ -74,53 +74,46 @@
             <v-text-field
               label="Satuan"
               v-model="rowItem.unitName"
-              class="ml-2 mr-3"
+              class="pl-md-2"
               dense
               readonly
             ></v-text-field>
           </v-col>
         </v-row>
-        <v-row>
-          <v-form ref="form"
-            v-model="valid">
-            <v-data-table
-              :headers="grid.columns"
-              :items="grid.data"
-              :items-per-page="-1"
-              height="300"
-              class="elevation-1"
-              dense
-              disable-sort
-              fixed-header
-              hide-default-footer
+
+        <v-row no-gutters>
+          <v-col cols="12">
+            <v-form
+              ref="form"
+              v-model="valid"
             >
-            <template v-slot:[`item.qtyAdjust`]="{ item }">
-              <v-currency-field
-                v-model="item.qtyAdjust"
-                :decimal-length="0"
-                :min="0"
-                class="text-body-2 text-right mt-0"
+              <v-data-table
+                :headers="grid.columns"
+                :items="grid.data"
+                :items-per-page="-1"
+                height="250"
+                class="elevation-1"
                 dense
-                @change="calculateSumQtyOpname"
-              ></v-currency-field>
-            </template>
-            <!-- <template v-slot:[`item.unitName`]="{ item }">
-              <v-autocomplete
-                v-model="item.unitId"
-                :items="item.units"
-                :rules="rules.required"
-                item-text="unitEquivalent"
-                item-value="id"
-                class="text-body-2 mt-0"
-                dense
-                required
-                @change="unitItemChange(item)"
-              ></v-autocomplete>
-            </template> -->
-          </v-data-table>
-          </v-form>
+                disable-sort
+                fixed-header
+                hide-default-footer
+              >
+                <template v-slot:[`item.qtyAdjust`]="{ item }">
+                  <v-currency-field
+                    v-model="item.qtyAdjust"
+                    :decimal-length="0"
+                    :min="0"
+                    class="text-body-2 text-right mt-0"
+                    dense
+                    @change="calculateSumQtyOpname"
+                  ></v-currency-field>
+                </template>
+              </v-data-table>
+            </v-form>
+          </v-col>
         </v-row>
       </v-card-text>
+
       <v-card-actions class="justify-end pb-2 pr-2">
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
@@ -128,7 +121,7 @@
               ref="save"
               v-bind="attrs"
               v-on="on"
-              class="primary mr-1"
+              class="primary"
               small
               tile
               v-shortkey="['ctrl', 's']"
@@ -143,12 +136,12 @@
         </v-tooltip>
       </v-card-actions>
     </v-card>
+
     <confirm ref="confirm"></confirm>
   </v-dialog>
 </template>
 
 <script>
-
 import Confirm from '@/components/dialog/Confirm'
 import { mapState } from 'vuex'
 import api from '@/services/axios.service'
@@ -161,15 +154,15 @@ export default {
   created: function () {
     this.rules = this.$store.state.app.rules
   },
+
   data() {
     return {
       rules: {},
       dialog: false,
       grid: {
         columns: [
-          { value: 'action', sortable: false, divider: true, width: '15' },
-          { text: 'Qty Aktual', value: 'qtyAdjust', divider: true, width: '380' },
-          { text: 'Satuan', value: 'unitName', align:'center', divider: true, width: '380' }
+          { text: 'Qty Aktual', value: 'qtyAdjust', divider: true, width: '200' },
+          { text: 'Satuan', value: 'unitName', width: '200' }
         ],
         data: []
       },
@@ -180,11 +173,13 @@ export default {
       valid: false
     }
   },
+
   computed: {
     ...mapState({
       endpoint: state => state.api.endpoint
     })
   },
+
   methods: {
     reset() {
       this.grid.data = []
@@ -195,10 +190,9 @@ export default {
     open(item, options) {
       this.dialog = true
       this.reset()
-      this.rowItem = item
+      this.rowItem = JSON.parse(JSON.stringify(item))
       this.bindUnit()
       this.options = Object.assign(this.options, options)
-      
     },
     close() {      
       this.dialog = false
@@ -243,11 +237,11 @@ export default {
         this.$store.dispatch('app/showInfo', 'Please kindly check mandatory fields or fields that have an error.')
         return
       }
-      this.generateDiffernetUnit()
+      this.generateDifferentUnit()
       this.$emit('save', this.rowItem)
       this.dialog = false
     },
-    generateDiffernetUnit() {
+    generateDifferentUnit() {
       this.rowItem.differentUnit = ''
       this.rowItem.differentUnits = this.grid.data.filter(x => x.qtyAdjust > 0)
       const temp = []

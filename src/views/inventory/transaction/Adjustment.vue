@@ -317,13 +317,13 @@
                       transition="false"
                     >
                       <v-textarea
-                      v-model="data.notes"
-                      :rules="rules.max256chars"
-                      label="Catatan"
-                      counter="256"
-                      class="mt-0"
-                      rows="4"
-                    ></v-textarea>
+                        v-model="data.notes"
+                        :rules="rules.max256chars"
+                        label="Catatan"
+                        counter="256"
+                        class="mt-0"
+                        rows="4"
+                      ></v-textarea>
                     </v-tab-item>
                     <v-tab-item
                       key="user"
@@ -376,7 +376,6 @@
             <v-row dense>
               <v-col cols="12">
                 <v-card>
-                  
                   <v-app-bar dense flat>
                     <v-spacer></v-spacer>
                     <v-tooltip bottom v-if="data.type === 1" >
@@ -391,7 +390,7 @@
                           @click="addItem"
                           @shortkey="addItem"
                           :disabled="(data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
-                          >
+                        >
                           <v-icon left>mdi-plus</v-icon>
                           Tambah
                         </v-btn>
@@ -410,24 +409,14 @@
                           :disabled="showItemDisabled"
                           @click="showAll"
                           @shortkey="showAll"
-                          >
+                        >
                           Tampilkan Barang
                         </v-btn>
                       </template>
                       <span class="text-caption">(Ctrl + A)</span>
                     </v-tooltip>
                   </v-app-bar>
-                  <!-- <v-data-table
-                    :headers="gridItem.columns"
-                    :items="gridItem.data"
-                    :items-per-page="-1"
-                    height="300"
-                    class="elevation-1"
-                    dense
-                    disable-sort
-                    fixed-header
-                    hide-default-footer
-                  > -->
+                  
                   <v-data-table
                     :headers="gridItem.columns"
                     :items="gridItem.data"
@@ -442,15 +431,15 @@
                       <v-tooltip v-if="data.type === 1" bottom>
                         <template v-slot:activator="{ on, attrs }">
                           <v-btn
-                              v-bind="attrs"
-                              v-on="on"
-                              color="red"
-                              icon
-                              small
-                              @click="removeItem(item)"
-                              :disabled="(data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
+                            v-bind="attrs"
+                            v-on="on"
+                            :disabled="(data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
+                            color="red"
+                            icon
+                            small
+                            @click="removeItem(item)"
                           >
-                              <v-icon small>mdi-close-thick</v-icon>
+                            <v-icon small>mdi-close-thick</v-icon>
                           </v-btn>
                         </template>
                         <span class="text-caption">Hapus</span>
@@ -460,6 +449,7 @@
                       <v-autocomplete
                         ref="itemId"
                         v-model="item.itemId"
+                        :readonly="data.type === 2"
                         :items="items"
                         :rules="rules.required"
                         item-text="initial"
@@ -471,6 +461,7 @@
                       >
                         <template v-slot:append>
                           <v-btn
+                            :disabled="data.type === 2"
                             color="primary"
                             icon
                             x-small
@@ -483,45 +474,6 @@
                         </template>
                       </v-autocomplete>
                     </template>
-                    <!-- <template v-slot:[`item.itemId`]="{ item }">
-                        <v-autocomplete
-                            ref="itemId"
-                            v-model="item.itemId"
-                            :items="items"
-                            :rules="rules.required"
-                            item-value="id"
-                            class="text-body-2 mt-0"
-                            dense
-                            required
-                            @change="itemIdChange(item)"
-                        >
-                            <template v-slot:append>
-                                <v-btn
-                                    color="primary"
-                                    icon
-                                    x-small
-                                    @click="showFindItemDialog(item)"
-                                >
-                                    <v-icon>
-                                    mdi-settings-helper
-                                    </v-icon>
-                                </v-btn>
-                            </template>
-                        </v-autocomplete>
-                    </template> -->
-                    <!-- <template v-slot:[`item.unit`]="{ item }">
-                        <v-autocomplete
-                            v-model="item.unit"
-                            :items="item.units"
-                            :rules="rules.required"
-                            class="text-body-2 mt-0"
-                            dense
-                            required
-                            ref="itemId"
-                            @change="changeUnit(item)"
-                        >
-                        </v-autocomplete>
-                    </template> -->
                     <template v-slot:[`item.unitName`]="{ item }">
                       <v-autocomplete
                         v-model="item.unitId"
@@ -537,28 +489,32 @@
                     </template>
                     <template v-slot:[`item.qtyOnHand`]="{ item }">
                       <span class="text-body-2 text-right mt-0">
-                        {{ item.qtyOnHand | formatCurrency }}
+                        {{ item.qtyOnHand | formatCurrency({ decimalDigits: 6 }) }}
                       </span>
                     </template>
                     <template v-slot:[`item.qtyAdjust`]="{ item }">
-                        <v-currency-field
-                          :min="-Number.MAX_SAFE_INTEGER"
-                          :max="Number.MAX_SAFE_INTEGER"
-                          :allow-negative="true"
-                          v-model="item.qtyAdjust"
-                          :rules="rules.cannot0"
-                          class="text-body-2 text-right mt-0"
-                          dense
-                        ></v-currency-field>
+                      <v-currency-field
+                        v-model="item.qtyAdjust"
+                        :allow-negative="true"
+                        :decimal-length="0"
+                        :rules="rules.cannot0"
+                        class="text-body-2 text-right mt-0"
+                        dense
+                      ></v-currency-field>
                     </template>
                     <template v-slot:[`item.qtyOpname`]="{ item }">
-                        <v-currency-field
-                            v-model="item.qtyOpname"
-                            class="text-body-2 text-right mt-0"
-                            dense
-                            @keyup="qtyAdjustChange(item, true)"
-                            @focus="qtyAdjustChange(item, true)"
-                        ></v-currency-field>
+                      <v-currency-field
+                        v-model="item.qtyOpname"
+                        :decimal-length="0"
+                        class="text-body-2 text-right mt-0"
+                        dense
+                        @change="qtyOpnameChange(item, true)"
+                      ></v-currency-field>
+                    </template>
+                    <template v-slot:[`item.different`]="{ item }">
+                      <span class="text-body-2 text-right mt-0">
+                        {{ item.different | formatCurrency({ decimalDigits: 6 }) }}
+                      </span>
                     </template>
                     <template v-slot:[`item.differentUnit`]="{ item }">
                       <v-text-field
@@ -569,6 +525,7 @@
                       >
                         <template v-slot:append>
                           <v-btn
+                            :disabled="item.baseUnitId !== item.unitId"
                             color="primary"
                             icon
                             x-small
@@ -581,18 +538,13 @@
                         </template>
                       </v-text-field>
                     </template>
-                    <template v-slot:[`item.different`]="{ item }">
-                      <span class="text-body-2 text-right mt-0">
-                        {{ item.different | formatCurrency }}
-                      </span>
-                    </template>
                     <template v-slot:[`item.notes`]="{ item }">
-                        <v-text-field
-                            v-model="item.notes"
-                            :rules="rules.max256chars"
-                            class="text-body-2 mt-0"
-                            dense
-                        ></v-text-field>
+                      <v-text-field
+                        v-model="item.notes"
+                        :rules="rules.max256chars"
+                        class="text-body-2 mt-0"
+                        dense
+                      ></v-text-field>
                     </template>
                   </v-data-table>
                 </v-card>
@@ -604,13 +556,6 @@
       
     </v-dialog>
     <confirm ref="confirm"></confirm>
-    <!-- <find-item-adjustment
-      ref="findItem"
-      :warehouseCode="data.warehouseCode"
-      :fromAdjustment="true"
-      @dblclick:row="bindItemData"
-      
-    ></find-item-adjustment> -->
     <find-item
       ref="findItem"
       :warehouseCode="data.warehouseCode"
@@ -636,6 +581,7 @@ import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 import FindItem from '@/components/dialog/inventory/FindItem'
 import FindUnit from '@/components/dialog/inventory/FindUnit'
+
 export default {
   components:{
     AdvancedSearch,
@@ -903,10 +849,10 @@ export default {
       }
       if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemId ?? null)) {
         let item = {}
-        if (this.data.type === 'Perhitungan Persediaan') {
+        if (this.data.type === 2) {
           item = {
             id: randomNumber(-1, -1000),
-            itemId: 0,
+            itemId: null,
             name: null,
             unitName: null,
             units: [],
@@ -922,14 +868,14 @@ export default {
         } else {
           item = {
             id: randomNumber(-1, -1000),
-            itemId: 0,
+            itemId: null,
             name: null,
             units: [],
-            uomId: 0,
-            oldUnitId: 0,
+            uomId: null,
+            oldUnitId: null,
             oldUnitName: null,
             oldQtyOnHand: 0,
-            unitId: 0,
+            unitId: null,
             unitName: null,
             qtyOnHand: 0,
             qtyAdjust: 0,
@@ -938,6 +884,7 @@ export default {
           }
         } 
         this.gridItem.data.push(item)
+
         setTimeout(() => {
           this.$refs.itemId.focus()
         }, 0)
@@ -956,8 +903,10 @@ export default {
         createdDate: (item.createdDate === null) ? null : format(parseISO(item.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
         updatedDate: (item.updatedDate === null) ? null : format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
+
       this.bindGridItems()
       this.getItemLists()
+
       // Get item details
       api.getAll(`${this.endpoint.inventory.adjustment}/item`, {
         params: { code: item.code }
@@ -1055,19 +1004,17 @@ export default {
         this.convertUOM(item, oldUnit.seq, unit.seq)
       }
     },
-    qtyAdjustChange(item, clearDiffUnits = false) {
-      item.different = item.qtyOpname - item.qtyOnHand 
+    qtyOpnameChange(item, clearDiffUnits = false) {
+      item.different = item.qtyOpname - item.qtyOnHand
       item.qtyAdjust = item.different
       if (clearDiffUnits) {
-        if (item.qtyAdjust > 0) {
-          item.differentUnit = null
-          item.differentUnits = []
-        }
+        // if (item.qtyAdjust > 0) {
+        item.differentUnit = null
+        item.differentUnits = []
+        // }
       }
-      
     },
     itemIdChange(item) {
-
       const data_i = this.items.find(i => i.id === item.itemId)
       if (data_i) {
         item.itemId = data_i.id
@@ -1147,7 +1094,6 @@ export default {
     },
     bindStockOpnameTable() {
       this.gridItem.columns = [
-        { value: 'action', sortable: false, divider: true, width: '90'},
         { text: 'Inisial', value: 'itemId', divider: true, width: '120' },
         { text: 'Nama', value: 'itemName', divider: true, width: '300' },
         { text: 'Satuan', value: 'unitName', sortable: false, divider: true, width: '100'},
@@ -1182,7 +1128,7 @@ export default {
         data_i.differentUnits = rowItem.differentUnits
         data_i.differentUnit = rowItem.differentUnit
         data_i.qtyOpname = rowItem.qtyOpname
-        this.qtyAdjustChange(data_i)
+        this.qtyOpnameChange(data_i)
       }
     },
     showAll() {
@@ -1190,6 +1136,7 @@ export default {
         this.$store.dispatch('app/showInfo', 'Mohon pilih gudang terlebih dahulu.')
         return
       }
+
       api.getAll(this.endpoint.inventory.item.item, {
         params: {
           warehouseCode: this.data.warehouseCode,
@@ -1209,7 +1156,7 @@ export default {
             const baseUnitId = units[0].id
             const buyUnit = item.uomBuyId
             const temp = {
-              id: randomNumber(-1, -1000),
+              id: -i,
               itemId: item.id,
               itemName: item.name,
               unitName: null,
@@ -1219,7 +1166,7 @@ export default {
               oldUnitId: baseUnitId,
               qtyOnHand: item.qtyOnHand,
               baseQtyOnHand: item.qtyOnHand,
-              baseUnit: buyUnit,
+              baseUnitId: baseUnitId,
               qtyOnTransit: 0,
               qtyOpname: 0,
               differentUnit: null,
@@ -1258,5 +1205,4 @@ export default {
     }
   }
 }
-
 </script>

@@ -424,7 +424,8 @@
                     <template v-slot:[`item.qty`]="{ item }">
                       <v-currency-field
                         v-model="item.qty"
-                        :rules="rules.cannot0"
+                        :decimal-length="0"
+                        :min="1"
                         class="text-body-2 text-right mt-0"
                         dense
                         @change="calcItemPrice(item)"
@@ -750,7 +751,7 @@ export default {
           id: randomNumber(-1, -1000),
           itemId: null,
           name: null,
-          qty: 0,
+          qty: 1,
           units: [],
           uomId: null,
           oldUnitId: null,
@@ -762,10 +763,10 @@ export default {
           notes: ''
         } 
         this.gridItem.data.push(item)
+
         setTimeout(() => {
           this.$refs.itemId.focus()
         }, 0)
-          
       }
     },
     edit(item) {
