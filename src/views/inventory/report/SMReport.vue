@@ -259,6 +259,7 @@
             :sort-by="grid.options.sortBy"
             :sort-desc="grid.options.sortDesc"
             :class="['elevation-1', this.data.type === 2 ? 'row-pointer' : !this.data.isSM ? 'row-pointer' : '']"
+            :disable-sort="this.data.isSM"
             fixed-header
             hide-default-footer
             disable-pagination
@@ -464,14 +465,6 @@ export default {
       this.grid.columns = this.data.type === 1 ? this.itemColumn : this.whColumn
     },
     getList() {
-      const sorts = []
-      for (let i = 0; i < this.grid.options.sortBy.length; i++) {
-        sorts.push({
-          field: this.grid.options.sortBy[i],
-          direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
-        })
-      }
-      
       this.grid.columns = this.data.type === 1 ? this.data.isSM ? this.smColumn : this.itemColumn : this.whColumn
       
       api.getAll(this.endpoint.inventory.smReport, {
@@ -482,8 +475,7 @@ export default {
           whCode: this.data.whCode,
           itemId: this.data.itemId,
           typeUnit: this.data.typeUnit,
-          isSM: this.data.isSM,
-          sorts: JSON.stringify(sorts)
+          isSM: this.data.isSM
         }
       })
         .then(response => {
@@ -493,16 +485,36 @@ export default {
         })
     },
     back() {
-      this.data.type = this.data.oldType
-      this.data.isSM = false
-      this.grid.columns = this.data.type === 1 ? this.itemColumn : this.whColumn
-      this.grid.options.sortBy = ['initial']
-      this.data.startDate = this.data.oldStartDate
-      this.data.endDate = this.data.oldEndDate
-      this.data.itemId = this.data.oldItemId
-      this.filter = true
-      this.getList()
-      this.main = true
+      if (this.data.isSM) {
+        this.data.type = 1
+        this.data.isSM = false
+        this.grid.columns = this.itemColumn
+        this.grid.options.sortBy = ['initial']
+        if (this.data.whCode !== null) {
+          this.data.filterName = this.data.oldFilterName
+          this.data.initial = this.data.oldInitial
+          this.data.name = this.data.oldName
+          this.data.itemId = null
+          this.filter = false
+          this.getList()
+          this.main = false
+        } else {
+          this.data.itemId = this.data.oldItemId
+          this.filter = true
+          this.getList()
+          this.main = true
+        }
+      } else {
+        this.data.type = 2
+        this.data.isSM = false
+        this.grid.columns = this.whColumn
+        this.grid.options.sortBy = ['initial']
+        this.data.itemId = null
+        this.data.whCode = null
+        this.filter = true
+        this.getList()
+        this.main = true
+      }
       this.setGridDefaultHeight()
     },
     showfilter() {
@@ -519,11 +531,13 @@ export default {
     },
     dblclickRow(event, { item }) {
       if (!this.data.isSM) {
-        this.data.oldType = this.data.type
-        this.data.oldStartDate = this.data.startDate
-        this.data.oldEndDate = this.data.endDate
-        this.data.oldItemId = this.data.itemId
         if (this.data.type === 1) {
+          if (this.data.filterName !== undefined) {
+            this.data.oldFilterName = this.data.filterName
+            this.data.oldInitial = this.data.initial
+            this.data.oldName = this.data.name
+          }
+          this.data.oldItemId = this.data.itemId
           this.data.filterName = 'Barang'
           this.data.initial = item.initial
           this.data.name = item.name
@@ -531,7 +545,7 @@ export default {
           this.data.itemId = item.id
           this.data.isSM = true
           this.filter = false
-          this.grid.options.sortBy = ['date']
+          this.grid.options.sortBy = []
           this.getList()
           this.main = false
         } else {
