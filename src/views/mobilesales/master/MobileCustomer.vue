@@ -54,7 +54,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'alt', 's']"
-                  :disabled="selected.length === 0 || !allowApprove"
+                  :disabled="selected.length === 0 || !auth.allowApprove"
                   color="green darken-1"
                   class="font-weight-regular"
                   dark
@@ -74,7 +74,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'alt', 't']"
-                  :disabled="selected.length === 0 || !allowReject"
+                  :disabled="selected.length === 0 || !auth.allowReject"
                   color="red darken-1"
                   class="font-weight-regular ml-1"
                   dark
@@ -168,7 +168,7 @@
                   v-shortkey="['ctrl', 's']"
                   color="blue darken-2"
                   class="font-weight-regular"
-                  :disabled="isRejected || !allowUpdate"
+                  :disabled="isRejected || !auth.allowUpdate"
                   dark
                   small
                   tile
