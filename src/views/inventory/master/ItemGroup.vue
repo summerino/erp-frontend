@@ -370,6 +370,11 @@
                           dense
                         ></v-text-field>
                       </template>
+                      <template v-slot:[`item.showInMobile`]="{ item }">
+                        <v-checkbox
+                          v-model="item.showInMobile"
+                        ></v-checkbox>
+                      </template>
                     </v-data-table>
                   </v-card-text>
                 </v-card>
@@ -429,7 +434,8 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '1%' },
         { text: 'Sub Grup', value: 'name', divider: true, width: '120' },
-        { text: 'Nilai Sub Grup', value: 'value', divider: true, width: '300' }
+        { text: 'Nilai Sub Grup', value: 'value', divider: true, width: '300' },
+        { text: 'Tampilkan di mobile?', value: 'showInMobile', width: '80' }
       ],
       data: []
     },
