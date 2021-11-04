@@ -400,6 +400,7 @@
                 <v-card>
                   <v-tabs v-model="tab.det">
                     <v-tab key="detail-trans">Detail</v-tab>
+                    <v-tab key="image">Gambar</v-tab>
 
                     <v-tab-item
                       key="detail-trans"
@@ -484,6 +485,36 @@
                         </v-data-table>
                       </v-card>
                     </v-tab-item>
+
+                    <v-tab-item
+                      key="image"
+                      transition="false"
+                    >
+                      <v-card>
+                        <v-data-table
+                          :headers="gridImg.columns"
+                          :items="gridImg.data"
+                          :items-per-page="-1"
+                          height="300"
+                          class="elevation-1"
+                          dense
+                          disable-sort
+                          fixed-header
+                          hide-default-footer
+                        >
+                          <template v-slot:[`item.image`]="{ item }">
+                            <span v-if="item.image.length > 0">
+                              <v-btn small color="blue darken-1" dark @click="showImage(item.image)">
+                                Tampilkan gambar 
+                              </v-btn>
+                            </span>
+                            <span v-else>
+                              -
+                            </span>
+                          </template>
+                        </v-data-table>
+                      </v-card>
+                    </v-tab-item>
                   </v-tabs>
                 </v-card>
               </v-col>
@@ -499,6 +530,7 @@
     @closeApprove="closeApprove"
     :selected="this.selected"
     ></approval-cost>
+    <display-image ref="displayImage"></display-image>
   </div>
 </template>
 
@@ -515,13 +547,15 @@ import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 import ApprovalCost from '@/components/dialog/mobilesales/ApprovalCost'
+import DisplayImage from '@/components/dialog/attendance/DisplayImage.vue'
 
 export default {
   components: {
     AdvancedSearch,
     ExportExcel,
     Confirm,
-    ApprovalCost
+    ApprovalCost,
+    DisplayImage
   },
 
   data: () => ({
@@ -559,6 +593,12 @@ export default {
         { value: 'action', sortable: false, divider: true, width: '1%' },
         { text: 'Akun', value: 'coaCode', divider: true, width: '150' },
         { text: 'Nilai', value: 'amount', align: 'right', width: '70' }
+      ],
+      data: []
+    },
+    gridImg: {
+      columns: [
+        { text: 'Gambar', value: 'image', width: '100'}
       ],
       data: []
     },
@@ -717,6 +757,14 @@ export default {
         .then(response => {
           this.gridDet.data = response.data.tableData
         })
+
+      // Get image details
+      api.getAll(`${this.endpoint.mobileSales.salesCost}/image`, {
+        params: { code: item.code }
+      })
+        .then(response => {
+          this.gridImg.data = response.data.tableData
+        })
     },
     async save(closeDialog) {
       if (!this.dialog.add) return
@@ -826,6 +874,9 @@ export default {
     closeApprove() {
       this.reset()
       this.getList()
+    },
+    showImage(link) {
+      this.$refs.displayImage.show(link)
     }
   }
 }
