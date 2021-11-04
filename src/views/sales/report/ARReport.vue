@@ -311,7 +311,7 @@ export default {
       { text: 'Nilai Bayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Sisa', value: 'remainderAmount', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
-    types: [{ id: 1, name: 'Berdasarkan Surat Jalan / Penjualan Langsung' }, { id: 2, name: 'Berdasarkan Pelanggan' }],
+    types: [{ id: 1, name: 'Berdasarkan Surat Jalan / Penjualan Langsung / Saldo Awal' }, { id: 2, name: 'Berdasarkan Pelanggan' }],
     customers: [],
     salesman: [],
     data: {},
