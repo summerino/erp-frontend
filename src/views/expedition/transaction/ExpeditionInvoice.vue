@@ -94,7 +94,6 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="(item.mark.toUpperCase() === 'V') || (!auth.allowUpdate)"
                 color="orange lighten-1"
                 icon
                 small
@@ -110,7 +109,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="(item.mark.toUpperCase() !== 'A') || (!auth.allowVoid)"
+                :disabled="item.mark.toUpperCase() !== 'A' || !auth.allowVoid"
                 color="red"
                 icon
                 small
@@ -138,23 +137,6 @@
             <span class="text-caption">Cetak</span>
           </v-tooltip>
         </template>
-        <template v-slot:[`item.mark`]="{ item }">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-chip
-                v-bind="attrs"
-                v-on="on"
-                :color="item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
-                class="px-1"
-                dark
-                small
-              >
-                {{ item.mark }}
-              </v-chip>
-            </template>
-            <span class="text-caption">{{ item.mark == 'A' ? 'Aktif' : 'Void' }}</span>
-          </v-tooltip>
-        </template>
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
@@ -169,6 +151,23 @@
         </template>
         <template v-slot:[`item.remaining`]="{ item }">
           {{ item.remaining | formatCurrency }}
+        </template>
+        <template v-slot:[`item.mark`]="{ item }">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-chip
+                v-bind="attrs"
+                v-on="on"
+                :color="item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
+                class="px-1"
+                dark
+                small
+              >
+                {{ item.mark }}
+              </v-chip>
+            </template>
+            <span class="text-caption">{{ item.status }}</span>
+          </v-tooltip>
         </template>
       </v-data-table>
     </v-card>
@@ -200,7 +199,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="isVoid || !auth.allowUpdate"
+                  :disabled="isVoid || hasRelatedTrans || (data.action === 'edit' && !auth.allowUpdate)"
                   dark
                   text
                   @click="save(true)"
@@ -229,7 +228,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="isVoid || !auth.allowUpdate"
+                  :disabled="isVoid || hasRelatedTrans || (data.action === 'edit' && !auth.allowUpdate)"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -277,6 +276,7 @@
                       <v-col cols="12" md="6" class="pl-md-1">
                         <v-text-field
                           v-model.trim="data.refNo"
+                          :readonly="isVoid"
                           :rules="[rules.required[0], rules.max30chars[0]]"
                           counter="30"
                           label="No. Ref. Transaksi"
@@ -298,7 +298,7 @@
                             <v-text-field
                               v-bind="attrs"
                               v-on="on"
-                              :disabled="!auth.allowChangeDate"
+                              :disabled="isVoid || !auth.allowChangeDate"
                               :rules="rules.required"
                               :value="formatDate"
                               label="Tanggal"
@@ -328,7 +328,7 @@
                             <v-text-field
                               v-bind="attrs"
                               v-on="on"
-                              :disabled="!auth.allowChangeDate"
+                              :disabled="isVoid || !auth.allowChangeDate"
                               :rules="rules.required"
                               :value="formatDueDate"
                               label="Tanggal Jatuh Tempo"
@@ -353,6 +353,7 @@
                         <v-autocomplete
                           v-model="data.srcTrans"
                           :items="sources"
+                          :readonly="isVoid || hasRelatedTrans"
                           :rules="rules.required"
                           label="Sumber Transaksi"
                           item-text="name"
@@ -394,6 +395,7 @@
                             v-model="data.supCode"
                             :items="suppliers"
                             :item-text="item => `${item.code} - ${item.initial}`"
+                            :readonly="isVoid || hasRelatedTrans"
                             :rules="rules.required"
                             label="Kode"
                             item-value="code"
@@ -453,6 +455,7 @@
                     >
                       <v-textarea
                         v-model="data.notes"
+                        :readonly="isVoid"
                         :rules="rules.max256chars"
                         label="Catatan"
                         counter="256"
@@ -532,6 +535,7 @@
                 <v-card>
                   <v-tabs v-model="tab.detail">
                     <v-tab key="detail">Detail</v-tab>
+                    <v-tab key="related-trans">Transaksi Terkait</v-tab>
 
                     <v-tab-item
                       key="detail"
@@ -546,7 +550,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid"
+                                :disabled="isVoid || hasRelatedTrans || (data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
                                 class="blue--text"
                                 small
                                 tile
@@ -578,7 +582,7 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
-                                  :disabled="isVoid"
+                                  :disabled="isVoid || hasRelatedTrans || (data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
                                   color="red"
                                   icon
                                   small
@@ -595,6 +599,7 @@
                               ref="transCode"
                               v-model="item.transCode"
                               :items="data.srcTrans === 1 ? receives : deliveries"
+                              :readonly="isVoid || hasRelatedTrans"
                               :rules="rules.required"
                               item-text="code"
                               item-value="code"
@@ -610,6 +615,30 @@
                           </template>
                         </v-data-table>
                       </v-card>
+                    </v-tab-item>
+
+                    <v-tab-item
+                      key="related-trans"
+                      transition="false"
+                    >
+                      <v-data-table
+                        :headers="gridRelated.columns"
+                        :items="gridRelated.data"
+                        :items-per-page="-1"
+                        height="300"
+                        class="elevation-1"
+                        dense
+                        disable-sort
+                        fixed-header
+                        hide-default-footer
+                      >
+                        <template v-slot:[`item.date`]="{ item }">
+                          {{ item.date | formatDate('dd-MMM-yyyy') }}
+                        </template>
+                        <template v-slot:[`item.total`]="{ item }">
+                          {{ item.total | formatCurrency }}
+                        </template>
+                      </v-data-table>
                     </v-tab-item>
                   </v-tabs>
                 </v-card>
@@ -694,6 +723,15 @@ export default {
       ],
       data: []
     },
+    gridRelated: {
+      columns: [
+        { text: 'Kode Trans.', value: 'code', divider: true },
+        { text: 'Tipe Trans.', value: 'type', divider: true },
+        { text: 'Tgl. Trans.', value: 'date', align: 'right', divider: true },
+        { text: 'Nilai', value: 'total', align: 'right' }
+      ],
+      data: []
+    },
     valid: false,
     dataStartDate: null,
     sources: [{ id: 1, name: 'Penerimaan Pembelian' }, { id: 2, name: 'Surat Jalan' }],
@@ -755,6 +793,9 @@ export default {
     formatDueDate() {
       return this.data.dueDate ? format(parseISO(this.data.dueDate), 'dd-MMM-yyyy') : ''
     },
+    hasRelatedTrans() {
+      return (this.gridRelated?.data?.length > 0)
+    },
     isVoid() {
       return (this.data?.mark?.toUpperCase() === 'V')
     }
@@ -779,6 +820,8 @@ export default {
         amount: 0,
         notes: null
       }
+      this.gridDetail.data = []
+      this.gridRelated.data = []
       this.tab.sup = 0
       this.tab.detail = 0
 
@@ -884,6 +927,14 @@ export default {
             response.data.tableData[i].mark = data_t.mark
           }
           this.gridDetail.data = response.data.tableData
+        })
+
+      // Get related transaction details
+      api.getAll(`${this.endpoint.expedition.invoice}/related-trans`, {
+        params: { code: item.code }
+      })
+        .then(response => {
+          this.gridRelated.data = response.data.tableData
         })
 
       // Set focus to return code field

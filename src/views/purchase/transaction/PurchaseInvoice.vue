@@ -926,7 +926,7 @@ export default {
         { text: 'Kode Trans.', value: 'code', divider: true },
         { text: 'Tipe Trans.', value: 'type', divider: true },
         { text: 'Tgl. Trans.', value: 'date', align: 'right', divider: true },
-        { text: 'Nilai', value: 'total', align: 'right', divider: true }
+        { text: 'Nilai', value: 'total', align: 'right' }
       ],
       data: []
     },
