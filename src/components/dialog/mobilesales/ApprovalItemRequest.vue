@@ -11,7 +11,7 @@
         dark
         dense
       >
-        <v-toolbar-title>Persetujuan Penerimaan Barang</v-toolbar-title>
+        <v-toolbar-title>Persetujuan Permintaan Barang</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn
           icon
