@@ -657,7 +657,9 @@ export default {
         { text: 'Alamat 2', value: 'address2', divider: true, width: '300' },
         { text: 'Kontak Person', value: 'contactPerson', divider: true, width: '120' },
         { text: 'Telepon', value: 'phone', divider: true, width: '170' },
-        { text: 'Fax', value: 'fax', divider: true, width: '170' }
+        { text: 'Fax', value: 'fax', divider: true, width: '170' },
+        { text: 'Latitude', value: 'lat', divider: true, width: '170' },
+        { text: 'Longitude', value: 'lng', width: '170' }
       ],
       data: []
     },
