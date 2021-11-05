@@ -764,6 +764,7 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'Kode', value: 'code', divider: true, width: '120', excelColWidth:'14' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'No. Kendaraan', value: 'vehicleNo', divider: true, width: '160', excelColWidth:'18' },
         { text: 'Supir', value: 'driverInitial', divider: true, width: '120', excelColWidth:'15' },
         { text: 'Gudang', value: 'warehouseInitial', divider: true, width: '160', excelColWidth:'19' },
@@ -809,6 +810,9 @@ export default {
       },
       {
         text: 'Gudang', value: 'warehouseInitial', dataType: 'text'
+      }, 
+      {
+        text: 'Tanggal', value: 'date', dataType: 'datetime'
       }     
     ],
     valid: false,

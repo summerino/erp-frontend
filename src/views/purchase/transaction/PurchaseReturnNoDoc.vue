@@ -1672,7 +1672,9 @@ export default {
       }
     },
     calcItemPrice(item, calcPrice = true) {
-      this.calcItemTax(item)
+      if (!this.data.noTax) {
+        this.calcItemTax(item)
+      }
       item.total = item.qty * item.nettPrice
       item.totTax = item.qty * item.taxAmount
       item.totDPP = item.qty * item.dpp
