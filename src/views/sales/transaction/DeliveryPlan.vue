@@ -782,7 +782,7 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '80' },
         { text: 'No. Dokumen', value: 'transCode', divider: true, width: '120' },
-        { text: 'Penjual', value: 'custName', divider: true, width: '120' },
+        { text: 'Penjual', value: 'salesInitial', divider: true, width: '120' },
         { text: 'Volume', value: 'volume', align: 'right', divider: true, width: '120' },
         { text: 'Bobot', value: 'weight', align: 'right', divider: true, width: '120' },
         { text: 'Detail Barang Gagal Kirim', value: 'detail', divider: true, width: '120' },
