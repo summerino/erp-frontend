@@ -824,7 +824,8 @@ export default {
     data: {},
     vehicles: [],
     warehouses: [],
-    listCode: []
+    listCode: [],
+    orderData: []
   }),
 
   created: function () {
@@ -834,6 +835,8 @@ export default {
     this.getEmployeeLists()
     this.getVehicleLists()
     this.getWarehouseLists()
+    this.getOrderData()
+    this.getDlvData()
     auth.getAction(this.endpoint, this.menuId.deliveryPlan)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -1072,6 +1075,15 @@ export default {
         params: { code: item.code }
       })
         .then(response => {
+          for (let i = 0; i < response.data.tableData.length; i++) {
+            const data_dlv = this.dlvData.find(x => x.code === response.data.tableData[i].transCode)
+            if (data_dlv) {
+              const data_so = this.orderData.find(x => x.code === data_dlv.transCode)
+              if (data_so) {
+                response.data.tableData[i].salesInitial = data_so.salesInitial
+              }
+            }
+          }
           this.gridItem.data = response.data.tableData
           this.calcTotal()  
         })
@@ -1225,6 +1237,18 @@ export default {
           this.data.warehouseCode = defWarehouse.code
         }
       }
+    },
+    getOrderData() {
+      api.getAll(this.endpoint.sales.order)
+        .then(response => {
+          this.orderData = response.data.tableData
+        })
+    },
+    getDlvData() {
+      api.getAll(this.endpoint.sales.delivery)
+        .then(response => {
+          this.dlvData = response.data.tableData
+        })
     }
   }
 }
