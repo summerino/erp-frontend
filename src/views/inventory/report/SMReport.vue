@@ -462,9 +462,9 @@ export default {
         isSM: false
       }
       this.filter = true
-      this.grid.columns = this.data.type === 1 ? this.itemColumn : this.whColumn
     },
     getList() {
+      this.checkInvAuth()
       this.grid.columns = this.data.type === 1 ? this.data.isSM ? this.smColumn : this.itemColumn : this.whColumn
       
       api.getAll(this.endpoint.inventory.smReport, {
@@ -623,6 +623,14 @@ export default {
         this.data.endDate = null
       }
       this.clearTable()
+    },
+    checkInvAuth() {
+      if (!this.auth.allowShowInventoryValue) {
+        const removed = ['invBegin', 'invIn', 'invOut', 'invEnd']
+        this.whColumn = this.whColumn.filter(x => !removed.includes(x.value))
+        this.itemColumn = this.itemColumn.filter(x => !removed.includes(x.value))
+        this.smColumn = this.smColumn.filter(x => !removed.includes(x.value))
+      }
     }
   }
 }
