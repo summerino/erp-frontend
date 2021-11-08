@@ -133,7 +133,7 @@
                   {{ item.date | formatDate('dd-MMM-yyyy') }}
                 </template>
                 <template v-slot:[`item.type`]="{ item }">
-                  {{ item.type === 1 ? 'Saldo Awal' : 'Retur' }}
+                  {{ item.src === 'BB' ? 'Saldo Awal' : item.type === 1 ? 'Deposit' : 'Retur' }}
                 </template>
                 <template v-slot:[`item.amount`]="{ item }">
                   {{ item.amount | formatCurrency }}
