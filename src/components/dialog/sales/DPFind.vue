@@ -171,7 +171,8 @@ export default {
         data: [],
         height: 400
       },
-      invoiceDetail: []
+      invoiceDetail: [],
+      orderData: []
     }
   },
 
@@ -194,6 +195,7 @@ export default {
       this.dialog = true
       this.rowItem = rowItem
       this.reset()
+      this.getOrderData()
       setTimeout(() => {
         this.$refs.search.focus()
       }, 100)
@@ -297,7 +299,17 @@ export default {
       if (data_i) {
         this.rowItem.doCode = data_i.doCode
       }
-
+      if (item.type === 'Penjualan Langsung') {
+        const data_o = this.orderData.find(i => i.code === item.code)
+        if (data_o) {
+          this.rowItem.salesInitial = data_o.salesInitial
+        }
+      } else {
+        const data_o = this.orderData.find(i => i.code === (srcTrans === 3 ? item.soCode : item.transCode))
+        if (data_o) {
+          this.rowItem.salesInitial = data_o.salesInitial
+        }
+      }
       this.rowItem.srcTrans = srcTrans
       this.rowItem.transCode = item.code
       this.rowItem.custName = item.custName
@@ -376,6 +388,12 @@ export default {
             })
         }
       }
+    },
+    getOrderData() {
+      api.getAll(this.endpoint.sales.order)
+        .then(response => {
+          this.orderData = response.data.tableData
+        })
     }
     
   }
