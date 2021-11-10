@@ -1089,7 +1089,22 @@ export default {
       return this.data.taxInvoiceDate ? format(parseISO(this.data.taxInvoiceDate), 'dd-MMM-yyyy') : ''
     },
     hasRelatedTrans() {
-      return (this.gridRelated?.data?.length > 0)
+      if (this.gridRelated?.data?.length > 0) {
+        const rcvData = this.gridRelated.data.filter(x => x.type === 'Penerimaan Pembelian')
+        if (rcvData.length > 0) {
+          return true
+        } else {
+          const status = ['PU', 'FU']
+          const dmData = this.gridRelated.data.filter(x => status.includes(x.mark))
+          if (dmData.length > 0) {
+            return true
+          } else {
+            return false
+          }
+        }
+      } else {
+        return false
+      }
     },
     isVoid() {
       return (this.data?.mark?.toUpperCase() === 'V')
