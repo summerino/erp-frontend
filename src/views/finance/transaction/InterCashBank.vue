@@ -894,6 +894,7 @@ export default {
         return
       }
 
+      this.$refs.Notes.focus() // prevent data.amount set to min value if do save in focus
       const data = this.data
       this.setDetail(data)
       data.itemDetails = this.itemDetails
