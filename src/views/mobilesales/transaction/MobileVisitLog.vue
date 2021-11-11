@@ -4,7 +4,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row no-gutters>
           <v-col cols="12" md="3">
-            Catatan Kunjungan
+            Log Kunjungan
           </v-col>
           <v-col cols="12" md="5" >
             <v-row no-gutters>
@@ -43,7 +43,7 @@
                 :filters="filter"
                 :grid="grid"
                 :gridDefOpts="gridDefOpts"
-                title="Daftar Catatan Kunjungan"
+                title="Daftar Log Kunjungan"
               ></export-excel>
             </v-row>
           </v-col>
@@ -192,7 +192,7 @@
           <v-btn icon dark @click="close">
             <v-icon>mdi-close</v-icon>
           </v-btn>
-          <v-toolbar-title>Catatan Kunjungan</v-toolbar-title>
+          <v-toolbar-title>Log Kunjungan</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-toolbar-items>
             <v-tooltip bottom>
@@ -628,7 +628,7 @@ export default {
       }, {
         text: 'Transaksi'
       }, {
-        text: 'Catatan Kunjungan'
+        text: 'Log Kunjungan'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
