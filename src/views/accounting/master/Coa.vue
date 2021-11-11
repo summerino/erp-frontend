@@ -216,7 +216,7 @@
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-autocomplete
                     v-model="data.parentId"
-                    :items="accounts"
+                    :items="parentAccounts"
                     :item-text="item => `${item.code} - ${item.name}`"
                     label="Induk Akun"
                     :readonly="isCBEdit"
@@ -383,6 +383,7 @@ export default {
     accounts: [],
     cbTypes: [{ id: 'C', name: 'Kas' }, { id: 'B', name: 'Bank' }],
     currencies: [],
+    parentAccounts: [],
     types: [],
     data: {},
     formatSummary: [],
@@ -396,6 +397,7 @@ export default {
     this.getCurrencyLists()
     this.getFormatList('S')
     this.getFormatList('D')
+    this.getParentAccountLists()
     auth.getAction(this.endpoint, this.menuId.coa)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -621,6 +623,24 @@ export default {
       })
         .then(response => {
           this.accounts = response.data.tableData
+        })
+    },
+    getParentAccountLists() {
+      api.getAll(`${this.endpoint.accounting.coa}/parents`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'isActive',
+            operator: 'eq',
+            keyword: true
+          }]),
+          sorts: JSON.stringify([{
+            field: 'code',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.parentAccounts = response.data.tableData
         })
     },
     typeChange() {
