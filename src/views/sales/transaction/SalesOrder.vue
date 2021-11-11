@@ -1201,7 +1201,6 @@ export default {
       .then((response) => {
         this.allowInsertSalesInvoice = response.data.some(x => x)
       })
-    this.getPromoLists()
     this.getPaymentTermLists()
     this.getAccountLists()
     this.$store.commit('app/setFilterFields', this.filterfields)
@@ -1226,6 +1225,12 @@ export default {
     'grid.options': {
       handler() {
         this.getList()
+      },
+      deep: true
+    },
+    'data.date': {
+      handler() {
+        this.getPromoLists()
       },
       deep: true
     }
@@ -1499,11 +1504,11 @@ export default {
           }, {
             field: 'startDate',
             operator: 'lte',
-            keyword: format(new Date(), 'yyyy-MM-dd')
+            keyword: this.data.date
           }, {
             field: 'endDate',
             operator: 'gte',
-            keyword: format(new Date(), 'yyyy-MM-dd')
+            keyword: this.data.date
           }])
         }
       })
