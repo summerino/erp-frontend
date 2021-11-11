@@ -191,7 +191,6 @@
                   v-model="data.name"
                   :rules="[rules.required[0], rules.max50chars[0]]"
                   :counter="50"
-                  :readonly="isCBEdit"
                   label="Nama"
                   class="mt-0"
                   required
@@ -319,27 +318,12 @@
 
             <v-row no-gutters>
               <v-col cols="12" md="6" class="pr-md-3">
-                <v-text-field
-                  v-model="data.vouCode"
-                  :disabled="(data.typeId !== 1) || (data.typeId === 1 && data.parentId === null)"
-                  :rules="data.typeId === 1 && data.parentId !== null ? [rules.required[0],rules.max4chars[0]] : []"
-                  :counter="4"
-                  :readonly="isCBEdit"
-                  label="Kode Voucher"
-                  class="mt-0"
-                  :required="data.typeId === 1 && data.parentId !== null ? true : false"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6" class="pl-md-3">
                 <v-checkbox
                   v-model="data.showInMobile"
                   label="Tampilkan di mobile?"
                 ></v-checkbox>
               </v-col>
-            </v-row>
-
-            <v-row no-gutters>
-              <v-col cols="12" md="6">
+              <v-col cols="12" md="6" class="pl-md-3">
                 <v-checkbox
                   v-model="data.isActive"
                   label="Aktif"
