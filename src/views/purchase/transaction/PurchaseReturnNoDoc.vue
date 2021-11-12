@@ -1393,7 +1393,7 @@ export default {
         return
       }
 
-      if (this.data.total < 0) {
+      if (this.data.difference < 0) {
         this.$store.dispatch('app/showInfo', 'Nilai Barang Masuk tidak boleh lebih kecil dari Nilai Barang Keluar')
         return
       }
@@ -1737,7 +1737,7 @@ export default {
       this.data.totalIn = this.data.subTotalIn 
 
       this.data.difference = this.data.totalIn - this.data.totalOut
-      this.data.total = this.data.difference
+      this.data.total = this.data.totalOut
     },
     showFindSupDialog() {
       this.$refs.findSup.open()
