@@ -490,6 +490,24 @@
                           dense
                         ></v-text-field>
                       </template>
+                      <template v-slot:[`item.lat`]="{ item }">
+                        <v-text-field
+                          ref="Lat"
+                          v-model="item.lat"
+                          :readonly="data.isActive === false"
+                          class="mt-0"
+                          dense
+                        ></v-text-field>
+                      </template>
+                      <template v-slot:[`item.lng`]="{ item }">
+                        <v-text-field
+                          ref="Lng"
+                          v-model="item.lng"
+                          :readonly="data.isActive === false"
+                          class="mt-0"
+                          dense
+                        ></v-text-field>
+                      </template>
                     </v-data-table>
                   </v-container>
                 </v-card>
