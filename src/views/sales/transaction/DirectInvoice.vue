@@ -1052,7 +1052,6 @@ export default {
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
-    this.getPromoLists()
     this.getPaymentTermLists()
     this.getAccountLists()
 
@@ -1073,6 +1072,15 @@ export default {
     },
     isVoid() {
       return (this.data?.mark?.toUpperCase() === 'V')
+    }
+  },
+
+  watch: {
+    'data.date': {
+      handler() {
+        this.getPromoLists()
+      },
+      deep: true
     }
   },
 
@@ -1241,11 +1249,11 @@ export default {
           }, {
             field: 'startDate',
             operator: 'lte',
-            keyword: format(new Date(), 'yyyy-MM-dd')
+            keyword: this.data.date
           }, {
             field: 'endDate',
             operator: 'gte',
-            keyword: format(new Date(), 'yyyy-MM-dd')
+            keyword: this.data.date
           }])
         }
       })
@@ -2136,8 +2144,7 @@ export default {
             }
 
             for (let iq = 0; iq < gridData[k].discPromo.length; iq++) {
-              const value = discPromo.find(x => x.promoDetailId === ('promoDetailId' in gridData[k].discPromo[iq] ? gridData[k].discPromo[iq].promoDetailId : 0))
-              if (value === null || value === undefined) {
+              if (!('promoDetailId' in gridData[k].discPromo[iq])) {
                 nDiscPromo.push(gridData[k].discPromo[iq])
               }
             }
@@ -2146,6 +2153,10 @@ export default {
               gridData[k].disc = _sumBy(gridData[k].discPromo, 'amount') 
               this.calcItemPrice(gridData[k], false)
             }
+          } else if (discPromo.length === 0) {
+            gridData[k].discPromo = []
+            gridData[k].disc = 0
+            this.calcItemPrice(gridData[k], false)
           }
         } else {
           gridData[k].discPromo = []
