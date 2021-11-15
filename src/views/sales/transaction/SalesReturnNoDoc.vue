@@ -1376,7 +1376,7 @@ export default {
         return
       }
 
-      if (this.data.difference < 0) {
+      if (this.data.type === 3 && this.data.difference < 0) {
         this.$store.dispatch('app/showInfo', 'Nilai Barang Keluar tidak boleh lebih kecil dari Nilai Barang Masuk')
         return
       }
