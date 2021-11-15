@@ -1371,7 +1371,7 @@ export default {
           'Hapus?',
           'Apakah anda yakin ingin menghapus data ini?')
       ) {
-        const idx = this.gridMemo.data.findIndex(i => i.code === item.code)
+        const idx = this.gridMemo.data.findIndex(i => i.creditMemoCode === item.creditMemoCode)
         this.gridMemo.data.splice(idx, 1)
       }
     },
@@ -1472,6 +1472,13 @@ export default {
     },
     async exportExcel() {
       this.exportExcel.export()
+    },
+    isMemoDuplicate() {
+      const valueArr = this.gridMemo.data.map(function (item) { return item.creditMemoCode })
+      const isDuplicate = valueArr.some(function (item, idx) { 
+        return valueArr.indexOf(item) !== idx 
+      })
+      return isDuplicate
     }
   }
 }

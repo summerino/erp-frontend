@@ -1410,6 +1410,11 @@ export default {
         return
       }
       
+      if (this.isMemoDuplicate()) {
+        this.$store.dispatch('app/showInfo', 'Tidak bisa melakukan simpan karena terdapat kredit memo dengan kode yang sama.')
+        return
+      }
+
       const data = this.data
       for (let i = 0; i < this.gridItem.data.length; i++) {
         const bonusData = this.gridBonus.data.filter(x => x.orderDetailId === this.gridItem.data[i].id)
@@ -1512,7 +1517,7 @@ export default {
           'Hapus?',
           'Apakah anda yakin ingin menghapus data ini?')
       ) {
-        const idx = this.gridMemo.data.findIndex(i => i.code === item.code)
+        const idx = this.gridMemo.data.findIndex(i => i.creditMemoCode === item.creditMemoCode)
         this.gridMemo.data.splice(idx, 1)
       }
     },
@@ -2221,6 +2226,13 @@ export default {
           creditMemoAmount: data[i].transAmount          
         })
       }
+    },
+    isMemoDuplicate() {
+      const valueArr = this.gridMemo.data.map(function (item) { return item.creditMemoCode })
+      const isDuplicate = valueArr.some(function (item, idx) { 
+        return valueArr.indexOf(item) !== idx 
+      })
+      return isDuplicate
     }
   }
 }
