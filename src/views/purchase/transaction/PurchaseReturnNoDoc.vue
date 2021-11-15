@@ -190,7 +190,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="isVoid || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || hasRelatedTrans || (data.action === 'edit' && !auth.allowUpdate)"
                   dark
                   text
                   @click="save(true)"
@@ -219,7 +219,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="isVoid || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || hasRelatedTrans || (data.action === 'edit' && !auth.allowUpdate)"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -1393,11 +1393,12 @@ export default {
         return
       }
 
-      if (this.data.difference < 0) {
+      if (this.data.type === 3 && this.data.difference < 0) {
         this.$store.dispatch('app/showInfo', 'Nilai Barang Masuk tidak boleh lebih kecil dari Nilai Barang Keluar')
         return
       }
 
+      this.$refs.code.focus()
       const data = this.data
       data.itemDetails = this.gridItem.data
       data.diffItemDetails = this.gridDiffItem.data
