@@ -1225,6 +1225,11 @@ export default {
         return
       }
       
+      if (this.isMemoDuplicate()) {
+        this.$store.dispatch('app/showInfo', 'Tidak bisa melakukan simpan karena terdapat debit memo dengan kode yang sama.')
+        return
+      }
+      
       const data = this.data
       data.details = this.gridDet.data
       data.memos = this.gridMemo.data
@@ -1401,6 +1406,13 @@ export default {
     },
     async exportExcel() {
       this.exportExcel.export()
+    },
+    isMemoDuplicate() {
+      const valueArr = this.gridMemo.data.map(function (item) { return item.debitMemoCode })
+      const isDuplicate = valueArr.some(function (item, idx) { 
+        return valueArr.indexOf(item) !== idx 
+      })
+      return isDuplicate
     }
   }
 }
