@@ -1301,7 +1301,7 @@ export default {
           'Hapus?',
           'Apakah anda yakin ingin menghapus data ini?')
       ) {
-        const idx = this.gridMemo.data.findIndex(i => i.code === item.code)
+        const idx = this.gridMemo.data.findIndex(i => i.debitMemoCode === item.debitMemoCode)
         this.gridMemo.data.splice(idx, 1)
       }
     },
