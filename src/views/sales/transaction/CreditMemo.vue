@@ -884,6 +884,7 @@ export default {
         return
       }
 
+      this.$refs.code.focus()
       const data = this.data
       data.currCode = 'IDR'
       let result = { success: false, message: '' }

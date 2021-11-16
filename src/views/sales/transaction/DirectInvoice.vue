@@ -1415,6 +1415,7 @@ export default {
         return
       }
 
+      this.$refs.code.focus()
       const data = this.data
       for (let i = 0; i < this.gridItem.data.length; i++) {
         const bonusData = this.gridBonus.data.filter(x => x.orderDetailId === this.gridItem.data[i].id)

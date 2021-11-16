@@ -827,6 +827,7 @@ export default {
         return
       }
 
+      this.$refs.code.focus()
       const data = this.data
       data.details = this.gridDetail.data
       data.total = data.totalDebit
