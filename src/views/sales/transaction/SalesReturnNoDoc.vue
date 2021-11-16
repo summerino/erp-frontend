@@ -1003,8 +1003,9 @@ export default {
     },
     gridRelated: {
       columns: [
-        { text: 'Kode', value: 'code', divider: true },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true },
+        { text: 'Kode Trans.', value: 'code', divider: true },
+        { text: 'Tipe Trans.', value: 'type', divider: true },
+        { text: 'Tgl. Trans.', value: 'date', align: 'right', divider: true },
         { text: 'Status', value: 'mark' }
       ],
       data: []
@@ -1079,7 +1080,22 @@ export default {
       return this.data.taxInvoiceDate ? format(parseISO(this.data.taxInvoiceDate), 'dd-MMM-yyyy') : ''
     },
     hasRelatedTrans() {
-      return (this.gridRelated?.data?.length > 0)
+      if (this.gridRelated?.data?.length > 0) {
+        const dlvData = this.gridRelated.data.filter(x => x.type === 'Surat Jalan')
+        if (dlvData.length > 0) {
+          return true
+        } else {
+          const status = ['PU', 'FU']
+          const cmData = this.gridRelated.data.filter(x => status.includes(x.mark))
+          if (cmData.length > 0) {
+            return true
+          } else {
+            return false
+          }
+        }
+      } else {
+        return false
+      }
     },
     isVoid() {
       return (this.data?.mark?.toUpperCase() === 'V')
