@@ -1393,6 +1393,7 @@ export default {
         return
       }
 
+      this.$refs.code.focus()
       const data = this.data
       data.itemDetails = this.gridItem.data
       
@@ -1420,6 +1421,7 @@ export default {
         this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
+      this.$refs.code.focus()
       const data = this.data
       data.itemDetails = this.gridItem.data
       this.$refs.poSr.open(data)
@@ -1433,6 +1435,7 @@ export default {
         this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
+      this.$refs.code.focus()
       const data = this.data
       data.itemDetails = this.gridItem.data
       this.$refs.poSi.open(data, true)
