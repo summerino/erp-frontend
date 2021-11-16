@@ -517,7 +517,7 @@ export default {
       text: 'Tanggal', value: 'date', dataType: 'datetime'
     }],
     dialog: {
-      add: true
+      add: false
     },
     tab: {
       sup: null,

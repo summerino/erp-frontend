@@ -54,4 +54,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/mobile-sales/report/visit-performance-report',
+  name: 'mobile-visit-performance-report',
+  component: () => import(/* webpackChunkName: "mobile-visit-performance-report" */ '@/views/mobilesales/report/MobileVisitPerformanceReport.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
