@@ -90,6 +90,7 @@ export default {
   mobileVisitLog: 118,
   mobileOrder: 120, 
   mobilePaymentInvoice: 119,
+  mobileVisitPerformanceReport: 128,
 
   // Mobile Warehouse
   mobileReceiveItem: 124,
