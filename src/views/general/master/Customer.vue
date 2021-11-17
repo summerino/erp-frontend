@@ -522,7 +522,7 @@
                       <v-col cols="12" md="6" class="pr-md-3">
                         <v-autocomplete
                           v-model="data.areaId1"
-                          :items="areaRef"
+                          :items="areaRef1"
                           :item-text="item => `${item.name}`"
                           item-value="id"
                           label="Wilayah 1"
@@ -532,7 +532,7 @@
                       <v-col cols="12" md="6" class="pl-md-3">
                         <v-autocomplete
                           v-model="data.areaId2"
-                          :items="areaRef"
+                          :items="areaRef2"
                           :item-text="item => `${item.name}`"
                           item-value="id"
                           label="Wilayah 2"
@@ -545,7 +545,7 @@
                       <v-col cols="12" md="6" class="pr-md-3">
                         <v-autocomplete
                           v-model="data.areaId3"
-                          :items="areaRef"
+                          :items="areaRef3"
                           :item-text="item => `${item.name}`"
                           item-value="id"
                           label="Wilayah 3"
@@ -555,7 +555,7 @@
                       <v-col cols="12" md="6" class="pl-md-3">
                         <v-autocomplete
                           v-model="data.areaId4"
-                          :items="areaRef"
+                          :items="areaRef4"
                           :item-text="item => `${item.name}`"
                           item-value="id"
                           label="Wilayah 4"
@@ -568,7 +568,7 @@
                       <v-col cols="12" md="6" class="pr-md-3">
                         <v-autocomplete
                           v-model="data.areaId5"
-                          :items="areaRef"
+                          :items="areaRef5"
                           :item-text="item => `${item.name}`"
                           item-value="id"
                           label="Wilayah 5"
@@ -686,7 +686,11 @@ export default {
     types: [],
     billingAddressRef: [],
     shippingAddressRef: [],
-    areaRef: [],
+    areaRef1: [],
+    areaRef2: [],
+    areaRef3: [],
+    areaRef4: [],
+    areaRef5: [],
     paymentTerms: [],
     data: {}
   }),
@@ -829,7 +833,11 @@ export default {
     getAreaList() {
       api.getAll(`${this.endpoint.sales.area}/lists`, {})
         .then(response => {
-          this.areaRef = response.data.tableData
+          this.areaRef1 = response.data.tableData.filter(x => x.deep === 1)
+          this.areaRef2 = response.data.tableData.filter(x => x.deep === 2)
+          this.areaRef3 = response.data.tableData.filter(x => x.deep === 3)
+          this.areaRef4 = response.data.tableData.filter(x => x.deep === 4)
+          this.areaRef5 = response.data.tableData.filter(x => x.deep === 5)
         })
     },
     getPaymentTermLists() {
