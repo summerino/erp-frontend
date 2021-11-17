@@ -1386,6 +1386,7 @@ export default {
       this.$refs.reportViewer.open('sales-return-wo-doc', item.code)
     },
     async save(closeDialog) {
+      this.$refs.code.focus()
       if (!this.dialog.add) return
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
