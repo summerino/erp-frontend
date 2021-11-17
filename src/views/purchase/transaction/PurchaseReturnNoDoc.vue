@@ -721,6 +721,7 @@
                               v-model="item.itemId"
                               :items="items"
                               :rules="rules.required"
+                              :readonly="hasRelatedTrans"
                               item-text="initial"
                               item-value="id"
                               class="text-body-2 mt-0"
@@ -730,6 +731,7 @@
                             >
                               <template v-slot:append>
                                 <v-btn
+                                  :disabled="hasRelatedTrans"
                                   color="primary"
                                   icon
                                   x-small
@@ -747,6 +749,7 @@
                               v-model="item.qty"
                               :decimal-length="0"
                               :min="1"
+                              :readonly="hasRelatedTrans"
                               class="text-body-2 text-right mt-0"
                               dense
                               @change="calcItemPrice(item)"
@@ -769,6 +772,7 @@
                           <template v-slot:[`item.unitPrice`]="{ item }">
                             <v-currency-field
                               v-model="item.unitPrice"
+                              :readonly="hasRelatedTrans"
                               class="text-body-2 text-right mt-0"
                               dense
                               @change="calcItemPrice(item)"
