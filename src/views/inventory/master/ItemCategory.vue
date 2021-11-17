@@ -211,6 +211,7 @@
                           v-model="data.groupId"
                           :items="groupRef"
                           :item-text="item => `${item.name}`"
+                          :rules="rules.required"
                           label="Grup Barang"
                           item-value="id"
                           class="mt-0"
