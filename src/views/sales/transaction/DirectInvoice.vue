@@ -579,7 +579,7 @@
                               v-model="item.disc"
                               class="text-body-2 text-right mt-0"
                               dense
-                              @change="calcItemPrice(item)"
+                              @blur="calcItemPrice(item)"
                               readonly
                             >
                               <template v-slot:append>
@@ -1405,6 +1405,7 @@ export default {
       }
     },
     async save(closeDialog) {
+      document.activeElement.blur()
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
@@ -1415,7 +1416,6 @@ export default {
         return
       }
 
-      this.$refs.code.focus()
       const data = this.data
       for (let i = 0; i < this.gridItem.data.length; i++) {
         const bonusData = this.gridBonus.data.filter(x => x.orderDetailId === this.gridItem.data[i].id)
