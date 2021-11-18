@@ -115,7 +115,8 @@ export default {
     visitLog: 'mobile-visit-log',
     order: 'mobile-order',
     paymentInvoice: 'mobile-payment-invoice',
-    visitPerformanceReport: 'mobile-visit-performance-report'
+    visitPerformanceReport: 'mobile-visit-performance-report',
+    activiyLogReport: 'mobile-activity-log-report'
   },
 
   mobileWarehouse: {

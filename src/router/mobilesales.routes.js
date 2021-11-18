@@ -61,4 +61,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/mobile-sales/report/activity-log-report',
+  name: 'mobile-activity-log-report',
+  component: () => import(/* webpackChunkName: "mobile-activity-log-report" */ '@/views/mobilesales/report/MobileActivityLogReport.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
