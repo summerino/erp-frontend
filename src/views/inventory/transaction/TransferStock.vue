@@ -1002,6 +1002,11 @@ export default {
         return
       }
       
+      if (this.data.warehouseCodeFrom == this.data.warehouseCodeTo) {
+        this.$store.dispatch('app/showInfo', 'Gudang asal & tujuan tidak boleh sama.')
+        return
+      }
+
       const data = this.data
       data.itemDetails = this.gridDet.data
       if (data.originTransferCode === '') {
