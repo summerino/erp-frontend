@@ -431,12 +431,12 @@ export default {
         this.exportFilter.searches.push(searchEndDate)
       }
 
-      searchTypeCode = this.data.typeCode
+      searchTypeCode.keyword = this.data.typeCode
       if (searchTypeCode.keyword !== null) {
         this.exportFilter.searches.push(searchTypeCode)
       }
 
-      searchNote = this.data.note
+      searchNote.keyword = this.data.note
       if (searchNote.keyword !== null) {
         this.exportFilter.searches.push(searchNote)
       }
