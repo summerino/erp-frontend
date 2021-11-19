@@ -1387,13 +1387,18 @@ export default {
       this.$refs.reportViewer.open('purchase-order', item.code)
     },
     async save(closeDialog) {
+      document.activeElement.blur()
       if (!this.dialog.add) return
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
 
-      this.$refs.code.focus()
+      if (this.containNegativePrice(this.gridItem.data)) {
+        this.$store.dispatch('app/showInfo', 'Terdapat barang dengan nilai total minus.')
+        return
+      }
+
       const data = this.data
       data.itemDetails = this.gridItem.data
       
@@ -1417,11 +1422,17 @@ export default {
       }
     },
     saveRcv() {
+      document.activeElement.blur()
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
-      this.$refs.code.focus()
+
+      if (this.containNegativePrice(this.gridItem.data)) {
+        this.$store.dispatch('app/showInfo', 'Terdapat barang dengan nilai total minus.')
+        return
+      }
+
       const data = this.data
       data.itemDetails = this.gridItem.data
       this.$refs.poSr.open(data)
@@ -1431,11 +1442,17 @@ export default {
       this.getList()
     },
     saveInv() {
+      document.activeElement.blur()
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
-      this.$refs.code.focus()
+
+      if (this.containNegativePrice(this.gridItem.data)) {
+        this.$store.dispatch('app/showInfo', 'Terdapat barang dengan nilai total minus.')
+        return
+      }
+
       const data = this.data
       data.itemDetails = this.gridItem.data
       this.$refs.poSi.open(data, true)
@@ -1670,6 +1687,14 @@ export default {
         } else if (defWarehouse) {
           this.data.warehouseCode = defWarehouse.code
         }
+      }
+    },
+    containNegativePrice(item) {
+      const result = item.filter(x => x.total < 0)
+      if (result.length > 0) {
+        return true
+      } else {
+        return false
       }
     }
   }
