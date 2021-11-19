@@ -1386,7 +1386,7 @@ export default {
       this.$refs.reportViewer.open('sales-return-wo-doc', item.code)
     },
     async save(closeDialog) {
-      this.$refs.code.focus()
+      document.activeElement.blur()
       if (!this.dialog.add) return
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
@@ -1683,14 +1683,15 @@ export default {
 
       const tax = this.taxes.find(t => t.id === item.taxId)
       if (tax) {
-        if (this.data.includeTax) {
+        if ((!this.data.includeTax || this.data.includeTax) && this.data.noTax) {
+          item.taxAmount = 0
+          item.nettPrice = item.unitPrice
+          item.dpp = item.unitPrice
+        } else if (this.data.includeTax) {
           item.taxAmount = (item.unitPrice) - ((item.unitPrice) / (1 + (tax.rate / 100)))
           item.taxAmountTemp = item.taxAmount
           item.nettPrice = item.unitPrice
           item.dpp = item.unitPrice - item.taxAmount
-        } else if (!this.data.includeTax && this.data.noTax) {
-          item.nettPrice = item.unitPrice + item.taxAmount
-          item.dpp = item.unitPrice
         } else {
           item.taxAmount = (item.unitPrice) * (tax.rate / 100)
           item.taxAmountTemp = item.taxAmount
@@ -1700,9 +1701,7 @@ export default {
       }
     },
     calcItemPrice(item, calcPrice = true) {
-      if (!this.data.noTax) {
-        this.calcItemTax(item)
-      }
+      this.calcItemTax(item)
       item.total = item.qty * item.nettPrice
       item.totTax = item.qty * item.taxAmount
       item.totDPP = item.qty * item.dpp
