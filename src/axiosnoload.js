@@ -1,0 +1,52 @@
+import axios from 'axios'
+import router from './router'
+import store from './store'
+
+// Set config defaults when creating the instance
+const instance = axios.create({
+  baseURL: process.env.VUE_APP_API_BASE_URL || '',
+  headers: {
+    'Accept': 'application/json',
+    'Content-Type': 'application/json' 
+  }
+})
+
+// request interceptor
+instance.interceptors.request.use((config) => {
+  const accessToken = localStorage.getItem('accessToken')
+  if (accessToken) {
+    config.headers['Authorization'] = `Bearer ${accessToken}`
+  }
+  return config
+}, (error) => {
+  return Promise.reject(error)
+})
+
+// response interceptor
+instance.interceptors.response.use((response) => {
+  if (!(response?.data?.success ?? true) && router?.history?.current?.name !== 'login') {
+    store.dispatch('app/showInfo', response.data.message)
+  }
+  
+  return response
+}, (error) => {
+  if (error.response) {
+    if (error.response.status === 401 || error.response.status === 403) {
+      // Remove localStorage
+      localStorage.removeItem('accessToken')
+      localStorage.removeItem('userInfo')
+
+      // Navigate to login page
+      router.push({ name: 'login' })
+    } else {
+      let errMessage = error.response?.data?.title ?? ''
+      if (!errMessage) {
+        errMessage = `${error.response.statusText}.`
+      }
+      store.dispatch('app/showError', `${error.response.status} ${errMessage}`)
+    }
+  }
+  return Promise.reject(error)
+})
+
+export default instance
