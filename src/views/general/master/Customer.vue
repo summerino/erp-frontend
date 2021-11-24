@@ -527,6 +527,7 @@
                           item-value="id"
                           label="Wilayah 1"
                           class="mt-0"
+                          @change="changeArea1()"
                         ></v-autocomplete>
                       </v-col>
                       <v-col cols="12" md="6" class="pl-md-3">
@@ -537,6 +538,7 @@
                           item-value="id"
                           label="Wilayah 2"
                           class="mt-0"
+                          @change="changeArea2()"
                         ></v-autocomplete>
                       </v-col>
                     </v-row>
@@ -550,6 +552,7 @@
                           item-value="id"
                           label="Wilayah 3"
                           class="mt-0"
+                          @change="changeArea3()"
                         ></v-autocomplete>
                       </v-col>
                       <v-col cols="12" md="6" class="pl-md-3">
@@ -560,6 +563,7 @@
                           item-value="id"
                           label="Wilayah 4"
                           class="mt-0"
+                          @change="changeArea4()"
                         ></v-autocomplete>
                       </v-col>
                     </v-row>
@@ -691,6 +695,7 @@ export default {
     areaRef3: [],
     areaRef4: [],
     areaRef5: [],
+    areas: [],
     paymentTerms: [],
     data: {}
   }),
@@ -834,10 +839,7 @@ export default {
       api.getAll(`${this.endpoint.sales.area}/lists`, {})
         .then(response => {
           this.areaRef1 = response.data.tableData.filter(x => x.deep === 1)
-          this.areaRef2 = response.data.tableData.filter(x => x.deep === 2)
-          this.areaRef3 = response.data.tableData.filter(x => x.deep === 3)
-          this.areaRef4 = response.data.tableData.filter(x => x.deep === 4)
-          this.areaRef5 = response.data.tableData.filter(x => x.deep === 5)
+          this.areas = response.data.tableData
         })
     },
     getPaymentTermLists() {
@@ -1015,6 +1017,28 @@ export default {
     },
     async exportExcel() {
       this.exportExcel.export()
+    },
+    changeArea1() {
+      this.areaRef2 = this.areas.filter(x => x.parentId === this.data.areaId1 && x.deep === 2)
+      this.data.areaId2 = null
+      this.data.areaId3 = null
+      this.data.areaId4 = null
+      this.data.areaId5 = null
+    },
+    changeArea2() {
+      this.areaRef3 = this.areas.filter(x => x.parentId === this.data.areaId2 && x.deep === 3)
+      this.data.areaId3 = null
+      this.data.areaId4 = null
+      this.data.areaId5 = null
+    },
+    changeArea3() {
+      this.areaRef4 = this.areas.filter(x => x.parentId === this.data.areaId3 && x.deep === 4)
+      this.data.areaId4 = null
+      this.data.areaId5 = null
+    },
+    changeArea4() {
+      this.areaRef5 = this.areas.filter(x => x.parentId === this.data.areaId4 && x.deep === 5)
+      this.data.areaId5 = null
     }
   }
 }
