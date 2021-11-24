@@ -562,10 +562,10 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
-        { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
-        { text: 'Status', value: 'mark', width: '50' }
+        { text: 'Kode', value: 'code', divider: true, width: '300', excelColWidth:'19' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '150', excelColWidth:'15', isDateTime: true },
+        { text: 'Total', value: 'total', align: 'right', divider: true, width: '150', excelColWidth:'15', isCurrency: true },
+        { text: 'Status', value: 'mark', width: '150' }
       ],
       data: [],
       options: {

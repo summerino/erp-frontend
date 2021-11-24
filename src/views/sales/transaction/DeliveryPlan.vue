@@ -762,7 +762,7 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
+        { value: 'action', sortable: false, divider: true, width: '110' },
         { text: 'Kode', value: 'code', divider: true, width: '120', excelColWidth:'14' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'No. Kendaraan', value: 'vehicleNo', divider: true, width: '160', excelColWidth:'18' },
