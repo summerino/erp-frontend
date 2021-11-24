@@ -746,8 +746,8 @@ export default {
 
       filters.push({
         field: 'mark',
-        operator: 'contains',
-        keyword: ['A', 'REJ']
+        operator: 'eq',
+        keyword: 'A'
       })
 
       api.getAll(this.endpoint.mobileSales.itemRequest, {
