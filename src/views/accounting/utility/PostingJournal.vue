@@ -30,6 +30,7 @@
                       v-on="on"
                       :rules="rules.required"
                       :value="formatDate"
+                      :disabled="ongoingPost"
                       label="Tanggal"
                       class="mt-0"
                       readonly
@@ -61,7 +62,7 @@
                       tile
                       @click="save()"
                       @shortkey="save()"
-                      :disabled="!auth.allowPost"
+                      :disabled="ongoingPost || !auth.allowPost"
                     >
                       <v-icon left>mdi-alpha-p-box-outline</v-icon>
                       Posting
@@ -69,6 +70,18 @@
                   </template>
                   <span class="text-caption">(Ctrl + Alt + P)</span>
                 </v-tooltip>
+              </v-col>
+            </v-row>
+
+            <v-row dense v-if="ongoingPost">
+              <v-col cols="12">
+                <v-progress-linear
+                  v-model="this.journalState.percent"
+                  color="red lighten-2"
+                  height="20"
+                  stream
+                >
+                </v-progress-linear>
               </v-col>
             </v-row>
           </v-container>
@@ -120,11 +133,10 @@
 
 <script>
 import { mapState } from 'vuex'
-import { format, parseISO }  from 'date-fns'
+import { format, parseISO, getMonth}  from 'date-fns'
 
-import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
-
+import axios from '@/axiosnoload'
 export default {
   data: () => ({
     grid: {
@@ -140,12 +152,18 @@ export default {
       date: false
     },
     valid: false,
-    data: {}
+    data: {},
+    journalState: {}
   }),
 
   created: function () {
     this.reset()
+    this.getJournalState()
     this.getHistoryPost()
+    setInterval(() => {
+      this.getJournalState()
+      this.getHistoryPost()
+    }, 1000)
     auth.getAction(this.endpoint, this.menuId.postingJournal)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -182,6 +200,9 @@ export default {
     }),
     formatDate() {
       return this.data.date ? format(parseISO(this.data.date), 'MMM-yyyy') : format(new Date(), 'MMM-yyyy')
+    },
+    ongoingPost() {
+      return (this.journalState?.status?.toUpperCase() === 'ONGOING')
     } 
   },
   
@@ -197,19 +218,22 @@ export default {
         return
       }
 
-      let result = { success: false, message: '' }
-      const resp = await api.create('journal', this.data)
-      result = resp.data
-
-      if (result.success) {
-        this.$store.dispatch('app/showSuccess', result.message)
-        this.getHistoryPost()
-      }
+      axios.post('/journal', this.data)
     },
     getHistoryPost() {
-      api.create('journal/lists', this.data)
+      axios.post('journal/lists', this.data)
         .then(response => {
           this.grid.data = response.data.tableData
+        })
+    },
+    getJournalState() {
+      axios.get('journal-state')
+        .then(response => {
+          if (response.data.status.toUpperCase() === 'ONGOING') {
+            this.data.date = response.data.processDate
+            response.data.percent = getMonth(parseISO(response.data.processDate)) === 11 ? (response.data.step / 21) * 100 : (response.data.step / 19) * 100
+          }
+          this.journalState = response.data
         })
     }
   }
