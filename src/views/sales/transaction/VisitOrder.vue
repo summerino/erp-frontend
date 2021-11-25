@@ -1092,7 +1092,7 @@ export default {
         if (closeDialog) {
           this.dialog.add = false
         } else {
-          this.data.initial = result.data
+          this.data.code = result.data
         }
         this.getList(!closeDialog)
       }
