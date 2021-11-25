@@ -1159,9 +1159,10 @@ export default {
       let customerList = []
       let dataSchedule = []
 
-      api.getAll(`${this.endpoint.general.employee}/salesman-schedule-by-id`, {
+      api.getAll(`${this.endpoint.general.employee}/salesman-schedule-by-id-with-date`, {
         params: {
-          id: this.employee.id
+          id: this.employee.id,
+          date: this.data.date
         }
       })
         .then(response => {
