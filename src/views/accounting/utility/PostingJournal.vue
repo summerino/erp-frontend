@@ -229,9 +229,15 @@ export default {
     getJournalState() {
       axios.get('journal-state')
         .then(response => {
-          if (response.data.status.toUpperCase() === 'ONGOING') {
+          if (response.data.status === 'ONGOING') {
             this.data.date = response.data.processDate
             response.data.percent = getMonth(parseISO(response.data.processDate)) === 11 ? (response.data.step / 21) * 100 : (response.data.step / 19) * 100
+          }
+
+          if (this.journalState.status === 'ONGOING' && response.data.status === 'FINISH') {
+            setTimeout(() => {
+              this.$store.dispatch('app/showSuccess', 'Posting journal selesai')
+            }, 500)
           }
           this.journalState = response.data
         })
