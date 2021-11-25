@@ -216,7 +216,6 @@
             :height="grid.height"
             :items="grid.data"
             class="elevation-1"
-            disable-sort
             fixed-header
             hide-default-footer
             disable-pagination
@@ -270,6 +269,8 @@ export default {
     grid: {
       height: 100,
       columns: [
+        { text: 'Tanggal', value: 'sortDate', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'Kode', value: 'sortCode', divider: true, width: '200', excelColWidth:'36' },
         { text: 'Kode Akun', value: 'accCode', divider: true, width: '120', excelColWidth:'15' },
         { text: 'Nama Akun', value: 'accName', divider: true, width: '200', excelColWidth:'36' },
         { text: 'Catatan', value: 'notes', divider: true, width: '300', excelColWidth:'50' },
