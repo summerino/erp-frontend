@@ -887,6 +887,11 @@ export default {
         action: 'edit',
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
+      
+      this.areaRef2 = this.areas.filter(x => x.parentId === this.data.areaId1 && x.deep === 2)
+      this.areaRef3 = this.areas.filter(x => x.parentId === this.data.areaId2 && x.deep === 3)
+      this.areaRef4 = this.areas.filter(x => x.parentId === this.data.areaId3 && x.deep === 4)
+      this.areaRef5 = this.areas.filter(x => x.parentId === this.data.areaId4 && x.deep === 5)
     },
     async remove(item) {
       if (
