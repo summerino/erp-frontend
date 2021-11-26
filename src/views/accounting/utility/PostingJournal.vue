@@ -30,7 +30,7 @@
                       v-on="on"
                       :rules="rules.required"
                       :value="formatDate"
-                      :disabled="ongoingPost"
+                      :disabled="isJournalStateEmpty || ongoingPost"
                       label="Tanggal"
                       class="mt-0"
                       readonly
@@ -55,6 +55,7 @@
                       v-bind="attrs"
                       v-on="on"
                       v-shortkey="['ctrl', 'alt', 'p']"
+                      :disabled="isJournalStateEmpty || ongoingPost || !auth.allowPost"
                       color="green darken-1"
                       class="font-weight-regular"
                       dark
@@ -62,7 +63,6 @@
                       tile
                       @click="save()"
                       @shortkey="save()"
-                      :disabled="ongoingPost || !auth.allowPost"
                     >
                       <v-icon left>mdi-alpha-p-box-outline</v-icon>
                       Posting
@@ -133,7 +133,8 @@
 
 <script>
 import { mapState } from 'vuex'
-import { format, parseISO, getMonth}  from 'date-fns'
+import { format, parseISO, getMonth }  from 'date-fns'
+import { isEmpty as _isEmpty } from 'lodash'
 
 import auth from '@/services/authorization.service'
 import axios from '@/axiosnoload'
@@ -160,8 +161,6 @@ export default {
 
   created: function () {
     this.reset()
-    // this.getJournalState()
-    // this.getHistoryPost()
     this.countInterval = setInterval(() => {
       this.getJournalState()
       this.getHistoryPost()
@@ -207,9 +206,12 @@ export default {
     formatDate() {
       return this.data.date ? format(parseISO(this.data.date), 'MMM-yyyy') : format(new Date(), 'MMM-yyyy')
     },
+    isJournalStateEmpty() {
+      return _isEmpty(this.journalState)
+    },
     ongoingPost() {
-      return (this.journalState?.status?.toUpperCase() === 'ONGOING')
-    } 
+      return this.journalState?.status?.toUpperCase() === 'ONGOING'
+    }
   },
   
   methods:{
