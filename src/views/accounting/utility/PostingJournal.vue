@@ -76,7 +76,7 @@
             <v-row dense v-if="ongoingPost">
               <v-col cols="12">
                 <v-progress-linear
-                  v-model="this.journalState.percent"
+                  v-model="this.postingState.percent"
                   color="red lighten-2"
                   height="20"
                   stream
@@ -154,7 +154,7 @@ export default {
     },
     valid: false,
     data: {},
-    journalState: {
+    postingState: {
       status: null
     },
     disableControl: true,
@@ -164,9 +164,9 @@ export default {
   created: function () {
     this.reset()
     this.countInterval = setInterval(() => {
-      this.getJournalState()
+      this.getPostingState()
       this.getHistoryPost()
-    }, 5000)
+    }, 3000)
     auth.getAction(this.endpoint, this.menuId.postingJournal)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -209,7 +209,7 @@ export default {
       return this.data.date ? format(parseISO(this.data.date), 'MMM-yyyy') : format(new Date(), 'MMM-yyyy')
     },
     ongoingPost() {
-      return this.journalState?.status?.toUpperCase() === 'ONGOING'
+      return this.postingState?.status?.toUpperCase() === 'ONGOING'
     }
   },
   
@@ -224,6 +224,7 @@ export default {
         this.$store.dispatch('app/showInfo', 'Tolong cek kembali bagian formulir yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
+      this.disableControl = false
 
       axios.post('/journal', this.data)
     },
@@ -233,8 +234,8 @@ export default {
           this.grid.data = response.data.tableData
         })
     },
-    getJournalState() {
-      axios.get('journal-state')
+    getPostingState() {
+      axios.get('journal/state')
         .then(response => {
           if (!response.data) {
             this.disableControl = false
@@ -246,14 +247,14 @@ export default {
             response.data.percent = getMonth(parseISO(response.data.processDate)) === 11 ? (response.data.step / 21) * 100 : (response.data.step / 19) * 100
           } else if (response.data.status === 'FINISH') {
             this.disableControl = false
-            if (this.journalState.status === 'ONGOING') {
+            if (this.postingState.status === 'ONGOING') {
               setTimeout(() => {
                 this.$store.dispatch('app/showSuccess', 'Posting journal selesai')
               }, 500)
             }
           }
 
-          this.journalState = response.data
+          this.postingState = response.data
         })
     }
   }
