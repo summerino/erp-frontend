@@ -220,6 +220,7 @@
                           ref="Initial"
                           v-model="data.initial"
                           :counter="20"
+                          :disabled="isItemUsed"
                           label="Inisial"
                           class="mt-0"
                           :rules="[rules.required[0], rules.max20chars[0]]"
@@ -293,6 +294,7 @@
                             v-model="data.uomId"
                             :items="uom"
                             :rules="rules.required"
+                            :disabled="isItemUsed"
                             label="Satuan Ukuran"
                             item-text="initial"
                             item-value="id"
@@ -827,6 +829,7 @@ export default {
     unitUomSell: [],
     unitUomBuy: [],
     itemCtg: [],
+    itemUsed: false,
     uom: [],
     slsTaxes: [],
     purcTaxes: [],
@@ -887,6 +890,9 @@ export default {
     },
     isActive() {
       return (this.data?.IsActive?.IsActive === true)
+    },
+    isItemUsed() {
+      return this.itemUsed
     }
   },
 
@@ -959,6 +965,7 @@ export default {
       this.tab.advancedItem = 0
       this.subGroupRef = []
       this.gridQuantity.data = []
+      this.itemUsed = false
 
       // Reset form validation
       if (resetValidation) {
@@ -1131,6 +1138,7 @@ export default {
         updatedDate: format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
 
+      this.validateItemUsed(item.id)
       await this.getUnitSellingOrBuying()
       this.loadSubGroup()
       this.getQuantity()
@@ -1254,6 +1262,14 @@ export default {
     },
     detailQty(item, from) {
       this.$refs.relatedTrans.open(item, from)
+    },
+    validateItemUsed(id) {
+      api.getAll(`${this.endpoint.inventory.item.item}/item-used`, {
+        params: { id: id }
+      })
+        .then(response => {
+          this.itemUsed = response.data
+        })
     }
   }
 }
