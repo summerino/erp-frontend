@@ -137,6 +137,7 @@ import { format, parseISO, getMonth}  from 'date-fns'
 
 import auth from '@/services/authorization.service'
 import axios from '@/axiosnoload'
+
 export default {
   data: () => ({
     grid: {
@@ -153,17 +154,18 @@ export default {
     },
     valid: false,
     data: {},
-    journalState: {}
+    journalState: {},
+    countInterval: null
   }),
 
   created: function () {
     this.reset()
-    this.getJournalState()
-    this.getHistoryPost()
-    setInterval(() => {
+    // this.getJournalState()
+    // this.getHistoryPost()
+    this.countInterval = setInterval(() => {
       this.getJournalState()
       this.getHistoryPost()
-    }, 1000)
+    }, 5000)
     auth.getAction(this.endpoint, this.menuId.postingJournal)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -179,6 +181,10 @@ export default {
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
+  },
+
+  beforeDestroy: function () {
+    clearInterval(this.countInterval)
   },
 
   watch: {
