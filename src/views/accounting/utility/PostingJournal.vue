@@ -28,9 +28,9 @@
                     <v-text-field
                       v-bind="attrs"
                       v-on="on"
+                      :disabled="disableControl"
                       :rules="rules.required"
                       :value="formatDate"
-                      :disabled="isJournalStateEmpty || ongoingPost"
                       label="Tanggal"
                       class="mt-0"
                       readonly
@@ -55,7 +55,7 @@
                       v-bind="attrs"
                       v-on="on"
                       v-shortkey="['ctrl', 'alt', 'p']"
-                      :disabled="isJournalStateEmpty || ongoingPost || !auth.allowPost"
+                      :disabled="disableControl || !auth.allowPost"
                       color="green darken-1"
                       class="font-weight-regular"
                       dark
@@ -134,7 +134,6 @@
 <script>
 import { mapState } from 'vuex'
 import { format, parseISO, getMonth }  from 'date-fns'
-import { isEmpty as _isEmpty } from 'lodash'
 
 import auth from '@/services/authorization.service'
 import axios from '@/axiosnoload'
@@ -155,7 +154,10 @@ export default {
     },
     valid: false,
     data: {},
-    journalState: {},
+    journalState: {
+      status: null
+    },
+    disableControl: true,
     countInterval: null
   }),
 
@@ -206,9 +208,6 @@ export default {
     formatDate() {
       return this.data.date ? format(parseISO(this.data.date), 'MMM-yyyy') : format(new Date(), 'MMM-yyyy')
     },
-    isJournalStateEmpty() {
-      return _isEmpty(this.journalState)
-    },
     ongoingPost() {
       return this.journalState?.status?.toUpperCase() === 'ONGOING'
     }
@@ -237,20 +236,26 @@ export default {
     getJournalState() {
       axios.get('journal-state')
         .then(response => {
-          if (response.data.status === 'ONGOING') {
-            this.data.date = response.data.processDate
-            response.data.percent = getMonth(parseISO(response.data.processDate)) === 11 ? (response.data.step / 21) * 100 : (response.data.step / 19) * 100
+          if (!response.data) {
+            this.disableControl = false
           }
 
-          if (this.journalState.status === 'ONGOING' && response.data.status === 'FINISH') {
-            setTimeout(() => {
-              this.$store.dispatch('app/showSuccess', 'Posting journal selesai')
-            }, 500)
+          if (response.data.status === 'ONGOING') {
+            this.disableControl = true
+            this.data.date = response.data.processDate
+            response.data.percent = getMonth(parseISO(response.data.processDate)) === 11 ? (response.data.step / 21) * 100 : (response.data.step / 19) * 100
+          } else if (response.data.status === 'FINISH') {
+            this.disableControl = false
+            if (this.journalState.status === 'ONGOING') {
+              setTimeout(() => {
+                this.$store.dispatch('app/showSuccess', 'Posting journal selesai')
+              }, 500)
+            }
           }
+
           this.journalState = response.data
         })
     }
   }
 }
-
 </script>
