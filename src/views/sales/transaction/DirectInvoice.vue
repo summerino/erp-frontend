@@ -853,7 +853,6 @@
                           label="Persen Diskon"
                           suffix="%"
                           class="text-right mt-0"
-                          readonly
                         ></v-currency-field>
                       </v-col>
                       <v-col cols="8" class="pl-1">
@@ -862,7 +861,6 @@
                           :allow-negative="false"
                           label="Diskon Final"
                           class="text-right mt-0"
-                          readonly
                         ></v-currency-field>
                       </v-col>
                     </v-row>
