@@ -907,8 +907,8 @@ export default {
         bookValue:0,
         coaAccumDeprec: '',
         coaAsset: '',
-        coaDeprecExpense: ''
-
+        coaDeprecExpense: '',
+        initDepreciationExpense: 0
       }
       this.gridHistory.data = []
       this.tab.sup = 0
