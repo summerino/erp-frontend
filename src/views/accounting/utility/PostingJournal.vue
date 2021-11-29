@@ -245,12 +245,13 @@ export default {
             this.disableControl = true
             this.data.date = response.data.processDate
             response.data.percent = getMonth(parseISO(response.data.processDate)) === 11 ? (response.data.step / 21) * 100 : (response.data.step / 19) * 100
+          } else if (response.data.status === 'FAILURE' && this.postingState.status !== 'FAILURE') {
+            this.disableControl = false
+            this.$store.dispatch('app/showError', `Posting journal periode ${format(parseISO(response.data.processDate), 'MMM-yyyy')} gagal.<br/>${response.data.notes}`)
           } else if (response.data.status === 'FINISH') {
             this.disableControl = false
             if (this.postingState.status === 'ONGOING') {
-              setTimeout(() => {
-                this.$store.dispatch('app/showSuccess', 'Posting journal selesai')
-              }, 500)
+              this.$store.dispatch('app/showSuccess', 'Posting journal selesai.')
             }
           }
 
