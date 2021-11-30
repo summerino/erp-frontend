@@ -68,4 +68,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/mobile-sales/report/map-tracking-report',
+  name: 'mobile-map-tracking-report',
+  component: () => import(/* webpackChunkName: "mobile-map-tracking-report" */ '@/views/mobilesales/report/MobileMapTrackingReport.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
