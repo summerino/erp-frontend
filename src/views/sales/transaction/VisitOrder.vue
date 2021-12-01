@@ -310,6 +310,7 @@
                           ref="Source"
                           v-model="data.sourceTransaction"
                           :items="sourceTransactionRef"
+                          :disabled="isSalesHasScheduledVisitOrder"
                           item-text="textValue"
                           item-value="textValue"
                           label="Sumber Transaksi"
@@ -860,7 +861,8 @@ export default {
     itemInvoice: [],
     items: [],
     sourceTransactionRef: [{ textValue: 'Manual' }, { textValue: 'Jadwal Kunjungan' }],
-    data: {}
+    data: {},
+    isSalesHasScheduledVisitOrder: false
   }),
 
   created: function () {
@@ -893,6 +895,22 @@ export default {
         this.getList()
       },
       deep: true
+    },
+    'data.salesmanId': {
+      handler() {
+        if (this.data.action === 'add') {
+          this.verifySales()
+        }
+      },
+      deep: true
+    },
+    'data.date': {
+      handler() {
+        if (this.data.action === 'add') {
+          this.verifySales()
+        }
+      },
+      deep: true
     }
   },
 
@@ -914,6 +932,9 @@ export default {
     },
     formatVisitDate() {
       return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
+    },
+    isSalesHasVSO() {
+      return this.isSalesHasScheduledVisitOrder
     }
   },
 
@@ -940,6 +961,8 @@ export default {
       this.gridInvoice.data = []
       this.tab.advancedItem = 0
       this.tab.signatureItem = 0
+      this.isSalesHasScheduledVisitOrder = false
+
 
       // Reset form validation
       if (resetValidation) {
@@ -1403,6 +1426,19 @@ export default {
     },
     async exportExcel() {
       this.exportExcel.export()
+    },
+    verifySales() {
+      if (this.data.salesmanId !== null) {
+        return api.getAll(`${this.endpoint.sales.visitOrder}/verify-sales`, {
+          params: { salesId: this.data.salesmanId, date: this.data.date }
+        })
+          .then(response => {
+            this.isSalesHasScheduledVisitOrder = response.data
+            if (this.isSalesHasScheduledVisitOrder) {
+              this.data.sourceTransaction = 'Manual'
+            }
+          })
+      }
     }
   }
 }
