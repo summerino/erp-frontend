@@ -9,10 +9,10 @@
     "dev": "npm run serve"
   },
   "dependencies": {
-    "@boldreports/javascript-reporting-controls": "^3.2.27",
+    "@boldreports/javascript-reporting-controls": "^3.3.23",
     "animate.css": "^4.1.1",
     "axios": "^0.24.0",
-    "date-fns": "^2.26.0",
+    "date-fns": "^2.27.0",
     "exceljs": "^4.3.0",
     "file-saver": "^2.0.5",
     "lodash": "^4.17.21",
@@ -24,7 +24,7 @@
     "vue-shortkey": "^3.1.7",
     "vue-spinner": "^1.0.4",
     "vue2-google-maps": "^0.10.7",
-    "vuetify": "^2.6.0",
+    "vuetify": "^2.6.1",
     "vuex": "^3.6.2"
   },
   "devDependencies": {
@@ -33,10 +33,10 @@
     "@vue/cli-plugin-eslint": "^4.5.15",
     "@vue/cli-service": "^4.5.15",
     "babel-eslint": "^10.1.0",
-    "core-js": "^3.19.1",
+    "core-js": "^3.19.2",
     "eslint": "^6.8.0",
     "eslint-plugin-vue": "^6.2.2",
-    "sass": "^1.43.4",
+    "sass": "^1.44.0",
     "sass-loader": "^10.2.0",
     "vue-cli-plugin-vuetify": "^2.4.4",
     "vue-template-compiler": "^2.6.14",
