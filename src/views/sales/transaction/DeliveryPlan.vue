@@ -556,30 +556,6 @@
                                   <span class="text-caption">Hapus</span>
                                 </v-tooltip>
                               </template>
-                              <template v-slot:[`item.transCode`]="{ item }">
-                                <v-text-field
-                                  ref="itemId"
-                                  v-model="item.transCode"
-                                  readonly
-                                  :rules="rules.required"
-                                  class="text-body-2 mt-0"
-                                  dense
-                                  required
-                                >
-                                  <template v-slot:append>
-                                    <v-btn
-                                      color="primary"
-                                      icon
-                                      x-small
-                                      @click="showDPFindDialog(item)"
-                                    >
-                                      <v-icon>
-                                        mdi-settings-helper
-                                      </v-icon>
-                                    </v-btn>
-                                  </template>
-                                </v-text-field>
-                              </template>
                               <template v-slot:[`item.volume`]="{ item }">
                                 {{ item.volume === null ? 0 : item.volume }} M³
                               </template>
@@ -711,8 +687,10 @@
       ref="dpFind"
       :warehouse-code="data.warehouseCode"
       :src-trans="data.srcTrans"
-      :grid-item="listCode"
-      @dblclick:row="getListCode"
+      :date-trans="data.date"
+      :list-code="listCode"
+      :grid-item="gridItem.data"
+      :dp-code="data.code"
     ></dp-find>
     <dp-send-failed
       ref="dpSendFailed"
@@ -727,7 +705,6 @@ import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
 import { sumBy as _sumBy } from 'lodash'
 
-import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
 
@@ -782,7 +759,10 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '80' },
         { text: 'No. Dokumen', value: 'transCode', divider: true, width: '120' },
-        { text: 'Penjual', value: 'salesInitial', divider: true, width: '120' },
+        { text: 'Penjual', value: 'salesName', divider: true, width: '120' },
+        { text: 'Nama Pelanggan', value: 'custName', divider: true, width: '120' },
+        { text: 'Alamat', value: 'custAddress', divider: true, width: '120' },
+        { text: 'Wilayah', value: 'custArea', divider: true, width: '120' },
         { text: 'Volume', value: 'volume', align: 'right', divider: true, width: '120' },
         { text: 'Bobot', value: 'weight', align: 'right', divider: true, width: '120' },
         { text: 'Detail Barang Gagal Kirim', value: 'detail', divider: true, width: '120' },
@@ -842,6 +822,15 @@ export default {
         this.$store.commit('api/setAuth', response.data)
       })
     this.$store.commit('app/setFilterFields', this.filterfields)
+  },
+
+  watch: {
+    'gridItem.data': {
+      handler() {
+        this.getListCode()
+      },
+      deep: true
+    }
   },
 
   mounted: function () {
@@ -1078,9 +1067,13 @@ export default {
           for (let i = 0; i < response.data.tableData.length; i++) {
             const data_dlv = this.dlvData.find(x => x.code === response.data.tableData[i].transCode)
             if (data_dlv) {
+              response.data.tableData[i].custName = data_dlv.custName
+              response.data.tableData[i].custAddress = data_dlv.custAddress
+              response.data.tableData[i].custArea = data_dlv.custArea
+
               const data_so = this.orderData.find(x => x.code === data_dlv.transCode)
               if (data_so) {
-                response.data.tableData[i].salesInitial = data_so.salesInitial
+                response.data.tableData[i].salesName = data_so.salesName
               }
             }
           }
@@ -1159,24 +1152,7 @@ export default {
       }
     },
     addDetail() {
-      if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.transCode ?? null)) {
-        const item = {
-          id: randomNumber(-1, -1000),
-          code: this.data.code,
-          transCode: null,
-          volume: 0,
-          weight: 0,
-          isFailShipment: false,
-          notesFailShipment: null,
-          custName: null,
-          undeliveredItems: []
-        }
-        this.gridItem.data.push(item)
-
-        setTimeout(() => {
-          this.$refs.itemId.focus()
-        }, 0)
-      }
+      this.$refs.dpFind.open(this.gridItem.data)
     },
     async removeItem(item) {
       if (
@@ -1207,16 +1183,13 @@ export default {
       this.data.diffVolume = this.data.totalVehicleVolume - this.data.totalVolume
       this.data.diffWeight = this.data.totalVehicleWeight - this.data.totalWeight
     },
-    showDPFindDialog(item) {
-      this.$refs.dpFind.open(item)
-    },
     showDPSendFailedDialog(item) {
       this.$refs.dpSendFailed.open(item)
     },
     getListCode() {
       this.listCode.splice(0, this.listCode.length)
       for (let i = 0; i < this.gridItem.data.length; i++) {
-        this.listCode.push(this.gridItem.data[i].code)
+        this.listCode.push(this.gridItem.data[i].transCode)
       }
     },
     clearItemData() {
