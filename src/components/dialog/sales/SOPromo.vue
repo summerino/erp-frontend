@@ -23,6 +23,10 @@
       </v-toolbar>
 
       <v-card-text class="px-2 pt-1">
+        <v-form
+            ref="form"
+            v-model="valid"
+          >
           <v-card>
             <v-row dense>
               <v-col cols="12">
@@ -116,6 +120,7 @@
                   </template>
                   <template v-slot:[`item.coaCode`]="{ item }">
                     <v-autocomplete
+                      v-if="item.fromPromo"
                       v-model="item.coaCode"
                       :items="accounts"
                       :item-text="item => `${item.code} - ${item.name}`"
@@ -123,6 +128,17 @@
                       item-value="code"
                       class="mt-0"      
                       dense                      
+                    ></v-autocomplete>
+                    <v-autocomplete
+                      v-else
+                      v-model="data.coaSlsDisc"
+                      :disabled="!item.fromPromo"
+                      :items="accounts"
+                      :item-text="item => `${item.code} - ${item.name}`"
+                      :rules="rules.required"
+                      item-value="code"
+                      class="mt-0"      
+                      dense
                     ></v-autocomplete>
                   </template>
                 </v-data-table>
@@ -170,6 +186,7 @@
               </v-col>
             </v-row>
           </v-card>
+        </v-form>
       </v-card-text>
     </v-card>
   </v-dialog>
@@ -198,7 +215,8 @@ export default {
       },
       data: [],
       promoMethod: [{ id: 1, name: 'Persen' }, { id: 2, name: 'Nominal' }],
-      accounts: []
+      accounts: [],
+      valid: false
     }
   },
 
@@ -251,6 +269,8 @@ export default {
       this.data = item
       setTimeout(() => {
         this.grid.height = this.$refs.dialog.$refs.content.clientHeight - 158
+        // Validate form first
+        this.$refs.form.validate()
       }, 100)
     },
     close() {
@@ -297,6 +317,10 @@ export default {
       }
     },
     save() {
+      if (!this.$refs.form.validate()) {
+        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
+        return
+      }
       this.close()
     },
     checkIsPercentage(item) {

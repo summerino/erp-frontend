@@ -657,6 +657,9 @@
                               @change="calcItemPrice(item)"
                             ></v-currency-field>
                           </template>
+                          <template v-slot:[`item.finalDiscHeader`]="{ item }">
+                            {{ item.finalDiscHeader | formatCurrency }}
+                          </template>
                           <template v-slot:[`item.taxAmount`]="{ item }">
                             {{ item.taxAmount | formatCurrency }}
                           </template>
@@ -731,12 +734,40 @@
                       key="detail"
                       transition="false"
                     >
-                      <v-currency-field
-                        v-model="data.dpp"
-                        label="Total Sebelum Pajak"
-                        class="text-right mt-0"
-                        readonly
-                      ></v-currency-field>
+                      <v-row no-gutters>
+                        <v-col cols="12">
+                          <v-currency-field
+                            v-model="data.dpp"
+                            label="Total Sebelum Pajak"
+                            class="text-right mt-0"
+                            readonly
+                          ></v-currency-field>
+                        </v-col>
+                      </v-row>
+
+                      <v-row no-gutters>
+                        <v-col cols="4">
+                          <v-currency-field
+                            v-model="data.finalDiscPercent"
+                            :allow-negative="false"
+                            :readonly="hasRelatedTrans"
+                            label="Persen Diskon"
+                            suffix="%"
+                            class="text-right mt-0"
+                            @blur="discPercentChange()"
+                          ></v-currency-field>
+                        </v-col>
+                        <v-col cols="8" class="pl-1">
+                          <v-currency-field
+                            v-model="data.finalDisc"
+                            :allow-negative="false"
+                            :readonly="hasRelatedTrans"
+                            label="Diskon Final"
+                            class="text-right mt-0"
+                            @change="discChange"
+                          ></v-currency-field>
+                        </v-col>
+                      </v-row>
                     </v-tab-item>
 
                     <v-tab-item
@@ -814,30 +845,6 @@
                         class="text-right mt-0"
                         readonly
                       ></v-currency-field>
-                    </v-row>
-
-                    <v-row no-gutters>
-                      <v-col cols="4">
-                        <v-currency-field
-                          v-model="data.finalDiscPercent"
-                          :allow-negative="false"
-                          :readonly="hasRelatedTrans"
-                          label="Persen Diskon"
-                          suffix="%"
-                          class="text-right mt-0"
-                          @blur="discPercentChange()"
-                        ></v-currency-field>
-                      </v-col>
-                      <v-col cols="8" class="pl-1">
-                        <v-currency-field
-                          v-model="data.finalDisc"
-                          :allow-negative="false"
-                          :readonly="hasRelatedTrans"
-                          label="Diskon Final"
-                          class="text-right mt-0"
-                          @change="discChange"
-                        ></v-currency-field>
-                      </v-col>
                     </v-row>
 
                     <v-row no-gutters>
@@ -967,6 +974,7 @@ export default {
         { text: 'Satuan', value: 'unitName', divider: true, width: '90' },
         { text: 'Harga Satuan', value: 'unitPrice', align: 'right', divider: true, width: '120' },
         { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '120' },
+        { text: 'Diskon Header', value: 'finalDiscHeader', align: 'right', divider: true, width: '120' },
         { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '120' },
         { text: 'Harga Nett', value: 'nettPrice', align: 'right', divider: true, width: '120' },
         { text: 'Harga Total', value: 'total', align: 'right', divider: true, width: '120' },
