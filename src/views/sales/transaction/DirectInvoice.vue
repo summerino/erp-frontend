@@ -597,6 +597,9 @@
                               </template>
                             </v-currency-field>
                           </template>
+                          <template v-slot:[`item.finalDiscHeader`]="{ item }">
+                            {{ item.finalDiscHeader | formatCurrency }}
+                          </template>
                           <template v-slot:[`item.taxAmount`]="{ item }">
                             {{ item.taxAmount | formatCurrency }}
                           </template>
@@ -760,12 +763,38 @@
                       key="detail"
                       transition="false"
                     >
-                      <v-currency-field
-                        v-model="data.dpp"
-                        label="Total Sebelum Pajak"
-                        class="text-right mt-0"
-                        readonly
-                      ></v-currency-field>
+                      <v-row no-gutters>
+                        <v-col cols="12">
+                          <v-currency-field
+                            v-model="data.dpp"
+                            label="Total Sebelum Pajak"
+                            class="text-right mt-0"
+                            readonly
+                          ></v-currency-field>
+                        </v-col>
+                      </v-row>
+                      
+                      <v-row no-gutters>
+                        <v-col cols="4">
+                          <v-currency-field
+                            v-model="data.finalDiscPercent"
+                            :allow-negative="false"
+                            label="Persen Diskon"
+                            suffix="%"
+                            class="text-right mt-0"
+                            @blur="discPercentChange"
+                          ></v-currency-field>
+                        </v-col>
+                        <v-col cols="8" class="pl-1">
+                          <v-currency-field
+                            v-model="data.finalDisc"
+                            :allow-negative="false"
+                            label="Diskon Final"
+                            class="text-right mt-0"
+                            @change="discChange"
+                          ></v-currency-field>
+                        </v-col>
+                      </v-row>
                     </v-tab-item>
 
                     <v-tab-item
@@ -843,26 +872,6 @@
                         class="text-right mt-0"
                         readonly
                       ></v-currency-field>
-                    </v-row>
-
-                    <v-row no-gutters>
-                      <v-col cols="4">
-                        <v-currency-field
-                          v-model="data.finalDiscPercent"
-                          :allow-negative="false"
-                          label="Persen Diskon"
-                          suffix="%"
-                          class="text-right mt-0"
-                        ></v-currency-field>
-                      </v-col>
-                      <v-col cols="8" class="pl-1">
-                        <v-currency-field
-                          v-model="data.finalDisc"
-                          :allow-negative="false"
-                          label="Diskon Final"
-                          class="text-right mt-0"
-                        ></v-currency-field>
-                      </v-col>
                     </v-row>
 
                     <v-row no-gutters>
@@ -969,6 +978,7 @@ export default {
         { text: 'Satuan', value: 'unitName', divider: true, width: '90' },
         { text: 'Harga Satuan', value: 'unitPrice', align: 'right', divider: true, width: '120' },
         { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '120' },
+        { text: 'Diskon Header', value: 'finalDiscHeader', align: 'right', divider: true, width: '120' },
         { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '120' },
         { text: 'Harga Nett', value: 'nettPrice', align: 'right', divider: true, width: '120' },
         { text: 'Harga Total', value: 'total', align: 'right', divider: true, width: '120' },
@@ -2117,9 +2127,37 @@ export default {
                   const tierData = dataPromo[i].itemDetails[j].promoTierList.find(x => mainData.subTotal >= x.fromQty && mainData.subTotal <= x.toQty)
                   if (tierData) {
                     if (tierData.isPercentage) {
-                      mainData.finalDiscPercent += tierData.value
+                      const prorateValue = (gridData[k].unitPrice / _sumBy(gridData, 'unitPrice')) * (gridData[k].unitPrice * (tierData.value / 100)) / gridData[k].qty
+                      totalDisc += prorateValue
+                      discPromo.push({
+                        id: randomNumber(-1, -1000),
+                        promoDetailId: dataPromo[i].itemDetails[j].id,
+                        promoCode: dataPromo[i].code,
+                        name: dataPromo[i].name, 
+                        promoMethod: 1, 
+                        value: tierData.value, 
+                        nettPrice: 0, 
+                        coaCode: dataPromo[i].coaCost, 
+                        amount: prorateValue, 
+                        fromPromo: true, 
+                        isPercentage: dataPromo[i].itemDetails[j].isPercentage
+                      })
                     } else {
-                      mainData.finalDisc += tierData.value
+                      const prorateValue = (gridData[k].unitPrice / _sumBy(gridData, 'unitPrice')) * tierData.value / gridData[k].qty
+                      totalDisc += prorateValue
+                      discPromo.push({
+                        id: randomNumber(-1, -1000),
+                        promoDetailId: dataPromo[i].itemDetails[j].id,
+                        promoCode: dataPromo[i].code, 
+                        name: dataPromo[i].name, 
+                        promoMethod: 2, 
+                        value: tierData.value, 
+                        nettPrice: 0, 
+                        coaCode: dataPromo[i].coaCost, 
+                        amount: prorateValue, 
+                        fromPromo: true, 
+                        isPercentage: dataPromo[i].itemDetails[j].isPercentage
+                      })
                     }
                   }
                 } else {
@@ -2127,9 +2165,37 @@ export default {
                   const tierData = dataPromo[i].itemDetails[j].promoTierList.find(x => x.paymentTermId === this.data.paymentTermId)
                   if (tierData) {
                     if (tierData.isPercentage) {
-                      mainData.finalDiscPercent += tierData.value
+                      const prorateValue = (gridData[k].unitPrice / _sumBy(gridData, 'unitPrice')) * (gridData[k].unitPrice * (tierData.value / 100)) / gridData[k].qty
+                      totalDisc += prorateValue
+                      discPromo.push({
+                        id: randomNumber(-1, -1000),
+                        promoDetailId: dataPromo[i].itemDetails[j].id,
+                        promoCode: dataPromo[i].code,
+                        name: dataPromo[i].name, 
+                        promoMethod: 1, 
+                        value: tierData.value, 
+                        nettPrice: 0, 
+                        coaCode: dataPromo[i].coaCost, 
+                        amount: prorateValue, 
+                        fromPromo: true, 
+                        isPercentage: dataPromo[i].itemDetails[j].isPercentage
+                      })
                     } else {
-                      mainData.finalDisc += tierData.value
+                      const prorateValue = (gridData[k].unitPrice / _sumBy(gridData, 'unitPrice')) * tierData.value / gridData[k].qty
+                      totalDisc += prorateValue
+                      discPromo.push({
+                        id: randomNumber(-1, -1000),
+                        promoDetailId: dataPromo[i].itemDetails[j].id,
+                        promoCode: dataPromo[i].code, 
+                        name: dataPromo[i].name, 
+                        promoMethod: 2, 
+                        value: tierData.value, 
+                        nettPrice: 0, 
+                        coaCode: dataPromo[i].coaCost, 
+                        amount: prorateValue, 
+                        fromPromo: true, 
+                        isPercentage: dataPromo[i].itemDetails[j].isPercentage
+                      })
                     }
                   }
                 }
@@ -2170,15 +2236,17 @@ export default {
         
       }
       this.gridBonus.data = bonusPromo
-      mainData.subTotal = _sumBy(this.gridItem.data, 'total')
-      mainData.finalDisc += mainData.subTotal * (mainData.finalDiscPercent / 100)
-      mainData.finalDiscPercent = mainData.finalDisc / mainData.subTotal * 100
-      if (mainData.includeTax) {
-        mainData.total = mainData.subTotal - mainData.finalDisc
-      } else {
-        mainData.total = mainData.subTotal - mainData.finalDisc + mainData.taxAmount
-      }
-      this.data = mainData    
+      this.calcPrice() 
+      // this.gridBonus.data = bonusPromo
+      // mainData.subTotal = _sumBy(this.gridItem.data, 'total')
+      // mainData.finalDisc += mainData.subTotal * (mainData.finalDiscPercent / 100)
+      // mainData.finalDiscPercent = mainData.finalDisc / mainData.subTotal * 100
+      // if (mainData.includeTax) {
+      //   mainData.total = mainData.subTotal - mainData.finalDisc
+      // } else {
+      //   mainData.total = mainData.subTotal - mainData.finalDisc + mainData.taxAmount
+      // }
+      // this.data = mainData    
     },
     setDefaultWarehouse() {
       const userInfo = this.userInfo = auth.getUserInfo()
