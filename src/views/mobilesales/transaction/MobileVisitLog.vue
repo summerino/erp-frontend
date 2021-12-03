@@ -145,7 +145,7 @@
           {{ item.lat }} : {{ item.lng}}
         </template>
         <template v-slot:[`item.image`]="{ item }">
-          <span v-if="item.image.length > 0">
+          <span v-if="item.image != null || item.image != undefined">
             <v-btn small color="blue darken-1" dark @click="showImage(item.image)">
               Tampilkan gambar 
             </v-btn>
