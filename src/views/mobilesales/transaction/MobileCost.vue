@@ -707,13 +707,7 @@ export default {
           direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
         })
       }
-
-      filters.push({
-        field: 'mark',
-        operator: 'eq',
-        keyword: 'A'
-      })
-
+      
       api.getAll(this.endpoint.mobileSales.salesCost, {
         params: {
           search: this.grid.search,

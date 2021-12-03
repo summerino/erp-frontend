@@ -604,12 +604,6 @@ export default {
         })
       }
 
-      filters.push({
-        field: 'mark',
-        operator: 'eq',
-        keyword: 'A'
-      })
-
       api.getAll(this.endpoint.mobileSales.paymentInvoice, {
         params: {
           search: this.grid.search,
