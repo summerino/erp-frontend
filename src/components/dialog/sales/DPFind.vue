@@ -241,60 +241,32 @@ export default {
     search() {
       const srcTrans = this.srcTrans
       if (srcTrans === 2) {
-        api.getAll(this.endpoint.sales.delivery, {
+        api.getAll(`${this.endpoint.sales.plan}/all-trans`, {
           params: {
+            warehouseCode: this.warehouseCode,
             filters: JSON.stringify([{
               field: this.data.by,
               operator: this.data.by === 'date' ? 'eq' : 'contains',
               keyword: this.data.value
-            }, {
-              field: 'warehouseCode',
-              operator: 'eq',
-              keyword: this.warehouseCode
-            }, {
-              field: 'mark',
-              operator: 'doesnotcontain',
-              keyword: ['V', 'INV']
-            }]),
-            sorts: JSON.stringify([{
-              field: this.data.by,
-              direction: 'asc'
             }])
           }
         })
           .then(response => {
-            for (let j = 0; j < response.data.tableData.length; j++) {
-              response.data.tableData[j].type = 'Surat Jalan'
-            }
-            this.grid.data = response.data.tableData
+            this.grid.data = response.data.tableData.filter(x => !this.listCode.includes(x.code) && x.date <= this.dateTrans && x.type === 'Surat Jalan')
           })
       } else if (srcTrans === 1) {
-        api.getAll(this.endpoint.sales.invoice, {
+        api.getAll(`${this.endpoint.sales.plan}/all-trans`, {
           params: {
+            warehouseCode: this.warehouseCode,
             filters: JSON.stringify([{
               field: this.data.by,
               operator: this.data.by === 'date' ? 'eq' : 'contains',
               keyword: this.data.value
-            }, {
-              field: 'fromDirectInvoice',
-              operator: 'eq',
-              keyword: true
-            }, {
-              field: 'mark',
-              operator: 'doesnotcontain',
-              keyword: ['V', 'INV']
-            }]),
-            sorts: JSON.stringify([{
-              field: this.data.by,
-              direction: 'asc'
             }])
           }
         })
           .then(response => {
-            for (let j = 0; j < response.data.tableData.length; j++) {
-              response.data.tableData[j].type = 'Penjualan Langsung'
-            }
-            this.grid.data = response.data.tableData
+            this.grid.data = response.data.tableData.filter(x => !this.listCode.includes(x.code) && x.date <= this.dateTrans && x.type === 'Penjualan Langsung')
           })
       } else if (srcTrans === 3) {
         api.getAll(`${this.endpoint.sales.plan}/all-trans`, {
