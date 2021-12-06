@@ -63,7 +63,7 @@ class TemplateExcelService {
         worksheet.getColumn(c + 1).numFmt = '_ * #,##0_ ;_ * -#,##0_ ;_ * "-"_ ;_ @_ '
       } 
       if (columns[c].isDateTime) {
-        worksheet.getColumn(c + 1).numFmt = 'dd-MMM-yyyy' 
+        //worksheet.getColumn(c + 1).numFmt = 'dd-MMM-yyyy' 
         worksheet.getColumn(c + 1).alignment = { vertical: 'middle', horizontal: 'right' }
       } 
     }
@@ -96,7 +96,7 @@ class TemplateExcelService {
     worksheet.getCell('H3').value = 'Format "Nilai" tidak boleh menggunakan format Indonesia. Contoh: 5000000.00, 220000.00'
     worksheet.getCell('H3').font = headerColumnFontSettings
     worksheet.getCell('H3').alignment = { vertical: 'middle', horizontal: 'left' }
-    worksheet.getCell('H4').value = 'Format "Tanggal" boleh menggunakan format Indonesia. Contoh: dd/mm/yyyy, dd-mm-yyyy'
+    worksheet.getCell('H4').value = 'Format "Tanggal" tidak boleh menggunakan format Indonesia. Contoh: mm/dd/yyyy, mm-dd-yyyy'
     worksheet.getCell('H4').font = headerColumnFontSettings
     worksheet.getCell('H4').alignment = { vertical: 'middle', horizontal: 'left' }
 
