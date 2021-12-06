@@ -124,7 +124,9 @@ class TemplateExcelService {
     const header = values.shift()
 
     for (let i = 0; i < values.length; i++) {
-      values[i].pop()
+      if (i < 3) {
+        values[i].pop()
+      }
       const obj = new Object()
       for (let j = 0; j < values[i].length; j++) {
         obj[header[j].toLowerCase().replace(/[ ,.]/g, '')] = values[i][j]
