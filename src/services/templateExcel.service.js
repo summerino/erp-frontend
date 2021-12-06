@@ -90,6 +90,16 @@ class TemplateExcelService {
       }
     }
     
+    worksheet.getCell('H2').value = 'Notes:'
+    worksheet.getCell('H2').font = headerColumnFontSettings
+    worksheet.getCell('H2').alignment = { vertical: 'middle', horizontal: 'left' }
+    worksheet.getCell('H3').value = 'Format "Nilai" tidak boleh menggunakan format Indonesia. Contoh: 5000000.00, 220000.00'
+    worksheet.getCell('H3').font = headerColumnFontSettings
+    worksheet.getCell('H3').alignment = { vertical: 'middle', horizontal: 'left' }
+    worksheet.getCell('H4').value = 'Format "Tanggal" boleh menggunakan format Indonesia. Contoh: dd/mm/yyyy, dd-mm-yyyy'
+    worksheet.getCell('H4').font = headerColumnFontSettings
+    worksheet.getCell('H4').alignment = { vertical: 'middle', horizontal: 'left' }
+
     const buf = await workbook.xlsx.writeBuffer()
     saveAs(new Blob([buf]), `${title}.xlsx`)
   }
@@ -101,7 +111,9 @@ class TemplateExcelService {
     await workbook.xlsx.load(file)
     workbook.eachSheet((sheet) => {
       sheet.eachRow((row) => {
-        values.push(row.values)
+        if (row.values[1] !== undefined) {
+          values.push(row.values)
+        }
       })
     })
 
@@ -112,6 +124,7 @@ class TemplateExcelService {
     const header = values.shift()
 
     for (let i = 0; i < values.length; i++) {
+      values[i].pop()
       const obj = new Object()
       for (let j = 0; j < values[i].length; j++) {
         obj[header[j].toLowerCase().replace(/[ ,.]/g, '')] = values[i][j]
