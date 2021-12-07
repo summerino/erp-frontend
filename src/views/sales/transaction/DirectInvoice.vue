@@ -1056,6 +1056,7 @@ export default {
     this.getTaxLists()
     this.getItemLists()
     this.defineAction()
+    this.getPromoLists()
     auth.getAction(this.endpoint, this.menuId.directInvoice)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
