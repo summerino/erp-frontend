@@ -368,7 +368,6 @@
                           :items="paymentTerms"
                           :item-text="item => `${item.initial} - ${item.name}`"
                           :rules="rules.required"
-                          :disabled="hasRelatedTrans"
                           label="Pembayaran"
                           item-value="id"
                           class="mt-0"
@@ -597,7 +596,6 @@
                           <template v-slot:[`item.unitPrice`]="{ item }">
                             <v-currency-field
                               v-model="item.unitPrice"
-                              :readonly="hasRelatedTrans"
                               :rules="rules.above0"
                               class="text-body-2 text-right mt-0"
                               dense
@@ -614,7 +612,6 @@
                             >
                              <template v-slot:append>
                                 <v-btn
-                                  :readonly="hasRelatedTrans"
                                   color="primary"
                                   icon
                                   x-small
@@ -812,6 +809,7 @@ export default {
     },
     valid: false,
     customers: [],
+    customerAddresses: [],
     employees: [],
     items: [],
     paymentTerms: [],
@@ -827,7 +825,7 @@ export default {
     this.getCustomerLists()
     this.getItemLists()
     this.getPaymentTermLists()
-    this.getPromoLists()
+    //this.getPromoLists()
     this.getSalesmanLists()
     this.getTaxLists()
     auth.getAction(this.endpoint, this.menuId.mobileOrder)
@@ -938,6 +936,7 @@ export default {
 
       this.data = {
         ...item,
+        salesmanId: item.salesBy,
         createdDate: (item.createdDate === null) ? null : format(parseISO(item.createdDate), 'dd-MMM-yyyy HH:mm:ss'),
         updatedDate: (item.updatedDate === null) ? null : format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss'),
         approvedDate: (item.approvedDate === null) ? null : format(parseISO(item.approvedDate), 'dd-MMM-yyyy HH:mm:ss'),
@@ -960,21 +959,21 @@ export default {
           this.gridBonus.data = response.data.tableData
         })
 
-      // Get Promo
-      api.getAll(`${this.endpoint.sales.promo}/list`, {
-        params: { code: item.code }
-      })
-        .then(response => {
-          const data = response.data.tableData
-          const obj = new Object()
-          const result = []
-          for (let i = 0; i < data.length; i++) {
-            obj['name'] = data[i]
-            obj['usePromo'] = true
-            result.push(obj)
-          }
-          this.gridPromo.data = result
-        })
+      // // Get Promo
+      // api.getAll(`${this.endpoint.sales.promo}/list`, {
+      //   params: { code: item.code }
+      // })
+      //   .then(response => {
+      //     const data = response.data.tableData
+      //     const obj = new Object()
+      //     const result = []
+      //     for (let i = 0; i < data.length; i++) {
+      //       obj['name'] = data[i]
+      //       obj['usePromo'] = true
+      //       result.push(obj)
+      //     }
+      //     this.gridPromo.data = result
+      //   })
     },
     async save(closeDialog) {
       if (!this.dialog.add) return
