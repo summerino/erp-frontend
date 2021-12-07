@@ -473,7 +473,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="data.mark === 'CMP' || data.mark === 'V'"
+                                :disabled="data.mark === 'CMP' || data.mark === 'V' || isScheduledVisit"
                                 class="blue--text"
                                 small
                                 tile
@@ -509,7 +509,7 @@
                                         <v-btn
                                           v-bind="attrs"
                                           v-on="on"
-                                          :disabled="data.mark === 'CMP' || data.mark === 'V'"
+                                          :disabled="data.mark === 'CMP' || data.mark === 'V' || isScheduledVisit"
                                           color="red"
                                           icon
                                           small
@@ -935,6 +935,9 @@ export default {
     },
     isSalesHasVSO() {
       return this.isSalesHasScheduledVisitOrder
+    },
+    isScheduledVisit() {
+      return this.data.sourceTransaction === 'Jadwal Kunjungan'
     }
   },
 
