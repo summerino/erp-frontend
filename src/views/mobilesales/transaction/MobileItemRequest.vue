@@ -538,7 +538,7 @@
                               ref="qty"
                               v-model="item.qty"
                               :decimal-length="0"
-                              :min="1"
+                              :rules="rules.above0"
                               :readonly="isRejected"
                               class="text-body-2 text-right mt-0"
                               dense
