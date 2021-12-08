@@ -686,6 +686,7 @@ export default {
       this.gridDet.data = []
       this.tab.user = 0
       this.tab.det = 0
+      this.selected = []
     },
     advancedSearch() {
       this.grid.search = null

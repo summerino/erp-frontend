@@ -722,6 +722,7 @@ export default {
       this.gridDet.data = []
       this.tab.area = 0
       this.tab.det = 0
+      this.selected = []
     },
     advancedSearch() {
       this.grid.search = null

@@ -884,6 +884,7 @@ export default {
       this.gridItem.data = []
       this.tab.cust = 0
       this.tab.det = 0
+      this.selected = []
     },
     advancedSearch() {
       this.grid.search = null
