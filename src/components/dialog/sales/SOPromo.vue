@@ -120,7 +120,6 @@
                   </template>
                   <template v-slot:[`item.coaCode`]="{ item }">
                     <v-autocomplete
-                      v-if="item.fromPromo"
                       v-model="item.coaCode"
                       :items="accounts"
                       :item-text="item => `${item.code} - ${item.name}`"
@@ -128,17 +127,6 @@
                       item-value="code"
                       class="mt-0"      
                       dense                      
-                    ></v-autocomplete>
-                    <v-autocomplete
-                      v-else
-                      v-model="data.coaSlsDisc"
-                      :disabled="!item.fromPromo"
-                      :items="accounts"
-                      :item-text="item => `${item.code} - ${item.name}`"
-                      :rules="rules.required"
-                      item-value="code"
-                      class="mt-0"      
-                      dense
                     ></v-autocomplete>
                   </template>
                 </v-data-table>
@@ -195,6 +183,7 @@
 <script>
 import { mapState } from 'vuex'
 import { randomNumber } from '@/helpers/math-helpers'
+import api from '@/services/axios.service'
 
 export default {
   data() {
@@ -216,6 +205,7 @@ export default {
       data: [],
       promoMethod: [{ id: 1, name: 'Persen' }, { id: 2, name: 'Nominal' }],
       accounts: [],
+      sysCoa: null,
       valid: false
     }
   },
@@ -234,6 +224,7 @@ export default {
     },
     open(item, accounts) {
       this.reset()
+      this.getSysCOA()
       this.dialog = true
       this.accounts = accounts
       if (item.discPromo) {
@@ -284,7 +275,7 @@ export default {
           promoMethod: 1,
           value: null,
           nettPrice: 0,
-          coa: null,
+          coaCode: this.data.coaSlsDisc ?? this.sysCoa,
           amount: 0,
           fromPromo: false,
           isPercentage: true
@@ -362,6 +353,17 @@ export default {
         const calcValue = this.data.unitPrice - this.data.disc
         this.data.nettPrice = calcValue < 0 ? 0 : calcValue
       }
+    },
+    getSysCOA() {
+      const codes = ['SLS_DISC_COA']
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          codes: JSON.stringify(codes)
+        }
+      })
+        .then(response => {
+          this.sysCoa = response.data.tableData[0].value
+        })
     }
   }
 }
