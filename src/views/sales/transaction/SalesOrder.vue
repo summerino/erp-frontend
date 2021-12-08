@@ -1768,6 +1768,7 @@ export default {
           unitName: null,
           unitPrice: 0,
           disc: 0,
+          finalDiscHeader: 0,
           taxId: null,
           taxAmount: 0,
           nettPrice: 0,
@@ -1942,11 +1943,11 @@ export default {
       }
     },
     discPercentChange() {
-      this.data.finalDisc = this.data.subTotal * (this.data.finalDiscPercent / 100)
+      this.data.finalDisc = this.data.dpp * (this.data.finalDiscPercent / 100)
       this.calcGrandTotal()
     },
     discChange() {
-      this.data.finalDiscPercent = this.data.finalDisc / this.data.subTotal * 100
+      this.data.finalDiscPercent = this.data.finalDisc / this.data.dpp * 100
       this.calcGrandTotal()
     },
     calcTax() {
