@@ -148,9 +148,20 @@
           <v-card-text v-if="this.filter" class="pa-2">
             <v-row no-gutters>
               <v-col cols="12" md="4">
-                <v-autocomplete
+                <v-autocomplete v-if="apRecogTime === 'PI'"
                   v-model="data.type"
-                  :items="types"                  
+                  :items="typesInv"                  
+                  label="Tipe Laporan"
+                  item-text="name"
+                  item-value="id"
+                  class="mt-0"
+                  dense
+                  @change="clearTable()"
+                >
+                </v-autocomplete>
+                <v-autocomplete v-else
+                  v-model="data.type"
+                  :items="typesRcv"                  
                   label="Tipe Laporan"
                   item-text="name"
                   item-value="id"
@@ -294,8 +305,21 @@ export default {
       { text: 'Nilai Bayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Sisa', value: 'remainderAmount', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
-    types: [{ id: 1, name: 'Berdasarkan Penerimaan / Saldo Awal' }, { id: 2, name: 'Berdasarkan Pemasok' }],
+    invColumn: [
+      { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true },
+      { text: 'Tanggal Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true },
+      { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Kd. Ord. Pembelian', value: 'orderCode', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Kode Pemasok', value: 'supCode', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Nama Pemasok', value: 'supName', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Nilai Transaksi', value: 'totalAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Nilai Bayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Sisa', value: 'remainderAmount', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
+    ],
+    typesRcv: [{ id: 1, name: 'Berdasarkan Penerimaan / Saldo Awal' }, { id: 2, name: 'Berdasarkan Pemasok' }],
+    typesInv: [{ id: 1, name: 'Berdasarkan Faktur / Saldo Awal' }, { id: 2, name: 'Berdasarkan Pemasok' }],
     suppliers: [],
+    apRecogTime: null,
     data: {},
     exportFilter:{
       fields : [
@@ -310,6 +334,7 @@ export default {
 
   created: function () {
     this.reset()
+    this.getSysAPRecog()
     this.getSupplierLists()
     auth.getAction(this.endpoint, this.menuId.apReport)
       .then((response) => {
@@ -368,7 +393,7 @@ export default {
         })
       }
 
-      this.grid.columns = this.data.type === 1 ? this.rcvColumn : this.supColumn
+      this.grid.columns = this.data.type === 1 ? this.apRecogTime === 'PI' ? this.invColumn : this.rcvColumn : this.supColumn
       
       api.getAll(this.endpoint.purchase.apReport, {
         params: {
@@ -441,7 +466,7 @@ export default {
         operator: 'eq'
       }
 
-      const report = this.types.find(x => x.id === this.data.type)
+      const report = this.apRecogTime === 'PI' ? this.typesInv.find(x => x.id === this.data.type) : this.typesRcv.find(x => x.id === this.data.type)
       searchType.keyword = report.name
       this.exportFilter.searches.push(searchType)
 
@@ -463,6 +488,17 @@ export default {
     clearTable() {
       this.grid.data = []
       this.grid.columns = []
+    },
+    getSysAPRecog() {
+      const codes = ['AP_RECOG_TIME']
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          codes: JSON.stringify(codes)
+        }
+      })
+        .then(response => {
+          this.apRecogTime = response.data.tableData[0].value
+        })
     }
   }
 }
