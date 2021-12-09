@@ -1394,7 +1394,7 @@ export default {
       }
 
       if (this.data.type === 3 && this.data.difference < 0) {
-        this.$store.dispatch('app/showInfo', 'Nilai Barang Keluar tidak boleh lebih kecil dari Nilai Barang Masuk')
+        this.$store.dispatch('app/showInfo', 'Nilai Barang Masuk tidak boleh lebih kecil dari Nilai Barang Keluar')
         return
       }
 
@@ -1743,7 +1743,7 @@ export default {
       this.data.totalOut = this.data.subTotalOut 
       this.data.totalIn = this.data.subTotalIn 
 
-      this.data.difference = this.data.totalOut - this.data.totalIn
+      this.data.difference = this.data.totalIn - this.data.totalOut
       this.data.total = this.data.totalIn
     },
     showFindItemDialog(item) {
