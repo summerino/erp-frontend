@@ -224,7 +224,7 @@ export default {
         this.$store.dispatch('app/showInfo', 'Tolong cek kembali bagian formulir yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
-      this.disableControl = false
+      this.disableControl = true
 
       axios.post('/journal', this.data)
     },
