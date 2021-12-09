@@ -1153,31 +1153,33 @@ export default {
           for (let i = 0; i < this.items.length; i++) {
             const item = this.items[i]
             const units = this.uoms.filter(x => x.uomId === item.uomId)
-            const baseUnitId = units[0].id
-            const buyUnit = item.uomBuyId
-            const temp = {
-              id: -i,
-              itemId: item.id,
-              itemName: item.name,
-              unitName: null,
-              units: units,
-              uomId: item.uomId,
-              unitId: buyUnit,
-              oldUnitId: baseUnitId,
-              qtyOnHand: item.qtyOnHand,
-              baseQtyOnHand: item.qtyOnHand,
-              baseUnitId: baseUnitId,
-              qtyOnTransit: 0,
-              qtyOpname: 0,
-              differentUnit: null,
-              differentUnits: [],
-              different: 0,
-              cogs: 0,
-              totalCogs: 0,
-              notes: ''
+            if (units.length > 0) {
+              const baseUnitId = units[0].id
+              const buyUnit = item.uomBuyId
+              const temp = {
+                id: -i,
+                itemId: item.id,
+                itemName: item.name,
+                unitName: null,
+                units: units,
+                uomId: item.uomId,
+                unitId: buyUnit,
+                oldUnitId: baseUnitId,
+                qtyOnHand: item.qtyOnHand,
+                baseQtyOnHand: item.qtyOnHand,
+                baseUnitId: baseUnitId,
+                qtyOnTransit: 0,
+                qtyOpname: 0,
+                differentUnit: null,
+                differentUnits: [],
+                different: 0,
+                cogs: 0,
+                totalCogs: 0,
+                notes: ''
+              }
+              this.unitItemChange(temp)
+              this.gridItem.data.push(temp)         
             }
-            this.unitItemChange(temp)
-            this.gridItem.data.push(temp)
           }
           this.isButtonShowItemDisabled()
         })  
