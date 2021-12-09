@@ -31,6 +31,7 @@ export default {
   purchaseReturn: 39,
   debitMemo: 40,
   apReport: 92,
+  apmReport: 131,
 
   // Sales
   area: 42,
@@ -46,6 +47,7 @@ export default {
   visitPlan: 54,
   visitOrder: 55,
   arReport: 93,
+  armReport: 132,
 
   // Expedition
   expeditionInvoice: 70,
