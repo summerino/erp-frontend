@@ -1,0 +1,584 @@
+<template>
+  <div class="w-full">
+    <v-row ref="filter" no-gutters>
+      <v-col cols="12">
+        <v-card>
+          <v-card-title class="indigo--text text--lighten-2 pb-1">
+            <v-row v-if="main" no-gutters>
+              <v-col cols="12" md="6">
+                Laporan Mutasi Hutang
+              </v-col>
+              <v-col cols="12" md="6" class="text-right">
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      v-bind="attrs"
+                      v-on="on"
+                      v-shortkey="['ctrl', 'alt', 's']"
+                      color="blue darken-1"
+                      class="font-weight-regular"
+                      dark
+                      small
+                      tile
+                      @click="getList"
+                      @shortkey="getList"
+                    >
+                      <v-icon left>mdi-magnify</v-icon>
+                      Cari
+                    </v-btn>
+                  </template>
+                  <span class="text-caption">(Ctrl + Alt + S)</span>
+                </v-tooltip>
+                <v-menu
+                  bottom
+                  open-on-hover
+                  offset-y
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      v-bind="attrs"
+                      v-on="on"
+                      color="blue darken-1"
+                      dark
+                      tile
+                      small
+                      :disabled="!auth.allowPrint"
+                    >
+                      <v-icon>mdi-menu-down</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list class="cursor-pointer">
+                    <v-list-item>
+                      <v-list-item-title>
+                        <export-excel
+                          ref="exportExcel"
+                          :company="companyName"
+                          :filters="exportFilter"
+                          :grid="grid"
+                          :gridDefOpts="gridDefOpts"
+                          title="Daftar Laporan Mutasi Hutang"
+                        ></export-excel>
+                      </v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      v-bind="attrs"
+                      v-on="on"
+                      v-shortkey="['ctrl', 'alt', 'f']"
+                      color="green darken-1"
+                      class="font-weight-regular ml-1"
+                      dark
+                      small
+                      tile
+                      @click="showfilter"
+                      @shortkey="showfilter"
+                    >
+                      <v-icon left>mdi-filter</v-icon>
+                      Filter
+                    </v-btn>
+                  </template>
+                  <span class="text-caption">(Ctrl + Alt + F)</span>
+                </v-tooltip>
+              </v-col>
+            </v-row>
+            <v-row v-else no-gutters>
+              <v-col cols="12" md="8">
+                Laporan Mutasi Hutang - Detail Berdasarkan Pemasok - {{ this.data.supInitial }} - {{ this.data.supName }} ({{ this.data.supCode }})
+              </v-col>
+              <v-col cols="12" md="4" class="text-right">
+                <v-menu
+                  bottom
+                  open-on-hover
+                  offset-y
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      v-bind="attrs"
+                      v-on="on"
+                      color="blue darken-1"
+                      dark
+                      tile
+                      small
+                      :disabled="!auth.allowPrint"
+                    >
+                      <v-icon>mdi-menu-down</v-icon>
+                    </v-btn>
+                  </template>
+                  <v-list class="cursor-pointer">
+                    <v-list-item>
+                      <v-list-item-title>
+                        <export-excel
+                          ref="exportExcel"
+                          :company="companyName"
+                          :filters="exportFilter"
+                          :grid="grid"
+                          :gridDefOpts="gridDefOpts"
+                          title="Daftar Laporan Hutang - Detail Berdasarkan Pemasok"
+                        ></export-excel>
+                      </v-list-item-title>
+                    </v-list-item>
+                  </v-list>
+                </v-menu>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                      v-bind="attrs"
+                      v-on="on"
+                      v-shortkey="['esc']"
+                      color="green darken-1"
+                      class="font-weight-regular ml-1"
+                      dark
+                      small
+                      tile
+                      @click="back"
+                      @shortkey="back"
+                    >
+                      <v-icon left>mdi-undo-variant</v-icon>
+                      Kembali
+                    </v-btn>
+                  </template>
+                  <span class="text-caption">(Esc)</span>
+                </v-tooltip>
+              </v-col>
+            </v-row>
+          </v-card-title>
+          <v-card-text v-if="this.filter" class="pa-2">
+            <v-row no-gutters>
+              <v-col cols="12" md="3">
+                <v-autocomplete
+                  v-model="data.type"
+                  :items="types"                  
+                  label="Tipe Laporan"
+                  item-text="name"
+                  item-value="id"
+                  class="mt-0"
+                  dense
+                  @change="clearTable()"
+                >
+                </v-autocomplete>
+              </v-col>
+              <v-col cols="12" md="2" class="pl-1">
+                <v-menu
+                  v-model="menu.startDate"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  min-width="290px"
+                  offset-y
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-bind="attrs"
+                      v-on="on"
+                      :value="formatStartDate"
+                      label="Tanggal Mulai"
+                      class="mt-0"
+                      dense
+                      readonly
+                      clearable
+                      @click:clear="clearDate('start')"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="data.startDate"
+                    no-title
+                    scrollable
+                    @change="menu.startDate = false; changeStartDate();"
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-col cols="12" md="2" class="pl-1">
+                <v-menu
+                  v-model="menu.endDate"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  min-width="290px"
+                  offset-y
+                >
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-text-field
+                      v-bind="attrs"
+                      v-on="on"
+                      :value="formatEndDate"
+                      label="Tanggal Akhir"
+                      class="mt-0"
+                      dense
+                      readonly
+                      clearable
+                      @click:clear="clearDate('end')"
+                    ></v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="data.endDate"
+                    no-title
+                    scrollable
+                    @change="menu.endDate = false; changeEndDate();"
+                  ></v-date-picker>
+                </v-menu>
+              </v-col>
+              <v-col cols="12" md="3" class="pl-1">
+                <v-autocomplete
+                  v-model="data.supplier"
+                  :items="suppliers"
+                  :item-text="item => `${item.initial} - ${item.name}`"
+                  label="Pemasok"
+                  item-value="code"
+                  class="mt-0"
+                  dense
+                  clearable
+                  @change="clearTable()"
+                ></v-autocomplete>
+              </v-col>
+              <v-col cols="12" md="2" class="pl-1">
+                <v-autocomplete
+                  v-model="data.status"
+                  :items="statuses"
+                  label="Status"
+                  item-text="name"
+                  item-value="id"
+                  class="mt-0"
+                  dense
+                  clearable
+                  @change="clearTable()"
+                ></v-autocomplete>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <v-row dense>
+      <v-col cols="12">
+          <v-card>
+          <v-data-table  
+            :headers="grid.columns"
+            :height="grid.height"
+            :items="grid.data"
+            :options.sync="grid.options"
+            :sort-by="grid.options.sortBy"
+            :sort-desc="grid.options.sortDesc"
+            :class="['elevation-1', this.data.type === 2 ? 'row-pointer' : '']"
+            fixed-header
+            hide-default-footer
+            disable-pagination
+            disable-sort
+            @dblclick:row="dblclickRow"
+          >
+          <template v-slot:[`item.code`]="{ item }">
+            <span :class="item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.code }}
+            </span>
+          </template>
+          <template v-slot:[`item.name`]="{ item }">
+            <span :class="item.name === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.name }}
+            </span>
+          </template>
+          <template v-slot:[`item.date`]="{ item }">
+            {{ item.date | formatDate('dd-MMM-yyyy') }}
+          </template>
+          <template v-slot:[`item.dueDate`]="{ item }">
+            {{ item.dueDate | formatDate('dd-MMM-yyyy') }}
+          </template>
+          <template v-slot:[`item.beginningBalance`]="{ item }">
+            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.beginningBalance | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.transAmount`]="{ item }">
+            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.transAmount | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.paidAmount`]="{ item }">
+           <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.paidAmount | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.endingBalance`]="{ item }">
+            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.endingBalance | formatCurrency }}
+            </span>
+          </template>
+          </v-data-table>
+        </v-card>
+      </v-col> 
+    </v-row>
+  </div>
+</template>
+
+<script>
+import { mapState } from 'vuex'
+import { format, parseISO }  from 'date-fns'
+
+import api from '@/services/axios.service'
+import auth from '@/services/authorization.service'
+
+import ExportExcel from '@/components/common/ExportExcel.vue'
+
+export default {
+  components:{
+    ExportExcel
+  },
+
+  data: () => ({
+    main: true,
+    menu: {
+      startDate: false,
+      endDate: false
+    },
+    grid: {
+      height: 100,
+      columns: [],
+      data: [],
+      options: {
+        sortBy: ['code'],
+        sortDesc: [false]
+      },
+      total: 0
+    },
+    filter: false,
+    supColumn: [
+      { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Nama', value: 'name', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Jumlah Transaksi', value: 'totalTrans', align: 'right', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Saldo Awal', value: 'beginningBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Nilai Transaksi', value: 'transAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Nilai Bayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Saldo Akhir', value: 'endingBalance', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
+    ],
+    invColumn: [
+      { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true },
+      { text: 'Tanggal Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true },
+      { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Kd. Ord. Pembelian', value: 'orderCode', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Kode Pemasok', value: 'supCode', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Nama Pemasok', value: 'supName', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Saldo Awal', value: 'beginningBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Nilai Transaksi', value: 'transAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Nilai Bayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Saldo Akhir', value: 'endingBalance', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
+    ],
+    statuses: [{ id: 'NP', name: 'Belum Lunas' }, { id: 'P', name: 'Lunas' }],
+    suppliers: [],
+    types: [{ id: 1, name: 'Berdasarkan Faktur' }, { id: 2, name: 'Berdasarkan Pemasok' }],
+    data: {},
+    exportFilter:{
+      fields : [
+        {text: 'Tipe Laporan', value: 'type'},
+        {text: 'Tanggal Mulai', value: 'startDate'},
+        {text: 'Tanggal Akhir', value: 'endDate'},
+        {text: 'Pemasok', value: 'supplier'},
+        {text: 'Status Lunas', value: 'status'}
+      ],
+      operator: [{ text: 'Sama dgn.', value: 'eq'}],
+      searches: []
+    }  
+  }),
+
+  created: function () {
+    this.reset()
+    this.getSupplierLists()
+    auth.getAction(this.endpoint, this.menuId.apmReport)
+      .then((response) => {
+        this.$store.commit('api/setAuth', response.data)
+      })
+  },
+
+  mounted: function () {
+    setTimeout(() => {
+      this.$store.commit('app/setBreadcrumbs', [{
+        text: 'Pembelian'
+      }, {
+        text: 'Laporan'
+      }, {
+        text: 'Mutasi Hutang'
+      }])
+      this.setGridDefaultHeight()
+    }, 0)
+  },
+
+  computed: {
+    ...mapState({
+      gridDefOpts: state => state.app.grid,
+      rules: state => state.app.rules,
+      endpoint: state => state.api.endpoint,
+      companyName: state => state.api.companyName,
+      auth: state => state.api.authorization,
+      menuId: state => state.api.menus
+    }),
+    formatStartDate() {
+      return this.data.startDate ? format(parseISO(this.data.startDate), 'dd-MMM-yyyy') : ''
+    },
+    formatEndDate() {
+      return this.data.endDate ? format(parseISO(this.data.endDate), 'dd-MMM-yyyy') : ''
+    }
+  },
+  
+  methods:{
+    setGridDefaultHeight() {
+      this.grid.height = 100
+      setTimeout(() => {
+        this.grid.height = this.$el.clientHeight - this.$refs.filter.clientHeight - 61
+      }, 0)
+    },
+    reset() {
+      this.data = {        
+        type: 1,
+        startDate: format(new Date(), 'yyyy-MM-dd'),
+        endDate: format(new Date(), 'yyyy-MM-dd'),
+        supplier: null,
+        status: null
+      }
+      this.filter = true
+    },
+    getList() {
+      this.grid.columns = this.data.type === 1 ? this.invColumn : this.supColumn
+      
+      api.getAll(this.endpoint.purchase.apmReport, {
+        params: {
+          type: this.data.type,
+          startDate: this.data.startDate,
+          endDate: this.data.endDate,
+          supCode: this.data.supplier,
+          status: this.data.status
+        }
+      })
+        .then(response => {
+          this.grid.data = response.data.tableData
+          this.grid.total = response.data.rowCount
+          this.appendFilter()
+        })
+    },
+    back() {
+      this.data.type = this.data.oldType
+      this.data.startDate = this.data.oldStartDate
+      this.data.endDate = this.data.oldEndDate
+      this.data.supplier = this.data.oldSupplier
+      this.data.status = this.data.oldStatus
+      this.filter = true
+      this.getList()
+      this.main = true
+      this.setGridDefaultHeight()
+    },
+    showfilter() {
+      this.filter = !this.filter
+    },
+    async exportExcel() {
+      this.exportExcel.export()
+    },
+    getSupplierLists() {
+      api.getAll(`${this.endpoint.general.supplier.supplier}/lists`, {
+        params: {
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.suppliers = response.data.tableData
+        })
+    },
+    dblclickRow(event, { item }) {
+      if (this.data.type === 2) {
+        this.data.oldType = this.data.type
+        this.data.oldStartDate = this.data.startDate
+        this.data.oldEndDate = this.data.endDate
+        this.data.oldSupplier = this.data.supplier
+        this.data.oldStatus = this.data.status
+        this.data.supCode = item.code
+        this.data.supInitial = item.initial
+        this.data.supName = item.name
+        this.data.supplier = item.code
+        this.data.type = 1
+        this.filter = false
+        this.getList()
+        this.main = false
+        this.setGridDefaultHeight()
+      }
+    },
+    appendFilter() {
+      this.exportFilter.searches = []
+      const searchType = {
+        field: 'type',
+        keyword: '',
+        operator: 'eq'
+      }
+      const searchStartDate = {
+        field: 'startDate',
+        keyword: '',
+        operator: 'eq'
+      }
+
+      const searchEndDate = {
+        field: 'endDate',
+        keyword: '',
+        operator: 'eq'
+      }
+
+      const report = this.types.find(x => x.id === this.data.type)
+      searchType.keyword = report.name
+      this.exportFilter.searches.push(searchType)
+
+      searchStartDate.keyword = this.data.startDate ? format(parseISO(this.data.startDate), 'dd-MMM-yyyy') : ''
+      this.exportFilter.searches.push(searchStartDate)
+
+      searchEndDate.keyword = this.data.endDate ? format(parseISO(this.data.endDate), 'dd-MMM-yyyy') : ''
+      this.exportFilter.searches.push(searchEndDate)
+
+      const sup = this.suppliers.find(x => x.code === this.data.supplier)
+      if (sup) {
+        const searchSup = {
+          field: '',
+          keyword: '',
+          operator: 'eq'
+        }
+        searchSup.field = 'supplier'
+        searchSup.keyword = sup.name
+        this.exportFilter.searches.push(searchSup)
+      }
+
+      const sts = this.statuses.find(x => x.id === this.data.status)
+      if (sts) {
+        const searchStatus = {
+          field: '',
+          keyword: '',
+          operator: 'eq'
+        }
+        searchSup.field = 'status'
+        searchSup.keyword = sts.name
+        this.exportFilter.searches.push(searchStatus)
+      }
+    },
+    clearTable() {
+      this.grid.data = []
+      this.grid.columns = []
+    },
+    changeStartDate() {
+      if (this.data.startDate > this.data.endDate) {
+        this.data.endDate = this.data.startDate
+      }
+      this.clearTable()
+    },
+    changeEndDate() {
+      if (this.data.endDate < this.data.startDate) {
+        this.data.startDate = this.data.endDate
+      }
+      this.clearTable()
+    },
+    clearDate(item) {
+      if (item === 'end') {
+        this.data.endDate = null
+      } else if (item === 'start') {
+        this.data.startDate = null
+      }
+      this.clearTable()
+    }
+  }
+}
+
+</script>

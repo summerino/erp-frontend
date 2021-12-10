@@ -44,7 +44,8 @@ export default {
     invoice: 'purchase-invoice',
     return: 'purchase-return',
     debitMemo: 'debit-memo',
-    apReport: 'ap-report'
+    apReport: 'ap-report',
+    apmReport: 'ap-mutation-report'
   },
 
   sales: {
