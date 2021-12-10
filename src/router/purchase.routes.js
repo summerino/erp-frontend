@@ -47,4 +47,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/purchase/report/ap-mutation-report',
+  name: 'ap-mutation-report',
+  component: () => import(/* webpackChunkName: "ap-mutation-report" */ '@/views/purchase/report/APMutationReport.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
