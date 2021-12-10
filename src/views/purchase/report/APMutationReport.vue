@@ -549,8 +549,8 @@ export default {
           keyword: '',
           operator: 'eq'
         }
-        searchSup.field = 'status'
-        searchSup.keyword = sts.name
+        searchStatus.field = 'status'
+        searchStatus.keyword = sts.name
         this.exportFilter.searches.push(searchStatus)
       }
     },
