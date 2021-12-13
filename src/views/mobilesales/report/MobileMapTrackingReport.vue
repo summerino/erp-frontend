@@ -56,67 +56,35 @@
             <v-row no-gutters>
               <v-col cols="12" md="3">
                 <v-menu
-                  v-model="menu.startDate"
+                  v-model="menu.date"
                   :close-on-content-click="false"
+                  :disabled="isLastPosition"
                   transition="scale-transition"
                   min-width="290px"
                   offset-y
-                  :disabled="isLastPosition"
                 >
                   <template v-slot:activator="{ on, attrs }">
                     <v-text-field
                       v-bind="attrs"
                       v-on="on"
-                      :value="formatStartDate"
-                      label="Tanggal Mulai"
+                      :disabled="isLastPosition"
+                      :value="formatDate"
+                      label="Tanggal"
                       class="mt-0"
                       dense
                       readonly
-                      clearable
-                      @click:clear="clearDate('start')"
-                      :disabled="isLastPosition"
+                      @click:clear="clearDate"
                     ></v-text-field>
                   </template>
                   <v-date-picker
-                    v-model="data.startDate"
+                    v-model="data.date"
                     no-title
                     scrollable
-                    @change="menu.startDate = false; changeStartDate();"
+                    @change="menu.date = false;"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
-              <v-col cols="12" md="3" class="pl-1">
-                <v-menu
-                  v-model="menu.endDate"
-                  :close-on-content-click="false"
-                  transition="scale-transition"
-                  min-width="290px"
-                  offset-y
-                  :disabled="isLastPosition"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-bind="attrs"
-                      v-on="on"
-                      :value="formatEndDate"
-                      label="Tanggal Akhir"
-                      class="mt-0"
-                      dense
-                      readonly
-                      clearable
-                      @click:clear="clearDate('end')"
-                      :disabled="isLastPosition"
-                    ></v-text-field>
-                  </template>
-                  <v-date-picker
-                    v-model="data.endDate"
-                    no-title
-                    scrollable
-                    @change="menu.endDate = false; changeEndDate();"
-                  ></v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-col cols="12" md="3" class="pl-1">
+              <v-col cols="12" md="6" class="pl-1">
                 <v-autocomplete
                   v-model="data.salesId"
                   :items="employees"
@@ -124,7 +92,7 @@
                   :rules="rules.required"
                   label="Penjual"
                   item-value="id"
-                  class="mt-0"
+                  class="mt-0" 
                   dense
                   required
                   @change="clearMap()"
@@ -153,16 +121,29 @@
     <v-row dense>
       <v-col cols="12">
         <v-card>
-          <div class="custom-map">
-            <gmap-map
-              v-if="path.length > 0"
-              :zoom="10"    
-              :center="center"
-              style="height:500px"
-            >
-              <DirectionsRenderer :key="index" v-for="(m, index) in path" :origin="path[index]" :destination="index === path.length - 1 ? path[index] : path[index + 1]"/>
-            </gmap-map>
-          </div>
+          <gmap-map
+            :center="center"
+            :zoom="zoom"
+            style="height:500px"
+          >
+            <gmap-info-window
+              :options="infoOption"
+              :position="infoWindowPos"
+              :opened="infoWinOpen"
+              @closeclick="infoWinOpen=false" />
+            <gmap-marker
+              v-for="(path, index) in paths"
+              :key="index"
+              :label="!isLastPosition ? { text: (index + 1).toString(), fontWeight: '600' } : null"
+              :position="path"
+              :icon="icon"
+              :clickable="true"
+              @click="toggleInfoWindow(path, index)" />
+            <gmap-polyline
+              v-if="paths.length > 0 && !isLastPosition"
+              :path="paths"
+              :options="{ strokeColor: '#ff0000' }" />
+          </gmap-map>
         </v-card>
       </v-col> 
     </v-row>
@@ -175,24 +156,31 @@ import { format, parseISO }  from 'date-fns'
 
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
-import DirectionsRenderer from '@/configs/directionsrenderer'
-
 
 export default {
-  components: {
-    DirectionsRenderer
-  },
-
   data: () => ({
     menu: {
-      startDate: false,
-      endDate: false
+      date: false
     },
-    center: null,
     filter: false,
     employees: [],
     data: {},
-    path: [],
+    center: { lat: -6.2293867, lng: 106.6894286 },
+    zoom: 10,
+    paths: [],
+    currentIdx: null,
+    infoWinOpen: false,
+    infoWindowPos: { lat: -6.2293867, lng: 106.6894286 },
+    infoOption: {
+      content: '',
+      pixelOffset: {
+        width: 0,
+        height: -48
+      }
+    },
+    icon: {
+      url: '../../images/truck-marker.png'
+    },
     types: [{ id: 1, name: 'Riwayat Pelacakan' }, { id: 2, name: 'Posisi Terakhir'}],
     countInterval: null
   }),
@@ -226,8 +214,7 @@ export default {
     'data.type': {
       handler() {
         if (this.isLastPosition) {
-          this.data.startDate = format(new Date(), 'yyyy-MM-dd')
-          this.data.endDate = format(new Date(), 'yyyy-MM-dd')
+          this.data.date = format(new Date(), 'yyyy-MM-dd')
         } else {
           clearInterval(this.countInterval)
         }
@@ -246,11 +233,8 @@ export default {
       action: state => state.api.action,
       menuId: state => state.api.menus
     }),
-    formatStartDate() {
-      return this.data.startDate ? format(parseISO(this.data.startDate), 'dd-MMM-yyyy') : ''
-    },
-    formatEndDate() {
-      return this.data.endDate ? format(parseISO(this.data.endDate), 'dd-MMM-yyyy') : ''
+    formatDate() {
+      return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
     },
     isLastPosition() {
       return this.data.type === 2
@@ -260,49 +244,67 @@ export default {
   methods:{
     reset() {
       this.data = {        
+        date: format(new Date(), 'yyyy-MM-dd'),
         salesId: null,
-        startDate: format(new Date(), 'yyyy-MM-dd'),
-        endDate: format(new Date(), 'yyyy-MM-dd'),
         type: 1
       }
       this.filter = true
     },
     getData() {
-      api.getAll(this.endpoint.mobileSales.mapTrackingReport, {
-        params: {
-          salesId: this.data.salesId,
-          startDate: this.data.startDate,
-          endDate: this.data.endDate,
-          type: this.data.type
-        }
-      })
-        .then(response => {
-          this.path = response.data.tableData
-          if (this.path[0] !== null || this.path !== undefined) {
-            this.center = this.path[0]
-          }
-        })
+      this.showMap()
 
       if (this.isLastPosition) {
         this.countInterval = setInterval(() => {
-          api.getAll(this.endpoint.mobileSales.mapTrackingReport, {
-            params: {
-              salesId: this.data.salesId,
-              startDate: this.data.startDate,
-              endDate: this.data.endDate,
-              type: this.data.type
-            }
-          })
-            .then(response => {
-              this.path = response.data.tableData
-              if (this.path[0] !== null || this.path !== undefined) {
-                this.center = this.path[0]
-              }
-            })
+          this.showMap()
         }, 5000)
       } else {
         clearInterval(this.countInterval)
       }
+    },
+    showMap() {
+      api.getAll(this.endpoint.mobileSales.mapTrackingReport, {
+        params: {
+          date: this.data.date,
+          salesId: this.data.salesId,
+          type: this.data.type
+        }
+      })
+        .then(response => {
+          this.paths = response.data.tableData
+          this.currentIdx = null
+          this.infoWinOpen = false
+
+          if (this.paths.length === 0) {
+            return
+          }
+          
+          this.center = { lat: this.paths[0].lat, lng: this.paths[0].lng }
+          this.zoom = !this.isLastPosition ? 16 : 18
+          // if (!this.isLastPosition) {
+          //   let origin = {}
+          //   let destination = {}
+          //   const waypoints = []
+
+          //   for (let j = 0; j < locations.length; j++) {
+          //     if (j === 0) {
+          //       origin = { lat: locations[j].lat, lng: locations[j].lng }
+          //       this.center = origin
+          //     } else if (j === locations.length - 1) {
+          //       destination = { lat: locations[j].lat, lng: locations[j].lng }
+          //     } else if (j > 0) {
+          //       waypoints.push({
+          //         location: { lat: locations[j].lat, lng: locations[j].lng }
+          //       })
+          //     }
+          //   }
+
+          //   this.directions.push({
+          //     origin: origin,
+          //     destination: destination,
+          //     waypoints: waypoints
+          //   })
+          // }
+        })
     },
     showfilter() {
       this.filter = !this.filter
@@ -327,42 +329,28 @@ export default {
         })
     },
     clearMap() {
-      this.center = null
-      this.path = []
+      this.center = { lat: -6.2293867, lng: 106.6894286 }
+      this.zoom = 10
+      this.paths = []
+      this.position = {}
+      this.currentIdx = null
+      this.infoWinOpen = false
     },
-    changeStartDate() {
-      if (this.data.startDate > this.data.endDate) {
-        this.data.endDate = this.data.startDate
-      }
+    clearDate() {
+      this.data.date = null
       this.clearMap()
     },
-    changeEndDate() {
-      if (this.data.endDate < this.data.startDate) {
-        this.data.startDate = this.data.endDate
-      }
-      this.clearMap()
-    },
-    clearDate(item) {
-      if (item === 'start') {
-        this.data.startDate = null
+    toggleInfoWindow(path, idx) {
+      this.infoWindowPos = { lat: path.lat, lng: path.lng }
+      this.infoOption.content = `Waktu Pelacakan: ${format(parseISO(path.trackedDate), 'HH:mm:ss')}`
+
+      if (this.currentIdx === idx) {
+        this.infoWinOpen = !this.infoWinOpen
       } else {
-        this.data.endDate = null
+        this.infoWinOpen = true
+        this.currentIdx = idx
       }
-      this.clearMap()
     }
   }
 }
-
 </script>
-
-<style lang="scss">
-.vue-map-container,
-.vue-map-container .vue-map {
-  width: 100%;
-  height: 100%;
-}
-.custom-map {
-  width : 100%;
-  height : 100%;
-}
-</style>

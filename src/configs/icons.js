@@ -1,6 +1,6 @@
 export default [
   // Community Material Design Icons | http://materialdesignicons.com/
-  'https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css',
+  'https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css',
 
   // Google Material Icons | https://github.com/google/material-design-icons
   'https://fonts.googleapis.com/css?family=Material+Icons',

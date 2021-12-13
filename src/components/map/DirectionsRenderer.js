@@ -13,22 +13,20 @@ export default MapElementFactory({
 
   props: {
     origin: { type: Object },
-    destination: { type: Object }
+    destination: { type: Object },
+    waypoints: { type: Array }
   },
 
   afterCreate(directionsRenderer) {
     const directionsService = new window.google.maps.DirectionsService()
-
-    directionsService.route(
-      {
-        origin: this.origin,
-        destination: this.destination,
-        travelMode: 'DRIVING'
-      },
-      (response, status) => {
-        if (status !== 'OK') return
-        directionsRenderer.setDirections(response)
-      }
-    )
+    directionsService.route({
+      origin: this.origin,
+      destination: this.destination,
+      travelMode: 'DRIVING',
+      waypoints: this.waypoints
+    }, (response, status) => {
+      if (status !== 'OK') return
+      directionsRenderer.setDirections(response)
+    })
   }
 })
