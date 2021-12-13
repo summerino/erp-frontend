@@ -61,7 +61,8 @@ export default {
     creditMemo: 'credit-memo',
     visitPlan: 'visit-plan',
     visitOrder: 'visit-order',
-    arReport: 'ar-report'
+    arReport: 'ar-report',
+    armReport: 'ar-mutation-report'
   },
 
   expedition: {
