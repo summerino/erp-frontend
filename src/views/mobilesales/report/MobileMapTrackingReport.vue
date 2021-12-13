@@ -251,14 +251,13 @@ export default {
       this.filter = true
     },
     getData() {
+      clearInterval(this.countInterval)
       this.showMap()
 
       if (this.isLastPosition) {
         this.countInterval = setInterval(() => {
           this.showMap()
         }, 5000)
-      } else {
-        clearInterval(this.countInterval)
       }
     },
     showMap() {
