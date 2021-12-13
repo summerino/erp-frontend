@@ -335,6 +335,7 @@ export default {
       this.position = {}
       this.currentIdx = null
       this.infoWinOpen = false
+      clearInterval(this.countInterval)
     },
     clearDate() {
       this.data.date = null
