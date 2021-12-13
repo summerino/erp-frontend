@@ -286,26 +286,7 @@ export default {
     async removeItem(item) {
       const idx = this.grid.data.findIndex(i => i.id === item.id)
       this.grid.data.splice(idx, 1)
-      for (let i = 0; i < this.grid.data.length; i++) {
-        if (i === 0) {
-          if (this.grid.data[i].promoMethod === 1) {
-            this.grid.data[i].amount = this.data.unitPrice * (this.grid.data[i].value / 100)
-          } else {
-            this.grid.data[i].amount = this.grid.data[i].value
-          }
-          this.grid.data[i].nettPrice = this.data.unitPrice - this.grid.data[i].amount
-          this.data.disc = this.grid.data[i].amount
-        } else {
-          if (this.grid.data[i].promoMethod === 1) {
-            this.grid.data[i].amount = this.data.unitPrice * (this.grid.data[i].value / 100)
-          } else {
-            this.grid.data[i].amount = this.grid.data[i].value
-          }
-          this.grid.data[i].nettPrice = this.data.nettPrice - this.grid.data[i].amount
-          this.data.disc += this.grid.data[i].amount
-        }
-        this.data.nettPrice = this.data.unitPrice - this.data.disc
-      }
+      this.changeValue()
     },
     save() {
       if (!this.$refs.form.validate()) {
@@ -330,28 +311,33 @@ export default {
       }
     },
     changeValue() {
-      for (let i = 0; i < this.grid.data.length; i++) {
-        if (i === 0) {
-          if (this.grid.data[i].promoMethod === 1) {
-            this.grid.data[i].amount = this.data.unitPrice * (this.grid.data[i].value / 100)
+      if (this.grid.data.length > 0) {
+        for (let i = 0; i < this.grid.data.length; i++) {
+          if (i === 0) {
+            if (this.grid.data[i].promoMethod === 1) {
+              this.grid.data[i].amount = this.data.unitPrice * (this.grid.data[i].value / 100)
+            } else {
+              this.grid.data[i].amount = this.grid.data[i].value
+            }
+            const calcValue = this.data.unitPrice - this.grid.data[i].amount
+            this.grid.data[i].nettPrice = calcValue < 0 ? 0 : calcValue
+            this.data.disc = this.grid.data[i].amount
           } else {
-            this.grid.data[i].amount = this.grid.data[i].value
+            if (this.grid.data[i].promoMethod === 1) {
+              this.grid.data[i].amount = this.data.unitPrice * (this.grid.data[i].value / 100)
+            } else {
+              this.grid.data[i].amount = this.grid.data[i].value
+            }
+            const calcValue = this.data.nettPrice - this.grid.data[i].amount
+            this.grid.data[i].nettPrice = calcValue < 0 ? 0 : calcValue
+            this.data.disc += this.grid.data[i].amount
           }
-          const calcValue = this.data.unitPrice - this.grid.data[i].amount
-          this.grid.data[i].nettPrice = calcValue < 0 ? 0 : calcValue
-          this.data.disc = this.grid.data[i].amount
-        } else {
-          if (this.grid.data[i].promoMethod === 1) {
-            this.grid.data[i].amount = this.data.unitPrice * (this.grid.data[i].value / 100)
-          } else {
-            this.grid.data[i].amount = this.grid.data[i].value
-          }
-          const calcValue = this.data.nettPrice - this.grid.data[i].amount
-          this.grid.data[i].nettPrice = calcValue < 0 ? 0 : calcValue
-          this.data.disc += this.grid.data[i].amount
+          const calcValue = this.data.unitPrice - this.data.disc
+          this.data.nettPrice = calcValue < 0 ? 0 : calcValue
         }
-        const calcValue = this.data.unitPrice - this.data.disc
-        this.data.nettPrice = calcValue < 0 ? 0 : calcValue
+      } else {
+        this.data.disc = 0
+        this.data.nettPrice = this.data.unitPrice
       }
     },
     getSysCOA() {
