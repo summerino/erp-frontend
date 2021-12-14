@@ -538,12 +538,6 @@ export default {
         })
       }
 
-      filters.push({
-        field: 'mark',
-        operator: 'contains',
-        keyword: ['A', 'REJ']
-      })
-
       api.getAll(this.endpoint.mobileWarehouse.deliveryItem, {
         params: {
           search: this.grid.search,
