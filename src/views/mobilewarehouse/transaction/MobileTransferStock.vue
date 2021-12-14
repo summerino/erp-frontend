@@ -537,13 +537,7 @@ export default {
           direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
         })
       }
-
-      filters.push({
-        field: 'mark',
-        operator: 'contains',
-        keyword: ['A', 'REJ']
-      })
-
+      
       api.getAll(this.endpoint.mobileWarehouse.transferStock, {
         params: {
           search: this.grid.search,
