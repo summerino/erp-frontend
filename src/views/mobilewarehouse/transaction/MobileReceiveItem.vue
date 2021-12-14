@@ -711,9 +711,10 @@ export default {
         this.$store.dispatch('app/showInfo', 'Data barang tidak boleh kosong.')
         return
       }
-
-      if (_sumBy(this.gridItem.data.filter(x => x.type === 0), 'qty') <= 0) {
-        this.$store.dispatch('app/showInfo', 'Total qty penerimaan tidak boleh 0.')
+      
+      const nItem = this.gridItem.data.filter(x => x.type === 0)
+      if (nItem.length > 0 && _sumBy(nItem, 'qty') <= 0) {
+        this.$store.dispatch('app/showInfo', 'Total qty barang normal tidak boleh 0.')
         return
       }
       
