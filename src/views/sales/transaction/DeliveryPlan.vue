@@ -740,12 +740,12 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '110' },
-        { text: 'Kode', value: 'code', divider: true, width: '120', excelColWidth:'14' },
+        { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'14' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
-        { text: 'No. Kendaraan', value: 'vehicleNo', divider: true, width: '160', excelColWidth:'18' },
-        { text: 'Supir', value: 'driverInitial', divider: true, width: '120', excelColWidth:'15' },
+        { text: 'No. Kendaraan', value: 'vehicleNo', divider: true, width: '100', excelColWidth:'18' },
+        { text: 'Supir', value: 'driverInitial', divider: true, width: '160', excelColWidth:'15' },
         { text: 'Gudang', value: 'warehouseInitial', divider: true, width: '160', excelColWidth:'19' },
-        { text: 'Status', value: 'mark', divider: true, width: '120', excelColWidth:'10' }
+        { text: 'Status', value: 'mark', divider: true, width: '70', excelColWidth:'10' }
       ],
       data: [],
       options: {
