@@ -2216,7 +2216,7 @@ export default {
             }
 
             for (let iq = 0; iq < gridData[k].discPromo.length; iq++) {
-              if (!('promoDetailId' in gridData[k].discPromo[iq])) {
+              if (!('promoDetailId' in gridData[k].discPromo[iq]) || gridData[k].discPromo[iq].promoDetailId === null) {
                 nDiscPromo.push(gridData[k].discPromo[iq])
               }
             }
@@ -2231,9 +2231,21 @@ export default {
             this.calcItemPrice(gridData[k], false)
           }
         } else {
-          gridData[k].discPromo = []
-          gridData[k].disc = 0
-          this.calcItemPrice(gridData[k], false)
+          const nDiscPromo = []
+          for (let iq = 0; iq < gridData[k].discPromo.length; iq++) {
+            if (!('promoDetailId' in gridData[k].discPromo[iq]) || gridData[k].discPromo[iq].promoDetailId === null) {
+              nDiscPromo.push(gridData[k].discPromo[iq])
+            }
+          }
+          if (nDiscPromo.length > 0) {
+            gridData[k].discPromo = nDiscPromo
+            gridData[k].disc = _sumBy(gridData[k].discPromo, 'amount') 
+            this.calcItemPrice(gridData[k], false)
+          } else {
+            gridData[k].discPromo = []
+            gridData[k].disc = 0
+            this.calcItemPrice(gridData[k], false)
+          }
         }
         
       }
