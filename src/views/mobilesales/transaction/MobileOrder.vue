@@ -963,6 +963,8 @@ export default {
           this.gridBonus.data = response.data.tableData
         })
 
+      this.getCustomerAddressesLists(this.data.custCode)
+
       // // Get Promo
       // api.getAll(`${this.endpoint.sales.promo}/list`, {
       //   params: { code: item.code }
@@ -1332,12 +1334,12 @@ export default {
         this.data.custFax = customer.fax
         this.data.paymentTermId = customer.paymentTermId
         this.data.custTypeId = customer.typeId
-        this.getCustomerAddressesLists(customer)
+        this.getCustomerAddressesLists(customer.code)
       }
     },
     getCustomerAddressesLists(item) {
       api.getAll(`${this.endpoint.general.customer.customer}/addresses`, {
-        params: { code: item.code }
+        params: { code: item }
       })
         .then(response => {
           this.customerAddresses = response.data.tableData
