@@ -321,7 +321,7 @@
                       <v-col cols="12" md="6" class="pl-md-1">
                         <v-text-field
                           v-model="employee.aliases"
-                          :readonly="data.mark === 'CMP' || data.mark === 'V'"
+                          :readonly="data.mark === 'CMP' || data.mark === 'V' || data.action === 'edit'"
                           :rules="rules.required"
                           label="Penjual"
                           class="mt-0"
@@ -330,7 +330,7 @@
                           <template v-slot:append>
                             <v-btn
                               color="primary"
-                              :disabled="data.mark === 'CMP' || data.mark === 'V'"
+                              :disabled="data.mark === 'CMP' || data.mark === 'V' || data.action === 'edit'"
                               icon
                               small
                               @click="showFindSalesDialog"
@@ -932,9 +932,6 @@ export default {
     },
     formatVisitDate() {
       return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
-    },
-    isSalesHasVSO() {
-      return this.isSalesHasScheduledVisitOrder
     },
     isScheduledVisit() {
       return this.data.sourceTransaction === 'Jadwal Kunjungan'
