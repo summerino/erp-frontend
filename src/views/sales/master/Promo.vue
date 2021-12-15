@@ -736,7 +736,7 @@ export default {
         { text: 'Nama', value: 'itemName', divider: true, width: '120' },
         { text: 'Tipe Promo', value: 'promoType', divider: true, width: '120' },
         { text: 'Promo (%)', value: 'valuePercentage', align: 'right', divider: true, width: '90' },
-        { text: 'Promo (Nilai) Dalam Satuan Terkecil', value: 'valueAmount', align: 'right', divider: true, width: '90' },
+        { text: 'Promo (Nilai)', value: 'valueAmount', align: 'right', divider: true, width: '90' },
         { text: 'Jenjang', value: 'tier', align: 'center', divider: true, width: '100' }
       ],
       data: []
