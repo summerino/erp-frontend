@@ -208,6 +208,7 @@ export default {
       this.dialog = true
       this.rowItem = rowItem
       this.notes = rowItem.notesFailShipment
+      this.checkAll = rowItem.failedSendAll
       this.reset()
       this.getDetail(rowItem)
       setTimeout(() => {
@@ -314,6 +315,7 @@ export default {
         this.$store.dispatch('app/showInfo', 'Barang tidak boleh duplikat.')
       } else {
         this.rowItem.notesFailShipment = this.notes
+        this.rowItem.failedSendAll = this.checkAll
         this.rowItem.undeliveredItems = this.grid.data
         if (!this.rowItem.undeliveredItems.length) {
           this.rowItem.isFailShipment = false
