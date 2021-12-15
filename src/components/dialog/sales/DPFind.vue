@@ -300,6 +300,7 @@ export default {
           volume: 0,
           weight: 0,
           isFailShipment: false,
+          failedSendAll: false,
           notesFailShipment: null,
           custName: null,
           undeliveredItems: []
