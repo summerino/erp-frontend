@@ -1524,6 +1524,9 @@ export default {
       ) {
         const idx = this.gridDiffItem.data.findIndex(i => i.id === item.id)
         this.gridDiffItem.data.splice(idx, 1)
+
+        // Calc price
+        this.calcPrice()
       }
     },
     bindColumn() {
