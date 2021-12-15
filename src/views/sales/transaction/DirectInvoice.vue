@@ -1449,6 +1449,11 @@ export default {
           this.close()
         } else {
           this.data.code = result.data
+          this.$router.push({
+            name: 'direct-invoice',
+            params: { action: 'edit', code: result.data }
+          })
+          this.defineAction()
         }
       }
     },
