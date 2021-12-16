@@ -15,7 +15,6 @@ steps:
     versionSpec: '10.x'
   displayName: 'Install Node.js'
 
-# Build production mode
 - script: |
     npm install
     npm run build
@@ -42,34 +41,5 @@ steps:
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'drop'
-    publishLocation: 'Container'
-  displayName: 'Publish Artifact'
-
-# Build staging mode
-- script: |
-    npm run build -- --mode staging
-  displayName: 'npm build staging mode'
-
-- task: CopyFiles@2
-  inputs:
-    SourceFolder: 'dist'
-    Contents: '**'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
-    CleanTargetFolder: true
-  displayName: 'Copy Files'
-
-- task: ArchiveFiles@2
-  inputs:
-    rootFolderOrFile: 'dist'
-    includeRootFolder: false
-    archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
-    replaceExistingArchive: true
-  displayName: 'Archive Files'
-
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'staging-drop'
     publishLocation: 'Container'
   displayName: 'Publish Artifact'
