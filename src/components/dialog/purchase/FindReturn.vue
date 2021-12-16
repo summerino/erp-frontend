@@ -134,7 +134,8 @@ export default {
     markExclude: {
       type: Array,
       required: true
-    }
+    },
+    rcvDate: String
   },
 
   data() {
@@ -229,7 +230,7 @@ export default {
         }
       })
         .then(response => {
-          this.grid.data = response.data.tableData
+          this.grid.data = this.rcvDate === undefined ? response.data.tableData : response.data.tableData.filter(x => x.date <= this.rcvDate)
         })
     },
     searchByChange() {
