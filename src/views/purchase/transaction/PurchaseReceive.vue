@@ -658,6 +658,7 @@
     <find-po
       ref="findPO"
       :mark-exclude="['V', 'CLS', 'CMP']"
+      :rcv-date="data.date"
       @dblclick:row="bindTransData"
     ></find-po>
     <find-return

@@ -131,7 +131,8 @@ export default {
   props: {
     caller: String,
     MarkExclude: Array,
-    invCode: String
+    invCode: String,
+    rcvDate: String
   },
 
   data() {
@@ -220,7 +221,7 @@ export default {
         params: params
       })
         .then(response => {
-          this.grid.data = response.data.tableData
+          this.grid.data = this.rcvDate === undefined ? response.data.tableData : response.data.tableData.filter(x => x.date <= this.rcvDate)
         })
     },
     searchByChange() {
