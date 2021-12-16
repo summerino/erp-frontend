@@ -1125,7 +1125,7 @@ export default {
 
       const data = this.data
       for (let i = 0; i < this.gridItem.data.length; i++) {
-        const listFreeItem = this.gridBonus.data.filter(x => x.orderDetailId === this.gridItem.data[i].soDetailId)
+        const listFreeItem = data.action === 'add' ? this.gridBonus.data.filter(x => x.orderDetailId === this.gridItem.data[i].soDetailId) : this.gridBonus.data.filter(x => x.dlvOrderDetailId === this.gridItem.data[i].id)
         if (listFreeItem) {
           this.gridItem.data[i].freeItemDetails = listFreeItem
         }
