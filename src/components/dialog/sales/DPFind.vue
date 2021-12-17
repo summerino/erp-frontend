@@ -252,7 +252,7 @@ export default {
           }
         })
           .then(response => {
-            this.grid.data = response.data.tableData.filter(x => !this.listCode.includes(x.code) && x.date <= this.dateTrans && x.type === 'Surat Jalan')
+            this.grid.data = response.data.tableData.filter(x => !this.listCode.includes(x.code) && new Date(x.date) <= new Date(this.dateTrans) && x.type === 'Surat Jalan')
           })
       } else if (srcTrans === 1) {
         api.getAll(`${this.endpoint.sales.plan}/all-trans`, {
@@ -266,7 +266,7 @@ export default {
           }
         })
           .then(response => {
-            this.grid.data = response.data.tableData.filter(x => !this.listCode.includes(x.code) && x.date <= this.dateTrans && x.type === 'Penjualan Langsung')
+            this.grid.data = response.data.tableData.filter(x => !this.listCode.includes(x.code) && new Date(x.date) <= new Date(this.dateTrans) && x.type === 'Penjualan Langsung')
           })
       } else if (srcTrans === 3) {
         api.getAll(`${this.endpoint.sales.plan}/all-trans`, {
@@ -280,7 +280,7 @@ export default {
           }
         })
           .then(response => {
-            this.grid.data = response.data.tableData.filter(x => !this.listCode.includes(x.code) && x.date <= this.dateTrans)
+            this.grid.data = response.data.tableData.filter(x => !this.listCode.includes(x.code) && new Date(x.date) <= new Date(this.dateTrans))
           })
       }
     },
