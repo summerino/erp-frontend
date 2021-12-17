@@ -6,7 +6,7 @@
           <v-card-title class="indigo--text text--lighten-2 pb-1">
             <v-row v-if="main" no-gutters>
               <v-col cols="12" md="6">
-                Laporan Mutasi Hutang
+                Laporan Umur Hutang
               </v-col>
               <v-col cols="12" md="6" class="text-right">
                 <v-tooltip bottom>
@@ -56,7 +56,7 @@
                           :filters="exportFilter"
                           :grid="grid"
                           :gridDefOpts="gridDefOpts"
-                          title="Daftar Laporan Mutasi Hutang"
+                          title="Daftar Laporan Umur Hutang"
                         ></export-excel>
                       </v-list-item-title>
                     </v-list-item>
@@ -86,7 +86,7 @@
             </v-row>
             <v-row v-else no-gutters>
               <v-col cols="12" md="8">
-                Laporan Mutasi Hutang - Detail Berdasarkan Pemasok - {{ this.data.supName }} ({{ this.data.supCode }})
+                Laporan Umur Hutang - Detail Berdasarkan Pemasok - {{ this.data.supName }} ({{ this.data.supCode }})
               </v-col>
               <v-col cols="12" md="4" class="text-right">
                 <v-menu
@@ -160,9 +160,9 @@
                 >
                 </v-autocomplete>
               </v-col>
-              <v-col cols="12" md="2" class="pl-1">
+              <v-col cols="12" md="3" class="pl-1">
                 <v-menu
-                  v-model="menu.startDate"
+                  v-model="menu.date"
                   :close-on-content-click="false"
                   transition="scale-transition"
                   min-width="290px"
@@ -172,49 +172,18 @@
                     <v-text-field
                       v-bind="attrs"
                       v-on="on"
-                      :value="formatStartDate"
-                      label="Tanggal Mulai"
+                      :value="formatDate"
+                      label="Sampai Tanggal"
                       class="mt-0"
                       dense
                       readonly
-                      clearable
-                      @click:clear="clearDate('start')"
                     ></v-text-field>
                   </template>
                   <v-date-picker
-                    v-model="data.startDate"
+                    v-model="data.date"
                     no-title
                     scrollable
-                    @change="menu.startDate = false; changeStartDate();"
-                  ></v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-col cols="12" md="2" class="pl-1">
-                <v-menu
-                  v-model="menu.endDate"
-                  :close-on-content-click="false"
-                  transition="scale-transition"
-                  min-width="290px"
-                  offset-y
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-bind="attrs"
-                      v-on="on"
-                      :value="formatEndDate"
-                      label="Tanggal Akhir"
-                      class="mt-0"
-                      dense
-                      readonly
-                      clearable
-                      @click:clear="clearDate('end')"
-                    ></v-text-field>
-                  </template>
-                  <v-date-picker
-                    v-model="data.endDate"
-                    no-title
-                    scrollable
-                    @change="menu.endDate = false; changeEndDate();"
+                    @change="menu.date = false; clearTable();"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
@@ -231,11 +200,11 @@
                   @change="clearTable()"
                 ></v-autocomplete>
               </v-col>
-              <v-col cols="12" md="2" class="pl-1">
+              <v-col cols="12" md="3" class="pl-1">
                 <v-autocomplete
-                  v-model="data.status"
-                  :items="statuses"
-                  label="Status"
+                  v-model="data.duration"
+                  :items="durations"
+                  label="Durasi"
                   item-text="name"
                   item-value="id"
                   class="mt-0"
@@ -267,9 +236,9 @@
             disable-sort
             @dblclick:row="dblclickRow"
           >
-          <template v-slot:[`item.code`]="{ item }">
-            <span :class="item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.code }}
+          <template v-slot:[`item.supName`]="{ item }">
+            <span :class="item.supName === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.supName }}
             </span>
           </template>
           <template v-slot:[`item.name`]="{ item }">
@@ -283,24 +252,74 @@
           <template v-slot:[`item.dueDate`]="{ item }">
             {{ item.dueDate | formatDate('dd-MMM-yyyy') }}
           </template>
-          <template v-slot:[`item.beginningBalance`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.beginningBalance | formatCurrency }}
+          <template v-slot:[`item.remainderAmount`]="{ item }">
+            <span :class="item.name === 'Total' || item.supName === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.remainderAmount | formatCurrency }}
             </span>
           </template>
-          <template v-slot:[`item.transAmount`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.transAmount | formatCurrency }}
+          <template v-slot:[`item.past90`]="{ item }">
+            <span :class="item.name === 'Total' || item.supName === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.past90 | formatCurrency }}
             </span>
           </template>
-          <template v-slot:[`item.paidAmount`]="{ item }">
-           <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.paidAmount | formatCurrency }}
+          <template v-slot:[`item.past61To90`]="{ item }">
+            <span :class="item.name === 'Total' || item.supName === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.past61To90 | formatCurrency }}
             </span>
           </template>
-          <template v-slot:[`item.endingBalance`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.endingBalance | formatCurrency }}
+          <template v-slot:[`item.past31To60`]="{ item }">
+           <span :class="item.name === 'Total' || item.supName === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.past31To60 | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.past15To30`]="{ item }">
+            <span :class="item.name === 'Total' || item.supName === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.past15To30 | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.past8To14`]="{ item }">
+            <span :class="item.name === 'Total' || item.supName === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.past8To14 | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.past1To7`]="{ item }">
+            <span :class="item.name === 'Total' || item.supName === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.past1To7 | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.dueToday`]="{ item }">
+            <span :class="item.name === 'Total' || item.supName === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.dueToday | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.due1To7`]="{ item }">
+            <span :class="item.name === 'Total' || item.supName === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.due1To7 | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.due8To14`]="{ item }">
+            <span :class="item.name === 'Total' || item.supName === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.due8To14 | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.due15To30`]="{ item }">
+            <span :class="item.name === 'Total' || item.supName === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.due15To30 | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.due31To60`]="{ item }">
+            <span :class="item.name === 'Total' || item.supName === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.due31To60 | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.due61To90`]="{ item }">
+            <span :class="item.name === 'Total' || item.supName === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.due61To90 | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.due90`]="{ item }">
+            <span :class="item.name === 'Total' || item.supName === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.due90 | formatCurrency }}
             </span>
           </template>
           </v-data-table>
@@ -327,8 +346,7 @@ export default {
   data: () => ({
     main: true,
     menu: {
-      startDate: false,
-      endDate: false
+      date: false
     },
     grid: {
       height: 100,
@@ -342,37 +360,60 @@ export default {
     },
     filter: false,
     supColumn: [
-      { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nama', value: 'name', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Kd. Pemasok', value: 'code', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Nm. Pemasok', value: 'name', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Jumlah Transaksi', value: 'totalTrans', align: 'right', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Saldo Awal', value: 'beginningBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Nilai Transaksi', value: 'transAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Nilai Bayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Saldo Akhir', value: 'endingBalance', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
+      { text: 'Sisa Hutang', value: 'remainderAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Lewat > 90 Hari', value: 'past90', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Lewat 61-90 Hari', value: 'past61To90', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Lewat 31-60 Hari', value: 'past31To60', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Lewat 15-30 Hari', value: 'past15To30', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Lewat 8-14 Hari', value: 'past8To14', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Lewat 1-7 Hari', value: 'past1To7', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Jth. Tempo Hari Ini', value: 'dueToday', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Jth. Tempo 1-7 Hari', value: 'due1To7', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Jth. Tempo 8-14 Hari', value: 'due8To14', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Jth. Tempo 15-30 Hari', value: 'due15To30', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Jth. Tempo 31-60 Hari', value: 'due31To60', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Jth. Tempo 61-90 Hari', value: 'due61To90', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Jth. Tempo > 90 Hari', value: 'due90', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
     invColumn: [
+      { text: 'Kd. Pemasok', value: 'supCode', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Nm. Pemasok', value: 'supName', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true },
       { text: 'Tanggal Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true },
       { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Kd. Ord. Pembelian', value: 'orderCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Pemasok', value: 'supCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nama Pemasok', value: 'supName', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Saldo Awal', value: 'beginningBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Nilai Transaksi', value: 'transAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Nilai Bayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Saldo Akhir', value: 'endingBalance', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
+      { text: 'Sisa Hutang', value: 'remainderAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Lewat > 90 Hari', value: 'past90', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Lewat 61-90 Hari', value: 'past61To90', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Lewat 31-60 Hari', value: 'past31To60', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Lewat 15-30 Hari', value: 'past15To30', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Lewat 8-14 Hari', value: 'past8To14', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Lewat 1-7 Hari', value: 'past1To7', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Jth. Tempo Hari Ini', value: 'dueToday', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Jth. Tempo 1-7 Hari', value: 'due1To7', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Jth. Tempo 8-14 Hari', value: 'due8To14', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Jth. Tempo 15-30 Hari', value: 'due15To30', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Jth. Tempo 31-60 Hari', value: 'due31To60', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Jth. Tempo 61-90 Hari', value: 'due61To90', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Jth. Tempo > 90 Hari', value: 'due90', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
-    statuses: [{ id: 'NP', name: 'Belum Lunas' }, { id: 'P', name: 'Lunas' }],
+    durations: [{ id: 'Past90', name: 'Lewat > 90 Hari' }, { id: 'Past61To90', name: 'Lewat 61-90 Hari' }, { id: 'Past31To60', name: 'Lewat 31-60 Hari' },
+      { id: 'Past15To30', name: 'Lewat 15-30 Hari' }, { id: 'Past8To14', name: 'Lewat 8-14 Hari' }, { id: 'Past1To7', name: 'Lewat 1-7 Hari' },
+      { id: 'DueToday', name: 'Jth. Tempo Hari Ini' }, { id: 'Due1To7', name: 'Jth. Tempo 1-7 Hari' }, { id: 'Due8To14', name: 'Jth. Tempo 8-14 Hari' },
+      { id: 'Due15To30', name: 'Jth. Tempo 15-30 Hari' }, { id: 'Due31To60', name: 'Jth. Tempo 31-60 Hari' }, { id: 'Due61To90', name: 'Jth. Tempo 61-90 Hari' },
+      { id: 'Due90', name: 'Jth. Tempo > 90 Hari' }],
     suppliers: [],
     types: [{ id: 1, name: 'Berdasarkan Faktur' }, { id: 2, name: 'Berdasarkan Pemasok' }],
     data: {},
     exportFilter:{
       fields : [
         {text: 'Tipe Laporan', value: 'type'},
-        {text: 'Tanggal Mulai', value: 'startDate'},
-        {text: 'Tanggal Akhir', value: 'endDate'},
+        {text: 'Sampai Tanggal', value: 'date'},
         {text: 'Pemasok', value: 'supplier'},
-        {text: 'Status Lunas', value: 'status'}
+        {text: 'Durasi', value: 'duration'}
       ],
       operator: [{ text: 'Sama dgn.', value: 'eq'}],
       searches: []
@@ -382,7 +423,7 @@ export default {
   created: function () {
     this.reset()
     this.getSupplierLists()
-    auth.getAction(this.endpoint, this.menuId.apmReport)
+    auth.getAction(this.endpoint, this.menuId.apaReport)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -395,7 +436,7 @@ export default {
       }, {
         text: 'Laporan'
       }, {
-        text: 'Mutasi Hutang'
+        text: 'Umur Hutang'
       }])
       this.setGridDefaultHeight()
     }, 0)
@@ -410,11 +451,8 @@ export default {
       auth: state => state.api.authorization,
       menuId: state => state.api.menus
     }),
-    formatStartDate() {
-      return this.data.startDate ? format(parseISO(this.data.startDate), 'dd-MMM-yyyy') : ''
-    },
-    formatEndDate() {
-      return this.data.endDate ? format(parseISO(this.data.endDate), 'dd-MMM-yyyy') : ''
+    formatDate() {
+      return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
     }
   },
   
@@ -428,23 +466,21 @@ export default {
     reset() {
       this.data = {        
         type: 1,
-        startDate: format(new Date(), 'yyyy-MM-dd'),
-        endDate: format(new Date(), 'yyyy-MM-dd'),
+        date: format(new Date(), 'yyyy-MM-dd'),
         supplier: null,
-        status: null
+        duration: null
       }
       this.filter = true
     },
     getList() {
       this.grid.columns = this.data.type === 1 ? this.invColumn : this.supColumn
       
-      api.getAll(this.endpoint.purchase.apmReport, {
+      api.getAll(this.endpoint.purchase.apaReport, {
         params: {
           type: this.data.type,
-          startDate: this.data.startDate,
-          endDate: this.data.endDate,
+          date: this.data.date,
           supCode: this.data.supplier,
-          status: this.data.status
+          duration: this.data.duration
         }
       })
         .then(response => {
@@ -455,10 +491,9 @@ export default {
     },
     back() {
       this.data.type = this.data.oldType
-      this.data.startDate = this.data.oldStartDate
-      this.data.endDate = this.data.oldEndDate
+      this.data.date = this.data.oldDate
       this.data.supplier = this.data.oldSupplier
-      this.data.status = this.data.oldStatus
+      this.data.duration = this.data.oldDuration
       this.filter = true
       this.getList()
       this.main = true
@@ -486,11 +521,11 @@ export default {
     dblclickRow(event, { item }) {
       if (this.data.type === 2) {
         this.data.oldType = this.data.type
-        this.data.oldStartDate = this.data.startDate
-        this.data.oldEndDate = this.data.endDate
+        this.data.oldDate = this.data.date
         this.data.oldSupplier = this.data.supplier
-        this.data.oldStatus = this.data.status
+        this.data.oldDuration = this.data.duration
         this.data.supCode = item.code
+        this.data.supInitial = item.initial
         this.data.supName = item.name
         this.data.supplier = item.code
         this.data.type = 1
@@ -507,14 +542,8 @@ export default {
         keyword: '',
         operator: 'eq'
       }
-      const searchStartDate = {
-        field: 'startDate',
-        keyword: '',
-        operator: 'eq'
-      }
-
-      const searchEndDate = {
-        field: 'endDate',
+      const searchDate = {
+        field: 'date',
         keyword: '',
         operator: 'eq'
       }
@@ -523,11 +552,8 @@ export default {
       searchType.keyword = report.name
       this.exportFilter.searches.push(searchType)
 
-      searchStartDate.keyword = this.data.startDate ? format(parseISO(this.data.startDate), 'dd-MMM-yyyy') : ''
-      this.exportFilter.searches.push(searchStartDate)
-
-      searchEndDate.keyword = this.data.endDate ? format(parseISO(this.data.endDate), 'dd-MMM-yyyy') : ''
-      this.exportFilter.searches.push(searchEndDate)
+      searchDate.keyword = this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
+      this.exportFilter.searches.push(searchDate)
 
       const sup = this.suppliers.find(x => x.code === this.data.supplier)
       if (sup) {
@@ -541,41 +567,21 @@ export default {
         this.exportFilter.searches.push(searchSup)
       }
 
-      const sts = this.statuses.find(x => x.id === this.data.status)
-      if (sts) {
-        const searchStatus = {
+      const dtn = this.durations.find(x => x.id === this.data.duration)
+      if (dtn) {
+        const searchDuration = {
           field: '',
           keyword: '',
           operator: 'eq'
         }
-        searchStatus.field = 'status'
-        searchStatus.keyword = sts.name
-        this.exportFilter.searches.push(searchStatus)
+        searchDuration.field = 'duration'
+        searchDuration.keyword = dtn.name
+        this.exportFilter.searches.push(searchDuration)
       }
     },
     clearTable() {
       this.grid.data = []
       this.grid.columns = []
-    },
-    changeStartDate() {
-      if (this.data.startDate > this.data.endDate) {
-        this.data.endDate = this.data.startDate
-      }
-      this.clearTable()
-    },
-    changeEndDate() {
-      if (this.data.endDate < this.data.startDate) {
-        this.data.startDate = this.data.endDate
-      }
-      this.clearTable()
-    },
-    clearDate(item) {
-      if (item === 'end') {
-        this.data.endDate = null
-      } else if (item === 'start') {
-        this.data.startDate = null
-      }
-      this.clearTable()
     }
   }
 }

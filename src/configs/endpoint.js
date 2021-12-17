@@ -45,7 +45,8 @@ export default {
     return: 'purchase-return',
     debitMemo: 'debit-memo',
     apReport: 'ap-report',
-    apmReport: 'ap-mutation-report'
+    apmReport: 'ap-mutation-report',
+    apaReport: 'ap-aging-report'
   },
 
   sales: {
