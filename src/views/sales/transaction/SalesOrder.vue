@@ -909,7 +909,7 @@
                             label="Persen Diskon"
                             suffix="%"
                             class="text-right mt-0"
-                            @blur="discPercentChange"
+                            @change="discPercentChange"
                           ></v-currency-field>
                         </v-col>
                         <v-col cols="8" class="pl-1">
@@ -1683,13 +1683,13 @@ export default {
       this.$refs.reportViewer.open('sales-order', item.code)
     },
     async save(closeDialog) {
+      document.activeElement.blur()
       if (!this.dialog.add) return
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
       
-      this.$refs.code.focus()
       const data = this.data
       for (let i = 0; i < this.gridItem.data.length; i++) {
         const bonusData = this.gridBonus.data.filter(x => x.orderDetailId === this.gridItem.data[i].id)
