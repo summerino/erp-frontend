@@ -54,4 +54,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/purchase/report/ap-aging-report',
+  name: 'ap-aging-report',
+  component: () => import(/* webpackChunkName: "ap-aging-report" */ '@/views/purchase/report/APAgingReport.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
