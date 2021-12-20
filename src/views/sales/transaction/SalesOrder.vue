@@ -758,7 +758,7 @@
                               class="text-body-2 text-right mt-0"
                               dense
                               required
-                              @change="unitItemChange(item); calcPromo();"
+                              @change="unitItemChange(item); calcPromo(); unitItemChange(item, true);"
                             ></v-autocomplete>
                           </template>
                           <template v-slot:[`item.unitPrice`]="{ item }">
@@ -1882,7 +1882,7 @@ export default {
         this.calcItemPrice(item)
       }
     },
-    unitItemChange(item) {
+    unitItemChange(item, calcDisc = false) {
       const oldUnit = item.units.find(u => u.id === item.oldUnitId)
       const unit = item.units.find(u => u.id === item.unitId)
       if (oldUnit.seq < unit.seq) {
@@ -1891,12 +1891,18 @@ export default {
           this.calcUomConversion(true, item, unit.unitToConvert)
         }
         item.unitPrice = item.oldUnitPrice * item.uomConversion
+        if (calcDisc) {
+          this.unitItemChangePromo(item, 'multiply')
+        }
       } else {
         item.uomConversion = 1
         if (unit.unitEquivalent !== item.oldUnitName) {
           this.calcUomConversion(false, item, unit.unitEquivalent)
         }
         item.unitPrice = item.oldUnitPrice / item.uomConversion
+        if (calcDisc) {
+          this.unitItemChangePromo(item, 'divide')
+        }
       }
       
       this.calcItemPrice(item)
@@ -2486,6 +2492,38 @@ export default {
     },
     changeSales() {
       this.setDefaultWarehouse()
+    },
+    unitItemChangePromo(item, method) {
+      if (item.discPromo.length > 0) {
+        for (let i = 0; i < item.discPromo.length; i++) {
+          if (i === 0) {
+            if (item.discPromo[i].promoMethod === 1) {
+              item.discPromo[i].amount = item.unitPrice * (item.discPromo[i].value / 100)
+            } else {
+              item.discPromo[i].amount = method === 'multiply' ? item.discPromo[i].value * item.uomConversion : item.discPromo[i].value / item.uomConversion
+              item.discPromo[i].value = method === 'multiply' ? item.discPromo[i].value * item.uomConversion : item.discPromo[i].value / item.uomConversion
+            }
+            const calcValue = item.unitPrice - item.discPromo[i].amount
+            item.discPromo[i].nettPrice = calcValue < 0 ? 0 : calcValue
+            item.disc = item.discPromo[i].amount
+          } else {
+            if (item.discPromo[i].promoMethod === 1) {
+              item.discPromo[i].amount = item.unitPrice * (item.discPromo[i].value / 100)
+            } else {
+              item.discPromo[i].amount = method === 'multiply' ? item.discPromo[i].value * item.uomConversion : item.discPromo[i].value / item.uomConversion
+              item.discPromo[i].value = method === 'multiply' ? item.discPromo[i].value * item.uomConversion : item.discPromo[i].value / item.uomConversion
+            }
+            const calcValue = item.nettPrice - item.discPromo[i].amount
+            item.discPromo[i].nettPrice = calcValue < 0 ? 0 : calcValue
+            item.disc += item.discPromo[i].amount
+          }
+          const calcValue = item.unitPrice - item.disc
+          item.nettPrice = calcValue < 0 ? 0 : calcValue
+        }
+      } else {
+        item.disc = 0
+        item.nettPrice = item.unitPrice
+      }
     }
   }
 }
