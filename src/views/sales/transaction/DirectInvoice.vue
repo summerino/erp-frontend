@@ -579,7 +579,7 @@
                               v-model="item.disc"
                               class="text-body-2 text-right mt-0"
                               dense
-                              @blur="calcItemPrice(item)"
+                              @change="calcItemPrice(item)"
                               readonly
                             >
                               <template v-slot:append>
@@ -782,7 +782,7 @@
                             label="Persen Diskon"
                             suffix="%"
                             class="text-right mt-0"
-                            @blur="discPercentChange"
+                            @change="discPercentChange"
                           ></v-currency-field>
                         </v-col>
                         <v-col cols="8" class="pl-1">
