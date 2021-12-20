@@ -123,7 +123,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { format, parseISO } from 'date-fns'
+import { format, parseISO} from 'date-fns'
 
 import api from '@/services/axios.service'
 
@@ -230,7 +230,7 @@ export default {
         }
       })
         .then(response => {
-          this.grid.data = this.rcvDate === undefined ? response.data.tableData : response.data.tableData.filter(x => x.date <= this.rcvDate)
+          this.grid.data = this.rcvDate === undefined ? response.data.tableData : response.data.tableData.filter(x => new Date(x.date) < new Date(this.rcvDate))
         })
     },
     searchByChange() {

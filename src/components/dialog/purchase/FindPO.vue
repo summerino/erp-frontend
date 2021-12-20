@@ -221,7 +221,7 @@ export default {
         params: params
       })
         .then(response => {
-          this.grid.data = this.rcvDate === undefined ? response.data.tableData : response.data.tableData.filter(x => x.date <= this.rcvDate)
+          this.grid.data = this.rcvDate === undefined ? response.data.tableData : response.data.tableData.filter(x => new Date(x.date) < new Date(this.rcvDate))
         })
     },
     searchByChange() {
