@@ -33,6 +33,7 @@ export default {
   apReport: 92,
   apmReport: 131,
   apaReport: 133,
+  dmReport: 137,
 
   // Sales
   area: 42,
@@ -50,6 +51,7 @@ export default {
   arReport: 93,
   armReport: 132,
   araReport: 134,
+  cmReport: 138,
   
   // Expedition
   expeditionInvoice: 70,
