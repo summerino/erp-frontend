@@ -63,7 +63,8 @@ export default {
     visitPlan: 'visit-plan',
     visitOrder: 'visit-order',
     arReport: 'ar-report',
-    armReport: 'ar-mutation-report'
+    armReport: 'ar-mutation-report',
+    araReport: 'ar-aging-report'
   },
 
   expedition: {
