@@ -96,4 +96,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/sales/report/ar-aging-report',
+  name: 'ar-aging-report',
+  component: () => import(/* webpackChunkName: "ar-aging-report" */ '@/views/sales/report/ARAgingReport.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
