@@ -123,22 +123,30 @@
         <v-card>
           <gmap-map
             :center="center"
+            :options="mapOptions"
             :zoom="zoom"
             style="height:500px"
           >
             <gmap-info-window
-              :options="infoOption"
+              :options="infoOptions"
               :position="infoWindowPos"
               :opened="infoWinOpen"
               @closeclick="infoWinOpen=false" />
             <gmap-marker
+              v-for="(customer, index) in customers"
+              :key="`cm${index}`"
+              :position="customer"
+              :icon="shopIcon"
+              :clickable="true"
+              @click="toggleInfoWindow('cust', customer, index)" />
+            <gmap-marker
               v-for="(path, index) in paths"
-              :key="index"
+              :key="`tm${index}`"
               :label="!isLastPosition ? { text: (index + 1).toString(), fontWeight: '600' } : null"
               :position="path"
-              :icon="icon"
+              :icon="truckIcon"
               :clickable="true"
-              @click="toggleInfoWindow(path, index)" />
+              @click="toggleInfoWindow('path', path, index)" />
             <gmap-polyline
               v-if="paths.length > 0 && !isLastPosition"
               :path="paths"
@@ -166,21 +174,25 @@ export default {
     employees: [],
     data: {},
     center: { lat: -6.2293867, lng: 106.6894286 },
+    mapOptions: {
+      disableDefaultUI: true,
+      fullscreenControl: true
+    },
     zoom: 10,
+    customers: [],
     paths: [],
     currentIdx: null,
     infoWinOpen: false,
     infoWindowPos: { lat: -6.2293867, lng: 106.6894286 },
-    infoOption: {
+    infoOptions: {
       content: '',
       pixelOffset: {
         width: 0,
         height: -48
       }
     },
-    icon: {
-      url: '../../images/truck-marker.png'
-    },
+    shopIcon: { url: '../../images/shop-marker.png' },
+    truckIcon: { url: '../../images/truck-marker.png' },
     types: [{ id: 1, name: 'Riwayat Pelacakan' }, { id: 2, name: 'Posisi Terakhir'}],
     countInterval: null
   }),
@@ -269,15 +281,21 @@ export default {
         }
       })
         .then(response => {
-          this.paths = response.data.tableData
+          this.customers = response.data.customer
+          this.paths = response.data.tracking
           this.currentIdx = null
           this.infoWinOpen = false
 
-          if (this.paths.length === 0) {
+          if (this.customers.length === 0 && this.paths.length === 0) {
             return
           }
+
+          if (this.paths.length > 0) {
+            this.center = { lat: this.paths[0].lat, lng: this.paths[0].lng }
+          } else if (this.customers.length > 0) {
+            this.center = { lat: this.customers[0].lat, lng: this.customers[0].lng }
+          }
           
-          this.center = { lat: this.paths[0].lat, lng: this.paths[0].lng }
           this.zoom = !this.isLastPosition ? 16 : 18
           // if (!this.isLastPosition) {
           //   let origin = {}
@@ -330,6 +348,7 @@ export default {
     clearMap() {
       this.center = { lat: -6.2293867, lng: 106.6894286 }
       this.zoom = 10
+      this.customers = []
       this.paths = []
       this.position = {}
       this.currentIdx = null
@@ -340,9 +359,13 @@ export default {
       this.data.date = null
       this.clearMap()
     },
-    toggleInfoWindow(path, idx) {
-      this.infoWindowPos = { lat: path.lat, lng: path.lng }
-      this.infoOption.content = `Waktu Pelacakan: ${format(parseISO(path.trackedDate), 'HH:mm:ss')}`
+    toggleInfoWindow(type, data, idx) {
+      this.infoWindowPos = { lat: data.lat, lng: data.lng }
+      if (type === 'cust') {
+        this.infoOptions.content = `${data.code} - ${data.name}`
+      } else {
+        this.infoOptions.content = `Waktu Pelacakan: ${format(parseISO(data.trackedDate), 'HH:mm:ss')}`
+      }
 
       if (this.currentIdx === idx) {
         this.infoWinOpen = !this.infoWinOpen
