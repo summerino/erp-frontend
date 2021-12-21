@@ -409,7 +409,7 @@ export default {
   mounted: function () {
     setTimeout(() => {
       this.$store.commit('app/setBreadcrumbs', [{
-        text: 'Pembelian'
+        text: 'Penjualan'
       }, {
         text: 'Laporan'
       }, {
