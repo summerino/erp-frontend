@@ -46,7 +46,8 @@ export default {
     debitMemo: 'debit-memo',
     apReport: 'ap-report',
     apmReport: 'ap-mutation-report',
-    apaReport: 'ap-aging-report'
+    apaReport: 'ap-aging-report',
+    dmReport: 'debit-memo-report'
   },
 
   sales: {

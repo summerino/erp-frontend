@@ -61,4 +61,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/purchase/report/debit-memo-report',
+  name: 'debit-memo-report',
+  component: () => import(/* webpackChunkName: "debit-memo-report" */ '@/views/purchase/report/DebitMemoReport.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
