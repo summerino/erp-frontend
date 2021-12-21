@@ -431,7 +431,7 @@ export default {
         startDate: format(new Date(), 'yyyy-MM-dd'),
         endDate: format(new Date(), 'yyyy-MM-dd'),
         supplier: null,
-        status: null
+        status: 'NP'
       }
       this.filter = true
     },

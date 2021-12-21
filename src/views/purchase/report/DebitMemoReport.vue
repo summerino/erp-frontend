@@ -6,7 +6,7 @@
           <v-card-title class="indigo--text text--lighten-2 pb-1">
             <v-row v-if="main" no-gutters>
               <v-col cols="12" md="6">
-                Laporan Mutasi Piutang
+                Laporan Nota Debit
               </v-col>
               <v-col cols="12" md="6" class="text-right">
                 <v-tooltip bottom>
@@ -56,7 +56,7 @@
                           :filters="exportFilter"
                           :grid="grid"
                           :gridDefOpts="gridDefOpts"
-                          title="Daftar Laporan Mutasi Piutang"
+                          title="Daftar Laporan Nota Debit"
                         ></export-excel>
                       </v-list-item-title>
                     </v-list-item>
@@ -86,7 +86,7 @@
             </v-row>
             <v-row v-else no-gutters>
               <v-col cols="12" md="8">
-                Laporan Mutasi Piutang - Detail Berdasarkan Pelanggan - {{ this.data.custName }} ({{ this.data.custCode }})
+                Laporan Nota Debit - Detail Berdasarkan Pemasok - {{ this.data.supInitial }} - {{ this.data.supName }} ({{ this.data.supCode }})
               </v-col>
               <v-col cols="12" md="4" class="text-right">
                 <v-menu
@@ -116,7 +116,7 @@
                           :filters="exportFilter"
                           :grid="grid"
                           :gridDefOpts="gridDefOpts"
-                          title="Daftar Laporan Piutang - Detail Berdasarkan Pelanggan"
+                          title="Daftar Laporan Nota Debit - Detail Berdasarkan Pemasok"
                         ></export-excel>
                       </v-list-item-title>
                     </v-list-item>
@@ -147,7 +147,7 @@
           </v-card-title>
           <v-card-text v-if="this.filter" class="pa-2">
             <v-row no-gutters>
-              <v-col cols="12" md="2">
+              <v-col cols="12" md="3">
                 <v-autocomplete
                   v-model="data.type"
                   :items="types"                  
@@ -160,9 +160,9 @@
                 >
                 </v-autocomplete>
               </v-col>
-              <v-col cols="12" md="2" class="pl-1">
+              <v-col cols="12" md="3" class="pl-1">
                 <v-menu
-                  v-model="menu.startDate"
+                  v-model="menu.date"
                   :close-on-content-click="false"
                   transition="scale-transition"
                   min-width="290px"
@@ -172,71 +172,27 @@
                     <v-text-field
                       v-bind="attrs"
                       v-on="on"
-                      :value="formatStartDate"
-                      label="Tanggal Mulai"
+                      :value="formatDate"
+                      label="Sampai Tanggal"
                       class="mt-0"
                       dense
                       readonly
-                      clearable
-                      @click:clear="clearDate('start')"
                     ></v-text-field>
                   </template>
                   <v-date-picker
-                    v-model="data.startDate"
+                    v-model="data.date"
                     no-title
                     scrollable
-                    @change="menu.startDate = false; changeStartDate();"
+                    @change="menu.date = false; clearTable();"
                   ></v-date-picker>
                 </v-menu>
               </v-col>
-              <v-col cols="12" md="2" class="pl-1">
-                <v-menu
-                  v-model="menu.endDate"
-                  :close-on-content-click="false"
-                  transition="scale-transition"
-                  min-width="290px"
-                  offset-y
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      v-bind="attrs"
-                      v-on="on"
-                      :value="formatEndDate"
-                      label="Tanggal Akhir"
-                      class="mt-0"
-                      dense
-                      readonly
-                      clearable
-                      @click:clear="clearDate('end')"
-                    ></v-text-field>
-                  </template>
-                  <v-date-picker
-                    v-model="data.endDate"
-                    no-title
-                    scrollable
-                    @change="menu.endDate = false; changeEndDate();"
-                  ></v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-col cols="12" md="2" class="pl-1">
+              <v-col cols="12" md="3" class="pl-1">
                 <v-autocomplete
-                  v-model="data.slsId"
-                  :items="salesmen"
-                  :item-text="item => `${item.initial} - ${item.firstName}`"
-                  label="Penjual"
-                  item-value="code"
-                  class="mt-0"
-                  dense
-                  clearable
-                  @change="clearTable()"
-                ></v-autocomplete>
-              </v-col>
-              <v-col cols="12" md="2" class="pl-1">
-                <v-autocomplete
-                  v-model="data.custCode"
-                  :items="customers"
+                  v-model="data.supplier"
+                  :items="suppliers"
                   :item-text="item => `${item.initial} - ${item.name}`"
-                  label="Pelanggan"
+                  label="Pemasok"
                   item-value="code"
                   class="mt-0"
                   dense
@@ -244,13 +200,13 @@
                   @change="clearTable()"
                 ></v-autocomplete>
               </v-col>
-              <v-col cols="12" md="2" class="pl-1">
+              <v-col cols="12" md="3" class="pl-1">
                 <v-autocomplete
                   v-model="data.status"
                   :items="statuses"
                   label="Status"
-                  item-text="name"
                   item-value="id"
+                  item-text="name"
                   class="mt-0"
                   dense
                   clearable
@@ -277,44 +233,25 @@
             fixed-header
             hide-default-footer
             disable-pagination
-            disable-sort
             @dblclick:row="dblclickRow"
           >
-          <template v-slot:[`item.code`]="{ item }">
-            <span :class="item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.code }}
-            </span>
-          </template>
-          <template v-slot:[`item.name`]="{ item }">
-            <span :class="item.name === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.name }}
-            </span>
-          </template>
           <template v-slot:[`item.date`]="{ item }">
             {{ item.date | formatDate('dd-MMM-yyyy') }}
           </template>
-          <template v-slot:[`item.dueDate`]="{ item }">
-            {{ item.dueDate | formatDate('dd-MMM-yyyy') }}
+          <template v-slot:[`item.amount`]="{ item }">
+            {{ item.amount | formatCurrency }}
           </template>
-          <template v-slot:[`item.beginningBalance`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.beginningBalance | formatCurrency }}
-            </span>
+          <template v-slot:[`item.usedAmount`]="{ item }">
+            {{ item.usedAmount | formatCurrency }}
           </template>
-          <template v-slot:[`item.transAmount`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.transAmount | formatCurrency }}
-            </span>
+          <template v-slot:[`item.totalAmount`]="{ item }">
+            {{ item.totalAmount | formatCurrency }}
           </template>
           <template v-slot:[`item.paidAmount`]="{ item }">
-           <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.paidAmount | formatCurrency }}
-            </span>
+            {{ item.paidAmount | formatCurrency }}
           </template>
-          <template v-slot:[`item.endingBalance`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.endingBalance | formatCurrency }}
-            </span>
+          <template v-slot:[`item.remainderAmount`]="{ item }">
+            {{ item.remainderAmount | formatCurrency }}
           </template>
           </v-data-table>
         </v-card>
@@ -340,8 +277,7 @@ export default {
   data: () => ({
     main: true,
     menu: {
-      startDate: false,
-      endDate: false
+      date: false
     },
     grid: {
       height: 100,
@@ -354,42 +290,34 @@ export default {
       total: 0
     },
     filter: false,
-    custColumn: [
-      { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nama', value: 'name', divider: true, width: '100', excelColWidth:'20' },
+    supColumn: [
+      { text: 'Kd. Pemasok', value: 'code', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Nm. Pemasok', value: 'name', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Jumlah Transaksi', value: 'totalTrans', align: 'right', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Saldo Awal', value: 'beginningBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Nilai Transaksi', value: 'transAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Nilai Bayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Saldo Akhir', value: 'endingBalance', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
+      { text: 'Nilai Transaksi', value: 'totalAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Digunakan', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Sisa', value: 'remainderAmount', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
-    dlvColumn: [
+    dmColumn: [
       { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true },
-      { text: 'Tanggal Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true },
       { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kd. Sumber', value: 'srcCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kd. Faktur', value: 'invCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Penjual', value: 'slsName', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kd. Pelanggan', value: 'custCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nm. Pelanggan', value: 'custName', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Saldo Awal', value: 'beginningBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Nilai Transaksi', value: 'transAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Nilai Bayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Saldo Akhir', value: 'endingBalance', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
+      { text: 'Kode Sumber', value: 'srcCode', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Kode Pemasok', value: 'supCode', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Nama Pemasok', value: 'supName', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Nilai Transaksi', value: 'amount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Digunakan', value: 'usedAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Sisa', value: 'remainderAmount', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
-    customers: [],
-    salesmen: [],
-    statuses: [{ id: 'NP', name: 'Belum Lunas' }, { id: 'P', name: 'Lunas' }],
-    types: [{ id: 1, name: 'Berdasarkan Surat Jalan / Penjualan Langsung' }, { id: 2, name: 'Berdasarkan Pelanggan' }],
+    types: [{ id: 1, name: 'Berdasarkan Nota Debit' }, { id: 2, name: 'Berdasarkan Pemasok' }],
+    statuses: [{ id: 'A', name: 'Belum Dibayarkan' }, { id: 'PU', name: 'Sebagian Digunakan' }, { id: 'FU', name: 'Sepenuhnya Digunakan' }],
+    suppliers: [],
     data: {},
     exportFilter:{
       fields : [
         {text: 'Tipe Laporan', value: 'type'},
-        {text: 'Tanggal Mulai', value: 'startDate'},
-        {text: 'Tanggal Akhir', value: 'endDate'},
-        {text: 'Penjual', value: 'salesman'},
-        {text: 'Pelanggan', value: 'customer'},
-        {text: 'Status Lunas', value: 'status'}
+        {text: 'Sampai Tanggal', value: 'date'},
+        {text: 'Pemasok', value: 'supplier'},
+        {text: 'Status', value: 'status'}
       ],
       operator: [{ text: 'Sama dgn.', value: 'eq'}],
       searches: []
@@ -398,9 +326,8 @@ export default {
 
   created: function () {
     this.reset()
-    this.getSalesmanLists()
-    this.getCustomerLists()
-    auth.getAction(this.endpoint, this.menuId.armReport)
+    this.getSupplierLists()
+    auth.getAction(this.endpoint, this.menuId.dmReport)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -409,11 +336,11 @@ export default {
   mounted: function () {
     setTimeout(() => {
       this.$store.commit('app/setBreadcrumbs', [{
-        text: 'Penjualan'
+        text: 'Pembelian'
       }, {
         text: 'Laporan'
       }, {
-        text: 'Mutasi Piutang'
+        text: 'Nota Debit'
       }])
       this.setGridDefaultHeight()
     }, 0)
@@ -428,11 +355,8 @@ export default {
       auth: state => state.api.authorization,
       menuId: state => state.api.menus
     }),
-    formatStartDate() {
-      return this.data.startDate ? format(parseISO(this.data.startDate), 'dd-MMM-yyyy') : ''
-    },
-    formatEndDate() {
-      return this.data.endDate ? format(parseISO(this.data.endDate), 'dd-MMM-yyyy') : ''
+    formatDate() {
+      return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
     }
   },
   
@@ -446,25 +370,30 @@ export default {
     reset() {
       this.data = {        
         type: 1,
-        startDate: format(new Date(), 'yyyy-MM-dd'),
-        endDate: format(new Date(), 'yyyy-MM-dd'),
-        slsId: null,
-        custCode: null,
-        status: 'NP'
+        date: format(new Date(), 'yyyy-MM-dd'),
+        supplier: null,
+        status: 'A'
       }
       this.filter = true
     },
     getList() {
-      this.grid.columns = this.data.type === 1 ? this.dlvColumn : this.custColumn
+      const sorts = []
+      for (let i = 0; i < this.grid.options.sortBy.length; i++) {
+        sorts.push({
+          field: this.grid.options.sortBy[i],
+          direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
+        })
+      }
+
+      this.grid.columns = this.data.type === 1 ? this.dmColumn : this.supColumn
       
-      api.getAll(this.endpoint.sales.armReport, {
+      api.getAll(this.endpoint.purchase.dmReport, {
         params: {
           type: this.data.type,
-          startDate: this.data.startDate,
-          endDate: this.data.endDate,
-          slsId: this.data.slsId,
-          custCode: this.data.custCode,
-          status: this.data.status
+          date: this.data.date,
+          supCode: this.data.supplier,
+          status: this.data.status,
+          sorts: JSON.stringify(sorts)
         }
       })
         .then(response => {
@@ -475,10 +404,8 @@ export default {
     },
     back() {
       this.data.type = this.data.oldType
-      this.data.startDate = this.data.oldStartDate
-      this.data.endDate = this.data.oldEndDate
-      this.data.slsId = this.data.oldSlsId
-      this.data.custCode = this.data.oldCustCode
+      this.data.date = this.data.oldDate
+      this.data.supplier = this.data.oldSupplier
       this.data.status = this.data.oldStatus
       this.filter = true
       this.getList()
@@ -491,8 +418,8 @@ export default {
     async exportExcel() {
       this.exportExcel.export()
     },
-    getCustomerLists() {
-      api.getAll(`${this.endpoint.general.customer.customer}/lists`, {
+    getSupplierLists() {
+      api.getAll(`${this.endpoint.general.supplier.supplier}/lists`, {
         params: {
           sorts: JSON.stringify([{
             field: 'initial',
@@ -501,37 +428,19 @@ export default {
         }
       })
         .then(response => {
-          this.customers = response.data.tableData
-        })
-    },
-    getSalesmanLists() {
-      api.getAll(`${this.endpoint.general.employee}/lists`, {
-        params: {
-          filters: JSON.stringify([{
-            field: 'type',
-            operator: 'eq',
-            keyword: 2
-          }]),
-          sorts: JSON.stringify([{
-            field: 'initial',
-            direction: 'asc'
-          }])
-        }
-      })
-        .then(response => {
-          this.salesmen = response.data.tableData
+          this.suppliers = response.data.tableData
         })
     },
     dblclickRow(event, { item }) {
       if (this.data.type === 2) {
         this.data.oldType = this.data.type
-        this.data.oldStartDate = this.data.startDate
-        this.data.oldEndDate = this.data.endDate
-        this.data.oldSlsId = this.data.slsId
-        this.data.oldCustCode = this.data.custCode
+        this.data.oldDate = this.data.date
+        this.data.oldSupplier = this.data.supplier
         this.data.oldStatus = this.data.status
-        this.data.custCode = item.code
-        this.data.custName = item.name
+        this.data.supCode = item.code
+        this.data.supInitial = item.initial
+        this.data.supName = item.name
+        this.data.supplier = item.code
         this.data.type = 1
         this.filter = false
         this.getList()
@@ -546,14 +455,8 @@ export default {
         keyword: '',
         operator: 'eq'
       }
-      const searchStartDate = {
-        field: 'startDate',
-        keyword: '',
-        operator: 'eq'
-      }
-
-      const searchEndDate = {
-        field: 'endDate',
+      const searchDate = {
+        field: 'date',
         keyword: '',
         operator: 'eq'
       }
@@ -562,71 +465,36 @@ export default {
       searchType.keyword = report.name
       this.exportFilter.searches.push(searchType)
 
-      searchStartDate.keyword = this.data.startDate ? format(parseISO(this.data.startDate), 'dd-MMM-yyyy') : ''
-      this.exportFilter.searches.push(searchStartDate)
+      searchDate.keyword = this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
+      this.exportFilter.searches.push(searchDate)
 
-      searchEndDate.keyword = this.data.endDate ? format(parseISO(this.data.endDate), 'dd-MMM-yyyy') : ''
-      this.exportFilter.searches.push(searchEndDate)
-
-      const sls = this.salesmen.find(x => x.id === this.data.slsId)
-      if (sls) {
-        const searchSls = {
+      const sup = this.suppliers.find(x => x.code === this.data.supplier)
+      if (sup) {
+        const searchSup = {
           field: '',
           keyword: '',
           operator: 'eq'
         }
-        searchSls.field = 'salesman'
-        searchSls.keyword = sls.firstName
-        this.exportFilter.searches.push(searchSls)
-      }
-
-      const cust = this.customers.find(x => x.code === this.data.custCode)
-      if (cust) {
-        const searchCust = {
-          field: '',
-          keyword: '',
-          operator: 'eq'
-        }
-        searchCust.field = 'customer'
-        searchCust.keyword = cust.name
-        this.exportFilter.searches.push(searchCust)
+        searchSup.field = 'supplier'
+        searchSup.keyword = sup.name
+        this.exportFilter.searches.push(searchSup)
       }
 
       const sts = this.statuses.find(x => x.id === this.data.status)
       if (sts) {
-        const searchStatus = {
+        const searchSts = {
           field: '',
           keyword: '',
           operator: 'eq'
         }
-        searchStatus.field = 'status'
-        searchStatus.keyword = sts.name
-        this.exportFilter.searches.push(searchStatus)
+        searchSts.field = 'status'
+        searchSts.keyword = sts.name
+        this.exportFilter.searches.push(searchSts)
       }
     },
     clearTable() {
       this.grid.data = []
       this.grid.columns = []
-    },
-    changeStartDate() {
-      if (this.data.startDate > this.data.endDate) {
-        this.data.endDate = this.data.startDate
-      }
-      this.clearTable()
-    },
-    changeEndDate() {
-      if (this.data.endDate < this.data.startDate) {
-        this.data.startDate = this.data.endDate
-      }
-      this.clearTable()
-    },
-    clearDate(item) {
-      if (item === 'end') {
-        this.data.endDate = null
-      } else if (item === 'start') {
-        this.data.startDate = null
-      }
-      this.clearTable()
     }
   }
 }
