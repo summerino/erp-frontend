@@ -935,6 +935,13 @@ export default {
           direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
         })
       }
+
+      filters.push({
+        field: 'fromDirectInvoice',
+        operator: 'eq',
+        keyword: false
+      })
+      
       api.getAll(this.endpoint.sales.delivery, {
         params: {
           search: this.grid.search,
