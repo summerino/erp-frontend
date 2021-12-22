@@ -103,4 +103,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/sales/report/credit-memo-report',
+  name: 'credit-memo-report',
+  component: () => import(/* webpackChunkName: "credit-memo-report" */ '@/views/sales/report/CreditMemoReport.vue'),
+  meta: {
+    authRequired: true
+  }
 }]

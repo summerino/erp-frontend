@@ -65,7 +65,8 @@ export default {
     visitOrder: 'visit-order',
     arReport: 'ar-report',
     armReport: 'ar-mutation-report',
-    araReport: 'ar-aging-report'
+    araReport: 'ar-aging-report',
+    cmReport: 'credit-memo-report'
   },
 
   expedition: {
