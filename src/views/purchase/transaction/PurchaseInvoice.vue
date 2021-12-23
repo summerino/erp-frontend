@@ -542,6 +542,7 @@
                     <v-tab key="detail-trans">Detail</v-tab>
                     <v-tab key="memo">Nota</v-tab>
                     <v-tab key="related-trans">Transaksi Terkait</v-tab>
+                    <v-tab v-if="apRecogTime === 'PI'" key="tax">Faktur Pajak</v-tab>
 
                     <v-tab-item
                       key="detail-trans"
@@ -738,6 +739,55 @@
                           {{ item.total | formatCurrency }}
                         </template>
                       </v-data-table>
+                    </v-tab-item>
+
+                    <v-tab-item
+                      v-if="apRecogTime === 'PI'"
+                      key="tax"
+                      transition="false"
+                    >
+                      <v-card>
+                        <v-card-text>
+                          <v-row no-gutters>
+                            <v-col cols="12" md="6">
+                              <v-text-field
+                                v-model="data.taxInvoiceNo"
+                                label="No Faktur Pajak"
+                                class="mt-0"
+                              ></v-text-field>
+                            </v-col>
+                            <v-col cols="12" md="6" class="pl-md-1">
+                              <v-menu
+                                v-model="menu.taxInvoiceDate"
+                                :close-on-content-click="false"
+                                transition="scale-transition"
+                                min-width="290px"
+                                offset-y
+                              >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    :value="formatInvoiceDate"
+                                    label="Tanggal Faktur Pajak"
+                                    class="mt-0"
+                                    readonly
+                                    clearable
+                                    @click:clear="clearDate('tax')"
+                                  ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                  v-model="data.taxInvoiceDate"
+                                  :min="dataStartDate"
+                                  no-title
+                                  scrollable
+                                  @change="menu.taxInvoiceDate = false"
+                                ></v-date-picker>
+                              </v-menu>
+                            </v-col>
+                          </v-row>
+                        </v-card-text>
+                      </v-card>
                     </v-tab-item>
                   </v-tabs>
                 </v-card>
@@ -944,13 +994,15 @@ export default {
     dataStartDate: null,
     employees: [],
     receives:[],
-    data: {}
+    data: {},
+    apRecogTime: null
   }),
 
   created: function () {
     this.getList()
     this.getSystemParameter()
     this.getEmployeeLists()
+    this.getSysAPRecog()
     auth.getAction(this.endpoint, this.menuId.purchaseInvoice)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -1413,6 +1465,22 @@ export default {
         return valueArr.indexOf(item) !== idx 
       })
       return isDuplicate
+    },
+    getSysAPRecog() {
+      const codes = ['AP_RECOG_TIME']
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          codes: JSON.stringify(codes)
+        }
+      })
+        .then(response => {
+          this.apRecogTime = response.data.tableData[0].value
+        })
+    },
+    clearDate(item) {
+      if (item === 'tax') {
+        this.data.taxInvoiceDate = null
+      }
     }
   }
 }
