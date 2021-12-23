@@ -239,6 +239,7 @@
             :headers="grid.columns"
             :height="grid.height"
             :items="grid.data"
+            :items-per-page="-1"
             :options.sync="grid.options"
             :sort-by="grid.options.sortBy"
             :sort-desc="grid.options.sortDesc"
@@ -373,9 +374,9 @@ export default {
     },
     filter: false,
     cusColumn: [
-      { text: 'Kd. Pelanggan', value: 'code', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nm. Pelanggan', value: 'name', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Jumlah Transaksi', value: 'totalTrans', align: 'right', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Kd. Pelanggan', value: 'code', divider: true, width: '100', excelColWidth:'18' },
+      { text: 'Nm. Pelanggan', value: 'name', divider: true, width: '300', excelColWidth:'40' },
+      { text: 'Jml. Transaksi', value: 'totalTrans', align: 'right', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Sisa Piutang', value: 'remainderAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Lewat > 90 Hari', value: 'past90', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Lewat 61-90 Hari', value: 'past61To90', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
@@ -392,13 +393,13 @@ export default {
       { text: 'Jth. Tempo > 90 Hari', value: 'due90', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
     dlvColumn: [
-      { text: 'Kd. Pelanggan', value: 'custCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nm. Pelanggan', value: 'custName', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true },
-      { text: 'Tanggal Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true },
-      { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kd. Ord. Penjualan', value: 'srcCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nm. Penjual', value: 'slsName', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Kd. Pelanggan', value: 'custCode', divider: true, width: '100', excelColWidth:'18' },
+      { text: 'Nm. Pelanggan', value: 'custName', divider: true, width: '300', excelColWidth:'40' },
+      { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+      { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'18', isDateTime: true },
+      { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kd. Order', value: 'srcCode', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Nm. Penjual', value: 'slsName', divider: true, width: '150', excelColWidth:'20' },
       { text: 'Sisa Piutang', value: 'remainderAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Lewat > 90 Hari', value: 'past90', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Lewat 61-90 Hari', value: 'past61To90', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },

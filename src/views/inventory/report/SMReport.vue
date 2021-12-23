@@ -251,10 +251,11 @@
     <v-row dense>
       <v-col cols="12">
           <v-card>
-          <v-data-table  
+          <v-data-table
             :headers="grid.columns"
             :height="grid.height"
             :items="grid.data"
+            :items-per-page="-1"
             :options.sync="grid.options"
             :sort-by="grid.options.sortBy"
             :sort-desc="grid.options.sortDesc"
@@ -280,17 +281,17 @@
           </template>
           <template v-slot:[`item.qtyIn`]="{ item }">
             <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.qtyIn }}
+              {{ item.qtyIn | formatCurrency({ decimalDigits: 0 }) }}
             </span>
           </template>
           <template v-slot:[`item.qtyOut`]="{ item }">
             <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.qtyOut }}
+              {{ item.qtyOut | formatCurrency({ decimalDigits: 0 }) }}
             </span>
           </template>
           <template v-slot:[`item.qtyEnd`]="{ item }">
             <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.qtyEnd }}
+              {{ item.qtyEnd | formatCurrency({ decimalDigits: 0 }) }}
             </span>
           </template>
           <template v-slot:[`item.invBegin`]="{ item }">
@@ -351,9 +352,9 @@ export default {
     },
     filter: false,
     whColumn: [
-      { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Inisial', value: 'initial', divider: true, width: '100', excelColWidth:'20'},
-      { text: 'Nama', value: 'name', divider: true, width: '100', excelColWidth:'20'},
+      { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'13' },
+      { text: 'Inisial', value: 'initial', divider: true, width: '120', excelColWidth:'13'},
+      { text: 'Nama', value: 'name', divider: true, width: '300', excelColWidth:'40'},
       { text: 'Qty Awal', value: 'qtyBegin', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Masuk', value: 'qtyIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Keluar', value: 'qtyOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
@@ -364,9 +365,9 @@ export default {
       { text: 'Persediaan Akhir', value: 'invEnd', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
     itemColumn: [
-      { text: 'Inisial', value: 'initial', divider: true, width: '100', excelColWidth:'20'},
-      { text: 'Nama', value: 'name', divider: true, width: '100', excelColWidth:'20'},
-      { text: 'Satuan', value: 'unit', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Inisial', value: 'initial', divider: true, width: '120', excelColWidth:'13'},
+      { text: 'Nama', value: 'name', divider: true, width: '300', excelColWidth:'40'},
+      { text: 'Satuan', value: 'unit', divider: true, width: '100', excelColWidth:'12' },
       { text: 'Qty Awal', value: 'qtyBegin', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Masuk', value: 'qtyIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Keluar', value: 'qtyOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
@@ -377,9 +378,9 @@ export default {
       { text: 'Persediaan Akhir', value: 'invEnd', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
     smColumn: [
-      { text: 'Tgl. Transaksi', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true},
-      { text: 'Kode Transaksi', value: 'transCode', divider: true, width: '100', excelColWidth:'20'},
-      { text: 'Tipe Transaksi', value: 'srcTrans', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Tgl. Transaksi', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true},
+      { text: 'Kode Transaksi', value: 'transCode', divider: true, width: '160', excelColWidth:'20'},
+      { text: 'Tipe Transaksi', value: 'srcTrans', divider: true, width: '180', excelColWidth:'22' },
       { text: 'Qty Masuk', value: 'qtyIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Keluar', value: 'qtyOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Akhir', value: 'qtyEnd', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },

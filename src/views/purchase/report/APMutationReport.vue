@@ -257,6 +257,7 @@
             :headers="grid.columns"
             :height="grid.height"
             :items="grid.data"
+            :items-per-page="-1"
             :options.sync="grid.options"
             :sort-by="grid.options.sortBy"
             :sort-desc="grid.options.sortDesc"
@@ -342,21 +343,21 @@ export default {
     },
     filter: false,
     supColumn: [
-      { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nama', value: 'name', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Jumlah Transaksi', value: 'totalTrans', align: 'right', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Kode', value: 'code', divider: true, width: '120', excelColWidth:'12' },
+      { text: 'Nama', value: 'name', divider: true, width: '300', excelColWidth:'40' },
+      { text: 'Jml. Transaksi', value: 'totalTrans', align: 'right', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Saldo Awal', value: 'beginningBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Nilai Transaksi', value: 'transAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Nilai Bayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Saldo Akhir', value: 'endingBalance', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
     invColumn: [
-      { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true },
-      { text: 'Tanggal Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true },
-      { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kd. Ord. Pembelian', value: 'orderCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Pemasok', value: 'supCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nama Pemasok', value: 'supName', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+      { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'18', isDateTime: true },
+      { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kd. Order', value: 'orderCode', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kd. Pemasok', value: 'supCode', divider: true, width: '100', excelColWidth:'18' },
+      { text: 'Nm. Pemasok', value: 'supName', divider: true, width: '300', excelColWidth:'40' },
       { text: 'Saldo Awal', value: 'beginningBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Nilai Transaksi', value: 'transAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Nilai Bayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },

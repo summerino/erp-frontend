@@ -222,10 +222,11 @@
     <v-row dense>
       <v-col cols="12">
           <v-card>
-          <v-data-table  
+          <v-data-table
             :headers="grid.columns"
             :height="grid.height"
             :items="grid.data"
+            :items-per-page="-1"
             :options.sync="grid.options"
             :sort-by="grid.options.sortBy"
             :sort-desc="grid.options.sortDesc"
@@ -291,22 +292,22 @@ export default {
     },
     filter: false,
     custColumn: [
-      { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nama', value: 'name', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Jumlah Transaksi', value: 'totalTrans', align: 'right', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Kode', value: 'code', divider: true, width: '120', excelColWidth:'12' },
+      { text: 'Nama', value: 'name', divider: true, width: '300', excelColWidth:'20' },
+      { text: 'Jml. Transaksi', value: 'totalTrans', align: 'right', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Nilai Transaksi', value: 'totalAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Nilai Bayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Sisa', value: 'remainderAmount', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
     rcvColumn: [
-      { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true },
-      { text: 'Tanggal Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '100', excelColWidth:'20', isDateTime: true },
-      { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Sumber', value: 'srcCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Faktur', value: 'invCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Penjual', value: 'slsName', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Kode Pelanggan', value: 'custCode', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Nama Pelanggan', value: 'custName', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+      { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'18', isDateTime: true },
+      { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kd. Sumber', value: 'srcCode', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kd. Faktur', value: 'invCode', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Penjual', value: 'slsName', divider: true, width: '150', excelColWidth:'20' },
+      { text: 'Kd. Pelanggan', value: 'custCode', divider: true, width: '100', excelColWidth:'18' },
+      { text: 'Nm. Pelanggan', value: 'custName', divider: true, width: '300', excelColWidth:'40' },
       { text: 'Nilai Transaksi', value: 'totalAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Nilai Bayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Sisa', value: 'remainderAmount', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
