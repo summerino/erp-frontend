@@ -3,9 +3,9 @@ import { saveAs } from 'file-saver'
 import { format, parseISO }  from 'date-fns'
 
 class ExcelService {
-  getExcelColumns(grid, currentPage) {
+  getExcelColumns(grid, addColumNo) {
     const result = []
-    if (currentPage) {
+    if (addColumNo) {
       result.push({
         text: 'No',
         value: 'no',
@@ -123,7 +123,7 @@ class ExcelService {
   }
   async export(company, title, grid, gridDefOpts, filter = null, fromSwift = false) {
     const currentPage = grid?.options?.page
-    const pageSize = gridDefOpts.pageSize
+    const pageSize = grid?.options?.itemsPerPage || gridDefOpts.pageSize
 
     const workbook = new Excel.Workbook()
     const worksheet = workbook.addWorksheet(title)
@@ -175,7 +175,7 @@ class ExcelService {
     countHeaderRow++
 
     let firstNumber = 0
-    if (currentPage) {
+    if (currentPage && pageSize > 0) {
       const totalRow = !fromSwift ? grid.total : grid.rowCount
       firstNumber = this.getFirstNumber(currentPage, pageSize)
       const pageInfo = this.getPageInfo(firstNumber, currentPage, pageSize, totalRow)
@@ -186,7 +186,7 @@ class ExcelService {
     }
 
     // Render header columns
-    const columns = this.getExcelColumns(grid, currentPage)
+    const columns = this.getExcelColumns(grid, currentPage && pageSize > 0)
     const columnOnly = columns.map(x => {
       return x.text
     })
