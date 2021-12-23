@@ -562,7 +562,7 @@
                               class="text-body-2 text-right mt-0"
                               dense
                               required
-                              @change="unitItemChange(item); calcPromo(); unitItemChange(item, true);"
+                              @change="unitItemChange(item); calcPromo();"
                             ></v-autocomplete>
                           </template>
                           <template v-slot:[`item.unitPrice`]="{ item }">
@@ -1650,7 +1650,7 @@ export default {
         this.calcItemPrice(item)
       }
     },
-    unitItemChange(item, calcDisc = false) {
+    unitItemChange(item) {
       const oldUnit = item.units.find(u => u.id === item.oldUnitId)
       const unit = item.units.find(u => u.id === item.unitId)
 
@@ -1660,18 +1660,12 @@ export default {
           this.calcUomConversion(true, item, unit.unitToConvert)
         }
         item.unitPrice = item.oldUnitPrice * item.uomConversion
-        if (calcDisc) {
-          this.unitItemChangePromo(item, 'multiply')
-        }
       } else {
         item.uomConversion = 1
         if (unit.unitEquivalent !== item.oldUnitName) {
           this.calcUomConversion(false, item, unit.unitEquivalent)
         }
         item.unitPrice = item.oldUnitPrice / item.uomConversion
-        if (calcDisc) {
-          this.unitItemChangePromo(item, 'divide')
-        }
       }
       
       this.calcItemPrice(item)
@@ -2268,6 +2262,7 @@ export default {
           if (discPromo.length > 0 && gridData[k].discPromo.length === 0) {
             gridData[k].discPromo = discPromo
             gridData[k].disc = totalDisc
+            this.unitItemChangePromo(gridData[k])
             this.calcItemPrice(gridData[k], false)
           } else if (discPromo.length > 0 && gridData[k].discPromo.length > 0) {
             const nDiscPromo = []
@@ -2283,6 +2278,7 @@ export default {
             if (nDiscPromo.length > 0) {
               gridData[k].discPromo = nDiscPromo
               gridData[k].disc = _sumBy(gridData[k].discPromo, 'amount') 
+              this.unitItemChangePromo(gridData[k])
               this.calcItemPrice(gridData[k], false)
             }
           } else if (discPromo.length === 0) {
@@ -2312,6 +2308,7 @@ export default {
           if (nDiscPromo.length > 0) {
             gridData[k].discPromo = nDiscPromo
             gridData[k].disc = _sumBy(gridData[k].discPromo, 'amount') 
+            this.unitItemChangePromo(gridData[k])
             this.calcItemPrice(gridData[k], false)
           } else {
             gridData[k].discPromo = []
@@ -2387,15 +2384,19 @@ export default {
       })
       return isDuplicate
     },
-    unitItemChangePromo(item, method) {
+    unitItemChangePromo(item) {
       if (item.discPromo.length > 0) {
+        const oldUnit = item.units.find(u => u.id === item.oldUnitId)
+        const unit = item.units.find(u => u.id === item.unitId)
         for (let i = 0; i < item.discPromo.length; i++) {
           if (i === 0) {
             if (item.discPromo[i].promoMethod === 1) {
               item.discPromo[i].amount = item.unitPrice * (item.discPromo[i].value / 100)
             } else {
-              item.discPromo[i].amount = method === 'multiply' ? item.discPromo[i].value * item.uomConversion : item.discPromo[i].value / item.uomConversion
-              item.discPromo[i].value = method === 'multiply' ? item.discPromo[i].value * item.uomConversion : item.discPromo[i].value / item.uomConversion
+              item.discPromo[i].amount = item.discPromo[i].fromPromo ? oldUnit.seq < unit.seq ? item.discPromo[i].value * item.uomConversion : item.discPromo[i].value / item.uomConversion : item.discPromo[i].value
+              if (item.discPromo[i].fromPromo) {
+                item.discPromo[i].value = oldUnit.seq < unit.seq ? item.discPromo[i].value * item.uomConversion : item.discPromo[i].value / item.uomConversion
+              }
             }
             const calcValue = item.unitPrice - item.discPromo[i].amount
             item.discPromo[i].nettPrice = calcValue < 0 ? 0 : calcValue
@@ -2404,8 +2405,10 @@ export default {
             if (item.discPromo[i].promoMethod === 1) {
               item.discPromo[i].amount = item.unitPrice * (item.discPromo[i].value / 100)
             } else {
-              item.discPromo[i].amount = method === 'multiply' ? item.discPromo[i].value * item.uomConversion : item.discPromo[i].value / item.uomConversion
-              item.discPromo[i].value = method === 'multiply' ? item.discPromo[i].value * item.uomConversion : item.discPromo[i].value / item.uomConversion
+              item.discPromo[i].amount = item.discPromo[i].fromPromo ? oldUnit.seq < unit.seq ? item.discPromo[i].value * item.uomConversion : item.discPromo[i].value / item.uomConversion : item.discPromo[i].value
+              if (item.discPromo[i].fromPromo) {
+                item.discPromo[i].value = oldUnit.seq < unit.seq ? item.discPromo[i].value * item.uomConversion : item.discPromo[i].value / item.uomConversion
+              }
             }
             const calcValue = item.nettPrice - item.discPromo[i].amount
             item.discPromo[i].nettPrice = calcValue < 0 ? 0 : calcValue
