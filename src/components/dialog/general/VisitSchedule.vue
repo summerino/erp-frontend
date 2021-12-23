@@ -359,6 +359,13 @@
         >
           <v-toolbar-title>Pilih Pelanggan</v-toolbar-title>
           <v-spacer></v-spacer>
+        <v-toolbar-items>
+          <v-btn
+            v-if="selected.length > 0"
+            text
+            @click="chooseCust"
+          >Pilih Pelanggan</v-btn>
+        </v-toolbar-items>
           <v-btn
             icon
             @click="dialogCustomer = false"
@@ -397,7 +404,9 @@
             disable-sort
             fixed-header
             hide-default-footer
-            @dblclick:row="dblclickRow"
+            item-key="code"
+            v-model="selected"
+            show-select
           >
           </v-data-table>
         </v-card-text>
@@ -469,6 +478,8 @@ export default {
     area4Ref: [],
     area5Ref: [],
     tempCustomerList: [],
+    selected: [],
+    listCode: [],
     recurrenceRef: [{ value: 1, text: '1 Minggu' }, { value: 2, text: '2 Minggu' }, { value: 3, text: '3 Minggu' }, { value: 4, text: '4 Minggu' }, { value: 5, text: '5 Minggu' }],
     data: {}
   }),
@@ -488,6 +499,14 @@ export default {
   },
   created: function () {
     this.getAreaParent()
+  },
+  watch: {
+    'gridCustomer.data': {
+      handler() {
+        this.getListCode()
+      },
+      deep: true
+    }
   },
   methods: {
     reset() {
@@ -533,6 +552,7 @@ export default {
     open(action, item) {
       this.dialog = true
       this.reset()
+      this.getListCode()
 
       this.data = {
         ...item,
@@ -737,60 +757,59 @@ export default {
         }
       })
         .then(response => {
-          this.gridCustomerDetail.data = response.data.tableData
+          this.gridCustomerDetail.data = response.data.tableData.filter(x => !this.listCode.includes(x.code))
         })
     },
     bindItemData(item) {
       if (!item) return
 
-      const isAvailableCode = this.gridCustomer.data.find(x => x.code === item.code)
-      if (isAvailableCode) {
-        this.$store.dispatch('app/showInfo', 'Pelanggan sudah ada dalam daftar, silahkan pilih pelanggan lainnya.')
-        return
-      }
-
-      if (item) {   
+      for (let i = 0; i < item.length; i++) {
         const newItem = {
-          address1: item.address1,
-          address2: item.address2,
-          areaId1: item.areaId1,
-          areaId2: item.areaId2,
-          areaId3: item.areaId3,
-          areaId4: item.areaId4,
-          areaId5: item.areaId5,
-          billingAddressId: item.billingAddressId,
+          address1: item[i].address1,
+          address2: item[i].address2,
+          areaId1: item[i].areaId1,
+          areaId2: item[i].areaId2,
+          areaId3: item[i].areaId3,
+          areaId4: item[i].areaId4,
+          areaId5: item[i].areaId5,
+          billingAddressId: item[i].billingAddressId,
           called: 'dialogCustomer',
-          code: item.code,
-          contactPerson: item.contactPerson,
-          createdBy: item.createdBy,
-          createdDate: item.createdDate,
-          creditLimit: item.creditLimit,
-          email: item.email,
-          fax: item.fax,
-          initial: item.initial,
-          initialAddress: item.initialAddress,
-          isActive: item.isActive,
-          name: item.name,
-          notes: item.notes,
-          paymentTermId: item.paymentTermId,
-          phone: item.phone,
-          refNo: item.refNo,
-          shippingAddressId: item.shippingAddressId,
-          typeId: item.typeId,
-          typeName: item.typeName,
-          updatedBy: item.updatedBy,
-          updatedDate: item.updatedDate,
-          updatedInitial: item.updatedInitial,
-          website: item.website
+          code: item[i].code,
+          contactPerson: item[i].contactPerson,
+          createdBy: item[i].createdBy,
+          createdDate: item[i].createdDate,
+          creditLimit: item[i].creditLimit,
+          email: item[i].email,
+          fax: item[i].fax,
+          initial: item[i].initial,
+          initialAddress: item[i].initialAddress,
+          isActive: item[i].isActive,
+          name: item[i].name,
+          notes: item[i].notes,
+          paymentTermId: item[i].paymentTermId,
+          phone: item[i].phone,
+          refNo: item[i].refNo,
+          shippingAddressId: item[i].shippingAddressId,
+          typeId: item[i].typeId,
+          typeName: item[i].typeName,
+          updatedBy: item[i].updatedBy,
+          updatedDate: item[i].updatedDate,
+          updatedInitial: item[i].updatedInitial,
+          website: item[i].website
         }
-        this.gridCustomer.data.push(newItem)     
-      }
+        this.gridCustomer.data.push(newItem) 
+      }    
     },
-    dblclickRow(event, { item }) {
-      item.called = 'dialogCustomer'
-      this.$emit('dblclick:row', item)
+    chooseCust() {
       this.dialogCustomer = false
-      this.bindItemData(item)
+      this.bindItemData(this.selected)
+      this.selected = []
+    },
+    getListCode() {
+      this.listCode.splice(0, this.listCode.length)
+      for (let i = 0; i < this.gridCustomer.data.length; i++) {
+        this.listCode.push(this.gridCustomer.data[i].code)
+      }
     }
   }
 }
