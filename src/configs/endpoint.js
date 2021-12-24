@@ -47,7 +47,8 @@ export default {
     apReport: 'ap-report',
     apmReport: 'ap-mutation-report',
     apaReport: 'ap-aging-report',
-    dmReport: 'debit-memo-report'
+    dmReport: 'debit-memo-report',
+    poReport: 'purchase-order-report'
   },
 
   sales: {
