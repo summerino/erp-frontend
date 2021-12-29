@@ -123,6 +123,11 @@ import { format, parseISO } from 'date-fns'
 import api from '@/services/axios.service'
 
 export default {
+  props: {
+    listCustCode: Array,
+    listInvCode: Array
+  },
+
   data() {
     return {
       dialog: false,
@@ -202,7 +207,7 @@ export default {
         }
       })
         .then(response => {
-          this.grid.data = response.data.tableData
+          this.grid.data = response.data.tableData.filter(x => this.listCustCode.includes(x.custCode) && !this.listInvCode.includes(x.code))
         })
     },
     dblclickRow(event, { item }) {

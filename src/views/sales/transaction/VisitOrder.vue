@@ -739,6 +739,8 @@
     ></find-customer>
     <find-invoice
       ref="findInvoice"
+      :list-cust-code="listCustCode"
+      :list-inv-code="listInvCode"
       @dblclick:row="bindInvoice"
     ></find-invoice>
   </div>
@@ -860,6 +862,8 @@ export default {
     employeeRef: [],
     itemInvoice: [],
     items: [],
+    listCustCode: [],
+    listInvCode: [],
     sourceTransactionRef: [{ textValue: 'Manual' }, { textValue: 'Jadwal Kunjungan' }],
     data: {},
     isSalesHasScheduledVisitOrder: false
@@ -909,6 +913,18 @@ export default {
         if (this.data.action === 'add') {
           this.verifySales()
         }
+      },
+      deep: true
+    },
+    'gridCustomer.data': {
+      handler() {
+        this.getListCustCode()
+      },
+      deep: true
+    },
+    'gridInvoice.data': {
+      handler() {
+        this.getListInvCode()
       },
       deep: true
     }
@@ -1438,6 +1454,18 @@ export default {
               this.data.sourceTransaction = 'Manual'
             }
           })
+      }
+    },
+    getListCustCode() {
+      this.listCustCode.splice(0, this.listCustCode.length)
+      for (let i = 0; i < this.gridCustomer.data.length; i++) {
+        this.listCustCode.push(this.gridCustomer.data[i].custCode)
+      }
+    },
+    getListInvCode() {
+      this.listInvCode.splice(0, this.listInvCode.length)
+      for (let i = 0; i < this.gridInvoice.data.length; i++) {
+        this.listInvCode.push(this.gridInvoice.data[i].invCode)
       }
     }
   }
