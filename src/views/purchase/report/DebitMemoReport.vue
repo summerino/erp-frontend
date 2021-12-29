@@ -285,7 +285,7 @@ export default {
       columns: [],
       data: [],
       options: {
-        sortBy: ['code'],
+        sortBy: ['date'],
         sortDesc: [false]
       },
       total: 0
