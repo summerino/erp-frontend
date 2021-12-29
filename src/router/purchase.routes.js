@@ -75,4 +75,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/purchase/report/purchase-receive-report',
+  name: 'purchase-receive-report',
+  component: () => import(/* webpackChunkName: "purchase-receive-report" */ '@/views/purchase/report/PurchaseReceiveReport.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
