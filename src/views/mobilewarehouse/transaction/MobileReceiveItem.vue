@@ -177,7 +177,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="isRejected || !auth.allowUpdate"
+                  :disabled="!isActive || !auth.allowUpdate"
                   dark
                   text
                   @click="save(true)"
@@ -206,7 +206,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="isRejected || !auth.allowUpdate"
+                  :disabled="!isActive || !auth.allowUpdate"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -610,8 +610,8 @@ export default {
     formatDate() {
       return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
     },
-    isRejected() {
-      return (this.data?.mark?.toUpperCase() === 'REJ')
+    isActive() {
+      return (this.data?.mark?.toUpperCase() === 'A')
     }
   },
 
