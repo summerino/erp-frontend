@@ -2508,9 +2508,7 @@ export default {
               item.discPromo[i].amount = item.unitPrice * (item.discPromo[i].value / 100)
             } else {
               item.discPromo[i].amount = item.discPromo[i].fromPromo ? oldUnit.seq < unit.seq ? item.discPromo[i].value * item.uomConversion : item.discPromo[i].value / item.uomConversion : item.discPromo[i].value
-              if (item.discPromo[i].fromPromo) {
-                item.discPromo[i].value = oldUnit.seq < unit.seq ? item.discPromo[i].value * item.uomConversion : item.discPromo[i].value / item.uomConversion
-              }
+              item.discPromo[i].value = oldUnit.seq < unit.seq ? item.discPromo[i].value * item.uomConversion : item.discPromo[i].value / item.uomConversion
             }
             const calcValue = item.unitPrice - item.discPromo[i].amount
             item.discPromo[i].nettPrice = calcValue < 0 ? 0 : calcValue
@@ -2520,9 +2518,7 @@ export default {
               item.discPromo[i].amount = item.unitPrice * (item.discPromo[i].value / 100)
             } else {
               item.discPromo[i].amount = item.discPromo[i].fromPromo ? oldUnit.seq < unit.seq ? item.discPromo[i].value * item.uomConversion : item.discPromo[i].value / item.uomConversion : item.discPromo[i].value
-              if (item.discPromo[i].fromPromo) {
-                item.discPromo[i].value = oldUnit.seq < unit.seq ? item.discPromo[i].value * item.uomConversion : item.discPromo[i].value / item.uomConversion
-              }
+              item.discPromo[i].value = oldUnit.seq < unit.seq ? item.discPromo[i].value * item.uomConversion : item.discPromo[i].value / item.uomConversion
             }
             const calcValue = item.nettPrice - item.discPromo[i].amount
             item.discPromo[i].nettPrice = calcValue < 0 ? 0 : calcValue
