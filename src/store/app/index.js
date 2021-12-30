@@ -50,6 +50,9 @@ const state = {
     max15chars: [
       (v) => (v || '').length <= 15 || 'Maksimal 15 karakter'
     ],
+    max16chars: [
+      (v) => (v || '').length <= 16 || 'Maksimal 16 karakter'
+    ],
     max17chars: [
       (v) => (v || '').length <= 17 || 'Maksimal 17 karakter'
     ],

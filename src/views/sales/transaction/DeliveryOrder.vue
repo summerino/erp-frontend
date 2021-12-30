@@ -671,6 +671,7 @@
                             <v-col cols="12" md="6">
                               <v-text-field
                                 v-model="data.taxInvoiceNo"
+                                :rules="rules.max16chars"
                                 label="No Faktur Pajak"
                                 class="mt-0"
                               ></v-text-field>
@@ -922,6 +923,9 @@ export default {
         }
       }
       return true
+    },
+    formatInvoiceDate() {
+      return this.data.taxInvoiceDate ? format(parseISO(this.data.taxInvoiceDate), 'dd-MMM-yyyy') : ''
     }
   },
 
