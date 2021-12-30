@@ -1653,14 +1653,7 @@ export default {
         .then(response => {
           const data = response.data.tableData
           if (data.length > 0) {
-            const obj = new Object()
-            const result = []
-            for (let i = 0; i < data.length; i++) {
-              obj['name'] = data[i]
-              obj['usePromo'] = true
-              result.push(obj)
-            }
-            this.gridPromo.data = result
+            this.gridPromo.data = data
           } else {
             this.findPromo(true)
           }
