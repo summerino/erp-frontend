@@ -49,7 +49,8 @@ export default {
     apaReport: 'ap-aging-report',
     dmReport: 'debit-memo-report',
     poReport: 'purchase-order-report',
-    rcvReport: 'purchase-receive-report'
+    rcvReport: 'purchase-receive-report',
+    prReport: 'purchase-return-report'
   },
 
   sales: {
