@@ -83,6 +83,13 @@ export default [{
     authRequired: true
   }
 }, {
+  path: '/purchase/report/purchase-invoice-report',
+  name: 'purchase-invoice-report',
+  component: () => import(/* webpackChunkName: "purchase-invoice-report" */ '@/views/purchase/report/PurchaseInvoiceReport.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
   path: '/purchase/report/purchase-return-report',
   name: 'purchase-return-report',
   component: () => import(/* webpackChunkName: "purchase-return-report" */ '@/views/purchase/report/PurchaseReturnReport.vue'),
