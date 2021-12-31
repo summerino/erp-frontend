@@ -230,15 +230,15 @@ export default {
       if (item.discPromo) {
         for (let i = 0; i < item.discPromo.length; i++) {
           if (i === 0) {
-            if (item.discPromo[i].promoMethod === 1) {
+            if (item.discPromo[i].promoMethod === 1 || item.discPromo[i].isPercentage) {
               item.discPromo[i].nettPrice = item.unitPrice - (item.unitPrice * (item.discPromo[i].value / 100))
             } else {
               item.discPromo[i].nettPrice = item.unitPrice - item.discPromo[i].value
             }
             item.nettPrice = item.discPromo[i].nettPrice
           } else {
-            if (item.discPromo[i].promoMethod === 1) {
-              item.discPromo[i].nettPrice = item.nettPrice - (item.unitPrice * (item.discPromo[i].value / 100))
+            if (item.discPromo[i].promoMethod === 1 || item.discPromo[i].isPercentage) {
+              item.discPromo[i].nettPrice = item.nettPrice - (item.nettPrice * (item.discPromo[i].value / 100))
             } else {
               item.discPromo[i].nettPrice = item.nettPrice - item.discPromo[i].value
             }
@@ -314,7 +314,7 @@ export default {
       if (this.grid.data.length > 0) {
         for (let i = 0; i < this.grid.data.length; i++) {
           if (i === 0) {
-            if (this.grid.data[i].promoMethod === 1) {
+            if (this.grid.data[i].promoMethod === 1 || this.grid.data[i].isPercentage) {
               this.grid.data[i].amount = this.data.unitPrice * (this.grid.data[i].value / 100)
             } else {
               this.grid.data[i].amount = this.grid.data[i].value
@@ -323,8 +323,8 @@ export default {
             this.grid.data[i].nettPrice = calcValue < 0 ? 0 : calcValue
             this.data.disc = this.grid.data[i].amount
           } else {
-            if (this.grid.data[i].promoMethod === 1) {
-              this.grid.data[i].amount = this.data.unitPrice * (this.grid.data[i].value / 100)
+            if (this.grid.data[i].promoMethod === 1 || this.grid.data[i].isPercentage) {
+              this.grid.data[i].amount = this.data.nettPrice * (this.grid.data[i].value / 100)
             } else {
               this.grid.data[i].amount = this.grid.data[i].value
             }
