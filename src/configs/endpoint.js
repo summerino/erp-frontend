@@ -50,7 +50,8 @@ export default {
     dmReport: 'debit-memo-report',
     poReport: 'purchase-order-report',
     rcvReport: 'purchase-receive-report',
-    invReport: 'purchase-invoice-report'
+    invReport: 'purchase-invoice-report',
+    prReport: 'purchase-return-report'
   },
 
   sales: {
