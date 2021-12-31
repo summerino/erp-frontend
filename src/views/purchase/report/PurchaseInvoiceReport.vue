@@ -6,7 +6,7 @@
           <v-card-title class="indigo--text text--lighten-2 pb-1">
             <v-row v-if="main" no-gutters>
               <v-col cols="12" md="6">
-                Laporan Penerimaan Pembelian
+                Laporan Faktur Pembelian
               </v-col>
               <v-col cols="12" md="6" class="text-right">
                 <v-tooltip bottom>
@@ -56,7 +56,7 @@
                           :filters="exportFilter"
                           :grid="grid"
                           :gridDefOpts="gridDefOpts"
-                          title="Daftar Laporan Penerimaan Pembelian"
+                          title="Daftar Laporan Faktur Pembelian"
                         ></export-excel>
                       </v-list-item-title>
                     </v-list-item>
@@ -86,7 +86,7 @@
             </v-row>
             <v-row v-else no-gutters>
               <v-col cols="12" md="8">
-                Laporan Penerimaan Pembelian - Detail {{ this.data.typeName }} - {{ this.data.detailName}}
+                Laporan Faktur Pembelian - Detail {{ this.data.typeName }} - {{ this.data.detailName}}
               </v-col>
               <v-col cols="12" md="4" class="text-right">
                 <v-menu
@@ -116,7 +116,7 @@
                           :filters="exportFilter"
                           :grid="grid"
                           :gridDefOpts="gridDefOpts"
-                          :title="`Daftar Laporan Penerimaan Pembelian - Detail ${ this.data.typeName } - ${ this.data.detailName }`"
+                          :title="`Daftar Laporan Faktur Pembelian - Detail ${ this.data.typeName } - ${ this.data.detailName }`"
                         ></export-excel>
                       </v-list-item-title>
                     </v-list-item>
@@ -147,7 +147,7 @@
           </v-card-title>
           <v-card-text v-if="this.filter" class="pa-2">
             <v-row no-gutters>
-              <v-col cols="12" md="4">
+              <v-col cols="12" md="2">
                 <v-autocomplete
                   v-model="data.type"
                   :items="types"                  
@@ -160,7 +160,7 @@
                 >
                 </v-autocomplete>
               </v-col>
-              <v-col cols="12" md="4" class="pl-1">
+              <v-col cols="12" md="2" class="pl-1">
                 <v-menu
                   v-model="menu.startDate"
                   :close-on-content-click="false"
@@ -189,7 +189,7 @@
                   ></v-date-picker>
                 </v-menu>
               </v-col>
-              <v-col cols="12" md="4" class="pl-1">
+              <v-col cols="12" md="2" class="pl-1">
                 <v-menu
                   v-model="menu.endDate"
                   :close-on-content-click="false"
@@ -218,22 +218,7 @@
                   ></v-date-picker>
                 </v-menu>
               </v-col>
-            </v-row>
-            <v-row no-gutters>
-              <v-col cols="12" md="3">
-                <v-autocomplete
-                  v-model="data.srcTrans"
-                  :items="srcTrans"
-                  label="Sumber Transaksi"
-                  item-text="name"
-                  item-value="id"
-                  class="mt-0"
-                  dense
-                  clearable
-                  @change="clearTable()"
-                ></v-autocomplete>
-              </v-col>
-              <v-col cols="12" md="3" class="pl-1">
+              <v-col cols="12" md="2" class="pl-1">
                 <v-autocomplete
                   v-model="data.supplier"
                   :items="suppliers"
@@ -246,7 +231,7 @@
                   @change="clearTable()"
                 ></v-autocomplete>
               </v-col>
-              <v-col cols="12" md="3" class="pl-1">
+              <v-col cols="12" md="2" class="pl-1">
                 <v-autocomplete
                   v-model="data.status"
                   :items="statuses"
@@ -259,7 +244,7 @@
                   @change="clearTable()"
                 ></v-autocomplete>
               </v-col>
-              <v-col cols="12" md="3" class="pl-1">
+              <v-col cols="12" md="2" class="pl-1">
                 <v-autocomplete
                   v-model="data.itemId"
                   :items="items"
@@ -308,6 +293,9 @@
           </template>
           <template v-slot:[`item.date`]="{ item }">
             {{ item.date | formatDate('dd-MMM-yyyy') }}
+          </template>
+          <template v-slot:[`item.dueDate`]="{ item }">
+            {{ item.dueDate | formatDate('dd-MMM-yyyy') }}
           </template>
           <template v-slot:[`item.totalTrans`]="{ item }">
             <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
@@ -390,8 +378,6 @@ export default {
     supColumn: [
       { text: 'Kode', value: 'code', divider: true, width: '120', excelColWidth:'12' },
       { text: 'Nama', value: 'name', divider: true, width: '300', excelColWidth:'40' },
-      { text: 'Kd. Transaksi', value: 'transCode', divider: true, width: '120', excelColWidth:'12' },
-      { text: 'No. Ref.', value: 'refNo', divider: true, width: '120', excelColWidth:'12' },
       { text: 'Jml. Transaksi', value: 'totalTrans', align: 'right', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Sub Total', value: 'subTotal', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
@@ -401,10 +387,12 @@ export default {
     ],
     codeColumn: [
       { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+      { text: 'Tgl. Jth. Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
       { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kd. Order', value: 'orderCode', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'No. Ref.', value: 'refNo', divider: true, width: '160', excelColWidth:'20' },
       { text: 'Kd. Pemasok', value: 'supCode', divider: true, width: '100', excelColWidth:'18' },
       { text: 'Nm. Pemasok', value: 'supName', divider: true, width: '300', excelColWidth:'40' },
-      { text: 'Status', value: 'status', divider: true, width: '160', excelColWidth:'20' },
       { text: 'Sub Total', value: 'subTotal', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'DPP', value: 'dpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
@@ -426,15 +414,14 @@ export default {
     ],
     detailColumn: [
       { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+      { text: 'Tgl. Jth. Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
       { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
-      { text: 'Kd. Transaksi', value: 'transCode', divider: true, width: '120', excelColWidth:'12' },
-      { text: 'No. Ref.', value: 'refNo', divider: true, width: '120', excelColWidth:'12' },
+      { text: 'Kd. Order', value: 'orderCode', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'No. Ref.', value: 'refNo', divider: true, width: '160', excelColWidth:'20' },
       { text: 'Kd. Pemasok', value: 'supCode', divider: true, width: '100', excelColWidth:'18' },
       { text: 'Nm. Pemasok', value: 'supName', divider: true, width: '300', excelColWidth:'40' },
       { text: 'Ins. Barang', value: 'itemInitial', divider: true, width: '120', excelColWidth:'12' },
       { text: 'Nm. Barang', value: 'itemName', divider: true, width: '300', excelColWidth:'40' },
-      { text: 'Gudang', value: 'warehouseName', divider: true, width: '120', excelColWidth:'12' },
-      { text: 'Status', value: 'status', divider: true, width: '160', excelColWidth:'20' },
       { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Satuan', value: 'unit', divider: true, width: '120', excelColWidth:'12' },
       { text: 'Sub Total', value: 'subTotal', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
@@ -445,10 +432,9 @@ export default {
       { text: 'Total', value: 'total', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
     items: [],
-    statuses: [{ id: 'A', name: 'Aktif' }, { id: 'INV', name: 'Sudah Difakturkan' }, { id: 'V', name: 'Void' }],
+    statuses: [{ id: 'A', name: 'Aktif' }, { id: 'V', name: 'Void' }],
     suppliers: [],
     types: [{ id: 1, name: 'Berdasarkan Kode' }, { id: 2, name: 'Berdasarkan Pemasok' }, { id: 3, name: 'Berdasarkan Barang' }],
-    srcTrans: [{ id: 1, name: 'Order Pembelian' }, { id: 2, name: 'Retur Pembelian' }],
     data: {},
     exportFilter:{
       fields : [
@@ -457,8 +443,7 @@ export default {
         {text: 'Tanggal Akhir', value: 'endDate'},
         {text: 'Pemasok', value: 'supplier'},
         {text: 'Status', value: 'status'},
-        {text: 'Barang', value: 'item'},
-        {text: 'Sumber Transaksi', value: 'srcTrans'}
+        {text: 'Barang', value: 'item'}
       ],
       operator: [{ text: 'Sama dgn.', value: 'eq'}],
       searches: []
@@ -482,7 +467,7 @@ export default {
       }, {
         text: 'Laporan'
       }, {
-        text: 'Penerimaan Pembelian'
+        text: 'Faktur Pembelian'
       }])
       this.setGridDefaultHeight()
     }, 0)
@@ -521,7 +506,6 @@ export default {
         status: 'A',
         itemId: null,
         code: null,
-        srcTrans: null,
         isDetail: false
       }
       this.filter = true
@@ -533,7 +517,7 @@ export default {
         this.grid.columns = this.detailColumn
       }
       
-      api.getAll(this.endpoint.purchase.rcvReport, {
+      api.getAll(this.endpoint.purchase.invReport, {
         params: {
           type: this.data.type,
           startDate: this.data.startDate,
@@ -542,7 +526,6 @@ export default {
           status: this.data.status,
           itemId: this.data.itemId,
           code: this.data.code,
-          srcTrans: this.data.srcTrans,
           isDetail: !this.main
         }
       })
@@ -560,7 +543,6 @@ export default {
       this.data.status = this.data.oldStatus
       this.data.itemId = this.data.oldItemId
       this.data.code = this.data.oldCode
-      this.data.srcTrans = this.data.oldSrcTrans
       this.filter = true
       this.main = true
       this.getList()
@@ -594,7 +576,6 @@ export default {
         this.data.oldStatus = this.data.status
         this.data.oldItemId = this.data.itemId
         this.data.oldCode = this.data.code
-        this.data.oldSrcTrans = this.data.srcTrans
         if (this.data.type === 1) {
           const type = this.types.find(x => x.id === 1)
           this.data.typeName = type.name
@@ -682,18 +663,6 @@ export default {
         searchItem.field = 'item'
         searchItem.keyword = item.name
         this.exportFilter.searches.push(searchItem)
-      }
-
-      const src = this.srcTrans.find(x => x.id === this.data.srcTrans)
-      if (src) {
-        const searchSrc = {
-          field: '',
-          keyword: '',
-          operator: 'eq'
-        }
-        searchSrc.field = 'srcTrans'
-        searchSrc.keyword = src.name
-        this.exportFilter.searches.push(searchSrc)
       }
     },
     clearTable() {
