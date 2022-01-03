@@ -416,7 +416,6 @@ export default {
       { text: 'Nm. Barang', value: 'name', divider: true, width: '300', excelColWidth:'40' },
       { text: 'Jml. Transaksi', value: 'totalTrans', align: 'right', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Satuan', value: 'unit', divider: true, width: '120', excelColWidth:'12' },
       { text: 'Sub Total', value: 'subTotal', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Diskon H', value: 'discHeader', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
@@ -469,7 +468,7 @@ export default {
     this.reset()
     this.getSupplierLists()
     this.getItemLists()
-    auth.getAction(this.endpoint, this.menuId.apmReport)
+    auth.getAction(this.endpoint, this.menuId.purchaseReceiveReport)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
