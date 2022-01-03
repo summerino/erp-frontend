@@ -41,34 +41,6 @@ export default [{
     authRequired: true
   }
 }, {
-  path: '/purchase/report/ap-report',
-  name: 'ap-report',
-  component: () => import(/* webpackChunkName: "ap-report" */ '@/views/purchase/report/APReport.vue'),
-  meta: {
-    authRequired: true
-  }
-}, {
-  path: '/purchase/report/ap-mutation-report',
-  name: 'ap-mutation-report',
-  component: () => import(/* webpackChunkName: "ap-mutation-report" */ '@/views/purchase/report/APMutationReport.vue'),
-  meta: {
-    authRequired: true
-  }
-}, {
-  path: '/purchase/report/ap-aging-report',
-  name: 'ap-aging-report',
-  component: () => import(/* webpackChunkName: "ap-aging-report" */ '@/views/purchase/report/APAgingReport.vue'),
-  meta: {
-    authRequired: true
-  }
-}, {
-  path: '/purchase/report/debit-memo-report',
-  name: 'debit-memo-report',
-  component: () => import(/* webpackChunkName: "debit-memo-report" */ '@/views/purchase/report/DebitMemoReport.vue'),
-  meta: {
-    authRequired: true
-  }
-}, {
   path: '/purchase/report/purchase-order-report',
   name: 'purchase-order-report',
   component: () => import(/* webpackChunkName: "purchase-order-report" */ '@/views/purchase/report/PurchaseOrderReport.vue'),
@@ -93,6 +65,34 @@ export default [{
   path: '/purchase/report/purchase-return-report',
   name: 'purchase-return-report',
   component: () => import(/* webpackChunkName: "purchase-return-report" */ '@/views/purchase/report/PurchaseReturnReport.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/purchase/report/ap-report',
+  name: 'ap-report',
+  component: () => import(/* webpackChunkName: "ap-report" */ '@/views/purchase/report/APReport.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/purchase/report/ap-mutation-report',
+  name: 'ap-mutation-report',
+  component: () => import(/* webpackChunkName: "ap-mutation-report" */ '@/views/purchase/report/APMutationReport.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/purchase/report/ap-aging-report',
+  name: 'ap-aging-report',
+  component: () => import(/* webpackChunkName: "ap-aging-report" */ '@/views/purchase/report/APAgingReport.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/purchase/report/debit-memo-report',
+  name: 'debit-memo-report',
+  component: () => import(/* webpackChunkName: "debit-memo-report" */ '@/views/purchase/report/DebitMemoReport.vue'),
   meta: {
     authRequired: true
   }
