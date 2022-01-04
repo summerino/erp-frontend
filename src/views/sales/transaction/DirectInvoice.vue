@@ -2399,8 +2399,8 @@ export default {
           if (i === 0) {
             if (item.discPromo[i].promoMethod === 1  || item.discPromo[i].isPercentage) {
               item.discPromo[i].amount = item.unitPrice * (item.discPromo[i].value / 100)
-            } else {
-              const cseq = oldUnit.seq < unit.seq || oldUnit.seq === unit.seq
+            } else if (item.uomConversion !== undefined) {
+              const cseq = oldUnit.seq < unit.seq
               const vle = item.discPromo[i].fromPromo === true ? item.discPromo[i].value : item.discPromo[i].oldValue
               item.discPromo[i].amount = cseq ? vle * item.uomConversion : vle / item.uomConversion
               item.discPromo[i].value = item.discPromo[i].amount
@@ -2411,8 +2411,8 @@ export default {
           } else {
             if (item.discPromo[i].promoMethod === 1  || item.discPromo[i].isPercentage) {
               item.discPromo[i].amount = item.nettPrice * (item.discPromo[i].value / 100)
-            } else {              
-              const cseq = oldUnit.seq < unit.seq || oldUnit.seq === unit.seq
+            } else if (item.uomConversion !== undefined) {
+              const cseq = oldUnit.seq < unit.seq
               const vle = item.discPromo[i].fromPromo === true ? item.discPromo[i].value : item.discPromo[i].oldValue
               item.discPromo[i].amount = cseq ? vle * item.uomConversion : vle / item.uomConversion
               item.discPromo[i].value = item.discPromo[i].amount
