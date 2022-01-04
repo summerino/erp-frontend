@@ -147,7 +147,7 @@
           </v-card-title>
           <v-card-text v-if="this.filter" class="pa-2">
             <v-row no-gutters>
-              <v-col cols="12" md="2">
+              <v-col cols="12" md="3">
                 <v-autocomplete
                   v-model="data.type"
                   :items="types"                  
@@ -160,7 +160,7 @@
                 >
                 </v-autocomplete>
               </v-col>
-              <v-col cols="12" md="2" class="pl-1">
+              <v-col cols="12" md="3" class="pl-1">
                 <v-menu
                   v-model="menu.startDate"
                   :close-on-content-click="false"
@@ -189,7 +189,7 @@
                   ></v-date-picker>
                 </v-menu>
               </v-col>
-              <v-col cols="12" md="2" class="pl-1">
+              <v-col cols="12" md="3" class="pl-1">
                 <v-menu
                   v-model="menu.endDate"
                   :close-on-content-click="false"
@@ -218,7 +218,7 @@
                   ></v-date-picker>
                 </v-menu>
               </v-col>
-              <v-col cols="12" md="2" class="pl-1">
+              <v-col cols="12" md="3" class="pl-1">
                 <v-autocomplete
                   v-model="data.supplier"
                   :items="suppliers"
@@ -231,7 +231,9 @@
                   @change="clearTable()"
                 ></v-autocomplete>
               </v-col>
-              <v-col cols="12" md="2" class="pl-1">
+            </v-row>
+            <v-row no-gutters>
+              <v-col cols="12" md="4">
                 <v-autocomplete
                   v-model="data.status"
                   :items="statuses"
@@ -244,12 +246,25 @@
                   @change="clearTable()"
                 ></v-autocomplete>
               </v-col>
-              <v-col cols="12" md="2" class="pl-1">
+              <v-col cols="12" md="4" class="pl-1">
                 <v-autocomplete
                   v-model="data.itemId"
                   :items="items"
                   :item-text="item => `${item.initial} - ${item.name}`"
                   label="Barang"
+                  item-value="id"
+                  class="mt-0"
+                  dense
+                  clearable
+                  @change="clearTable()"
+                ></v-autocomplete>
+              </v-col>
+              <v-col cols="12" md="4" class="pl-1">
+                <v-autocomplete
+                  v-model="data.categoryId"
+                  :items="itemCategories"
+                  :item-text="item => `${item.initial} - ${item.name}`"
+                  label="Kategori Barang"
                   item-value="id"
                   class="mt-0"
                   dense
@@ -376,7 +391,7 @@ export default {
       { text: 'Kode', value: 'code', divider: true, width: '120', excelColWidth:'12' },
       { text: 'Nama', value: 'name', divider: true, width: '300', excelColWidth:'40' },
       { text: 'Jml. Transaksi', value: 'totalTrans', align: 'right', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Sub Total', value: 'subTotal', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Harga Kotor', value: 'subTotal', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'DPP', value: 'dpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
@@ -388,7 +403,7 @@ export default {
       { text: 'Kd. Pemasok', value: 'supCode', divider: true, width: '100', excelColWidth:'18' },
       { text: 'Nm. Pemasok', value: 'supName', divider: true, width: '300', excelColWidth:'40' },
       { text: 'Status', value: 'status', divider: true, width: '160', excelColWidth:'20' },
-      { text: 'Sub Total', value: 'subTotal', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Harga Kotor', value: 'subTotal', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'DPP', value: 'dpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
@@ -397,9 +412,11 @@ export default {
     itemColumn: [
       { text: 'Ins. Barang', value: 'initial', divider: true, width: '120', excelColWidth:'12' },
       { text: 'Nm. Barang', value: 'name', divider: true, width: '300', excelColWidth:'40' },
+      { text: 'Ins. Kategori', value: 'categoryInitial', divider: true, width: '120', excelColWidth:'12' },
       { text: 'Jml. Transaksi', value: 'totalTrans', align: 'right', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Sub Total', value: 'subTotal', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Satuan', value: 'unitName', divider: true, width: '120', excelColWidth:'12' },
+      { text: 'Harga Kotor', value: 'subTotal', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Diskon H', value: 'discHeader', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'DPP', value: 'dpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
@@ -413,21 +430,37 @@ export default {
       { text: 'Nm. Pemasok', value: 'supName', divider: true, width: '300', excelColWidth:'40' },
       { text: 'Ins. Barang', value: 'itemInitial', divider: true, width: '120', excelColWidth:'12' },
       { text: 'Nm. Barang', value: 'itemName', divider: true, width: '300', excelColWidth:'40' },
+      { text: 'Ins. Kategori', value: 'categoryInitial', divider: true, width: '120', excelColWidth:'12' },
       { text: 'Status', value: 'status', divider: true, width: '160', excelColWidth:'20' },
       { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Satuan', value: 'unit', divider: true, width: '120', excelColWidth:'12' },
-      { text: 'Sub Total', value: 'subTotal', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Satuan', value: 'unitName', divider: true, width: '120', excelColWidth:'12' },
+      { text: 'Harga Kotor', value: 'subTotal', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Diskon H', value: 'discHeader', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'DPP', value: 'dpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Total', value: 'total', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
+    categoryColumn: [
+      { text: 'Ins. Kategori', value: 'initial', divider: true, width: '120', excelColWidth:'12' },
+      { text: 'Nm. Kategori', value: 'name', divider: true, width: '300', excelColWidth:'40' },
+      { text: 'Jml. Transaksi', value: 'totalTrans', align: 'right', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Satuan', value: 'unitName', divider: true, width: '120', excelColWidth:'12' },
+      { text: 'Harga Kotor', value: 'subTotal', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Diskon H', value: 'discHeader', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'DPP', value: 'dpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Total', value: 'total', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
+    ],
+    itemCategories: [],
     items: [],
     statuses: [{ id: 'A', name: 'Aktif' }, { id: 'PR', name: 'Diterima Sebagian' }, { id: 'CMP', name: 'Diterima Seluruhnya' },
       { id: 'CLS', name: 'Ditutup' }, { id: 'V', name: 'Void' }],
     suppliers: [],
-    types: [{ id: 1, name: 'Berdasarkan Kode' }, { id: 2, name: 'Berdasarkan Pemasok' }, { id: 3, name: 'Berdasarkan Barang' }],
+    types: [{ id: 1, name: 'Berdasarkan Kode' }, { id: 2, name: 'Berdasarkan Pemasok' },
+      { id: 3, name: 'Berdasarkan Barang' }, { id: 4, name: 'Berdasarkan Kategori Barang' }],
     data: {},
     exportFilter:{
       fields : [
@@ -436,7 +469,8 @@ export default {
         {text: 'Tanggal Akhir', value: 'endDate'},
         {text: 'Pemasok', value: 'supplier'},
         {text: 'Status', value: 'status'},
-        {text: 'Barang', value: 'item'}
+        {text: 'Barang', value: 'item'},
+        {text: 'Kategori Barang', value: 'category'}
       ],
       operator: [{ text: 'Sama dgn.', value: 'eq'}],
       searches: []
@@ -447,6 +481,7 @@ export default {
     this.reset()
     this.getSupplierLists()
     this.getItemLists()
+    this.getItemCategoryLists()
     auth.getAction(this.endpoint, this.menuId.purchaseOrderReport)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -499,13 +534,17 @@ export default {
         status: 'A',
         itemId: null,
         code: null,
-        isDetail: false
+        isDetail: false,
+        categoryId: null,
+        unitId: null
       }
       this.filter = true
     },
     getList() {
       if (this.main) {
-        this.grid.columns = this.data.type === 1 ? this.codeColumn : this.data.type === 2 ? this.supColumn : this.itemColumn
+        this.grid.columns = this.data.type === 1 ? this.codeColumn : 
+          this.data.type === 2 ? this.supColumn : 
+            this.data.type === 3 ? this.itemColumn : this.categoryColumn
       } else {
         this.grid.columns = this.detailColumn
       }
@@ -519,7 +558,9 @@ export default {
           status: this.data.status,
           itemId: this.data.itemId,
           code: this.data.code,
-          isDetail: !this.main
+          isDetail: !this.main,
+          categoryId: this.data.categoryId,
+          unitId: this.data.unitId
         }
       })
         .then(response => {
@@ -536,6 +577,8 @@ export default {
       this.data.status = this.data.oldStatus
       this.data.itemId = this.data.oldItemId
       this.data.code = this.data.oldCode
+      this.data.categoryId = this.data.oldCategoryId
+      this.data.unitId = this.data.oldUnitId
       this.filter = true
       this.main = true
       this.getList()
@@ -569,6 +612,8 @@ export default {
         this.data.oldStatus = this.data.status
         this.data.oldItemId = this.data.itemId
         this.data.oldCode = this.data.code
+        this.data.oldCategoryId = this.data.categoryId
+        this.data.oldUnitId = this.data.unitId
         if (this.data.type === 1) {
           const type = this.types.find(x => x.id === 1)
           this.data.typeName = type.name
@@ -585,6 +630,14 @@ export default {
           this.data.typeName = type.name
           const uItem = this.items.find(x => x.initial === item.initial)
           this.data.itemId = uItem.id
+          this.data.unitId = item.unitId
+          this.data.detailName = `${item.initial} - ${item.name}`
+        } else if (this.data.type === 4) {
+          const type = this.types.find(x => x.id === 4)
+          this.data.typeName = type.name
+          const uCtg = this.itemCategories.find(x => x.initial === item.initial)
+          this.data.categoryId = uCtg.id
+          this.data.unitId = item.unitId
           this.data.detailName = `${item.initial} - ${item.name}`
         }
         this.filter = false
@@ -657,6 +710,18 @@ export default {
         searchItem.keyword = item.name
         this.exportFilter.searches.push(searchItem)
       }
+
+      const category = this.itemCategories.find(x => x.id === this.data.categoryId)
+      if (category) {
+        const searchCategory = {
+          field: '',
+          keyword: '',
+          operator: 'eq'
+        }
+        searchCategory.field = 'category'
+        searchCategory.keyword = item.name
+        this.exportFilter.searches.push(searchCategory)
+      }
     },
     clearTable() {
       this.grid.data = []
@@ -694,6 +759,12 @@ export default {
       })  
         .then(response => {
           this.items = response.data.tableData
+        })
+    },
+    getItemCategoryLists() {
+      api.getAll(`${this.endpoint.inventory.item.category}/lists`, {})
+        .then(response => {
+          this.itemCategories = response.data.tableData
         })
     }
   }
