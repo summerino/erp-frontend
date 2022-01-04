@@ -1628,6 +1628,9 @@ export default {
       })
         .then(response => {
           this.gridItem.data = response.data.tableData
+          for (let i = 0; i < this.gridItem.data.length; i++) {
+            this.addOldValue(this.gridItem.data[i])
+          }
         })
       
       // Get item details
@@ -2497,21 +2500,25 @@ export default {
         const unit = item.units.find(u => u.id === item.unitId)
         for (let i = 0; i < item.discPromo.length; i++) {
           if (i === 0) {
-            if (item.discPromo[i].promoMethod === 1) {
+            if (item.discPromo[i].promoMethod === 1  || item.discPromo[i].isPercentage) {
               item.discPromo[i].amount = item.unitPrice * (item.discPromo[i].value / 100)
             } else {
-              item.discPromo[i].amount = item.discPromo[i].fromPromo ? oldUnit.seq < unit.seq ? item.discPromo[i].value * item.uomConversion : item.discPromo[i].value / item.uomConversion : item.discPromo[i].value
-              item.discPromo[i].value = oldUnit.seq < unit.seq ? item.discPromo[i].value * item.uomConversion : item.discPromo[i].value / item.uomConversion
+              const cseq = oldUnit.seq < unit.seq || oldUnit.seq === unit.seq
+              const vle = item.discPromo[i].fromPromo === true ? item.discPromo[i].value : item.discPromo[i].oldValue
+              item.discPromo[i].amount = cseq ? vle * item.uomConversion : vle / item.uomConversion
+              item.discPromo[i].value = item.discPromo[i].amount
             }
             const calcValue = item.unitPrice - item.discPromo[i].amount
             item.discPromo[i].nettPrice = calcValue < 0 ? 0 : calcValue
             item.disc = item.discPromo[i].amount
           } else {
-            if (item.discPromo[i].promoMethod === 1) {
-              item.discPromo[i].amount = item.unitPrice * (item.discPromo[i].value / 100)
-            } else {
-              item.discPromo[i].amount = item.discPromo[i].fromPromo ? oldUnit.seq < unit.seq ? item.discPromo[i].value * item.uomConversion : item.discPromo[i].value / item.uomConversion : item.discPromo[i].value
-              item.discPromo[i].value = oldUnit.seq < unit.seq ? item.discPromo[i].value * item.uomConversion : item.discPromo[i].value / item.uomConversion
+            if (item.discPromo[i].promoMethod === 1  || item.discPromo[i].isPercentage) {
+              item.discPromo[i].amount = item.nettPrice * (item.discPromo[i].value / 100)
+            } else {              
+              const cseq = oldUnit.seq < unit.seq || oldUnit.seq === unit.seq
+              const vle = item.discPromo[i].fromPromo === true ? item.discPromo[i].value : item.discPromo[i].oldValue
+              item.discPromo[i].amount = cseq ? vle * item.uomConversion : vle / item.uomConversion
+              item.discPromo[i].value = item.discPromo[i].amount
             }
             const calcValue = item.nettPrice - item.discPromo[i].amount
             item.discPromo[i].nettPrice = calcValue < 0 ? 0 : calcValue
@@ -2523,6 +2530,13 @@ export default {
       } else {
         item.disc = 0
         item.nettPrice = item.unitPrice
+      }
+    },
+    addOldValue(item) {
+      if (item.discPromo.length > 0) {
+        for (let i = 0; i < item.discPromo.length; i++) {
+          item.discPromo[i].oldValue = item.discPromo[i].value
+        }
       }
     }
   }
