@@ -558,6 +558,7 @@ export default {
     employees: [],
     lblTransCode: null,
     selected: [],
+    sources: [{ id: 1, name: 'Order Pembelian' }, { id: 2, name: 'Retur Pembelian' }],
     data: {}
   }),
 
@@ -621,6 +622,7 @@ export default {
       this.gridItem.data = []
       this.tab.sup = 0
       this.tab.det = 0
+      this.selected = []
     },
     advancedSearch() {
       this.grid.search = null
