@@ -70,7 +70,8 @@ export default {
     arReport: 'ar-report',
     armReport: 'ar-mutation-report',
     araReport: 'ar-aging-report',
-    cmReport: 'credit-memo-report'
+    cmReport: 'credit-memo-report',
+    soReport: 'sales-order-report'
   },
 
   expedition: {
