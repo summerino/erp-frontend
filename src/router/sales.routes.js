@@ -83,6 +83,13 @@ export default [{
     authRequired: true
   }
 }, {
+  path: '/sales/report/sales-order-report',
+  name: 'sales-order-report',
+  component: () => import(/* webpackChunkName: "sales-order-report" */ '@/views/sales/report/SalesOrderReport.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
   path: '/sales/report/ar-report',
   name: 'ar-report',
   component: () => import(/* webpackChunkName: "ar-report" */ '@/views/sales/report/ARReport.vue'),
