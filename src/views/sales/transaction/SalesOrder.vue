@@ -2535,7 +2535,9 @@ export default {
     addOldValue(item) {
       if (item.discPromo.length > 0) {
         for (let i = 0; i < item.discPromo.length; i++) {
-          item.discPromo[i].oldValue = item.discPromo[i].value
+          const cPercent = Math.round(item.discPromo[i].value / item.unitPrice * 100)
+          const cValue = Math.round(item.oldUnitPrice * (cPercent / 100))
+          item.discPromo[i].oldValue = cValue
         }
       }
     }
