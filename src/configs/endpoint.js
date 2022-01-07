@@ -73,7 +73,8 @@ export default {
     cmReport: 'credit-memo-report',
     soReport: 'sales-order-report',
     doReport: 'sales-delivery-report',
-    siReport: 'sales-invoice-report'
+    siReport: 'sales-invoice-report',
+    srReport: 'sales-return-report'
   },
 
   expedition: {
