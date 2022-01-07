@@ -97,6 +97,13 @@ export default [{
     authRequired: true
   }
 }, {
+  path: '/sales/report/sales-invoice-report',
+  name: 'sales-invoice-report',
+  component: () => import(/* webpackChunkName: "sales-invoice-report" */ '@/views/sales/report/SalesInvoiceReport.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
   path: '/sales/report/ar-report',
   name: 'ar-report',
   component: () => import(/* webpackChunkName: "ar-report" */ '@/views/sales/report/ARReport.vue'),
