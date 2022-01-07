@@ -104,6 +104,13 @@ export default [{
     authRequired: true
   }
 }, {
+  path: '/sales/report/sales-return-report',
+  name: 'sales-return-report',
+  component: () => import(/* webpackChunkName: "sales-return-report" */ '@/views/sales/report/SalesReturnReport.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
   path: '/sales/report/ar-report',
   name: 'ar-report',
   component: () => import(/* webpackChunkName: "ar-report" */ '@/views/sales/report/ARReport.vue'),
