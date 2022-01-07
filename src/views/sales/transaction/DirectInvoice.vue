@@ -1429,14 +1429,11 @@ export default {
         })
           .then(response => {
             const data = response.data.tableData
-            const obj = new Object()
-            const result = []
-            for (let i = 0; i < data.length; i++) {
-              obj['name'] = data[i]
-              obj['usePromo'] = true
-              result.push(obj)
+            if (data.length > 0) {
+              this.gridPromo.data = data
+            } else {
+              this.findPromo(true)
             }
-            this.gridPromo.data = result
           })
       } else {
         this.data.action = 'add'
@@ -1768,13 +1765,13 @@ export default {
       //find Promo
       this.findPromo()
     },
-    async findPromo() {
+    async findPromo(fromEdit = false) {
       const gridData = this.gridItem.data
       this.gridPromo.data = []
       for (let k = 0; k < gridData.length; k++) {
         for (let i = 0; i < this.promos.length; i++) {
           let appliedHeader = false
-          const applied = this.promos[i].itemDetails.find(x => x.itemId === gridData[k].itemId || x.itemId === gridData[k].categoryId || x.applyTo === 2)
+          const applied = this.promos[i].itemDetails.find(x => x.itemId === gridData[k].itemId || x.itemId === gridData[k].categoryId)
           if (this.promos[i].applyTo === 1) {
             appliedHeader = true
           } else if (this.promos[i].applyTo === 2) {
@@ -1790,7 +1787,11 @@ export default {
           }
           if (applied && appliedHeader) {
             if (!this.gridPromo.data.includes(this.promos[i])) {
-              this.promos[i].usePromo = true
+              if (fromEdit) {
+                this.promos[i].usePromo = false
+              } else {
+                this.promos[i].usePromo = true
+              }
               this.gridPromo.data.push(this.promos[i])
             }
           }
