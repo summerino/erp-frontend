@@ -503,7 +503,8 @@ export default {
       { text: 'Total Stlh. Diskon', value: 'totalAfterDisc', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Total DPP', value: 'totalDpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Total Pajak', value: 'totalTaxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Total Harga Nett', value: 'totalNettPrice', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
+      { text: 'Total Harga Nett', value: 'totalNettPrice', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Status', value: 'status',  width: '160', excelColWidth:'20' }
     ],
     categoryColumn: [
       { text: 'Ins. Kategori', value: 'initial', divider: true, width: '120', excelColWidth:'12' },
