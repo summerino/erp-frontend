@@ -2427,13 +2427,20 @@ export default {
           } else if (discPromo.length > 0 && gridData[k].discPromo.length > 0) {
             const nDiscPromo = []
             for (let ip = 0; ip < discPromo.length; ip++) {
-              nDiscPromo.push(discPromo[ip])
+              const dPromo = gridData[k].discPromo.find(x => x.promoDetailId === discPromo[ip].promoDetailId)
+              if (!dPromo) {
+                if (!('oldValue' in discPromo[ip]) && !discPromo[ip].isPercentage) {
+                  discPromo[ip].oldValue = discPromo[ip].value
+                }
+                nDiscPromo.push(discPromo[ip])
+              }
             }
 
             for (let iq = 0; iq < gridData[k].discPromo.length; iq++) {
-              if (!('promoDetailId' in gridData[k].discPromo[iq]) || gridData[k].discPromo[iq].promoDetailId === null) {
-                nDiscPromo.push(gridData[k].discPromo[iq])
+              if (!('oldValue' in gridData[k].discPromo[iq]) && !gridData[k].discPromo[iq].isPercentage) {
+                gridData[k].discPromo[iq].oldValue = gridData[k].discPromo[iq].value
               }
+              nDiscPromo.push(gridData[k].discPromo[iq])
             }
             if (nDiscPromo.length > 0) {
               gridData[k].discPromo = nDiscPromo
@@ -2444,9 +2451,10 @@ export default {
           } else if (discPromo.length === 0) {
             const nDiscPromo = []
             for (let iq = 0; iq < gridData[k].discPromo.length; iq++) {
-              if (!('promoDetailId' in gridData[k].discPromo[iq]) || gridData[k].discPromo[iq].promoDetailId === null) {
-                nDiscPromo.push(gridData[k].discPromo[iq])
+              if (!('oldValue' in gridData[k].discPromo[iq]) && !gridData[k].discPromo[iq].isPercentage) {
+                gridData[k].discPromo[iq].oldValue = gridData[k].discPromo[iq].value
               }
+              nDiscPromo.push(gridData[k].discPromo[iq])
             }
             if (nDiscPromo.length > 0) {
               gridData[k].discPromo = nDiscPromo
@@ -2504,7 +2512,7 @@ export default {
               item.discPromo[i].amount = item.unitPrice * (item.discPromo[i].value / 100)
             } else if (item.uomConversion !== undefined) {
               const cseq = oldUnit.seq < unit.seq
-              const vle = item.discPromo[i].fromPromo === true ? item.discPromo[i].value : item.discPromo[i].oldValue
+              const vle = 'oldValue' in item.discPromo[i] ? item.discPromo[i].oldValue : item.discPromo[i].value
               item.discPromo[i].amount = cseq ? vle * item.uomConversion : vle / item.uomConversion
               item.discPromo[i].value = item.discPromo[i].amount
             }
@@ -2516,7 +2524,7 @@ export default {
               item.discPromo[i].amount = item.nettPrice * (item.discPromo[i].value / 100)
             } else if (item.uomConversion !== undefined) {              
               const cseq = oldUnit.seq < unit.seq
-              const vle = item.discPromo[i].fromPromo === true ? item.discPromo[i].value : item.discPromo[i].oldValue
+              const vle = 'oldValue' in item.discPromo[i] ? item.discPromo[i].oldValue : item.discPromo[i].value
               item.discPromo[i].amount = cseq ? vle * item.uomConversion : vle / item.uomConversion
               item.discPromo[i].value = item.discPromo[i].amount
             }
