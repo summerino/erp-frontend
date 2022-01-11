@@ -479,7 +479,6 @@ export default {
       { text: 'Ins. Barang', value: 'itemInitial', divider: true, width: '120', excelColWidth:'12' },
       { text: 'Nm. Barang', value: 'itemName', divider: true, width: '300', excelColWidth:'40' },
       { text: 'Ins. Kategori', value: 'categoryInitial', divider: true, width: '120', excelColWidth:'12' },
-      { text: 'Status', value: 'status', divider: true, width: '160', excelColWidth:'20' },
       { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Satuan', value: 'unitName', divider: true, width: '120', excelColWidth:'12' },
       { text: 'Harga Kotor', value: 'grossAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },

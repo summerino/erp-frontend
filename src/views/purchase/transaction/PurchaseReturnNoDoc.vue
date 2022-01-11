@@ -1726,7 +1726,7 @@ export default {
       this.data.dppIn = Math.round(_sumBy(this.gridDiffItem.data, 'totDPP'))
       
       this.data.taxAmount = this.data.taxAmountIn + this.data.taxAmountOut
-      this.data.dpp = this.data.dppOut + this.data.dppIn
+      this.data.dpp = this.data.dppOut
 
       this.calcGrandTotal()
     },
