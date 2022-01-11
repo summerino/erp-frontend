@@ -475,7 +475,7 @@
                           <template v-slot:[`item.amount`]="{ item }">
                             <v-currency-field
                               v-model="item.amount"
-                              :decimal-length="0"
+                              :decimal-length="2"
                               :min="1"
                               :readonly="isRejected"
                               class="text-body-2 text-right mt-0"

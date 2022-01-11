@@ -130,8 +130,8 @@
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
-        <template v-slot:[`item.total`]="{ item }">
-          {{ item.total | formatCurrency }}
+        <template v-slot:[`item.amount`]="{ item }">
+          {{ item.amount | formatCurrency }}
         </template>
         <template v-slot:[`item.mark`]="{ item }">
           <v-tooltip bottom>
@@ -341,7 +341,7 @@
                       <v-col cols="12"  md="6">
                         <v-currency-field
                           v-model="data.amount"
-                          :decimal-length="0"
+                          :decimal-length="2"
                           :min="1"
                           class="text-right mt-0"
                           label="Nilai"
@@ -361,8 +361,6 @@
                   </v-card-text>
                 </v-card>
               </v-col>
-
-              
             </v-row>
 
             <v-row dense>
