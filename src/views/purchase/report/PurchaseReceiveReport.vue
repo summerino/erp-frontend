@@ -671,10 +671,10 @@ export default {
     },
     getList() {
       if (this.main) {
-        this.grid.columns = this.data.type === 1 ? this.apRecogTime !== 'PI' ? this.codeColumn : this.codeInvColumn : 
+        this.grid.columns = this.data.type === 1 ? this.apRecogTime === 'RCV' ? this.codeInvColumn : this.codeColumn : 
           this.data.type === 2 ? this.supColumn : 
             this.data.type === 3 ? this.itemColumn :
-              this.data.type === 4 ? this.categoryColumn : this.apRecogTime !== 'PI' ? this.detailColumn : this.detailInvColumn
+              this.data.type === 4 ? this.categoryColumn : this.apRecogTime === 'RCV' ? this.detailInvColumn : this.detailColumn
       } else {
         this.grid.columns = this.detailColumn
       }
