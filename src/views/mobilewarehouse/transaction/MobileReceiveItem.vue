@@ -667,7 +667,7 @@ export default {
       this.dialog.add = false
       this.reset()
     },
-    edit(item) {
+    async edit(item) {
       if (!item) return
 
       this.dialog.add = true
@@ -686,7 +686,7 @@ export default {
       }
 
       // Get supplier details
-      this.bindSupData(this.data)
+      await this.bindSupData(this.data)
 
       // Get item details
       api.getAll(`${this.endpoint.mobileWarehouse.receiveItem}/item`, {
@@ -786,6 +786,7 @@ export default {
       api.getOne(this.endpoint.general.supplier.supplier, item.supCode)
         .then(response => {
           if (response.data) {
+            item.supName = response.data.name
             item.supAddr = response.data.address1
             item.supPhone = response.data.phone
             item.supFax = response.data.fax
