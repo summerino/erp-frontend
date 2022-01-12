@@ -279,6 +279,11 @@
               
             </span>
           </template>
+          <template v-slot:[`item.qtyBegin`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.qtyBegin | formatCurrency({ decimalDigits: 0 }) }}
+            </span>
+          </template>
           <template v-slot:[`item.qtyIn`]="{ item }">
             <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
               {{ item.qtyIn | formatCurrency({ decimalDigits: 0 }) }}
@@ -310,6 +315,116 @@
           <template v-slot:[`item.invEnd`]="{ item }">
             <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
               {{ item.invEnd | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.qtyInPO`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.qtyInPO | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.qtyInRtn`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.qtyInRtn | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.qtyInTS`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.qtyInTS | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.qtyInCNEE`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.qtyInCNEE | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.qtyInADJ`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.qtyInADJ | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.qtyOutDO`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.qtyOutDO | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.qtyOutDI`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.qtyOutDI | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.qtyOutRtn`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.qtyOutRtn | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.qtyOutTS`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.qtyOutTS | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.qtyOutCNEE`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.qtyOutCNEE | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.qtyOutADJ`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.qtyOutADJ | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.invInPO`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.invInPO | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.invInRtn`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.invInRtn | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.invInTS`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.invInTS | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.invInCNEE`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.invInCNEE | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.invInADJ`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.invInADJ | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.invOutDO`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.invOutDO | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.invOutDI`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.invOutDI | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.invOutRtn`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.invOutRtn | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.invOutTS`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.invOutTS | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.invOutCNEE`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.invOutCNEE | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.invOutADJ`]="{ item }">
+            <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.invOutADJ | formatCurrency }}
             </span>
           </template>
           </v-data-table>
@@ -368,6 +483,7 @@ export default {
       { text: 'Inisial', value: 'initial', divider: true, width: '120', excelColWidth:'13'},
       { text: 'Nama', value: 'name', divider: true, width: '300', excelColWidth:'40'},
       { text: 'Satuan', value: 'unit', divider: true, width: '100', excelColWidth:'12' },
+      { text: 'Ins. Kategori', value: 'categoryInitial', divider: true, width: '120', excelColWidth:'13' },
       { text: 'Qty Awal', value: 'qtyBegin', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Masuk', value: 'qtyIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Keluar', value: 'qtyOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
@@ -375,6 +491,38 @@ export default {
       { text: 'Persediaan Awal', value: 'invBegin', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Persediaan Masuk', value: 'invIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Persediaan Keluar', value: 'invOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Persediaan Akhir', value: 'invEnd', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
+    ],
+    typeColumn: [
+      { text: 'Inisial', value: 'initial', divider: true, width: '120', excelColWidth:'13'},
+      { text: 'Nama', value: 'name', divider: true, width: '300', excelColWidth:'40'},
+      { text: 'Satuan', value: 'unit', divider: true, width: '100', excelColWidth:'12' },
+      { text: 'Ins. Kategori', value: 'categoryInitial', divider: true, width: '120', excelColWidth:'13' },
+      { text: 'Qty Awal', value: 'qtyBegin', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Qty Terima (PO)', value: 'qtyInPO', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Qty Terima (Retur)', value: 'qtyInRtn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Qty Transfer +', value: 'qtyInTS', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Qty Konsinyasi +', value: 'qtyInCNEE', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Qty Peny. +', value: 'qtyInADJ', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Qty Kirim (SJ)', value: 'qtyOutDO', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Qty Kirim (DI)', value: 'qtyOutDI', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Qty Kirim (Retur)', value: 'qtyOutRtn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Qty Transfer -', value: 'qtyOutTS', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Qty Konsinyasi -', value: 'qtyOutCNEE', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Qty Peny. -', value: 'qtyOutADJ', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Qty Akhir', value: 'qtyEnd', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Persediaan Awal', value: 'invBegin', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Persediaan Terima (PO)', value: 'invInPO', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Persediaan Terima (Retur)', value: 'invInRtn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Persediaan Transfer +', value: 'invInTS', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Persediaan Konsinyasi +', value: 'invInCNEE', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Persediaan Peny. +', value: 'invInADJ', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Persediaan Kirim (SJ)', value: 'invOutDO', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Persediaan Kirim (DI)', value: 'invOutDI', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Persediaan Kirim (Retur)', value: 'invOutRtn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Persediaan Transfer -', value: 'invOutTS', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Persediaan Konsinyasi -', value: 'invOutCNEE', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
+      { text: 'Persediaan Peny. -', value: 'invOutADJ', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Persediaan Akhir', value: 'invEnd', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
     smColumn: [
@@ -388,7 +536,7 @@ export default {
       { text: 'Persediaan Keluar', value: 'invOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Persediaan Akhir', value: 'invEnd', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
-    types: [{ id: 1, name: 'Berdasarkan Barang' }, { id: 2, name: 'Berdasarkan Gudang' }],
+    types: [{ id: 1, name: 'Berdasarkan Barang' }, { id: 2, name: 'Berdasarkan Gudang' }, { id: 3, name: 'Berdasarkan Tipe Transaksi' }],
     typeUnits: [{ id: 1, name: 'Satuan Terkecil' }, { id: 2, name: 'Satuan Beli' }, { id: 3, name: 'Satuan Jual' }],
     items: [],
     data: {},
@@ -466,7 +614,8 @@ export default {
     },
     getList() {
       this.checkInvAuth()
-      this.grid.columns = this.data.type === 1 ? this.data.isSM ? this.smColumn : this.itemColumn : this.whColumn
+      this.grid.columns = this.data.type === 1 ? this.data.isSM ? this.smColumn : this.itemColumn :
+        this.data.type === 2 ? this.whColumn : this.typeColumn
       
       api.getAll(this.endpoint.inventory.smReport, {
         params: {
@@ -549,7 +698,7 @@ export default {
           this.grid.options.sortBy = []
           this.getList()
           this.main = false
-        } else {
+        } else if (this.data.type === 2) {
           this.data.filterName = 'Gudang'
           this.data.initial = item.initial
           this.data.name = item.name
