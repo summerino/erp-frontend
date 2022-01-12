@@ -121,6 +121,24 @@
                       </v-list-item-title>
                     </v-list-item>
                   </v-list>
+                  <v-list v-if="this.data.filterName === 'Gudang'">
+                    <v-list-item>
+                      <v-list-item-title>
+                        <export-excel
+                          ref="exportExcelInv"
+                          :caption="'Export Excel Stok Opname'"
+                          :color="'red'"
+                          :company="companyName"
+                          :filters="exportFilter"
+                          :grid="gridInv"
+                          :gridDefOpts="gridDefOpts"
+                          :shortcut="['ctrl', 'alt', 's']"
+                          :shortcutCaption="'(Ctrl + Alt + S)'"
+                          :title="`Stock Opname - Detail Berdasarkan ${this.data.filterName} - ${this.data.name} (${this.data.initial}) `"
+                        ></export-excel>
+                      </v-list-item-title>
+                    </v-list-item>
+                  </v-list>
                 </v-menu>
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
@@ -465,6 +483,22 @@ export default {
       total: 0,
       search: null
     },
+    gridInv:{
+      height: 100,
+      columns: [{ text: 'Inisial', value: 'initial', excelColWidth:'13'},
+        { text: 'Nama', value: 'name', excelColWidth:'40'},
+        { text: 'Ins. Kategori', value: 'categoryInitial', excelColWidth:'13' },
+        { text: 'Satuan', value: 'unit', excelColWidth:'12' },
+        { text: 'Qty Sistem', value: 'qtyEnd', align: 'right', excelColWidth:'20', isNumber: true },
+        { text: 'Qty Aktual', excelColWidth:'20'},
+        { text: 'Selisih', excelColWidth:'20' },
+        { text: 'Keterangan', excelColWidth:'30' }],
+      data: [],
+      options: {
+        sortBy: ['initial'],
+        sortDesc: [false]
+      }
+    },
     filter: false,
     whColumn: [
       { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'13' },
@@ -482,8 +516,8 @@ export default {
     itemColumn: [
       { text: 'Inisial', value: 'initial', divider: true, width: '120', excelColWidth:'13'},
       { text: 'Nama', value: 'name', divider: true, width: '300', excelColWidth:'40'},
-      { text: 'Satuan', value: 'unit', divider: true, width: '100', excelColWidth:'12' },
       { text: 'Ins. Kategori', value: 'categoryInitial', divider: true, width: '120', excelColWidth:'13' },
+      { text: 'Satuan', value: 'unit', divider: true, width: '100', excelColWidth:'12' },
       { text: 'Qty Awal', value: 'qtyBegin', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Masuk', value: 'qtyIn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Keluar', value: 'qtyOut', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
@@ -496,8 +530,8 @@ export default {
     typeColumn: [
       { text: 'Inisial', value: 'initial', divider: true, width: '120', excelColWidth:'13'},
       { text: 'Nama', value: 'name', divider: true, width: '300', excelColWidth:'40'},
-      { text: 'Satuan', value: 'unit', divider: true, width: '100', excelColWidth:'12' },
       { text: 'Ins. Kategori', value: 'categoryInitial', divider: true, width: '120', excelColWidth:'13' },
+      { text: 'Satuan', value: 'unit', divider: true, width: '100', excelColWidth:'12' },
       { text: 'Qty Awal', value: 'qtyBegin', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Terima (PO)', value: 'qtyInPO', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
       { text: 'Qty Terima (Retur)', value: 'qtyInRtn', align: 'right', divider: true, width: '100', excelColWidth:'20', isNumber: true },
@@ -631,6 +665,7 @@ export default {
         .then(response => {
           this.grid.data = response.data.tableData
           this.grid.total = response.data.rowCount
+          this.gridInv.data = this.grid.data
           this.appendFilter()
         })
     },
@@ -649,12 +684,14 @@ export default {
           this.getList()
           this.main = false
         } else {
+          this.data.filterName = null
           this.data.itemId = this.data.oldItemId
           this.filter = true
           this.getList()
           this.main = true
         }
       } else {
+        this.data.filterName = null
         this.data.type = 2
         this.data.isSM = false
         this.grid.columns = this.whColumn
