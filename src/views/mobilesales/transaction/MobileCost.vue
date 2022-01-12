@@ -288,7 +288,7 @@
                       <v-col cols="12">
                         <v-currency-field
                           v-model="data.total"
-                          :decimal-length="0"
+                          :decimal-length="2"
                           :min="1"
                           class="text-right mt-0"
                           label="Nilai Total"
