@@ -144,6 +144,9 @@
             <span class="text-caption">{{ item.status }}</span>
           </v-tooltip>
         </template>
+        <template v-slot:[`item.date`]="{ item }">
+          {{ item.date | formatDate('dd-MMM-yyyy') }}
+        </template>
       </v-data-table>
     </v-card>
 
@@ -254,6 +257,31 @@
                           class="mt-0"
                           readonly
                         ></v-text-field>
+                    </v-row>
+
+                    <v-row no-gutters>
+                      <v-col cols="12">
+                        <v-text-field
+                          :value="formatDate"
+                          label="Tanggal"
+                          class="mt-0"
+                          readonly
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+
+                    <v-row no-gutters>
+                      <v-col cols="12">
+                        <v-autocomplete
+                          v-model="data.warehouseCode"
+                          :items="warehouses"
+                          :item-text="item => `${item.initial} - ${item.name}`"
+                          label="Gudang Asal"
+                          item-value="code"
+                          class="mt-0"
+                          readonly
+                        ></v-autocomplete>
+                      </v-col>
                     </v-row>
                   </v-card-text>
                 </v-card>
@@ -430,9 +458,11 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '120' },
+        { value: 'action', sortable: false, divider: true, width: '80' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Kode Rencana Pengiriman', value: 'dlvPlanCode', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+        { text: 'Gudang', value: 'warehouseInitial', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
@@ -460,6 +490,7 @@ export default {
   created: function () {
     this.reset()
     this.getList()
+    this.getWarehouse()
     auth.getAction(this.endpoint, this.menuId.mobileDeliveryItem)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -516,6 +547,7 @@ export default {
       this.gridItem.data = []
       this.tab.sup = 0
       this.tab.det = 0
+      this.selected = []
     },
     advancedSearch() {
       this.grid.search = null
@@ -633,6 +665,24 @@ export default {
         this.reset()
         this.getList()
       }
+    },
+    getWarehouse() {
+      api.getAll(`${this.endpoint.inventory.warehouse}/lists`, {
+        params: { 
+          filters: JSON.stringify([{
+            field: 'custCode',
+            operator: 'eq',
+            keyword: null
+          }]),
+          sorts: JSON.stringify([{
+            field: 'name',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.warehouses = response.data.tableData
+        })
     }
   } 
 }
