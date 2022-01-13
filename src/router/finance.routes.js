@@ -20,5 +20,12 @@ export default [
     meta: {
       authRequired: true
     }
+  }, {
+    path: '/finance/report/outstanding-cheque-report',
+    name: 'outstanding-cheque-report',
+    component: () => import(/* webpackChunkName: "outstanding-cheque-report" */ '@/views/finance/report/OutstandingChequeReport.vue'),
+    meta: {
+      authRequired: true
+    }
   }
 ]
