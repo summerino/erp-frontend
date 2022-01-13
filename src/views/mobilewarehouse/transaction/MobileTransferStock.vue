@@ -144,6 +144,9 @@
             <span class="text-caption">{{ item.status }}</span>
           </v-tooltip>
         </template>
+        <template v-slot:[`item.date`]="{ item }">
+          {{ item.date | formatDate('dd-MMM-yyyy') }}
+        </template>
       </v-data-table>
     </v-card>
 
@@ -248,12 +251,50 @@
                     </v-row>
 
                     <v-row no-gutters>
-                      <v-text-field
-                          v-model="data.transCode"
+                      <v-col cols="12" md="6">
+                        <v-text-field
+                          v-model="data.transferCode"
                           label="Kode Transfer Stok"
                           class="mt-0"
                           readonly
                         ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" md="6" class="pl-md-1">
+                        <v-text-field
+                          :value="formatDate"
+                          label="Tanggal"
+                          class="mt-0"
+                          readonly
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+
+                    <v-row no-gutters>
+                      <v-col cols="12">
+                        <v-autocomplete
+                          v-model="data.warehouseCodeFrom"
+                          :items="warehouses"
+                          :item-text="item => `${item.initial} - ${item.name}`"
+                          label="Gudang Asal"
+                          item-value="code"
+                          class="mt-0"
+                          readonly
+                        ></v-autocomplete>
+                      </v-col>
+                    </v-row>
+
+                    <v-row no-gutters>
+                      <v-col cols="12">
+                        <v-autocomplete
+                          v-model="data.warehouseCodeTo"
+                          :items="warehouses"
+                          :item-text="item => `${item.initial} - ${item.name}`"
+                          label="Gudang Tujuan"
+                          item-value="code"
+                          class="mt-0"
+                          readonly
+                        ></v-autocomplete>
+                      </v-col>
                     </v-row>
                   </v-card-text>
                 </v-card>
@@ -432,7 +473,10 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '120' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
-        { text: 'Kode Transfer Stok', value: 'transCode', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+        { text: 'Kode Transfer Stok', value: 'transferCode', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Gudang Asal', value: 'warehouseInitialFrom', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Gudang Tujuan', value: 'warehouseInitialTo', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
@@ -454,12 +498,14 @@ export default {
     },
     valid: false,
     selected: [],
+    warehouses: [],
     data: {}
   }),
 
   created: function () {
     this.reset()
     this.getList()
+    this.getWarehouse()
     auth.getAction(this.endpoint, this.menuId.mobileTransferStock)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -633,6 +679,24 @@ export default {
         this.reset()
         this.getList()
       }
+    },
+    getWarehouse() {
+      api.getAll(`${this.endpoint.inventory.warehouse}/lists`, {
+        params: { 
+          filters: JSON.stringify([{
+            field: 'custCode',
+            operator: 'eq',
+            keyword: null
+          }]),
+          sorts: JSON.stringify([{
+            field: 'name',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.warehouses = response.data.tableData
+        })
     }
   } 
 }
