@@ -1718,12 +1718,12 @@ export default {
     },
     calcPrice() {
       this.data.subTotalIn = _sumBy(this.gridItem.data, 'total')
-      this.data.taxAmountIn = Math.round(_sumBy(this.gridItem.data, 'totTax'))
-      this.data.dppOut = Math.round(_sumBy(this.gridItem.data, 'totDPP'))
+      this.data.taxAmountIn = _sumBy(this.gridItem.data, 'totTax')
+      this.data.dppOut = _sumBy(this.gridItem.data, 'totDPP')
 
       this.data.subTotalOut = _sumBy(this.gridDiffItem.data, 'total')
-      this.data.taxAmountOut = Math.round(_sumBy(this.gridDiffItem.data, 'totTax'))
-      this.data.dppIn = Math.round(_sumBy(this.gridDiffItem.data, 'totDPP'))
+      this.data.taxAmountOut = _sumBy(this.gridDiffItem.data, 'totTax')
+      this.data.dppIn = _sumBy(this.gridDiffItem.data, 'totDPP')
       
       this.data.dpp = this.data.dppOut + this.data.dppIn
       this.data.taxAmount = this.data.taxAmountIn + this.data.taxAmountOut
