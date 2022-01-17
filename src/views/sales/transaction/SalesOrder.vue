@@ -909,7 +909,7 @@
                             label="Persen Diskon"
                             suffix="%"
                             class="text-right mt-0"
-                            @change="discPercentChange"
+                            @blur="discPercentChange"
                           ></v-currency-field>
                         </v-col>
                         <v-col cols="8" class="pl-1">
@@ -919,7 +919,7 @@
                             :readonly="hasRelatedTrans"
                             label="Diskon Final"
                             class="text-right mt-0"
-                            @change="discChange"
+                            @blur="discChange"
                           ></v-currency-field>
                         </v-col>
                       </v-row>
@@ -1946,7 +1946,7 @@ export default {
       }
     },
     discPercentChange() {
-      this.data.finalDisc = this.data.dpp * (this.data.finalDiscPercent / 100)
+      this.data.finalDisc = Math.round(this.data.dpp * (this.data.finalDiscPercent / 100))
       this.calcGrandTotal()
     },
     discChange() {
