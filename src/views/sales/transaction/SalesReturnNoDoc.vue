@@ -1423,6 +1423,7 @@ export default {
           this.dialog.add = false
         } else {
           this.data.code = result.data
+          this.data.action = 'edit'
         }
         this.getList(!closeDialog)
       }
