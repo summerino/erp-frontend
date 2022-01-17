@@ -718,7 +718,7 @@ export default {
         { text: 'Nama Promo', value: 'name', divider: true, width: '100' },
         { text: 'Tanggal Mulai', value: 'startDate', align: 'right', divider: true, width: '100' },
         { text: 'Tanggal Akhir', value: 'endDate', align: 'right', divider: true, width: '100' },
-        { text: 'Status', value: 'status', divider: true, width: '100' }
+        { text: 'Status', value: 'status', width: '100' }
       ],
       data: [],
       options: {
@@ -737,14 +737,14 @@ export default {
         { text: 'Tipe Promo', value: 'promoType', divider: true, width: '120' },
         { text: 'Promo (%)', value: 'valuePercentage', align: 'right', divider: true, width: '90' },
         { text: 'Promo (Nilai)', value: 'valueAmount', align: 'right', divider: true, width: '90' },
-        { text: 'Jenjang', value: 'tier', align: 'center', divider: true, width: '100' }
+        { text: 'Jenjang', value: 'tier', align: 'center', width: '100' }
       ],
       data: []
     },
     gridSubject: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '5%' },
-        { text: 'Subjek', value: 'subject', divider: true, width: '95%' }
+        { text: 'Subjek', value: 'subject', width: '95%' }
       ],
       data: []
     }, 
