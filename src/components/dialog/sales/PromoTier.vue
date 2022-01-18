@@ -1,15 +1,15 @@
 <template>
   <v-dialog
     v-model="dialog"
-    :width="options.width"
+    width="800"
     persistent
+    scrollable
     @keydown.esc="close"
   >
     <v-card>
     <v-toolbar
         color="indigo darken-1"
         dark
-        dense
       >
         <v-toolbar-title>Jenjang Promo</v-toolbar-title>
         <v-spacer></v-spacer>
@@ -20,129 +20,130 @@
           <v-icon>mdi-window-close</v-icon>
         </v-btn>
     </v-toolbar>
-    <v-form
+    
+    <v-card-text class="px-2 py-1">
+      <v-form
       ref="form"
       v-model="valid"
-    >
-      <v-card-text class="px-2 pt-1">
-        <v-card>
-          <v-card-title>Umum</v-card-title>
-          <v-card-text>
-            <v-row no-gutters>
-              <v-col cols="12">
-                <v-autocomplete
-                v-model="data.promoMethod"
-                :items="promoMethod"
-                :rules="rules.required"
-                item-text="name"
-                item-value="id"
-                label="Metode Promo"
-                class="mt-0"
-                @change="checkIsPercentage()"
-                >
-                </v-autocomplete>
-              </v-col>
-            </v-row>
-            <v-row v-if="data.applyTo !== 3 && (data.promoType === 2 || data.promoType === 3)" no-gutters>
-              <v-col cols="12">
-                <v-autocomplete
-                v-model="data.saleUnit"
-                :items="itemUnits"
-                :rules="rules.required"
-                item-text="unitEquivalent"
-                item-value="id"
-                label="Unit Yang Berlaku Untuk Promo"
-                class="mt-0"
-                @change="changeUnit()"
-                >
-                </v-autocomplete>
-              </v-col>
-            </v-row>
-            <v-row v-if="data.applyTo !== 3 && data.promoType === 2" no-gutters>
-              <v-col cols="12">
-                <v-checkbox
-                  v-model="data.applyToAllUnit"
-                  :label="`Berlaku untuk semua satuan berdasarkan ${unitName}`"
-                >
-                </v-checkbox>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
-      </v-card-text>
-
-      <v-card-text v-if="data.promoType === 3" class="px-2 pt-1">
-        <v-card>
-          <v-card-title>Barang Gratis</v-card-title>
-          <v-card-text>
-            <v-row no-gutters>
-              <v-col cols="12">
-                <v-autocomplete
-                  v-model="data.freeGoodItemId"
-                  :items="items"
+      >
+        <v-card-text class="px-2 py-1">
+          <v-card>
+            <v-card-title>Umum</v-card-title>
+            <v-card-text>
+              <v-row no-gutters>
+                <v-col cols="12">
+                  <v-autocomplete
+                  v-model="data.promoMethod"
+                  :items="promoMethod"
                   :rules="rules.required"
-                  item-text="initial"
+                  item-text="name"
                   item-value="id"
-                  class="text-body-2 mt-0"
-                  label="ID Barang"
-                  dense
-                  @change="freeItemIdChange(data.freeGoodItemId)"
-                >
-                </v-autocomplete>
-              </v-col>
-            </v-row>
-            <v-row no-gutters>
-              <v-col cols="12">
-                <v-text-field
-                  v-model="data.freeItemName"
-                  label="Nama Barang"
+                  label="Metode Promo"
                   class="mt-0"
-                  readonly
-                ></v-text-field>
-              </v-col>
-            </v-row>
-            <v-row no-gutters>
-              <v-col cols="12">
-                <v-autocomplete
-                  v-model="data.unitFreeGood"
-                  :items="freeItemUnits"
+                  @change="checkIsPercentage()"
+                  >
+                  </v-autocomplete>
+                </v-col>
+              </v-row>
+              <v-row v-if="data.applyTo !== 3 && (data.promoType === 2 || data.promoType === 3)" no-gutters>
+                <v-col cols="12">
+                  <v-autocomplete
+                  v-model="data.saleUnit"
+                  :items="itemUnits"
                   :rules="rules.required"
                   item-text="unitEquivalent"
                   item-value="id"
-                  class="text-body-2 mt-0"
-                  label="Satuan"
-                  dense
-                >
-                </v-autocomplete>
-              </v-col>
-            </v-row>
-            <v-row no-gutters>
-              <v-col cols="12">
-                <v-checkbox
-                  v-model="data.isMultiple"
-                  label="Kelipatan"
-                  @change="clearItemTier"
-                >
-                </v-checkbox>
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-card>
-      </v-card-text>
+                  label="Unit Yang Berlaku Untuk Promo"
+                  class="mt-0"
+                  @change="changeUnit()"
+                  >
+                  </v-autocomplete>
+                </v-col>
+              </v-row>
+              <v-row v-if="data.applyTo !== 3 && data.promoType === 2" no-gutters>
+                <v-col cols="12">
+                  <v-checkbox
+                    v-model="data.applyToAllUnit"
+                    :label="`Berlaku untuk semua satuan berdasarkan ${unitName}`"
+                  >
+                  </v-checkbox>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-card-text>
 
-      <v-card-text class="px-2 pt-1">
-        <v-card>
-          <v-tabs v-model="tab.tier">
-            <v-tab key="tier">Jenjang</v-tab>
-            <v-tab key="budget">Anggaran</v-tab>
-          </v-tabs>
+        <v-card-text v-if="data.promoType === 3" class="px-2 py-1">
+          <v-card>
+            <v-card-title>Barang Gratis</v-card-title>
+            <v-card-text>
+              <v-row no-gutters>
+                <v-col cols="12">
+                  <v-autocomplete
+                    v-model="data.freeGoodItemId"
+                    :items="items"
+                    :rules="rules.required"
+                    item-text="initial"
+                    item-value="id"
+                    class="text-body-2 mt-0"
+                    label="ID Barang"
+                    dense
+                    @change="freeItemIdChange(data.freeGoodItemId)"
+                  >
+                  </v-autocomplete>
+                </v-col>
+              </v-row>
+              <v-row no-gutters>
+                <v-col cols="12">
+                  <v-text-field
+                    v-model="data.freeItemName"
+                    label="Nama Barang"
+                    class="mt-0"
+                    readonly
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row no-gutters>
+                <v-col cols="12">
+                  <v-autocomplete
+                    v-model="data.unitFreeGood"
+                    :items="freeItemUnits"
+                    :rules="rules.required"
+                    item-text="unitEquivalent"
+                    item-value="id"
+                    class="text-body-2 mt-0"
+                    label="Satuan"
+                    dense
+                  >
+                  </v-autocomplete>
+                </v-col>
+              </v-row>
+              <v-row no-gutters>
+                <v-col cols="12">
+                  <v-checkbox
+                    v-model="data.isMultiple"
+                    label="Kelipatan"
+                    @change="clearItemTier"
+                  >
+                  </v-checkbox>
+                </v-col>
+              </v-row>
+            </v-card-text>
+          </v-card>
+        </v-card-text>
 
-          <v-tabs-items v-model="tab.tier" class="pa-2">
-            <v-tab-item
-              key="detail"
-              transition="false"
-            >
-              <v-card>
+        <v-card-text class="px-2 py-1">
+          <v-card>
+            <v-tabs v-model="tab.tier">
+              <v-tab key="tier">Jenjang</v-tab>
+              <!-- <v-tab key="budget">Anggaran</v-tab> -->
+            </v-tabs>
+
+            <v-tabs-items v-model="tab.tier" class="pa-2">
+              <v-tab-item
+                key="detail"
+                transition="false"
+              >
                 <v-row dense>
                   <v-col cols="12">
                     <v-app-bar dense flat>
@@ -254,79 +255,79 @@
                     </v-data-table>
                   </v-col>
                 </v-row>
-              </v-card>
-            </v-tab-item>
+              </v-tab-item>
 
-            <v-tab-item
-              key="budget"
-              transition="false"
-              eager
-            >
-              <v-row no-gutters>
-                <v-col cols="12">
-                  <v-checkbox
-                    v-model="data.isPromoWithBudget"
-                    label="Gunakan anggaran promo"
-                >
-                </v-checkbox>
-                </v-col>
-              </v-row>
-
-              <v-row no-gutters>
-                <v-col cols="12">
-                  <v-currency-field
-                    v-model="data.budgetMaximumValue"
-                    :decimal-length="2"
-                    :min="0"
-                    :disabled="!data.isPromoWithBudget"
-                    label="Nilai Maksimum"
-                    class="text-body-2 text-right mt-0"
-                  ></v-currency-field>
-                </v-col>
-              </v-row>
-
-              <v-row no-gutters>
-                <v-col cols="12">
-                  <v-radio-group
-                    v-model="data.overBudgetAction"
-                    mandatory
+              <!-- <v-tab-item
+                key="budget"
+                transition="false"
+                eager
+              >
+                <v-row no-gutters>
+                  <v-col cols="12">
+                    <v-checkbox
+                      v-model="data.isPromoWithBudget"
+                      label="Gunakan anggaran promo"
                   >
-                    <template v-slot:label>
-                      <div><strong>Kalau melebihi anggaran</strong></div>
-                    </template>
-                    <v-radio
-                      label="Peringatkan user, pelanggan tetap mendapat promo"
-                      value="1"
-                    ></v-radio>
-                    <v-radio
-                      label="Peringatkan user, pelanggan tidak mendapat promo"
-                      value="2"
-                    ></v-radio>
-                    <v-radio
-                      label="Peringatkan user, pelanggan tetap mendapat promo atau tidak"
-                      value="3"
-                    ></v-radio>
-                  </v-radio-group>
-                </v-col>
-              </v-row>
-            </v-tab-item>
-          </v-tabs-items>
-        </v-card>
-      </v-card-text>
-      <v-card-actions class="justify-end pb-2 pr-2">
-        <v-btn
-          color="green"
-          class="font-weight-regular"
-          dark
-          small
-          tile
-          @click="save"
-        >
-          <v-icon left>mdi-content-save</v-icon>
-          Simpan
-        </v-btn>
-      </v-card-actions>
-    </v-form>
+                  </v-checkbox>
+                  </v-col>
+                </v-row>
+
+                <v-row no-gutters>
+                  <v-col cols="12">
+                    <v-currency-field
+                      v-model="data.budgetMaximumValue"
+                      :decimal-length="2"
+                      :min="0"
+                      :disabled="!data.isPromoWithBudget"
+                      label="Nilai Maksimum"
+                      class="text-body-2 text-right mt-0"
+                    ></v-currency-field>
+                  </v-col>
+                </v-row>
+
+                <v-row no-gutters>
+                  <v-col cols="12">
+                    <v-radio-group
+                      v-model="data.overBudgetAction"
+                      mandatory
+                    >
+                      <template v-slot:label>
+                        <div><strong>Kalau melebihi anggaran</strong></div>
+                      </template>
+                      <v-radio
+                        label="Peringatkan user, pelanggan tetap mendapat promo"
+                        value="1"
+                      ></v-radio>
+                      <v-radio
+                        label="Peringatkan user, pelanggan tidak mendapat promo"
+                        value="2"
+                      ></v-radio>
+                      <v-radio
+                        label="Peringatkan user, pelanggan tetap mendapat promo atau tidak"
+                        value="3"
+                      ></v-radio>
+                    </v-radio-group>
+                  </v-col>
+                </v-row>
+              </v-tab-item> -->
+            </v-tabs-items>
+            <v-card-actions class="justify-end pb-2 pr-2">
+            <v-btn
+              color="green"
+              class="font-weight-regular"
+              dark
+              small
+              tile
+              @click="save"
+            >
+              <v-icon left>mdi-content-save</v-icon>
+              Simpan
+            </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-card-text>
+      </v-form>
+    </v-card-text>
     </v-card>
   </v-dialog>
 </template>
@@ -335,6 +336,7 @@
 import { mapState } from 'vuex'
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
+import { clone as _clone} from 'lodash'
 
 export default {
   data: () => ({
@@ -351,7 +353,7 @@ export default {
         { value: 'action', sortable: false, divider: true, width: '30' },
         { text: 'Qty Mulai', value: 'fromQty', divider: true, width: '100' },
         { text: 'Qty Sampai', value: 'toQty', divider: true, width: '100' },
-        { text: 'Nilai', value: 'value', align: 'right', divider: true, width: '100' }
+        { text: 'Nilai', value: 'value', align: 'right', width: '100' }
       ],
       data: [],
       height: 100
@@ -360,7 +362,7 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '30' },
         { text: 'Term Pembayaran', value: 'paymentTermId', divider: true, width: '100' },
-        { text: 'Nilai', value: 'value', align: 'right', divider: true, width: '100' }
+        { text: 'Nilai', value: 'value', align: 'right', width: '100' }
       ],
       data: [],
       height: 100
@@ -393,41 +395,41 @@ export default {
       this.reset()
       this.dialog = true
       this.items = listItem
-      this.data = item
+      this.data = _clone(item)
       if (this.data.promoType === 3) {        
-        this.grid.data = item.promoTierList
+        this.grid.data = this.data.promoTierList
         this.promoMethod = [{ id: 3, name: 'Mendapatkan' }]
-        this.data.freeGoodItemId = item.freeGoodItemId === undefined || item.freeGoodItemId === null ? item.promoTierList.length === 0 ? null : item.promoTierList[0].freeGoodItemId : item.freeGoodItemId 
+        this.data.freeGoodItemId = this.data.freeGoodItemId === undefined || this.data.freeGoodItemId === null ? this.data.promoTierList.length === 0 ? null : this.data.promoTierList[0].freeGoodItemId : this.data.freeGoodItemId 
         if (this.data.freeGoodItemId) {
           this.freeItemIdChange(this.data.freeGoodItemId)
         }
-        this.data.unitFreeGood = item.unitFreeGood === undefined || item.unitFreeGood === null ? item.promoTierList.length === 0 ? null : Number(item.promoTierList[0].unitFreeGood) : item.unitFreeGood 
-        this.data.isMultiple = item.isMultiple === undefined || item.isMultiple === null ? item.promoTierList.length === 0 ? false : item.promoTierList[0].isMultiple : item.isMultiple 
+        this.data.unitFreeGood = this.data.unitFreeGood === undefined || this.data.unitFreeGood === null ? this.data.promoTierList.length === 0 ? null : Number(this.data.promoTierList[0].unitFreeGood) : this.data.unitFreeGood 
+        this.data.isMultiple = this.data.isMultiple === undefined || this.data.isMultiple === null ? this.data.promoTierList.length === 0 ? false : this.data.promoTierList[0].isMultiple : this.data.isMultiple 
         this.data.promoMethod = 3
         if (this.data.applyTo !== 3) {
-          this.itemUnits = await this.getItemUnitLists(item.itemId)
+          this.itemUnits = await this.getItemUnitLists(this.data.itemId)
         }
-        this.data.saleUnit = item.saleUnit === undefined || item.saleUnit === null ? item.promoTierList.length === 0 ? this.itemUnits[0].id : item.promoTierList[0].saleUnit : item.saleUnit 
+        this.data.saleUnit = this.data.saleUnit === undefined || this.data.saleUnit === null ? this.data.promoTierList.length === 0 ? this.itemUnits[0].id : this.data.promoTierList[0].saleUnit : this.data.saleUnit 
       } else if (this.data.promoType === 4) {
-        this.gridPayment.data = item.promoTierList
+        this.gridPayment.data = this.data.promoTierList
         this.promoMethod = [{ id: 1, name: 'Persen' }, { id: 2, name: 'Nominal' }]
-        this.data.promoMethod = item.isPercentage === false ? 2 : 1
+        this.data.promoMethod = this.data.isPercentage === false ? 2 : 1
         this.getPaymentTermLists()
       } else if (this.data.promoType === 5) {
-        this.grid.data = item.promoTierList
+        this.grid.data = this.data.promoTierList
         this.promoMethod = [{ id: 1, name: 'Persen' }, { id: 2, name: 'Nominal' }]
-        this.data.promoMethod = item.isPercentage === false ? 2 : 1
+        this.data.promoMethod = this.data.isPercentage === false ? 2 : 1
         this.grid.columns[1].text = 'Nilai Mulai'
         this.grid.columns[2].text = 'Nilai Sampai'
       } else {
-        this.grid.data = item.promoTierList
-        this.data.applyToAllUnit = item.applyToAllUnit === undefined || item.applyToAllUnit === null ? item.promoTierList.length === 0 ? false : item.promoTierList[0].applyToAllUnit : item.applyToAllUnit 
+        this.grid.data = this.data.promoTierList
+        this.data.applyToAllUnit = this.data.applyToAllUnit === undefined || this.data.applyToAllUnit === null ? this.data.promoTierList.length === 0 ? false : this.data.promoTierList[0].applyToAllUnit : this.data.applyToAllUnit 
         this.promoMethod = [{ id: 1, name: 'Persen' }, { id: 2, name: 'Nominal' }]
-        this.data.promoMethod = item.isPercentage === false ? 2 : 1
+        this.data.promoMethod = this.data.isPercentage === false ? 2 : 1
         if (this.data.applyTo !== 3) {
-          this.itemUnits = await this.getItemUnitLists(item.itemId)
+          this.itemUnits = await this.getItemUnitLists(this.data.itemId)
         }
-        this.data.saleUnit = item.saleUnit === undefined || item.saleUnit === null ? item.promoTierList.length === 0 ? this.itemUnits[0].id : item.promoTierList[0].saleUnit : item.saleUnit        
+        this.data.saleUnit = this.data.saleUnit === undefined || this.data.saleUnit === null ? this.data.promoTierList.length === 0 ? this.itemUnits[0].id : this.data.promoTierList[0].saleUnit : this.data.saleUnit        
         const data_u = await this.itemUnits.find(i => i.id === this.data.saleUnit)
         this.unitName = data_u.unitEquivalent
       }
@@ -448,6 +450,7 @@ export default {
         this.data.promoTierList = this.grid.data
       }
       this.close()
+      this.$emit('saveTier', this.data)
     },
     addTier() {
       if (this.data.promoType !== 4) {
