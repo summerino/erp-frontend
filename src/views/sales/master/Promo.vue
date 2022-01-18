@@ -676,6 +676,7 @@
     ></find-item>
     <promo-tier
       ref="promoTier"
+      @saveTier="saveTier"
     ></promo-tier>
   </div>
 </template>
@@ -1202,6 +1203,12 @@ export default {
       ) {
         const idx = this.gridSubject.data.findIndex(i => i.id === item.id)
         this.gridSubject.data.splice(idx, 1)
+      }
+    },
+    saveTier(item) {
+      const index = this.gridItem.data.findIndex(x => x.id === item.id)
+      if (index >= 0) {
+        this.gridItem.data[index] = item
       }
     }
   }
