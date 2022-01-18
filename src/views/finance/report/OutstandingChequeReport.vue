@@ -6,7 +6,7 @@
           <v-card-title class="indigo--text text--lighten-2 pb-1">
             <v-row no-gutters>
               <v-col cols="12" md="6">
-                Laporan Giro Mundur (Belum Jth. Tempo)
+                Laporan Giro Mundur (Blm. Jth. Tempo)
               </v-col>
               <v-col cols="12" md="6" class="text-right">
                 <v-tooltip bottom>
@@ -56,7 +56,7 @@
                           :filters="exportFilter"
                           :grid="grid"
                           :gridDefOpts="gridDefOpts"
-                          title="Daftar Laporan Giro Mundur (Belum Jth. Tempo)"
+                          title="Daftar Laporan Giro Mundur (Blm. Jth. Tempo)"
                         ></export-excel>
                       </v-list-item-title>
                     </v-list-item>
@@ -246,7 +246,7 @@ export default {
       }, {
         text: 'Laporan'
       }, {
-        text: 'Giro Mundur (Belum Jth. Tempo)'
+        text: 'Giro Mundur (Blm. Jth. Tempo)'
       }])
       this.setGridDefaultHeight()
     }, 0)
