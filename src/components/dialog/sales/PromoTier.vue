@@ -45,7 +45,7 @@
                   </v-autocomplete>
                 </v-col>
               </v-row>
-              <v-row v-if="data.applyTo !== 3 && (data.promoType === 2 || data.promoType === 3)" no-gutters>
+              <v-row v-if="(data.applyTo === 1 || data.applyTo === 2) && (data.promoType === 2 || data.promoType === 3)" no-gutters>
                 <v-col cols="12">
                   <v-autocomplete
                   v-model="data.saleUnit"
@@ -60,7 +60,7 @@
                   </v-autocomplete>
                 </v-col>
               </v-row>
-              <v-row v-if="data.applyTo !== 3 && data.promoType === 2" no-gutters>
+              <v-row v-if="(data.applyTo === 1 || data.applyTo === 2) && data.promoType === 2" no-gutters>
                 <v-col cols="12">
                   <v-checkbox
                     v-model="data.applyToAllUnit"
@@ -406,10 +406,12 @@ export default {
         this.data.unitFreeGood = this.data.unitFreeGood === undefined || this.data.unitFreeGood === null ? this.data.promoTierList.length === 0 ? null : Number(this.data.promoTierList[0].unitFreeGood) : this.data.unitFreeGood 
         this.data.isMultiple = this.data.isMultiple === undefined || this.data.isMultiple === null ? this.data.promoTierList.length === 0 ? false : this.data.promoTierList[0].isMultiple : this.data.isMultiple 
         this.data.promoMethod = 3
-        if (this.data.applyTo !== 3) {
+        if (this.data.applyTo === 1 || this.data.applyTo === 2) {
           this.itemUnits = await this.getItemUnitLists(this.data.itemId)
         }
-        this.data.saleUnit = this.data.saleUnit === undefined || this.data.saleUnit === null ? this.data.promoTierList.length === 0 ? this.itemUnits[0].id : this.data.promoTierList[0].saleUnit : this.data.saleUnit 
+        if (this.data.applyTo < 4) {
+          this.data.saleUnit = this.data.saleUnit === undefined || this.data.saleUnit === null ? this.data.promoTierList.length === 0 ? this.itemUnits[0].id : this.data.promoTierList[0].saleUnit : this.data.saleUnit 
+        }
       } else if (this.data.promoType === 4) {
         this.gridPayment.data = this.data.promoTierList
         this.promoMethod = [{ id: 1, name: 'Persen' }, { id: 2, name: 'Nominal' }]
@@ -426,12 +428,14 @@ export default {
         this.data.applyToAllUnit = this.data.applyToAllUnit === undefined || this.data.applyToAllUnit === null ? this.data.promoTierList.length === 0 ? false : this.data.promoTierList[0].applyToAllUnit : this.data.applyToAllUnit 
         this.promoMethod = [{ id: 1, name: 'Persen' }, { id: 2, name: 'Nominal' }]
         this.data.promoMethod = this.data.isPercentage === false ? 2 : 1
-        if (this.data.applyTo !== 3) {
+        if (this.data.applyTo === 1 || this.data.applyTo === 2) {
           this.itemUnits = await this.getItemUnitLists(this.data.itemId)
         }
-        this.data.saleUnit = this.data.saleUnit === undefined || this.data.saleUnit === null ? this.data.promoTierList.length === 0 ? this.itemUnits[0].id : this.data.promoTierList[0].saleUnit : this.data.saleUnit        
-        const data_u = await this.itemUnits.find(i => i.id === this.data.saleUnit)
-        this.unitName = data_u.unitEquivalent
+        if (this.data.applyTo < 4) {
+          this.data.saleUnit = this.data.saleUnit === undefined || this.data.saleUnit === null ? this.data.promoTierList.length === 0 ? this.itemUnits[0].id : this.data.promoTierList[0].saleUnit : this.data.saleUnit        
+          const data_u = await this.itemUnits.find(i => i.id === this.data.saleUnit)
+          this.unitName = data_u.unitEquivalent 
+        }
       }
     },
     close() {
@@ -445,6 +449,7 @@ export default {
       if (this.data.promoType !== 4) {
         for (let i = 0; i < this.grid.data.length; i++) {
           this.grid.data[i].saleUnit = this.data.saleUnit
+          this.grid.data[i].freeGoodItemId = this.data.freeGoodItemId
           this.grid.data[i].unitFreeGood = this.data.unitFreeGood
         }
         this.data.promoTierList = this.grid.data
