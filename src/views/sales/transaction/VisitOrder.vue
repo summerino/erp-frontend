@@ -661,22 +661,17 @@
                                     ></v-checkbox>
                                   </template>
                                   <template v-slot:[`item.invCode`]="{ item }">
-                                    <v-autocomplete
-                                      ref="InvoiceCode"
+                                    <v-text-field
                                       v-model="item.invCode"
-                                      :items="itemInvoice"
-                                      :readonly="data.mark === 'CMP' || data.mark === 'V'"
                                       :rules="rules.required"
-                                      item-text="code"
-                                      item-value="code"
                                       class="text-body-2 mt-0"
                                       dense
                                       required
-                                      @change="invCodeChange(item)"
+                                      readonly
                                     >
                                       <template v-slot:append>
                                         <v-btn
-                                          :disabled="data.mark === 'CMP' || data.mark === 'V'"
+                                          :disabled="data.mark === 'V'"
                                           color="primary"
                                           icon
                                           x-small
@@ -687,7 +682,7 @@
                                           </v-icon>
                                         </v-btn>
                                       </template>
-                                    </v-autocomplete>
+                                    </v-text-field>
                                   </template>
                                   <template v-slot:[`item.transactionDate`]="{ item }">
                                     {{ item.transactionDate | formatDate('dd-MMM-yyyy') }}
@@ -1347,8 +1342,8 @@ export default {
         params: { 
           filters: JSON.stringify([{
             field: 'mark',
-            operator: 'eq',
-            keyword: 'A'
+            operator: 'contains',
+            keyword: ['A', 'CMP', 'PP']
           }]),
           sorts: JSON.stringify([{
             field: 'code',

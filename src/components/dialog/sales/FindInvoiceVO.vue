@@ -194,8 +194,8 @@ export default {
         keyword: this.data.value
       }, {
         field: 'mark',
-        operator: 'eq',
-        keyword: 'A'
+        operator: 'contains',
+        keyword: ['A', 'CMP', 'PP']
       }]
       api.getAll(this.endpoint.sales.invoice, {
         params: {
