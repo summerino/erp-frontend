@@ -1611,7 +1611,7 @@ export default {
         item.unitId = data_i.uomSellId
         item.unitName = data_i.uomSellName
         item.unitPrice = data_i.sellPrice
-        item.taxId = data_i.purchaseTaxId
+        item.taxId = data_i.salesTaxId
         item.taxAmount = 0
         item.taxAmountTemp = 0
         item.nettPrice = data_i.sellPrice
