@@ -115,7 +115,7 @@
     </v-card>
 
     <v-dialog
-       v-model="dialog.add"
+      v-model="dialog.add"
       transition="dialog-bottom-transition"
       fullscreen
       hide-overlay
@@ -577,6 +577,7 @@
                               </template>
                               <template v-slot:[`item.itemId`]="{ item }">
                                 <v-autocomplete
+                                v-if="item.applyTo < 4"
                                 v-model="item.itemId"
                                 :items="item.applyTo === 1 ? items : itemCategories"
                                 :rules="item.applyTo === 2 ? [] : rules.required"
@@ -586,7 +587,7 @@
                                 class="text-body-2 mt-0"
                                 dense
                                 @change="itemIdChange(item)"
-                              >
+                                >
                                   <template v-if="item.applyTo === 1" v-slot:append>
                                     <v-btn
                                       color="primary"
@@ -600,6 +601,26 @@
                                     </v-btn>
                                   </template>
                                 </v-autocomplete>
+                                <v-text-field
+                                v-else
+                                value="Beberapa Barang"
+                                class="text-body-2 mt-0"
+                                dense
+                                readonly
+                                >
+                                  <template v-slot:append>
+                                    <v-btn
+                                      color="primary"
+                                      icon
+                                      x-small
+                                      @click="showPromoMultiDialog(item)"
+                                    >
+                                      <v-icon>
+                                        mdi-settings-helper
+                                      </v-icon>
+                                    </v-btn>
+                                  </template>
+                                </v-text-field>
                               </template>
                               <template v-slot:[`item.promoType`]="{ item }">
                                 <v-autocomplete
@@ -643,7 +664,8 @@
                                     <v-btn
                                       v-bind="attrs"
                                       v-on="on"
-                                      :disabled="(item.promoType === 1 || item.promoType === 0) || ( item.itemId === null && item.applyTo !== 2)"
+                                      :disabled="(item.promoType === 1 || item.promoType === 0)
+                                      || (item.itemId === null && (item.applyTo === 1 || item.applyTo === 3))"
                                       color="blue"
                                       icon
                                       x-small
@@ -678,6 +700,11 @@
       ref="promoTier"
       @saveTier="saveTier"
     ></promo-tier>
+    <promo-multiple
+      ref="promoMulti"
+      :items="items"
+      @saveMultiple="saveMultiple"
+    ></promo-multiple>
   </div>
 </template>
 
@@ -692,12 +719,15 @@ import auth from '@/services/authorization.service'
 import Confirm from '@/components/dialog/Confirm'
 import FindItem from '@/components/dialog/inventory/FindItem'
 import PromoTier from '@/components/dialog/sales/PromoTier'
+import PromoMultiple from '@/components/dialog/sales/PromoMultiple'
+
 
 export default {
   components: {
     Confirm,
     FindItem,
-    PromoTier
+    PromoTier,
+    PromoMultiple
   },
 
   data: () => ({
@@ -751,7 +781,7 @@ export default {
     }, 
     dataStartDate: null,
     accounts: [],
-    applyTo: [{ id: 1, name: 'Barang' }, { id: 2, name: 'Faktur' }, { id: 3, name: 'Kategori Barang' }],
+    applyTo: [{ id: 1, name: 'Barang' }, { id: 2, name: 'Faktur' }, { id: 3, name: 'Kategori Barang' }, { id: 4, name: 'Beberapa Barang' }],
     applyToHeader: [{ id: 1, name: 'Semua' }, { id: 2, name: 'Pelanggan' }, { id: 3, name: 'Tipe Pelanggan' }],
     customers: [],
     customerTypes: [],
@@ -976,7 +1006,10 @@ export default {
           for (let i = 0; i < this.gridItem.data.length; i++) {
             this.itemIdChange(this.gridItem.data[i])
             this.gridItem.data[i].overBudgetAction = this.gridItem.data[i].overBudgetAction.toString()
-            this.gridItem.data[i].promoTypes = this.gridItem.data[i].applyTo === 2 ? [{ id: 5, name: 'Nilai Trans. Penj.' }, { id: 4, name: 'Term Pembayaran' }] : [{ id: 1, name: 'Reguler' }, { id: 2, name: 'Qty Barang' }, { id: 3, name: 'Bonus' }, { id: 4, name: 'Term Pembayaran' }]
+            this.gridItem.data[i].promoTypes = this.gridItem.data[i].applyTo === 2 ? 
+              [{ id: 5, name: 'Nilai Trans. Penj.' }, { id: 4, name: 'Term Pembayaran' }] :
+              this.gridItem.data[i].applyTo === 4 ?  [{ id: 2, name: 'Qty Barang' }, { id: 3, name: 'Bonus' }] : 
+                [{ id: 1, name: 'Reguler' }, { id: 2, name: 'Qty Barang' }, { id: 3, name: 'Bonus' }, { id: 4, name: 'Term Pembayaran' }]
           }
         })
 
@@ -1078,7 +1111,8 @@ export default {
           isPromoWithBudget: false,
           budgetMaximumValue: 0,
           overBudgetAction: null,
-          promoTierList: []
+          promoTierList: [],
+          multipleItem: []
         }
         this.gridItem.data.push(item)
 
@@ -1111,6 +1145,8 @@ export default {
       item.valueAmount = 0
       if (item.applyTo === 2) {
         item.promoTypes = [{ id: 5, name: 'Nilai Trans. Penj.' }, { id: 4, name: 'Term Pembayaran' }]
+      } else if (item.applyTo === 4) {
+        item.promoTypes = [{ id: 2, name: 'Qty Barang' }, { id: 3, name: 'Bonus' }]
       } else {
         item.promoTypes = [{ id: 1, name: 'Reguler' }, { id: 2, name: 'Qty Barang' }, { id: 3, name: 'Bonus' }, { id: 4, name: 'Term Pembayaran' }]
       }
@@ -1209,6 +1245,23 @@ export default {
       const index = this.gridItem.data.findIndex(x => x.id === item.id)
       if (index >= 0) {
         this.gridItem.data[index] = item
+      }
+    },
+    showPromoMultiDialog(item) {
+      this.$refs.promoMulti.open(item)
+    },
+    saveMultiple(item) {
+      const index = this.gridItem.data.findIndex(x => x.id === item.id)
+      if (index >= 0) {
+        const multiItem = []
+        for (let i = 0; i < item.items.length; i++) {
+          multiItem.push({
+            promoDetailId: item.id,
+            itemId: item.items[i].id
+          })
+          
+        }
+        this.gridItem.data[index].multipleItem = multiItem
       }
     }
   }
