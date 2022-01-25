@@ -171,6 +171,7 @@
             :headers="grid.columns"
             :height="grid.height"
             :items="grid.data"
+            :items-per-page="-1"
             :options.sync="grid.options"
             :sort-by="grid.options.sortBy"
             :sort-desc="grid.options.sortDesc"
@@ -221,21 +222,21 @@ export default {
     },
     filter: false,
     column: [
-      { text: 'Tanggal', value: 'date', divider: true, width: '14%', excelColWidth:'20', isDateTime: true },
-      { text: 'Penjual', value: 'name', divider: true, width: '14%', excelColWidth:'20' },
-      { text: 'Dijadwalkan', value: 'scheduled', align: 'right', divider: true, width: '14%', excelColWidth:'20' },
-      { text: 'Dikunjungi', value: 'visited', align: 'right', divider: true, width: '14%', excelColWidth:'20' },
-      { text: 'Bertransaksi', value: 'scheduledInvoiced', align: 'right', divider: true, width: '14%', excelColWidth:'20' },
-      { text: 'Tdk. Dijadwalkan', value: 'unscheduled', align: 'right', divider: true, width: '14%', excelColWidth:'20' },
-      { text: 'Tdk Dijadwalkan & Bertransaksi', value: 'unscheduledInvoiced', align: 'right', width: '14%', excelColWidth:'20' }
+      { text: 'Tanggal', value: 'date', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+      { text: 'Penjual', value: 'salesmanName', divider: true, width: '300', excelColWidth:'50' },
+      { text: 'Dijadwalkan', value: 'scheduled', align: 'right', divider: true, width: '100', excelColWidth:'18' },
+      { text: 'Dikunjungi', value: 'visited', align: 'right', divider: true, width: '100', excelColWidth:'18' },
+      { text: 'Bertransaksi', value: 'scheduledInvoiced', align: 'right', divider: true, width: '100', excelColWidth:'18' },
+      { text: 'Tdk. Dijadwalkan', value: 'unscheduled', align: 'right', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Tdk Dijadwalkan & Bertransaksi', value: 'unscheduledInvoiced', align: 'right', width: '100', excelColWidth:'32' }
     ],
     employees: [],
     data: {},
     exportFilter:{
       fields : [
-        {text: 'Penjualan', value: 'sales'},
         {text: 'Tanggal Mulai', value: 'startDate'},
-        {text: 'Tanggal Akhir', value: 'endDate'}
+        {text: 'Tanggal Akhir', value: 'endDate'},
+        {text: 'Penjual', value: 'sales'}
       ],
       operator: [{ text: 'Sama dgn.', value: 'eq'}],
       searches: []
@@ -347,11 +348,6 @@ export default {
     },
     appendFilter() {
       this.exportFilter.searches = []
-      const searchSls = {
-        field: 'salesId',
-        keyword: '',
-        operator: 'eq'
-      }
       const searchStartDate = {
         field: 'startDate',
         keyword: '',
@@ -362,11 +358,10 @@ export default {
         keyword: '',
         operator: 'eq'
       }
-
-      const emp = this.employees.find(x => x.id === this.data.salesId)
-      if (emp) {
-        searchSls.keyword = emp.firstName
-        this.exportFilter.searches.push(searchSls)
+      const searchSls = {
+        field: 'sales',
+        keyword: '',
+        operator: 'eq'
       }
 
       searchStartDate.keyword = this.data.startDate ? format(parseISO(this.data.startDate), 'dd-MMM-yyyy') : ''
@@ -375,6 +370,12 @@ export default {
       searchEndDate.keyword = this.data.endDate ? format(parseISO(this.data.endDate), 'dd-MMM-yyyy') : ''
       if (searchEndDate.keyword !== '') {
         this.exportFilter.searches.push(searchEndDate)
+      }
+
+      const emp = this.employees.find(x => x.id === this.data.salesId)
+      if (emp) {
+        searchSls.keyword = `${emp.initial} - ${emp.firstName}`
+        this.exportFilter.searches.push(searchSls)
       }
     },
     clearTable() {
