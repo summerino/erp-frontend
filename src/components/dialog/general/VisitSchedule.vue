@@ -364,7 +364,7 @@
             v-if="selected.length > 0"
             text
             @click="chooseCust"
-          >Pilih Pelanggan</v-btn>
+          >Simpan</v-btn>
         </v-toolbar-items>
           <v-btn
             icon
