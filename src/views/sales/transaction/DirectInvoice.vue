@@ -1714,7 +1714,7 @@ export default {
       }
     },
     discPercentChange() {
-      this.data.finalDisc = Math.round(this.data.dpp * (this.data.finalDiscPercent / 100))
+      this.data.finalDisc = this.data.dpp * (this.data.finalDiscPercent / 100)
       this.calcGrandTotal()
     },
     discChange() {
@@ -1729,8 +1729,8 @@ export default {
     },
     calcPrice() {
       this.data.subTotal = _sumBy(this.gridItem.data, 'total')
-      this.data.taxAmount = Math.round(_sumBy(this.gridItem.data, 'totTax'))
-      this.data.dpp = Math.round(_sumBy(this.gridItem.data, 'totDPP')) - this.data.finalDisc
+      this.data.taxAmount = _sumBy(this.gridItem.data, 'totTax')
+      this.data.dpp = _sumBy(this.gridItem.data, 'totDPP') - this.data.finalDisc
       this.calcGrandTotal()
     },
     calcGrandTotal() {
