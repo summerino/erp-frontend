@@ -354,8 +354,10 @@
                               :value="formatChequeDate"
                               label="Tanggal Cek"
                               class="mt-0"
+                              clearable
                               readonly
                               required
+                              @click:clear="data.chequeDate = null"
                             ></v-text-field>
                           </template>
                           <v-date-picker
