@@ -596,26 +596,50 @@
                     >
                       <v-card>
                         <v-app-bar dense flat>
-                          <v-spacer></v-spacer>
-                          <v-tooltip bottom>
-                            <template v-slot:activator="{ on, attrs }">
-                              <v-btn
-                                v-bind="attrs"
-                                v-on="on"
-                                v-shortkey="['ctrl', 'alt', 'i']"
-                                :disabled="data.mark === 'CMP' || data.mark === 'V'"
-                                class="blue--text"
-                                small
-                                tile
-                                @click="addItemInvoice"
-                                @shortkey="addItemInvoice"
-                              >
-                                <v-icon left>mdi-plus</v-icon>
-                                Tambah
-                              </v-btn>
-                            </template>
-                            <span class="text-caption">(Ctrl + Alt + I)</span>
-                          </v-tooltip>
+                          <v-row no-gutters>
+                            <v-col cols="11" class="text-right">
+                              <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-btn
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    v-shortkey="['ctrl', 'alt', 'd']"
+                                    :disabled="data.mark === 'CMP' || data.mark === 'V'"
+                                    class="blue--text"
+                                    small
+                                    tile
+                                    @click="addAllInvoice"
+                                    @shortkey="addAllInvoice"
+                                  >
+                                    <v-icon left>mdi-plus</v-icon>
+                                    Tambah Semua Faktur
+                                  </v-btn>
+                                </template>
+                                <span class="text-caption">(Ctrl + Alt + D)</span>
+                              </v-tooltip>
+                            </v-col>
+                            <v-col cols="1" class="text-right">
+                              <v-tooltip bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-btn
+                                    v-bind="attrs"
+                                    v-on="on"
+                                    v-shortkey="['ctrl', 'alt', 'i']"
+                                    :disabled="data.mark === 'CMP' || data.mark === 'V'"
+                                    class="blue--text"
+                                    small
+                                    tile
+                                    @click="addItemInvoice"
+                                    @shortkey="addItemInvoice"
+                                  >
+                                    <v-icon left>mdi-plus</v-icon>
+                                    Tambah
+                                  </v-btn>
+                                </template>
+                                <span class="text-caption">(Ctrl + Alt + I)</span>
+                              </v-tooltip>
+                            </v-col>
+                          </v-row>
                         </v-app-bar>
 
                         <v-card-text>
@@ -1462,6 +1486,44 @@ export default {
       for (let i = 0; i < this.gridInvoice.data.length; i++) {
         this.listInvCode.push(this.gridInvoice.data[i].invCode)
       }
+    },
+    addAllInvoice() {
+      api.getAll(this.endpoint.sales.invoice, {
+        params: { 
+          filters: JSON.stringify([{
+            field: 'mark',
+            operator: 'contains',
+            keyword: ['A', 'CMP', 'PP']
+          }]),
+          sorts: JSON.stringify([{
+            field: 'code',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          const data = response.data.tableData.filter(x => this.listCustCode.includes(x.custCode) && !this.listInvCode.includes(x.code))
+          for (let i = 0; i < data.length; i++) {
+            if (this.gridInvoice.data.length === 0 || (this.gridInvoice.data.slice(-1)[0]?.invCode ?? null)) {
+              const item = {
+                id: randomNumber(-1, -1000),
+                invCode: null,
+                failCollect: null,
+                notesFailCollect: null,
+                customerName: null,
+                transactionDate: null,
+                invoiceDueDate: null,
+                salesName: null,
+                total: 0,
+                state: 'A'
+              }
+              item.invCode = data[i].code
+              item.customerName = data[i].custName
+              this.invCodeChange(item)
+              this.gridInvoice.data.push(item)
+            }
+          }
+        })
     }
   }
 }
