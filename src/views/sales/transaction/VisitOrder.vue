@@ -1493,7 +1493,7 @@ export default {
           filters: JSON.stringify([{
             field: 'mark',
             operator: 'contains',
-            keyword: ['A', 'CMP', 'PP']
+            keyword: ['A', 'PP']
           }]),
           sorts: JSON.stringify([{
             field: 'code',
