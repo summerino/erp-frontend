@@ -303,7 +303,7 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90', excelColWidth:'10' },
         { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'10' },
-        { text: 'Initial', value: 'initial', divider: true, width: '150', excelColWidth:'15' },
+        { text: 'Inisial', value: 'initial', divider: true, width: '150', excelColWidth:'15' },
         { text: 'Nama', value: 'name', divider: true, width: '200', excelColWidth:'25' },
         { text: 'Alamat', value: 'address', divider: true, width: '200', excelColWidth:'35' },
         { text: 'Telepon', value: 'phone', divider: true, width: '120', excelColWidth:'15' },
