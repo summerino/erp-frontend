@@ -1490,6 +1490,7 @@ export default {
         const resp = await api.create(this.endpoint.sales.directInvoice, data)
         result = resp.data
       } else if (data.action === 'edit') {
+        data.listPromo = this.gridPromo.data
         const resp = await api.update(this.endpoint.sales.directInvoice, data.code, data)
         result = resp.data
       }
