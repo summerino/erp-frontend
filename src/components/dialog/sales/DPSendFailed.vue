@@ -188,6 +188,7 @@ export default {
       },
       notes : null,
       data: [],
+      dataFreeItem: [],
       valid: false
     }
   },
@@ -203,6 +204,7 @@ export default {
     reset() {
       this.grid.data = []
       this.data = []
+      this.dataFreeItem = []
     },
     open(rowItem) {
       this.dialog = true
@@ -211,6 +213,7 @@ export default {
       this.checkAll = rowItem.failedSendAll
       this.reset()
       this.getDetail(rowItem)
+      this.getDetailFree(rowItem)
       setTimeout(() => {
         this.grid.height = this.$refs.dialog.$refs.content.clientHeight - 158
       }, 100)
@@ -236,13 +239,45 @@ export default {
               qty: this.data[i].qty,
               warehouseCode: this.warehouseCode,
               type: 0,
-              unitName: this.data[i].unitName
+              unitName: this.data[i].unitName,
+              detailId: this.data[i].id
             }
-            const uItem = this.rowItem.undeliveredItems.find(x => x.itemId === item.itemId)
+            const uItem = this.rowItem.undeliveredItems.find(x => x.itemId === item.itemId && x.unitId === item.unitId && x.type === 0)
             if (uItem) {
               item.qty = uItem.qty
             }
             this.grid.data.push(item) 
+          }
+        })
+    },
+    getDetailFree(item) {
+      api.getAll(`${this.endpoint.sales.delivery}/free-item`, {
+        params: { 
+          code: 'doCode' in item ? item.doCode : item.transCode
+        }
+      })
+        .then(response => {
+          this.dataFreeItem = response.data.tableData
+          if (this.dataFreeItem.length > 0) {
+            for (let i = 0; i < this.dataFreeItem.length; i++) {
+              const item = {
+                id: randomNumber(-1, -1000),
+                code: this.rowItem.code,
+                itemId: this.dataFreeItem[i].itemId,
+                uomId: this.dataFreeItem[i].uomId,
+                unitId: this.dataFreeItem[i].unitId,
+                qty: this.dataFreeItem[i].qty,
+                warehouseCode: this.warehouseCode,
+                type: 1,
+                unitName: this.dataFreeItem[i].unitName,
+                detailId: this.dataFreeItem[i].id
+              }
+              const uItem = this.rowItem.undeliveredItems.find(x => x.itemId === item.itemId && x.unitId === item.unitId && x.type === 1)
+              if (uItem) {
+                item.qty = uItem.qty
+              }
+              this.grid.data.push(item) 
+            }
           }
         })
     },
