@@ -91,7 +91,8 @@ export default {
   computed: {
     ...mapState({ 
       rules: state => state.app.rules,
-      endpoint: state => state.api.endpoint }),
+      endpoint: state => state.api.endpoint
+    }),
     formatDlvDate() {
       return this.data.dlvDate ? format(parseISO(this.data.dlvDate), 'dd-MMM-yyyy') : ''
     }

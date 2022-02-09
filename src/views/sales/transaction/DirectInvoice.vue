@@ -336,21 +336,6 @@
                       </v-row>
 
                       <v-row no-gutters>
-                        <v-col cols="12">
-                          <v-autocomplete
-                            v-model="data.issuedBy"
-                            :items="employees"
-                            :item-text="item => `${item.initial} - ${item.firstName}`"
-                            :rules="rules.required"
-                            label="Dikeluarkan Oleh"
-                            item-value="id"
-                            class="mt-0"
-                            required
-                          ></v-autocomplete>
-                        </v-col>
-                      </v-row>
-
-                      <v-row no-gutters>
                         <v-col cols="12" md="6">
                           <v-checkbox
                             v-model="data.includeTax"
@@ -1084,7 +1069,6 @@ export default {
       custPhone: null,
       custFax: null,
       warehouseCode: null,
-      issuedBy: null,
       notes: null,
       dpp: 0,
       subTotal: 0,

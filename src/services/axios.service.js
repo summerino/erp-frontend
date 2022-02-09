@@ -26,12 +26,15 @@ class AxiosService {
   update(url, id, data, config) {
     return axios.put(`/${url}/${id}`, data, config)
   }
+
   updatemaster(url, data, config) {
     return axios.put(`/${url}`, data, config)
   }
+
   delete(endpoint, id, config) {
     return axios.delete(`/${endpoint}/${id}`, config)
   }
+
   deletemaster(endpoint, config) {
     return axios.delete(`/${endpoint}`, config)
   }

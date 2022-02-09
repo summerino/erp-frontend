@@ -903,7 +903,6 @@ export default {
         name: '',
         description: '',
         categoryId: '',
-        typeId: 0,
         costOfGoodSold: '',
         valuationMethod: 0,
         stockType: 0,

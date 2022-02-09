@@ -496,21 +496,6 @@
                       eager
                     >
                       <v-row no-gutters>
-                        <v-col cols="12">
-                          <v-autocomplete
-                            v-model="data.issuedBy"
-                            :items="employees"
-                            :item-text="item => `${item.initial} - ${item.firstName}`"
-                            :rules="rules.required"
-                            label="Dikeluarkan Oleh"
-                            item-value="id"
-                            class="mt-0"
-                            required
-                          ></v-autocomplete>
-                        </v-col>
-                      </v-row>
-
-                      <v-row no-gutters>
                         <v-col cols="6">
                           <v-text-field
                             v-model="data.createdInitial"
@@ -910,8 +895,6 @@ export default {
     }, {
       text: 'Kd. Ord. Penjualan', value: 'soCode', dataType: 'text'
     }, {
-      text: 'Dikeluarkan Oleh', value: 'issuedInitial', dataType: 'text'
-    }, {
       text: 'Tgl. Jatuh Tempo', value: 'dueDate', dataType: 'datetime'
     }],
     dialog: {
@@ -937,7 +920,6 @@ export default {
         { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
         { text: 'Nilai Sudah Dibayar', value: 'paidAmount', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
         { text: 'Sisa', value: 'remaining', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
-        { text: 'Dikeluarkan Oleh', value: 'issuedInitial', divider: true, width: '180', excelColWidth:'23' },
         { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'20', isDateTime: true },
         { text: 'Status', value: 'mark', width: '50' }
       ],
@@ -1064,7 +1046,6 @@ export default {
         custAddr: null,
         custPhone: null,
         custFax: null,
-        issuedBy: null,
         curr: 'IDR',
         notes: null,
         paidAmount: 0,
