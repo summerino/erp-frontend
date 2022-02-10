@@ -1068,7 +1068,7 @@ export default {
           filters: JSON.stringify([{
             field: 'type',
             operator: 'eq',
-            keyword: 1
+            keyword: 3
           }]),
           sorts: JSON.stringify([{
             field: 'initial',
