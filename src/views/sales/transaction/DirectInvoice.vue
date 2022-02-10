@@ -1741,6 +1741,9 @@ export default {
       this.data.custAddr = item.address1
       this.data.custPhone = item.phone
       this.data.custFax = item.fax
+      this.data.paymentTermId = item.paymentTermId
+      this.data.custTypeId = item.typeId
+      this.getCustomerAddressesLists(item)
     },
     bindItemData(rowItem) {
       this.itemIdChange(rowItem)
