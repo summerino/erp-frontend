@@ -217,6 +217,38 @@
                 <v-btn
                   v-bind="attrs"
                   v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'i']"
+                  :disabled="isVoid || !auth.allowPrint"
+                  dark
+                  text
+                  @click="print('packing', data)"
+                  @shortkey="print('packing', data)"
+                >Cetak Daftar Pengepakan</v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Alt + I)</span>
+            </v-tooltip>
+            <v-divider vertical></v-divider>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'o']"
+                  :disabled="isVoid || !auth.allowPrint"
+                  dark
+                  text
+                  @click="print('picking', data)"
+                  @shortkey="print('picking', data)"
+                >Cetak Daftar Pengambilan</v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Alt + O)</span>
+            </v-tooltip>
+            <v-divider vertical></v-divider>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
                   v-shortkey="['ctrl', 'enter']"
                   :disabled="isVoid || (data.action === 'edit' && !auth.allowUpdate)"
                   dark

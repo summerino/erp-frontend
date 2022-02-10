@@ -205,6 +205,22 @@
                 <v-btn
                   v-bind="attrs"
                   v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'p']"
+                  :disabled="isVoid || !auth.allowPrint"
+                  dark
+                  text
+                  @click="print(data)"
+                  @shortkey="print(data)"
+                >Cetak</v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Alt + P)</span>
+            </v-tooltip>
+            <v-divider vertical></v-divider>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
                   v-shortkey="['ctrl', 'enter']"
                   :disabled="isVoid || (data.action === 'edit' && !auth.allowUpdate)"
                   dark
