@@ -292,6 +292,11 @@
                           </v-checkbox>
                         </template>
                       </v-data-table>
+                      <v-card-text>
+                        <span >
+                          <span class="red--text">Note: Promo akan dihitung ulang ketika transaksi disimpan dengan syarat dan ketentuan promo yang berlaku.</span>
+                        </span>
+                      </v-card-text>
                     </v-tab-item>
 
                     <v-tab-item
