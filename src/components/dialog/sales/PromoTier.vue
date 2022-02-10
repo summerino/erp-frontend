@@ -40,7 +40,7 @@
                   item-value="id"
                   label="Metode Promo"
                   class="mt-0"
-                  @change="checkIsPercentage()"
+                  @change="checkIsPercentage(); clearItemTier();"
                   >
                   </v-autocomplete>
                 </v-col>
@@ -249,7 +249,7 @@
                           class="text-body-2 text-right mt-0"
                           dense
                           required
-                          @change="checkToQty(item)"
+                          @blur="checkToQty(item)"
                         ></v-currency-field>
                       </template>
                     </v-data-table>
@@ -486,6 +486,10 @@ export default {
           this.gridPayment.data.push(item)
         }  
       }
+
+      setTimeout(() => {
+        this.$refs.form.validate()
+      }, 0)
     },
     async removeItem(item) {
       if (this.data.promoType === 4) {
