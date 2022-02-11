@@ -19,7 +19,8 @@ export default {
     tax: 'tax',
     master: 'master',
     paymentTerm: 'payment-term',
-    approval: 'approval'
+    approval: 'approval',
+    activeTransaction: 'active-transaction'
   },
 
   inventory: {
