@@ -493,7 +493,7 @@
                         <v-col cols="12">
                           <v-autocomplete
                             v-model="data.shippedBy"
-                            :items="employees"
+                            :items="drivers"
                             :item-text="item => `${item.initial} - ${item.firstName}`"
                             :rules="rules.required"
                             label="Dikirim Oleh"
@@ -858,6 +858,7 @@ export default {
     },
     valid: false,
     dataStartDate: null,
+    drivers: [],
     employees: [],
     warehouses: [],
     taxes: [],
@@ -873,6 +874,7 @@ export default {
     this.getEmployeeLists()
     this.getWarehouseLists()
     this.getTaxLists()
+    this.getDriverLists()
     auth.getAction(this.endpoint, this.menuId.salesDelivery)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -1068,7 +1070,7 @@ export default {
           filters: JSON.stringify([{
             field: 'type',
             operator: 'eq',
-            keyword: 3
+            keyword: 1
           }]),
           sorts: JSON.stringify([{
             field: 'initial',
@@ -1078,6 +1080,24 @@ export default {
       })
         .then(response => {
           this.employees = response.data.tableData
+        })
+    },
+    getDriverLists() {
+      api.getAll(`${this.endpoint.general.employee}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'type',
+            operator: 'eq',
+            keyword: 3
+          }]),
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.drivers = response.data.tableData
         })
     },
     getWarehouseLists() {
