@@ -249,7 +249,7 @@
                           class="text-body-2 text-right mt-0"
                           dense
                           required
-                          @blur="checkToQty(item)"
+                          @change="checkToQty(item)"
                         ></v-currency-field>
                       </template>
                     </v-data-table>
@@ -556,7 +556,7 @@ export default {
       this.grid.data.splice(0, this.grid.data.length)
     },
     checkNextHasValue(item) {
-      const indexData = this.grid.data.findIndex(x => x.toQty === item.toQty)
+      const indexData = this.grid.data.findIndex(x => x.id === item.id)
       if (typeof this.grid.data[indexData + 1] === 'undefined') {
         return false
       } else {
