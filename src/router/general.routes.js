@@ -75,4 +75,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/general/active-transaction',
+  name: 'active-transaction',
+  component: () => import(/* webpackChunkName: "active-transaction" */ '@/views/general/transaction/ActiveTransaction.vue'),
+  meta: {
+    authRequired: true
+  }
 }]

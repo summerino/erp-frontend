@@ -10,7 +10,8 @@ export default {
   tax: 26,
   paymentTerm: 57,
   currency: 8,
-  approval:72,
+  approval: 72,
+  activeTransaction: 150,
 
   // Inventory
   item: 28,
