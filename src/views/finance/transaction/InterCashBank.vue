@@ -213,6 +213,38 @@
                 <v-btn
                   v-bind="attrs"
                   v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'i']"
+                  :disabled="isVoid || !auth.allowPrint"
+                  dark
+                  text
+                  @click="print('in', data)"
+                  @shortkey="print('in', data)"
+                >Cetak Kas Bank Masuk</v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Alt + I)</span>
+            </v-tooltip>
+            <v-divider vertical></v-divider>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'o']"
+                  :disabled="isVoid || !auth.allowPrint"
+                  dark
+                  text
+                  @click="print('out', data)"
+                  @shortkey="print('out', data)"
+                >Cetak Kas Bank Keluar</v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Alt + O)</span>
+            </v-tooltip>
+            <v-divider vertical></v-divider>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
                   v-shortkey="['ctrl', 'enter']"
                   :disabled="(data.action === 'edit' && !auth.allowUpdate) || data.mark !== 'A'"
                   dark
