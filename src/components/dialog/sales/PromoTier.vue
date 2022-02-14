@@ -336,7 +336,6 @@
 import { mapState } from 'vuex'
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
-import { clone as _clone} from 'lodash'
 
 export default {
   data: () => ({
@@ -395,7 +394,7 @@ export default {
       this.reset()
       this.dialog = true
       this.items = listItem
-      this.data = _clone(item)
+      this.data = JSON.parse(JSON.stringify((item)))
       if (this.data.promoType === 3) {        
         this.grid.data = this.data.promoTierList
         this.promoMethod = [{ id: 3, name: 'Mendapatkan' }]

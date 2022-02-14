@@ -1105,13 +1105,21 @@ export default {
           itemId: null,
           itemName: null,
           promoType: 0,
-          isPercentage: false,
+          promoTypes: [],
           valuePercentage: 0,
           valueAmount: 0,
+          promoMethod: 0,
+          isPercentage: false,
+          saleUnit: null,
+          applyToAllUnit: false,
+          freeGoodItemId: null,
+          freeItemName: null,
+          unitFreeGood: null,
+          isMultiple: false,
+          promoTierList: [],
           isPromoWithBudget: false,
           budgetMaximumValue: 0,
           overBudgetAction: null,
-          promoTierList: [],
           multipleItem: []
         }
         this.gridItem.data.push(item)
@@ -1135,7 +1143,8 @@ export default {
       this.$refs.findItem.open(item)
     },
     showPromoTierDialog(item) {
-      this.$refs.promoTier.open(item, this.items)
+      const index = this.gridItem.data.findIndex(x => x.id === item.id)
+      this.$refs.promoTier.open(this.gridItem.data[index], this.items)
     },
     applyToChange(item) {
       item.itemId = null
@@ -1244,7 +1253,7 @@ export default {
     saveTier(item) {
       const index = this.gridItem.data.findIndex(x => x.id === item.id)
       if (index >= 0) {
-        this.gridItem.data[index] = item
+        this.gridItem.data[index] = JSON.parse(JSON.stringify(item))
       }
     },
     showPromoMultiDialog(item) {
