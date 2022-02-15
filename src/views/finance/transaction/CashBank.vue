@@ -213,7 +213,7 @@
                   text
                   @click="save(true)"
                   @shortkey="save(true)"
-                  :disabled="(data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="(data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
                 >Simpan & Tutup</v-btn>
               </template>
               <span class="text-caption">(Ctrl + Enter)</span>
@@ -240,7 +240,7 @@
                   v-shortkey="['ctrl', 's']"
                   @click="save(false)"
                   @shortkey="save(false)"
-                  :disabled="(data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="(data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
                 >
                   <v-list-item-title>
                     <v-tooltip bottom>
@@ -630,6 +630,7 @@ import { sumBy as _sumBy } from 'lodash'
 
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
+import activeTrans from '@/services/activeTransaction.service'
 
 import Confirm from '@/components/dialog/Confirm'
 import ReportViewer from '@/components/dialog/ReportViewer'
@@ -716,7 +717,8 @@ export default {
     ],
     coas: [],
     data: {},
-    isShowCheque: false
+    isShowCheque: false,
+    seenByOthers: false
   }),
 
   created: function () {
@@ -890,8 +892,11 @@ export default {
         this.$refs.form.validate()
       }, 0)
     },
-    edit(item) {
+    async edit(item) {
       if (!item) return
+
+      const resp = await activeTrans.locked('CB', item.code)
+      this.seenByOthers = (resp?.data?.message === 'used')
 
       this.dialog.add = true
       this.reset()
@@ -921,7 +926,10 @@ export default {
     async exportExcel() {
       this.exportExcel.export()
     },
-    close() {
+    async close() {
+      if (this.data.action === 'edit') {
+        activeTrans.released('CB', this.data.code)
+      }
       this.dialog.add = false
       this.getList()
     },

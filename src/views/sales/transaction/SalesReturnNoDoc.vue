@@ -209,7 +209,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="isVoid || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
                   dark
                   text
                   @click="save(true)"
@@ -238,7 +238,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="isVoid || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -928,6 +928,7 @@ import { sumBy as _sumBy } from 'lodash'
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
+import activeTrans from '@/services/activeTransaction.service'
 
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
@@ -1036,7 +1037,8 @@ export default {
     taxes: [],
     items: [],
     data: {},
-    customers: []
+    customers: [],
+    seenByOthers: false
   }),
 
   created: function () {
@@ -1331,7 +1333,10 @@ export default {
           item.units = response.data.tableData
         })
     },
-    close() {
+    async close() {
+      if (this.data.action === 'edit') {
+        activeTrans.released('SR', this.data.code)
+      }
       this.dialog.add = false
     },
     add() {
@@ -1351,8 +1356,11 @@ export default {
         this.$refs.form.validate()
       }, 0)
     },
-    edit(item) {
+    async edit(item) {
       if (!item) return
+            
+      const resp = await activeTrans.locked('SR', item.code)
+      this.seenByOthers = (resp?.data?.message === 'used')
 
       this.dialog.add = true
       this.reset()

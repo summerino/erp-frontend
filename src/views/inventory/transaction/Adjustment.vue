@@ -174,7 +174,7 @@
                   text
                   @click="save(true)"
                   @shortkey="save(true)"
-                  :disabled="data.action === 'edit' && !auth.allowUpdate"
+                  :disabled="data.action === 'edit' && (!auth.allowUpdate || seenByOthers)"
                 >Simpan & Tutup</v-btn>
               </template>
               <span class="text-caption">(Ctrl + Enter)</span>
@@ -201,7 +201,7 @@
                   v-shortkey="['ctrl', 's']"
                   @click="save(false)"
                   @shortkey="save(false)"
-                  :disabled="data.action === 'edit' && !auth.allowUpdate"
+                  :disabled="data.action === 'edit' && (!auth.allowUpdate || seenByOthers)"
                 >
                   <v-list-item-title>
                     <v-tooltip bottom>
@@ -575,6 +575,7 @@ import { format, parseISO }  from 'date-fns'
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
+import activeTrans from '@/services/activeTransaction.service'
 
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
@@ -653,7 +654,8 @@ export default {
     warehouses: [],
     uoms: [],
     showItemDisabled: false,
-    userInfo: {}
+    userInfo: {},
+    seenByOthers: false
   }),
 
   created: function () {
@@ -825,7 +827,10 @@ export default {
           this.warehouses = response.data.tableData
         })
     },
-    back() {
+    async back() {
+      if (this.data.action === 'edit') {
+        activeTrans.released('ADJ', this.data.code)
+      }
       this.main = true
     },
     add() {
@@ -890,8 +895,12 @@ export default {
         }, 0)
       }
     },
-    edit(item) {
+    async edit(item) {
       if (!item) return
+
+      const resp = await activeTrans.locked('ADJ', item.code)
+      this.seenByOthers = (resp?.data?.message === 'used')
+
       this.isButtonShowItemDisabled()
       this.dialog.add = true
       this.reset()

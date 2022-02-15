@@ -272,7 +272,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="isVoid || hasRelatedTrans || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || hasRelatedTrans || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
                   dark
                   text
                   @click="save(true)"
@@ -303,7 +303,7 @@
                   v-shortkey="['ctrl', 's']"
                   @click="save(false)"
                   @shortkey="save(false)"
-                  :disabled="isVoid || hasRelatedTrans || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || hasRelatedTrans || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
                 >
                   <v-list-item-title>
                     <v-tooltip bottom>
@@ -868,6 +868,7 @@ import { sumBy as _sumBy } from 'lodash'
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
+import activeTrans from '@/services/activeTransaction.service'
 
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
@@ -983,7 +984,8 @@ export default {
     employees: [],
     dlvOrders: [],
     paymentTerms: [],
-    data: {}
+    data: {},
+    seenByOthers: false
   }),
 
   created: function () {
@@ -1196,7 +1198,10 @@ export default {
           }
         })
     },
-    close() {
+    async close() {
+      if (this.data.action === 'edit') {
+        activeTrans.released('SI', this.data.code)
+      }
       this.dialog.add = false
     },
     add(fromDI = false) {
@@ -1221,8 +1226,11 @@ export default {
         this.$refs.form.validate()
       }, 0)
     },
-    edit(item) {
+    async edit(item) {
       if (!item) return
+            
+      const resp = await activeTrans.locked('SI', item.code)
+      this.seenByOthers = (resp?.data?.message === 'used')
 
       if (item.fromDirectInvoice) {
         this.$router.push({
