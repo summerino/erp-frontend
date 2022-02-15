@@ -203,7 +203,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="isVoid || isComplete || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || isComplete || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
                   dark
                   text
                   @click="save(true, false)"
@@ -232,7 +232,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="isVoid || isComplete || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || isComplete || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
                   @click="save(false, false)"
                   @shortkey="save(false, false)"
                 >
@@ -253,7 +253,7 @@
                 <v-list-item
                   v-if="isTypeIn === 'OUT'"
                   v-shortkey="['ctrl', 'alt', 's']"
-                  :disabled="isVoid || isComplete || hasRelatedTrans"
+                  :disabled="isVoid || isComplete || hasRelatedTrans || seenByOthers"
                   @click="save(false, true)"
                   @shortkey="save(false, true)"
                 >
@@ -705,6 +705,7 @@ import { format, parseISO } from 'date-fns'
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
+import activeTrans from '@/services/activeTransaction.service'
 
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
@@ -801,7 +802,8 @@ export default {
     typeRef: [{ value: 'OUT', text: 'Barang Keluar' }, { value: 'IN', text: 'Barang Masuk' }, { value: 'DT', text: 'Transfer Langsung' }],
     warehouseRef: [],
     items: [],
-    data: {}
+    data: {},
+    seenByOthers: false
   }),
 
   created: function () {
@@ -945,7 +947,10 @@ export default {
           this.dataStartDate = response.data.tableData[0].value
         })
     },
-    close() {
+    async close() {
+      if (this.data.action === 'edit') {
+        activeTrans.released('TS', this.data.code)
+      }
       this.dialog.add = false
     },
     add() {
@@ -962,8 +967,11 @@ export default {
         this.$refs.form.validate()
       }, 0)
     },
-    edit(item) {
+    async edit(item) {
       if (!item) return
+      
+      const resp = await activeTrans.locked('TS', item.code)
+      this.seenByOthers = (resp?.data?.message === 'used')
 
       this.dialog.add = true
       this.reset()

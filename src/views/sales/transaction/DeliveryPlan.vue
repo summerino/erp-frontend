@@ -250,7 +250,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="isVoid || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
                   dark
                   text
                   @click="save(true)"
@@ -279,7 +279,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="isVoid || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -739,6 +739,7 @@ import { sumBy as _sumBy } from 'lodash'
 
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
+import activeTrans from '@/services/activeTransaction.service'
 
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
@@ -837,7 +838,8 @@ export default {
     vehicles: [],
     warehouses: [],
     listCode: [],
-    orderData: []
+    orderData: [],
+    seenByOthers: false
   }),
 
   created: function () {
@@ -1080,7 +1082,10 @@ export default {
 
         })
     },
-    close() {
+    async close() {
+      if (this.data.action === 'edit') {
+        activeTrans.released('DP', this.data.code)
+      }
       this.dialog.add = false
     },
     add() {
@@ -1097,8 +1102,11 @@ export default {
         this.$refs.form.validate()
       }, 0)
     },
-    edit(item) {
+    async edit(item) {
       if (!item) return
+            
+      const resp = await activeTrans.locked('DP', item.code)
+      this.seenByOthers = (resp?.data?.message === 'used')
 
       this.dialog.add = true
       this.reset()

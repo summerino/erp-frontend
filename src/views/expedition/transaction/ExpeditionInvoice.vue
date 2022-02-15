@@ -215,7 +215,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="isVoid || hasRelatedTrans || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || hasRelatedTrans || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
                   dark
                   text
                   @click="save(true)"
@@ -244,7 +244,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="isVoid || hasRelatedTrans || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || hasRelatedTrans || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -676,6 +676,7 @@ import { randomNumber } from '@/helpers/math-helpers'
 
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
+import activeTrans from '@/services/activeTransaction.service'
 
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
@@ -754,7 +755,8 @@ export default {
     deliveries: [],
     receives: [],
     suppliers: [],
-    data: {}
+    data: {},
+    seenByOthers: false
   }),
 
   created: function () {
@@ -909,8 +911,11 @@ export default {
         this.data.supFax = supplier.fax
       }
     },
-    edit(item) {
+    async edit(item) {
       if (!item) return
+            
+      const resp = await activeTrans.locked('EI', item.code)
+      this.seenByOthers = (resp?.data?.message === 'used')
 
       this.dialog.add = true
       this.reset()
@@ -974,7 +979,10 @@ export default {
     async exportExcel() {
       this.exportExcel.export()
     },
-    close() {
+    async close() {
+      if (this.data.action === 'edit') {
+        activeTrans.released('EI', this.data.code)
+      }
       this.dialog.add = false
     },
     add() {

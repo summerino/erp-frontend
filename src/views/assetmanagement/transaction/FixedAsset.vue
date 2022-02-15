@@ -177,7 +177,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="(data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="(data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
                   dark
                   text
                   @click="save(true)"
@@ -206,7 +206,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="(data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="(data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -721,6 +721,7 @@ import { format, parseISO } from 'date-fns'
 
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
+import activeTrans from '@/services/activeTransaction.service'
 
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
@@ -822,7 +823,8 @@ export default {
     }, {
       text: 'StraightLine',
       value: 2
-    }]
+    }],
+    seenByOthers: false
   }),
 
   created: function () {
@@ -1031,7 +1033,10 @@ export default {
           this.gridHistory.data = response.data.tableData
         })
     }, 
-    close() {
+    async close() {
+      if (this.data.action === 'edit') {
+        activeTrans.released('FA', this.data.code)
+      }
       this.dialog.add = false
     },
     add() {
@@ -1048,8 +1053,11 @@ export default {
         this.$refs.form.validate()
       }, 0)
     },
-    edit(item) {
+    async edit(item) {
       if (!item) return
+
+      const resp = await activeTrans.locked('FA', item.code)
+      this.seenByOthers = (resp?.data?.message === 'used')
 
       this.dialog.add = true
       this.reset()

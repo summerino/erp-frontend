@@ -246,7 +246,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="(data.action === 'edit' && !auth.allowUpdate) || data.mark !== 'A'"
+                  :disabled="(data.action === 'edit' && (!auth.allowUpdate || seenByOthers)) || data.mark !== 'A'"
                   dark
                   text
                   @click="save(true)"
@@ -276,7 +276,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="(data.action === 'edit' && !auth.allowUpdate) || data.mark !== 'A'"
+                  :disabled="(data.action === 'edit' && (!auth.allowUpdate || seenByOthers)) || data.mark !== 'A'"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -632,6 +632,7 @@ import { format, parseISO }  from 'date-fns'
 
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
+import activeTrans from '@/services/activeTransaction.service'
 
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
@@ -693,7 +694,8 @@ export default {
     coaRef: [],
     itemDetails: [],
     data: {},
-    details: {}
+    details: {},
+    seenByOthers: false
   }),
 
   created: function () {
@@ -852,7 +854,10 @@ export default {
           this.dataStartDate = response.data.tableData[0].value
         })
     },
-    close() {
+    async close() {
+      if (this.data.action === 'edit') {
+        activeTrans.released('ICB', this.data.code)
+      }
       this.dialog.add = false
     },
     add() {
@@ -872,6 +877,9 @@ export default {
     },
     async edit(item) {
       if (!item) return
+
+      const resp = await activeTrans.locked('ICB', item.code)
+      this.seenByOthers = (resp?.data?.message === 'used')
 
       this.dialog.add = true
       this.reset()

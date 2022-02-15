@@ -175,7 +175,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="isVoid || !auth.allowUpdate"
+                  :disabled="isVoid || (!auth.allowUpdate || seenByOthers)"
                   dark
                   text
                   @click="save(true)"
@@ -204,7 +204,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="isVoid || !auth.allowUpdate"
+                  :disabled="isVoid || (!auth.allowUpdate || seenByOthers)"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -531,6 +531,7 @@ import { sumBy as _sumBy } from 'lodash'
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
+import activeTrans from '@/services/activeTransaction.service'
 
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
@@ -588,7 +589,8 @@ export default {
     valid: false,
     dataStartDate: null,
     accounts: [],
-    data: {}
+    data: {},
+    seenByOthers: false
   }),
 
   created: function () {
@@ -721,6 +723,9 @@ export default {
     async edit(item) {
       if (!item) return
 
+      const resp = await activeTrans.locked('GEN-JR', item.code)
+      this.seenByOthers = (resp?.data?.message === 'used')
+
       this.dialog.add = true
       this.reset()
 
@@ -758,7 +763,10 @@ export default {
     async exportExcel() {
       this.exportExcel.export()
     },
-    close() {
+    async close() {
+      if (this.data.action === 'edit') {
+        activeTrans.released('GEN-JR', this.data.code)
+      }
       this.dialog.add = false
     },
     add() {

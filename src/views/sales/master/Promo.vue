@@ -141,7 +141,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="isVoid || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
                   dark
                   text
                   @click="save(true)"
@@ -170,7 +170,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="isVoid || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -715,6 +715,7 @@ import { format, parseISO } from 'date-fns'
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
+import activeTrans from '@/services/activeTransaction.service'
 
 import Confirm from '@/components/dialog/Confirm'
 import FindItem from '@/components/dialog/inventory/FindItem'
@@ -790,7 +791,8 @@ export default {
     itemCategories: [],
     listCode: [],
     suppliers: [],
-    valid: false
+    valid: false,
+    seenByOthers: false
   }),
 
   created: function () {
@@ -962,7 +964,10 @@ export default {
           this.itemCategories = response.data.tableData
         })
     },
-    close() {
+    async close() {
+      if (this.data.action === 'edit') {
+        activeTrans.released('PROMO', this.data.code)
+      }
       this.dialog.add = false
     },
     add() {
@@ -979,9 +984,11 @@ export default {
         this.$refs.form.validate()
       }, 0)
     },
-    edit(item) {
-      
+    async edit(item) {
       if (!item) return
+            
+      const resp = await activeTrans.locked('PROMO', item.code)
+      this.seenByOthers = (resp?.data?.message === 'used')
 
       this.dialog.add = true
       this.reset()

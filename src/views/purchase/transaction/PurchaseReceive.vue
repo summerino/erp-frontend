@@ -203,7 +203,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="isVoid || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
                   dark
                   text
                   @click="save(true)"
@@ -232,7 +232,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="isVoid || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -254,7 +254,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 'alt', 'i']"
-                  :disabled="isSaveNInvoiceAble || !allowInsertPurchaseInvoice || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isSaveNInvoiceAble || !allowInsertPurchaseInvoice || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
                   @click="saveInv()"
                   @shortkey="saveInv()"
                 >
@@ -754,6 +754,7 @@ import { sumBy as _sumBy } from 'lodash'
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
+import activeTrans from '@/services/activeTransaction.service'
 
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
@@ -850,6 +851,7 @@ export default {
     items: [],
     warehouses: [],
     data: {},
+    seenByOthers: false,
     allowInsertPurchaseInvoice: false,
     apRecogTime: null
   }),
@@ -1110,7 +1112,10 @@ export default {
           this.warehouses = response.data.tableData
         })
     },
-    close() {
+    async close() {
+      if (this.data.action === 'edit') {
+        activeTrans.released('RCV', this.data.code)
+      }
       this.dialog.add = false
     },
     add() {
@@ -1127,8 +1132,11 @@ export default {
         this.$refs.form.validate()
       }, 0)
     },
-    edit(item) {
+    async edit(item) {
       if (!item) return
+
+      const resp = await activeTrans.locked('RCV', item.code)
+      this.seenByOthers = (resp?.data?.message === 'used')
 
       this.dialog.add = true
       this.reset()

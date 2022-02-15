@@ -45,7 +45,7 @@
                   v-shortkey="['ctrl', 'enter']"
                   dark
                   text
-                  :disabled="isVoid || hasRelatedTrans || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || hasRelatedTrans || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
                   @click="save(true)"
                   @shortkey="save(true)"
                 >Simpan & Tutup</v-btn>
@@ -74,7 +74,7 @@
                   v-shortkey="['ctrl', 's']"
                   @click="save(false)"
                   @shortkey="save(false)"
-                  :disabled="isVoid || hasRelatedTrans || (data.action === 'edit' && !auth.allowUpdate)"
+                  :disabled="isVoid || hasRelatedTrans || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
                 >
                   <v-list-item-title>
                     <v-tooltip bottom>
@@ -986,6 +986,7 @@ import { sumBy as _sumBy } from 'lodash'
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
+import activeTrans from '@/services/activeTransaction.service'
 
 import Confirm from '@/components/dialog/Confirm'
 import FindCustomer from '@/components/dialog/general/FindCustomer'
@@ -1098,7 +1099,8 @@ export default {
       includeTax: false,
       taxAmount: 0,
       total: 0
-    }
+    },
+    seenByOthers: false
   }),
 
   created: function () {
@@ -1376,6 +1378,9 @@ export default {
         const resp = await api.getOne(this.endpoint.sales.directInvoice, this.$route.params.code)
 
         if (!resp.data) return
+                    
+        const activeResp = await activeTrans.locked('SI', resp.data.code)
+        this.seenByOthers = (activeResp?.data?.message === 'used')
 
         this.data = {
           ...resp.data,
@@ -1452,7 +1457,10 @@ export default {
         this.$refs.code.focus()
       }, 0)
     },
-    close() {
+    async close() {
+      if (this.$route.params.action.toLowerCase() === 'edit') {
+        activeTrans.released('SI', this.data.code)
+      }
       this.$router.push({ name: 'sales-invoice' })
     },
     async remove(item) {
