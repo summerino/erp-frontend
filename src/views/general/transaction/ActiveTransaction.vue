@@ -92,6 +92,9 @@
         v-model="selected"
         show-select
       >
+        <template v-slot:[`item.viewedDate`]="{ item }">
+          {{ item.viewedDate | formatDate('dd-MMM-yyyy HH:mm:ss') }}
+        </template>
       </v-data-table>
     </v-card>
     <confirm ref="confirm"></confirm>
@@ -125,6 +128,8 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '10' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'18' },
+        { text: 'Dilihat Oleh', value: 'userName', divider: true, width: '160', excelColWidth:'18' },
+        { text: 'Tanggal dan Jam', value: 'viewedDate', align: 'right', divider: true, width: '180', excelColWidth:'20', isDateTime: true },
         { text: 'Sumber Transaksi', value: 'srcName', width: '200', excelColWidth:'25' }
       ],
       data: [],

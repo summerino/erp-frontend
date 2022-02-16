@@ -614,7 +614,7 @@
                               <template v-slot:[`item.isFailShipment`]="{ item }">
                                 <v-checkbox
                                   v-model="item.isFailShipment"
-                                  :readonly="hasRelatedTrans"
+                                  readonly
                                 ></v-checkbox>
                               </template>
                             </v-data-table>
