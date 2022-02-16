@@ -1379,7 +1379,7 @@ export default {
 
         if (!resp.data) return
                     
-        const activeResp = await activeTrans.locked('SI', resp.data.code)
+        const activeResp = await activeTrans.locked('DI', resp.data.code)
         this.seenByOthers = (activeResp?.data?.message === 'used')
 
         this.data = {
@@ -1459,7 +1459,7 @@ export default {
     },
     async close() {
       if (this.$route.params.action.toLowerCase() === 'edit') {
-        activeTrans.released('SI', this.data.code)
+        activeTrans.released('DI', this.data.code)
       }
       this.$router.push({ name: 'sales-invoice' })
     },
