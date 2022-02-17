@@ -1997,7 +1997,7 @@ export default {
       this.calcGrandTotal()
     },
     discChange() {
-      this.data.finalDiscPercent = this.data.finalDisc / this.data.dpp * 100
+      this.data.finalDiscPercent = 0
       this.calcGrandTotal()
     },
     calcTax() {
