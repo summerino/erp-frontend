@@ -206,7 +206,7 @@
           max-height="64"
           dark
         >
-          <v-btn icon dark @click="dialog.add = false">
+          <v-btn icon dark @click="close">
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-toolbar-title>Rencana Pengiriman</v-toolbar-title>
