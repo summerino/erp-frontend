@@ -243,10 +243,13 @@ export default {
               detailId: this.data[i].id
             }
             const uItem = this.rowItem.undeliveredItems.find(x => x.itemId === item.itemId && x.unitId === item.unitId && x.type === 0)
-            if (uItem) {
+            if (uItem && this.rowItem.id > 0) {
+              item.id = uItem.id
               item.qty = uItem.qty
+              this.grid.data.push(item) 
+            } else if (this.rowItem.id < 0) {
+              this.grid.data.push(item) 
             }
-            this.grid.data.push(item) 
           }
         })
     },
@@ -273,11 +276,15 @@ export default {
                 detailId: this.dataFreeItem[i].id
               }
               const uItem = this.rowItem.undeliveredItems.find(x => x.itemId === item.itemId && x.unitId === item.unitId && x.type === 1)
-              if (uItem) {
+              if (uItem && this.rowItem.id > 0) {
+                item.id = uItem.id
                 item.qty = uItem.qty
+                this.grid.data.push(item) 
+              } else if (this.rowItem.id < 0) {
+                this.grid.data.push(item) 
               }
-              this.grid.data.push(item) 
             }
+            this.data.push(this.dataFreeItem)
           }
         })
     },
