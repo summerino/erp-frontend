@@ -1057,7 +1057,7 @@ export default {
           this.grid.data = response.data.tableData
           this.grid.total = response.data.rowCount
           if (bindToForm) {
-            const item = this.grid.data.find(h => h.initial === this.data.initial)
+            const item = this.grid.data.find(h => h.code === this.data.code)
             this.edit(item)
           }
         })
@@ -1165,7 +1165,7 @@ export default {
         const resp = await api.create(this.endpoint.sales.visitOrder, data)
         result = resp.data
       } else if (data.action === 'edit') {
-        const resp = await api.update(this.endpoint.sales.visitOrder, data.id, data)
+        const resp = await api.update(this.endpoint.sales.visitOrder, data.code, data)
         result = resp.data
       }
 
