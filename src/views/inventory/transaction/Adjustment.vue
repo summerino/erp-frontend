@@ -987,7 +987,10 @@ export default {
         this.getList(!closeDialog)
       }
     },
-    close() {
+    async close() {
+      if (this.data.action === 'edit') {
+        activeTrans.released('ADJ', this.data.code)
+      }
       this.reset()
       this.dialog.add = false
     },
