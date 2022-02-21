@@ -214,7 +214,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'alt', 'i']"
-                  :disabled="isVoid || !auth.allowPrint"
+                  :disabled="!auth.allowPrint"
                   dark
                   text
                   @click="print('in', data)"
@@ -230,7 +230,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'alt', 'o']"
-                  :disabled="isVoid || !auth.allowPrint"
+                  :disabled="!auth.allowPrint"
                   dark
                   text
                   @click="print('out', data)"
@@ -995,6 +995,7 @@ export default {
       }
     },
     setDetail(data) {
+      this.itemDetails = []
       for (let i = 1; i <= 2; i++) {
         this.itemDetails.push({
           code: (i === 2) ? this.details.transCode : data.code,

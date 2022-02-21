@@ -193,7 +193,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'alt', 'p']"
-                  :disabled="isVoid || !auth.allowPrint"
+                  :disabled="!auth.allowPrint"
                   dark
                   text
                   @click="print(data)"
