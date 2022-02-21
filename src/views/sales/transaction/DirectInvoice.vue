@@ -1728,7 +1728,7 @@ export default {
       }
     },
     discPercentChange() {
-      this.data.finalDisc = this.data.dpp * (this.data.finalDiscPercent / 100)
+      this.data.finalDisc = (this.data.dpp + _sumBy(this.gridItem.data, 'totFDH')) * (this.data.finalDiscPercent / 100)
       this.calcGrandTotal()
     },
     discChange() {
