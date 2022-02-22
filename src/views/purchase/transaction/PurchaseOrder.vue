@@ -770,7 +770,8 @@
                             label="Persen Diskon"
                             suffix="%"
                             class="text-right mt-0"
-                            @blur="discPercentChange()"
+                            @focus="data.oldFinalDiscPercent = data.finalDiscPercent"
+                            @blur="discPercentBlur()"
                           ></v-currency-field>
                         </v-col>
                         <v-col cols="8" class="pl-1">
@@ -780,7 +781,8 @@
                             :readonly="hasRelatedTrans"
                             label="Diskon Final"
                             class="text-right mt-0"
-                            @blur="discChange()"
+                            @focus="data.oldFinalDisc = data.finalDisc"
+                            @blur="discBlur()"
                           ></v-currency-field>
                         </v-col>
                       </v-row>
@@ -1130,6 +1132,8 @@ export default {
         notes: null,
         dpp: 0,
         subTotal: 0,
+        oldFinalDiscPercent: 0,
+        oldFinalDisc: 0,
         finalDiscPercent: 0,
         finalDisc: 0,
         includeTax: this.defTaxInc,
@@ -1683,13 +1687,17 @@ export default {
         this.calcPrice()
       }
     },
-    discPercentChange() {
-      this.data.finalDisc = (this.data.action === 'edit' ? (this.data.dpp + _sumBy(this.gridItem.data, 'totFDH')) : this.data.dpp) * (this.data.finalDiscPercent / 100)
-      this.calcGrandTotal()
+    discPercentBlur() {
+      if (this.data.oldFinalDiscPercent > 0 || this.data.finalDiscPercent > 0) {
+        this.data.finalDisc = (this.data.action === 'edit' ? (this.data.dpp + _sumBy(this.gridItem.data, 'totFDH')) : this.data.dpp) * (this.data.finalDiscPercent / 100)
+        this.calcGrandTotal()
+      }
     },
-    discChange() {
-      this.data.finalDiscPercent = 0
-      this.calcGrandTotal()
+    discBlur() {
+      if (this.data.oldFinalDisc !== this.data.finalDisc) {
+        this.data.finalDiscPercent = 0
+        this.calcGrandTotal()
+      }
     },
     calcTax() {
       for (let i = 0; i < this.gridItem.data.length; i++) {
