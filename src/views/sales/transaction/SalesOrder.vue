@@ -1767,7 +1767,8 @@ export default {
         this.getList(!closeDialog)
       }
     },
-    saveDlv() {
+    async saveDlv() {
+      await document.activeElement.blur()
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
@@ -1780,7 +1781,8 @@ export default {
       this.dialog.add = false
       this.getList()
     },
-    saveInv() {
+    async saveInv() {
+      await document.activeElement.blur()
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
@@ -1993,7 +1995,7 @@ export default {
       }
     },
     discPercentChange() {
-      this.data.finalDisc = (this.data.dpp + _sumBy(this.gridItem.data, 'totFDH')) * (this.data.finalDiscPercent / 100)
+      this.data.finalDisc = (this.data.action === 'edit' ? (this.data.dpp + _sumBy(this.gridItem.data, 'totFDH')) : this.data.dpp) * (this.data.finalDiscPercent / 100)
       this.calcGrandTotal()
     },
     discChange() {
