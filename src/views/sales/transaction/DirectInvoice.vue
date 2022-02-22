@@ -226,7 +226,7 @@
                             item-value="code"
                             class="mt-0"
                             required
-                            @change="changeSeller(); custCodeChange();"
+                            @change="custCodeChange();"
                           ></v-autocomplete>
                         </v-col>
 
