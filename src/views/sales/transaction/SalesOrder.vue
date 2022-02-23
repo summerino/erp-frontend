@@ -1033,14 +1033,14 @@
                       ></v-currency-field>
                     </v-row>
 
-                    <v-row no-gutters>
+                    <!-- <v-row no-gutters>
                       <v-currency-field
                         v-model="data.total"
                         label="Total Keseluruhan"
                         class="text-right mt-0"
                         readonly
                       ></v-currency-field>
-                    </v-row>
+                    </v-row> -->
                   </v-card-text>
                 </v-card>
               </v-col>
@@ -2000,7 +2000,11 @@ export default {
     },
     discPercentBlur() {
       if (this.data.oldFinalDiscPercent > 0 || this.data.finalDiscPercent > 0) {
-        this.data.finalDisc = (this.data.action === 'edit' ? (this.data.dpp + _sumBy(this.gridItem.data, 'totFDH')) : this.data.dpp) * (this.data.finalDiscPercent / 100)
+        if (this.data.includeTax) {
+          this.data.finalDisc = (this.data.action === 'edit' ? (this.data.subTotal + _sumBy(this.gridItem.data, 'totFDH')) : this.data.subTotal) * (this.data.finalDiscPercent / 100)
+        } else {
+          this.data.finalDisc = (this.data.action === 'edit' ? (this.data.dpp + _sumBy(this.gridItem.data, 'totFDH')) : this.data.dpp) * (this.data.finalDiscPercent / 100)
+        }
         this.calcGrandTotal()
       }
     },
@@ -2023,7 +2027,7 @@ export default {
       this.calcGrandTotal()
     },
     calcGrandTotal() {
-      this.data.total = this.data.subTotal - this.data.finalDisc
+      this.data.total = this.data.subTotal
       // if (this.data.includeTax) {
       //   this.data.total = this.data.subTotal - this.data.finalDisc
       // } else {
