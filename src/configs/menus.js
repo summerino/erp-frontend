@@ -44,6 +44,7 @@ export default {
   area: 42,
   salesmanGroup: 58,
   promo: 56,
+  salesmanTarget: 151,
   salesOrder: 44,
   salesDelivery: 45,
   salesInvoice: 46,
