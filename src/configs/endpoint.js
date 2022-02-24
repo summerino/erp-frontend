@@ -58,6 +58,7 @@ export default {
   sales: {
     area: 'area',
     salesman: 'salesman-group',
+    salesmanTarget: 'salesman-target',
     promo: 'promo',
     order: 'sales-order',
     delivery: 'sales-delivery',

@@ -13,6 +13,13 @@ export default [{
     authRequired: true
   }
 }, {
+  path: '/sales/master/salesman-target',
+  name: 'salesman-target',
+  component: () => import(/* webpackChunkName: "salesman-target" */ '@/views/sales/master/SalesmanTarget.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
   path: '/sales/master/promo',
   name: 'promo',
   component: () => import(/* webpackChunkName: "promo" */ '@/views/sales/master/Promo.vue'),
