@@ -220,8 +220,8 @@
                         <v-text-field
                             v-model="data.initial"
                             ref="initial"
-                            :rules="[rules.max20chars[0], rules.required[0]]"
-                            :counter="20"
+                            :rules="[rules.max50chars[0], rules.required[0]]"
+                            :counter="50"
                             class="text-body-2 mt-0"
                             label="Inisial"
                         ></v-text-field>
