@@ -548,7 +548,6 @@
                             <v-currency-field
                               v-model="item.qty"
                               :decimal-length="0"
-                              :min="1"
                               :readonly="hasRelatedTrans"
                               class="text-body-2 text-right mt-0"
                               dense
@@ -1104,7 +1103,8 @@ export default {
       taxAmount: 0,
       total: 0
     },
-    seenByOthers: false
+    seenByOthers: false,
+    dlvDetailData: []
   }),
 
   created: function () {
@@ -1402,6 +1402,13 @@ export default {
         // Get customer details
         this.custCodeChange()
 
+        // Get Delivery Detail
+        const respDetail = await api.getAll(`${this.endpoint.sales.delivery}/item`, {
+          params: { code: resp.data.code }
+        })
+
+        this.dlvDetailData = respDetail.data.tableData
+        
         // Get item details
         api.getAll(`${this.endpoint.sales.order}/item`, {
           params: { code: resp.data.soCode }
@@ -1409,7 +1416,11 @@ export default {
           .then(response => {
             this.gridItem.data = response.data.tableData
             for (let i = 0; i < this.gridItem.data.length; i++) {
-              this.addOldValue(this.gridItem.data[i])
+              const index = this.dlvDetailData.findIndex(x => x.itemId === this.gridItem.data[i].itemId && x.unitId === this.gridItem.data[i].unitId)
+              if (index >= 0) {
+                this.gridItem.data[i].qty = this.dlvDetailData[index].qty
+                this.calcItemPrice(this.gridItem.data[i], true)
+              }
             }
           })
 
