@@ -58,6 +58,7 @@ export default {
   salesDeliveryReport: 146,
   salesInvoiceReport: 147,
   salesReturnReport: 148,
+  salesTargetReport: 153,
   arReport: 93,
   armReport: 132,
   araReport: 134,

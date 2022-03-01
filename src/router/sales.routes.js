@@ -145,4 +145,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/sales/report/sales-target-report',
+  name: 'sales-target-report',
+  component: () => import(/* webpackChunkName: "sales-target-report" */ '@/views/sales/report/SalesmanTargetReport.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
