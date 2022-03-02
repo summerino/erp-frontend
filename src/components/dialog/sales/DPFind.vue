@@ -280,7 +280,7 @@ export default {
           }
         })
           .then(response => {
-            this.grid.data = response.data.tableData.filter(x => !this.listCode.includes(x.code) && new Date(x.date) <= new Date(this.dateTrans) && ((x.type === 'Penjualan Langsung' && x.mark === 'INV') || (x.type === 'Surat Jalan' && x.mark === 'A')))
+            this.grid.data = response.data.tableData.filter(x => !this.listCode.includes(x.code) && new Date(x.date) <= new Date(this.dateTrans) && ((x.type === 'Penjualan Langsung' && x.mark === 'A') || (x.type === 'Surat Jalan' && x.mark === 'A')))
           })
       }
     },
