@@ -1400,7 +1400,7 @@ export default {
         }
 
         // Get customer details
-        this.custCodeChange()
+        this.custCodeChange(true)
 
         // Get Delivery Detail
         const respDetail = await api.getAll(`${this.endpoint.sales.delivery}/item`, {
@@ -1619,14 +1619,16 @@ export default {
         this.gridMemo.data.splice(idx, 1)
       }
     },
-    custCodeChange() {
+    custCodeChange(loadEdit = false) {
       const customer = this.customers.find(s => s.code === this.data.custCode)
       if (customer) {
         this.data.custName = customer.name
         this.data.custAddr = customer.address1
         this.data.custPhone = customer.phone1
         this.data.custFax = customer.fax
-        this.data.paymentTermId = customer.paymentTermId
+        if (!loadEdit) {
+          this.data.paymentTermId = customer.paymentTermId
+        }
         this.data.custTypeId = customer.typeId
 
         const paymentData = this.paymentTerms.find(x => x.id === customer.paymentTermId)
