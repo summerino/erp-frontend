@@ -299,22 +299,22 @@
           </template>
           <template v-slot:[`item.qtyBegin`]="{ item }">
             <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.qtyBegin | formatCurrency({ decimalDigits: 0 }) }}
+              {{ item.qtyBegin | formatCurrency }}
             </span>
           </template>
           <template v-slot:[`item.qtyIn`]="{ item }">
             <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.qtyIn | formatCurrency({ decimalDigits: 0 }) }}
+              {{ item.qtyIn | formatCurrency }}
             </span>
           </template>
           <template v-slot:[`item.qtyOut`]="{ item }">
             <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.qtyOut | formatCurrency({ decimalDigits: 0 }) }}
+              {{ item.qtyOut | formatCurrency}}
             </span>
           </template>
           <template v-slot:[`item.qtyEnd`]="{ item }">
             <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.qtyEnd | formatCurrency({ decimalDigits: 0 }) }}
+              {{ item.qtyEnd | formatCurrency }}
             </span>
           </template>
           <template v-slot:[`item.invBegin`]="{ item }">
