@@ -263,7 +263,7 @@
             :options.sync="grid.options"
             :sort-by="grid.options.sortBy"
             :sort-desc="grid.options.sortDesc"
-            :class="['elevation-1', this.main && this.data.type < 5 ? 'row-pointer' : '']"
+            :class="['elevation-1', this.main ? 'row-pointer' : '']"
             fixed-header
             hide-default-footer
             disable-pagination
