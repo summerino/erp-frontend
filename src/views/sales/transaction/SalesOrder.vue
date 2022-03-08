@@ -371,7 +371,7 @@
                             :min="dataStartDate"
                             no-title
                             scrollable
-                            @change="menu.orderDate = false"
+                            @change="menu.orderDate = false; changeDate();"
                           ></v-date-picker>
                         </v-menu>
                       </v-col>
@@ -1256,12 +1256,6 @@ export default {
     'grid.options': {
       handler() {
         this.getList()
-      },
-      deep: true
-    },
-    'data.date': {
-      handler() {
-        this.getPromoLists()
       },
       deep: true
     }
@@ -2611,6 +2605,9 @@ export default {
           item.discPromo[i].oldValue = cValue
         }
       }
+    },
+    changeDate() {
+      this.gridPromo.data = []
     }
   }
 }
