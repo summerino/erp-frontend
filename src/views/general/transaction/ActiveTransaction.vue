@@ -3,10 +3,10 @@
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row no-gutters>
-          <v-col cols="12" md="2">
+          <v-col cols="12" md="3">
             Transaksi Yang Aktif
           </v-col>
-          <v-col cols="12" md="6">
+          <v-col cols="12" md="5">
             <v-row no-gutters>
               <v-text-field
                 v-model="grid.search"
