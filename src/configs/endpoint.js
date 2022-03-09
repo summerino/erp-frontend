@@ -20,7 +20,8 @@ export default {
     master: 'master',
     paymentTerm: 'payment-term',
     approval: 'approval',
-    activeTransaction: 'active-transaction'
+    activeTransaction: 'active-transaction',
+    dynamicReportTemplate: 'dynamic-report-template'
   },
 
   inventory: {
