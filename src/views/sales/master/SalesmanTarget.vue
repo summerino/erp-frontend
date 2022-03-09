@@ -110,7 +110,7 @@
         <template v-slot:[`item.endDate`]="{ item }">
           {{ item.endDate | formatDate('dd-MMM-yyyy') }}
         </template>
-        <template v-slot:[`item.mark`]="{ item }">
+        <template v-slot:[`item.status`]="{ item }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-chip

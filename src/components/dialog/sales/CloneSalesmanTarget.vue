@@ -29,11 +29,13 @@
           <v-row no-gutters>
             <v-col cols="12">
               <v-text-field
+                ref="name"
                 v-model="data.name"
                 :rules="[rules.required[0], rules.max50chars[0]]"
                 :counter="50"
                 label="Nama Target Penjual"
                 class="mt-0"
+                required
               ></v-text-field>
             </v-col>
           </v-row>
@@ -162,7 +164,9 @@ export default {
       this.dialog = true
       this.data.code = item
       setTimeout(() => {
-        this.$refs.code.focus()
+        this.$refs.name.focus()
+        // Validate form first
+        this.$refs.form.validate()
       }, 0)
     },
     close() {
