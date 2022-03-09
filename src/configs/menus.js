@@ -12,6 +12,7 @@ export default {
   currency: 8,
   approval: 72,
   activeTransaction: 150,
+  dynamicReportTemplate: 154,
 
   // Inventory
   item: 28,

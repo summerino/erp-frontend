@@ -82,4 +82,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/general/master/dynamic-report-template',
+  name: 'dynamic-report-template',
+  component: () => import(/* webpackChunkName: "dynamic-report-template" */ '@/views/general/master/DynamicReportTemplate.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
