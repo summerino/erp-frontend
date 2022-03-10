@@ -447,6 +447,7 @@
                     <template v-slot:[`item.unitPrice`]="{ item }">
                       <v-currency-field
                         v-model="item.unitPrice"
+                        :decimal-length="4"
                         class="text-body-2 text-right mt-0"
                         dense
                         @change="calcItemPrice(item)"
@@ -580,7 +581,7 @@ export default {
       }, {
         text: 'Transaksi'
       }, {
-        text: 'Saldo Awal'
+        text: 'Saldo Awal Persediaan'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
