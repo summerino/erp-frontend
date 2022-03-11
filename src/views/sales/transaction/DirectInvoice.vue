@@ -146,7 +146,7 @@
                             :min="dataStartDate"
                             no-title
                             scrollable
-                            @change="menu.invDate = false"
+                            @change="menu.invDate = false; changeDate();"
                           ></v-date-picker>
                         </v-menu>
                       </v-col>
@@ -1145,16 +1145,7 @@ export default {
       return this.data.taxInvoiceDate ? format(parseISO(this.data.taxInvoiceDate), 'dd-MMM-yyyy') : ''
     }
   },
-
-  watch: {
-    'data.date': {
-      handler() {
-        this.getPromoLists()
-      },
-      deep: true
-    }
-  },
-
+  
   methods: {
     reset(resetValidation = true) {
       this.data = {
@@ -2493,6 +2484,9 @@ export default {
       if (item === 'tax') {
         this.data.taxInvoiceDate = null
       }
+    },
+    changeDate() {
+      this.gridPromo.data = []
     }
   }
 }
