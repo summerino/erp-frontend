@@ -21,7 +21,8 @@ export default {
     paymentTerm: 'payment-term',
     approval: 'approval',
     activeTransaction: 'active-transaction',
-    dynamicReportTemplate: 'dynamic-report-template'
+    dynamicReportTemplate: 'dynamic-report-template',
+    customDynamicReport: 'custom-dynamic-report'
   },
 
   inventory: {

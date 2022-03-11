@@ -13,6 +13,7 @@ export default {
   approval: 72,
   activeTransaction: 150,
   dynamicReportTemplate: 154,
+  customDynamicReport: 156,
 
   // Inventory
   item: 28,
