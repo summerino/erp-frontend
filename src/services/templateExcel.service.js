@@ -104,7 +104,7 @@ class TemplateExcelService {
     saveAs(new Blob([buf]), `${title}.xlsx`)
   }
 
-  async extractData(file) {
+  async extractData(file, isStock = false) {
     const workbook = new Excel.Workbook()
     const values = []
     const result = []
@@ -126,6 +126,9 @@ class TemplateExcelService {
     for (let i = 0; i < values.length; i++) {
       if (i < 3) {
         values[i].pop()
+        if (isStock) {
+          values[i].pop()
+        }
       }
       const obj = new Object()
       for (let j = 0; j < values[i].length; j++) {
