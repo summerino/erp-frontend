@@ -2,7 +2,7 @@
   <div class="w-full">
     <v-card>
       <v-card-title class="indigo--text text--lighten-2 pb-1">
-        <v-row no-gutters>
+        <v-row v-if="!posting" no-gutters>
           <v-col cols="12" md="3">
             Saldo Awal Persediaan
           </v-col>
@@ -47,7 +47,28 @@
               ></export-excel>
             </v-row>
           </v-col>
-          <v-col cols="12" md="4" class="text-right">
+          <v-col cols="12" md="1" class="text-right">
+            <template-excel title="Template Saldo Awal Persediaan" :grid="grid"></template-excel>
+          </v-col>
+          <v-col cols="12" md="1" class="text-right">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'u']"
+                  icon
+                  color="blue"
+                  @click="openUpload()"
+                  @shortkey="openUpload()"
+                >
+                  <v-icon>mdi-file-upload</v-icon>
+                </v-btn>
+              </template>
+              <span class="text-caption text-center">Import Data Saldo Awal Persediaan<br/>(Ctrl + Alt + U)</span>
+            </v-tooltip>
+          </v-col>
+          <v-col cols="12" md="2" class="text-right">
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -71,11 +92,120 @@
             </v-tooltip>
           </v-col>
         </v-row>
+        <v-row v-else no-gutters>
+          <v-col cols="12" md="4">
+            <span>Import Saldo Awal Persediaan</span>
+          </v-col>
+          <v-col cols="12" md="8" class="text-right">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'p']"
+                  color="blue darken-2"
+                  class="font-weight-regular"
+                  dark
+                  small
+                  tile
+                  @click="postData"
+                  @shortkey="postData"
+                  
+                >
+                  <v-icon left>
+                    mdi-alpha-p-box-outline
+                  </v-icon>
+                  Post
+                </v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Alt + P)</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['esc']"
+                  class="font-weight-regular ml-1"
+                  small
+                  tile
+                  @click="backPosting"
+                  @shortkey="backPosting"
+                >
+                  <v-icon left>
+                    mdi-undo-variant
+                  </v-icon>
+                  Kembali
+                </v-btn>
+              </template>
+              <span class="text-caption">(Esc)</span>
+            </v-tooltip>
+          </v-col>
+        </v-row>
       </v-card-title>
+      <v-card-text v-if="posting" class="text-sm-body-2 pb-1">
+        <v-form
+          ref="form"
+          v-model="valid"
+        >
+          <v-row no-gutters>
+            <v-col cols="12" md="4">
+              <v-menu
+                v-model="menu.date"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                min-width="290px"
+                offset-y
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-text-field
+                    ref="date"
+                    v-bind="attrs"
+                    v-on="on"
+                    :rules="rules.required"
+                    :value="formatDate"
+                    label="Tanggal"
+                    class="mt-0"
+                    readonly
+                    required
+                  ></v-text-field>
+                </template>
+                <v-date-picker
+                  v-model="data.date"
+                  :max="dataStartDate"
+                  no-title
+                  scrollable
+                  @change="menu.date = false"
+                ></v-date-picker>
+              </v-menu>
+            </v-col>
+            <v-col cols="12" md="4" class="pl-md-1">
+              <v-autocomplete
+                v-model="data.warehouseCode"
+                :items="warehouses"
+                :item-text="item => `${item.initial} - ${item.name}`"
+                :rules="rules.required"
+                label="Gudang"
+                item-value="code"
+                class="mt-0"
+              ></v-autocomplete>
+            </v-col>
+            <v-col cols="12" md="4" class="pl-md-1">
+              <v-text-field
+                v-model="data.notes"
+                :rules="rules.max256chars"
+                label="Catatan"
+                class="text-body-2 mt-0"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+        </v-form>
+      </v-card-text>
       <v-card-text v-if="true" class="pb-1">
         <advanced-search @search="search"></advanced-search>
       </v-card-text>
       <v-data-table
+        v-if="!posting"
         :headers="grid.columns"
         :footer-props="{ itemsPerPageOptions: gridDefOpts.pageSizes }"
         :height="gridDefOpts.height"
@@ -125,6 +255,49 @@
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
       </v-data-table>
+      <v-data-table
+        v-else
+        :headers="grid.template"
+        :height="gridDefOpts.height"
+        :items="grid.data"
+        :sort-by="['inisialbarang']"
+        :sort-desc="grid.options.sortDesc"
+        class="elevation-1"
+        disable-pagination
+        fixed-header
+        hide-default-footer
+      >
+        <template v-slot:[`item.inisialbarang`]="{ item }">
+          <span :class="item.mark ? 'red--text' : 'black--text'">
+            {{ item.inisialbarang }}
+          </span>
+        </template>
+        <template v-slot:[`item.satuanbarang`]="{ item }">
+          <span :class="item.mark ? 'red--text' : 'black--text'">
+            {{ item.satuanbarang }}
+          </span>
+        </template>
+        <template v-slot:[`item.qtybarang`]="{ item }">
+          <span :class="item.mark ? 'red--text' : 'black--text'">
+            {{ item.qtybarang | formatCurrency }}
+          </span>
+        </template>
+        <template v-slot:[`item.hargabarang`]="{ item }">
+          <span :class="item.mark ? 'red--text' : 'black--text'">
+            {{ item.hargabarang | formatCurrency }}
+          </span>
+        </template>
+        <template v-slot:[`item.catatan`]="{ item }">
+          <span :class="item.mark ? 'red--text' : 'black--text'">
+            {{ item.catatan }}
+          </span>
+        </template>
+      </v-data-table>
+      <v-card-text v-if="posting">
+        <span >
+          * Data yang berwana <span class="red--text">merah</span> tidak akan di proses.
+        </span>
+      </v-card-text>
     </v-card>
     <v-dialog
       v-model="dialog.add"
@@ -479,6 +652,7 @@
       :warehouseCode="data.warehouseCode"
       @dblclick:row="bindItemData"
     ></find-item>
+    <upload-excel ref="upload" type="bb-st" :grid="grid" @uploadCmp="changePosting"></upload-excel>
   </div>
 </template>
 
@@ -494,13 +668,17 @@ import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 import FindItem from '@/components/dialog/inventory/FindItem'
+import TemplateExcel from '@/components/common/TemplateExcel.vue'
+import UploadExcel from '@/components/common/UploadExcel.vue'
 
 export default {
   components:{
     AdvancedSearch,
     ExportExcel,
     Confirm,
-    FindItem
+    FindItem,
+    TemplateExcel,
+    UploadExcel
   },
 
   data: () => ({
@@ -528,7 +706,14 @@ export default {
         { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'18' },
         { text: 'Tanggal', value: 'date', divider: true, width: '150', excelColWidth:'18', isDateTime: true },
         { text: 'Gudang', value: 'warehouseInitial', divider: true, width: '150', excelColWidth:'18' },
-        { text: 'Catatan', value: 'notes', divider: true, width: '200', excelColWidth:'25' }
+        { text: 'Catatan', value: 'notes', width: '200', excelColWidth:'25' }
+      ],
+      template: [
+        { text: 'Inisial Barang', value: 'inisialbarang', divider: true, width: '150', excelColWidth:'15' },
+        { text: 'Satuan Barang', value: 'satuanbarang', divider: true, width: '150', excelColWidth:'15' },
+        { text: 'Qty Barang', value: 'qtybarang', align: 'right', divider: true, width: '150', excelColWidth:'15', isCurrency: true },
+        { text: 'Harga Barang', value: 'hargabarang', align: 'right', divider: true, width: '150', excelColWidth:'15', isCurrency: true },
+        { text: 'Catatan', value: 'catatan', width: '220', excelColWidth:'35' }
       ],
       data: [],
       options: {
@@ -559,7 +744,8 @@ export default {
     warehouses: [],
     uoms: [],
     showItemDisabled: false,
-    userInfo: {}
+    userInfo: {},
+    posting: false
   }),
 
   created: function () {
@@ -957,6 +1143,36 @@ export default {
         } else if (defWarehouse) {
           this.data.warehouseCode = defWarehouse.code
         }
+      }
+    },
+    openUpload() {
+      this.$refs.upload.open()
+    },
+    changePosting() {
+      this.posting = !this.posting
+      setTimeout(() => {
+        this.$refs.date.focus()
+      }, 0)
+    },
+    backPosting() {
+      this.changePosting()
+      this.getList()
+    },
+    async postData() {
+      if (!this.$refs.form.validate()) {
+        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
+        return
+      }
+      const data = this.data
+      data.itemDetails = this.grid.data   
+
+      let result = { success: false, message: '' }
+      const resp = await api.create(`${this.endpoint.inventory.beginBalanceStock}/posting`, data)
+      result = resp.data
+
+      if (result.success) {
+        this.$store.dispatch('app/showSuccess', result.message)
+        this.backPosting()
       }
     }
   }

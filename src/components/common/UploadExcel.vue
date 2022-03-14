@@ -115,12 +115,16 @@ export default {
         const resp = await api.create(`${this.endpoint.accounting.beginBalance.cm}/upload`, data)
         this.grid.data = resp.data.tableData
         this.grid.total = resp.data.rowCount
+      } else if (this.type === 'bb-st') {
+        const resp = await api.create(`${this.endpoint.inventory.beginBalanceStock}/upload`, data)
+        this.grid.data = resp.data.tableData
+        this.grid.total = resp.data.rowCount
       }
       this.close()
       this.$emit('uploadCmp')
     },
     async extractData() {
-      const result = await templateExcelService.extractData(this.uploadedFile)
+      const result = await templateExcelService.extractData(this.uploadedFile, true)
       return result
     }
   }  
