@@ -151,7 +151,7 @@
           <v-row no-gutters>
             <v-col cols="12" md="4">
               <v-menu
-                v-model="menu.date"
+                v-model="menu.uploadDate"
                 :close-on-content-click="false"
                 transition="scale-transition"
                 min-width="290px"
@@ -175,7 +175,7 @@
                   :max="dataStartDate"
                   no-title
                   scrollable
-                  @change="menu.date = false"
+                  @change="menu.uploadDate = false"
                 ></v-date-picker>
               </v-menu>
             </v-col>
@@ -695,7 +695,8 @@ export default {
       add: false
     },
     menu: {
-      date: false
+      date: false,
+      uploadDate: false
     },
     tab: {
       bb: null
@@ -1150,6 +1151,8 @@ export default {
     },
     changePosting() {
       this.posting = !this.posting
+      this.data.date = null
+      this.data.warehouseCode = null
       setTimeout(() => {
         this.$refs.date.focus()
       }, 0)
