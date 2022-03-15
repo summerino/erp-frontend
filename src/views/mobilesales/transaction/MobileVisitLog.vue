@@ -144,6 +144,17 @@
           </v-tooltip>
           {{ item.lat }} : {{ item.lng}}
         </template>
+        <template v-slot:[`item.radius`]="{ item }">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <span @click="showMap(`${item.lat} : ${item.lng}`, item.radius, true)" v-bind="attrs" v-on="on">
+                <v-icon small >mdi-eye-outline</v-icon>
+              </span>
+            </template>
+            <span class="text-caption">Tampilkan di map</span>
+          </v-tooltip>
+          {{ item.lat }} : {{ item.lng}}
+        </template>
         <template v-slot:[`item.image`]="{ item }">
           <span v-if="item.image != null || item.image != undefined">
             <v-btn small color="blue darken-1" dark @click="showImage(item.image)">
@@ -588,6 +599,7 @@ export default {
         { text: 'Penjual', value: 'salesmanInitial', divider: true, width: '120', excelColWidth:'18' },
         { text: 'Pelanggan', value: 'customerName', divider: true, width: '120', excelColWidth:'18' },
         { text: 'Koordinat', value: 'lat', divider: true, width: '100', excelColWidth:'18' },
+        { text: 'Radius', value: 'radius', divider: true, width: '100', excelColWidth:'18' },
         { text: 'Gambar', value: 'image', divider: true, width: '100', excelColWidth:'18' },
         { text: 'Nilai Total', value: 'total', divider: true, align:'right', width: '100', excelColWidth:'15', isCurrency: true },
         { text: 'Status', value: 'mark', width: '50' }
@@ -797,11 +809,15 @@ export default {
         this.getList()
       }
     },
-    showMap(coordinat) {
+    showMap(coordinat, data = null, isRadius = false) {
       const arr = coordinat.split(' : ')
       const latitude = Number(arr[0])
       const longitude = Number(arr[1])
-      this.$refs.attendanceMap.show(latitude, longitude)
+      if (data !== null && isRadius) {
+        this.$refs.attendanceMap.show(latitude, longitude, data, true)
+      } else {
+        this.$refs.attendanceMap.show(latitude, longitude)
+      }
     },
     showImage(link) {
       this.$refs.displayImage.show(link)
