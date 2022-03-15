@@ -22,7 +22,27 @@
       </v-toolbar>
 
       <v-card-text class="px-2 pt-1">
-        <div class="custom-map">
+        <div v-if="useRadius" class="custom-map">
+          <gmap-map
+            :zoom="14"    
+            :center="center"
+            style="width:100%  height: 600px"
+          >
+            <gmap-marker
+              :key="index"
+              v-for="(m, index) in locationMarkers"
+              :position="m.position"
+            ></gmap-marker>
+            <gmap-circle
+              key="0b"
+              :center="locationMarkers[0].position"
+              :radius="data.radius"
+              :visible="true"
+              :options="{fillColor:data.radiusColor,fillOpacity:0.5}"
+            ></gmap-circle>
+          </gmap-map>
+        </div>
+        <div v-else class="custom-map">
           <gmap-map
             :zoom="14"    
             :center="center"
@@ -48,17 +68,32 @@ export default {
     center: null,
     options: {
       width: 800
-    }
+    },
+    useRadius: null,
+    data: {}
   }),
 
   methods:{
-    show(lat, lon) {
+    show(lat, lon, data = null, useRadius = false) {
+      this.locationMarkers = []
+      this.useRadius = useRadius
       this.dialog = true
+      
       const marker = {
         lat: lat,
         lng: lon
       }
       this.locationMarkers.push({ position: marker })
+      
+      if (data !== null) {
+        this.data = data
+        const dataMarker = {
+          lat: this.data.lat,
+          lng: this.data.lng
+        }
+        this.locationMarkers.push({ position: dataMarker })
+      }
+
       this.center = marker
     },
     close() {
