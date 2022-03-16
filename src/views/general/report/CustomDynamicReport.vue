@@ -444,6 +444,31 @@
             disable-pagination
             disable-sort
           >
+          <template v-slot:[`item.${n.value}`]="{ item }" v-for="n in this.grid.columns">
+            <span :key="n.value" v-if="n.columnType === 'Decimal'">
+              {{ item[n.value] | formatCurrency }}
+            </span>
+            <span :key="n.value" v-else-if="n.columnType === 'DateTime'">
+              {{ (item[n.value] !== null ? item[n.value] | formatDate('dd-MMM-yyyy') : '') }}
+            </span>
+            <v-tooltip :key="n.value" v-else-if="n.columnType === 'Boolean'" bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-icon 
+                  v-bind="attrs" 
+                  v-on="on" 
+                  :color="item[n.value] === true ? 'green' : 'red'"
+                >
+                  {{ item[n.value] === true ? 'mdi-toggle-switch-outline' : 'mdi-toggle-switch-off-outline' }}
+                </v-icon>
+              </template>
+              <span class="text-caption">
+                  {{ item[n.value] === true ? 'True' : 'False' }}
+              </span>
+            </v-tooltip>
+            <span :key="n.value" v-else>
+              {{ item[n.value] }}
+            </span>
+          </template>
           </v-data-table>
         </v-card>
       </v-col> 
@@ -524,12 +549,6 @@ export default {
       menuId: state => state.api.menus
     }),
     formatDate1() {
-      // let a = this.format '{name} - {initial}'
-      // const regArr = regex.match(\{\w+b}\i, a)
-      // for
-      //   var c = item[regArr[0]]
-      //   a = str_replce(a, regArr[0], c)
-      // return a 
       return this.data.parameter1 ? format(parseISO(this.data.parameter1), 'dd-MMM-yyyy') : ''
     },
     formatDate2() {
@@ -585,6 +604,9 @@ export default {
       this.filter = true
     },
     getList() {
+      this.grid.data = []
+      this.grid.column = []
+      this.grid.total = 0
       api.getAll(this.endpoint.general.customDynamicReport, {
         params: {
           id: this.data.templateId,
@@ -604,27 +626,27 @@ export default {
             
             switch (response.data.data.columns[i].columnType) {
             case 'Boolean':
-              this.grid.columns.push({ text: response.data.data.columns[i].columnName, value: keys[i], divider: true, width: '150', excelColWidth:'15', isBool: true })
+              this.grid.columns.push({ text: response.data.data.columns[i].columnName, value: keys[i], divider: true, width: '150', excelColWidth:'15', isBool: true, columnType: response.data.data.columns[i].columnType })
               break
             
             case 'Decimal':
-              this.grid.columns.push({ text: response.data.data.columns[i].columnName, value: keys[i], align: 'right', divider: true, width: '150', excelColWidth:'15', isCurrency: true  })
+              this.grid.columns.push({ text: response.data.data.columns[i].columnName, value: keys[i], align: 'right', divider: true, width: '150', excelColWidth:'15', isCurrency: true, columnType: response.data.data.columns[i].columnType  })
               break
             
             case 'Int32':
-              this.grid.columns.push({ text: response.data.data.columns[i].columnName, value: keys[i], align: 'right', divider: true, width: '150', excelColWidth:'15', isNumber: true })
+              this.grid.columns.push({ text: response.data.data.columns[i].columnName, value: keys[i], align: 'right', divider: true, width: '150', excelColWidth:'15', isNumber: true, columnType: response.data.data.columns[i].columnType })
               break
 
             case 'Int64':
-              this.grid.columns.push({ text: response.data.data.columns[i].columnName, value: keys[i], align: 'right', divider: true, width: '150', excelColWidth:'15', isNumber: true })
+              this.grid.columns.push({ text: response.data.data.columns[i].columnName, value: keys[i], align: 'right', divider: true, width: '150', excelColWidth:'15', isNumber: true, columnType: response.data.data.columns[i].columnType })
               break
 
             case 'DateTime':
-              this.grid.columns.push({ text: response.data.data.columns[i].columnName, value: keys[i], divider: true, width: '150', excelColWidth:'15', isFullDateTime: true  })
+              this.grid.columns.push({ text: response.data.data.columns[i].columnName, value: keys[i], divider: true, width: '150', excelColWidth:'15', isFullDateTime: true, columnType: response.data.data.columns[i].columnType  })
               break
 
             default:
-              this.grid.columns.push({ text: response.data.data.columns[i].columnName, value: keys[i], divider: true, width: '150', excelColWidth:'15' })
+              this.grid.columns.push({ text: response.data.data.columns[i].columnName, value: keys[i], divider: true, width: '150', excelColWidth:'15', columnType: response.data.data.columns[i].columnType })
               break
             }
           }

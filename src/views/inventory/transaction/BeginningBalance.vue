@@ -1151,8 +1151,7 @@ export default {
     },
     changePosting() {
       this.posting = !this.posting
-      this.data.date = null
-      this.data.warehouseCode = null
+      this.reset()
       setTimeout(() => {
         this.$refs.date.focus()
       }, 0)

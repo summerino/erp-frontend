@@ -404,6 +404,12 @@
 
             <v-row no-gutters>
               <v-col cols="12">
+                <v-card-text>
+                  <span>
+                    <div class="red--text">* Format parameter harus sesuai dengan tipe data pada query.</div>
+                    <div class="red--text">* Format kolom pada query tidak boleh menggunakan spasi.</div>
+                  </span>
+                </v-card-text>
                 <v-textarea
                   v-model="data.query"
                   :rules="rules.required"
