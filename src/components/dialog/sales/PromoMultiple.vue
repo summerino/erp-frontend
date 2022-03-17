@@ -35,6 +35,18 @@
           <v-col cols="12">
             <v-card-actions class="justify-end pr-2">
             <v-btn
+              :disabled="this.grid.data.length < 1"
+              color="red"
+              class="font-weight-regular"
+              dark
+              small
+              tile
+              @click="removeAll"
+            >
+              <v-icon left>mdi-window-close</v-icon>
+              Hapus Semua Barang
+            </v-btn>
+            <v-btn
               color="green"
               class="font-weight-regular"
               dark
@@ -63,6 +75,23 @@
                 fixed-header
                 hide-default-footer
               >
+                <template v-slot:[`item.action`]="{ item }">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        v-bind="attrs"
+                        v-on="on"
+                        color="red"
+                        icon
+                        small
+                        @click="removeItem(item)"
+                      >
+                        <v-icon small>mdi-close-thick</v-icon>
+                      </v-btn>
+                    </template>
+                    <span class="text-caption">Hapus</span>
+                  </v-tooltip>
+                </template>
               </v-data-table>
             </v-card> 
           </v-col>
@@ -145,6 +174,7 @@ export default {
       gridData: {},
       grid: {
         columns: [
+          { value: 'action', sortable: false, divider: true, width: '30' },
           { text: 'Inisial Barang', value: 'initial', divider: true, width: '160' },
           { text: 'Nama Barang', value: 'name', divider: true, width: '160' },
           { text: 'Satuan (Jual)', value: 'uomSellName', width: '160' }
@@ -161,7 +191,17 @@ export default {
         data: [],
         height: 600
       },
-      selected: []
+      selected: [],
+      selectedItem: []
+    }
+  },
+  
+  watch: {
+    'grid.data': {
+      handler() {
+        this.getListItem()
+      },
+      deep: true
     }
   },
 
@@ -187,23 +227,40 @@ export default {
       this.dialog.listItem = false
     },
     save() {
+      if (this.grid.data.length < 2) {
+        this.$store.dispatch('app/showInfo', 'Harus memilih minimal 2 barang.')
+        return
+      }
       this.dialog.listSelected = false
       this.data.items = _clone(this.grid.data)
       this.$emit('saveMultiple', this.data)
     },
     saveItem() {
-      if (this.selected.length < 2) {
-        this.$store.dispatch('app/showInfo', 'Harus memilih minimal 2 barang.')
-        return
-      }
-
       this.dialog.listItem = false
-      this.grid.data = _clone(this.selected)
+
+      for (let i = 0; i < this.selected.length; i++) {
+        this.grid.data.push(this.selected[i]) 
+      }
     },
     addItem() {
       this.dialog.listItem = true
-      this.gridItem.data = this.items
+      this.gridItem.data = this.items.filter(x => !this.selectedItem.includes(x.id))
       this.selected = []
+    },
+    getListItem() {
+      this.selectedItem.splice(0, this.selectedItem.length)
+      for (let i = 0; i < this.grid.data.length; i++) {
+        this.selectedItem.push(this.grid.data[i].id)
+      }
+    },
+    removeItem(item) {
+      const idx = this.grid.data.findIndex(i => i.id === item.id)
+      if (idx !== -1) {
+        this.grid.data.splice(idx, 1)
+      }
+    },
+    removeAll() {
+      this.grid.data = []
     }
   }
 }
