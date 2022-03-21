@@ -220,7 +220,7 @@
               </v-col>
             </v-row>
             <v-row no-gutters>
-              <v-col cols="12" md="6">
+              <v-col cols="12" md="4">
                 <v-autocomplete
                   v-model="data.groupId"
                   :items="itemGroups"
@@ -233,12 +233,25 @@
                   @change="groupIdChange(); clearTable();"
                 ></v-autocomplete>
               </v-col>
-              <v-col cols="12" md="6" class="pl-1">
+              <v-col cols="12" md="4" class="pl-1">
                 <v-autocomplete
                   v-model="data.subGroupId"
                   :items="itemSubGroups"
                   label="Sub Grup Barang"
                   item-value="id"
+                  item-text="name"
+                  class="mt-0"
+                  dense
+                  clearable
+                  @change="subGroupIdChange(); clearTable()"
+                ></v-autocomplete>
+              </v-col>
+              <v-col cols="12" md="4" class="pl-1">
+                <v-autocomplete
+                  v-model="data.groupSubGroup"
+                  :items="itemGroupSubGroup"
+                  label="Nilai Sub Grup Barang"
+                  item-value="name"
                   item-text="name"
                   class="mt-0"
                   dense
@@ -423,6 +436,7 @@ export default {
       { text: 'Penjual', value: 'salesName', divider: true, width: '160', excelColWidth:'20' },
       { text: 'Grup Barang', value: 'itemGroup', divider: true, width: '160', excelColWidth:'20' },
       { text: 'Sub Grup Barang', value: 'itemSubGroup', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Nilai Sub Grup Barang', value: 'itemSubGroup2', divider: true, width: '160', excelColWidth:'20' },
       { text: 'EC Pelanggan', value: 'totalCustomers', align: 'right', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Target', value: 'targetAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Riil', value: 'realAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
@@ -460,6 +474,8 @@ export default {
     ],
     itemGroups: [],
     itemSubGroups: [],
+    itemGroupSubGroup: [],
+    listSubSubGroups: [],
     salesmans: [],
     data: {},
     exportFilter:{
@@ -544,7 +560,7 @@ export default {
         this.grid.columns = this.detailColumn
       }
       
-      const subGroup = this.itemSubGroups.find(x => x.id === this.data.subGroupId)
+      //const subGroup = this.itemSubGroups.find(x => x.id === this.data.subGroupId)
 
       api.getAll(this.endpoint.sales.stReport, {
         params: {
@@ -552,8 +568,8 @@ export default {
           endDate: this.data.endDate,
           salesId: this.data.salesId,
           groupId: this.data.groupId,
-          subGroupId: this.main ? subGroup ? subGroup.trueId : null : this.data.subGroupId,
-          groupSubGroup: this.main ? subGroup ? subGroup.trueName : null : this.data.groupSubGroup,
+          subGroupId: this.data.subGroupId,
+          groupSubGroup: this.data.groupSubGroup,
           isDetail: !this.main
         }
       })
@@ -605,33 +621,33 @@ export default {
         })
     },
     async getItemSubGroupLists() {
-      const listSubGroup = []
       const response = await api.getAll(`${this.endpoint.inventory.item.group}/item-by-id`, {
         params: { id: this.data.groupId }
       })
 
-      let counter = 1
       const subGroup = response.data.tableData
       for (let i = 0; i < subGroup.length; i++) {
         const splitted = subGroup[i].value.split(';')
         for (let j = 0; j < splitted.length; j++) {
-          listSubGroup.push(
+          this.listSubSubGroups.push(
             {
-              id: counter++,
-              name: `${subGroup[i].name} - ${splitted[j]}`,
-              trueId: subGroup[i].id,
-              trueName: splitted[j]
+              id: subGroup[i].id,
+              name: splitted[j]
             }
           )
           
         }
       }
-      return listSubGroup
+      return subGroup
     },
     async groupIdChange() {
       this.data.subGroupId = null
       const listSubGroup = await this.getItemSubGroupLists()
       this.itemSubGroups = listSubGroup
+    },
+    subGroupIdChange() {
+      this.data.groupSubGroup = null
+      this.itemGroupSubGroup = this.listSubSubGroups.filter(x => x.id === this.data.subGroupId)
     },
     dblclickRow(event, { item }) {
       if (this.main) {
