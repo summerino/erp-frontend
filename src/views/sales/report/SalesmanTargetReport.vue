@@ -209,7 +209,7 @@
                 <v-autocomplete
                   v-model="data.salesId"
                   :items="salesmans"
-                  :item-text="item => `${item.initial} - ${item.firstName}`"
+                  :item-text="item => `${item.initial} - ${item.firstName} ${item.lastName}`"
                   label="Penjual"
                   item-value="id"
                   class="mt-0"
