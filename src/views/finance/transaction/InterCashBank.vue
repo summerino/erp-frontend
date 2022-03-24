@@ -214,7 +214,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'alt', 'i']"
-                  :disabled="!auth.allowPrint"
+                  :disabled="(data.action === 'edit' && !auth.allowPrint) || data.action === 'add'"
                   dark
                   text
                   @click="print('in', data)"
@@ -230,7 +230,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'alt', 'o']"
-                  :disabled="!auth.allowPrint"
+                  :disabled="(data.action === 'edit' && !auth.allowPrint) || data.action === 'add'"
                   dark
                   text
                   @click="print('out', data)"
