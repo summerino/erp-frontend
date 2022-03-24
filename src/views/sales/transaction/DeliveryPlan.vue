@@ -218,7 +218,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'alt', 'i']"
-                  :disabled="isVoid || !auth.allowPrint"
+                  :disabled="isVoid || (data.action === 'edit' && !auth.allowPrint) || data.action === 'add'"
                   dark
                   text
                   @click="print('packing', data)"
@@ -234,7 +234,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'alt', 'o']"
-                  :disabled="isVoid || !auth.allowPrint"
+                  :disabled="isVoid || (data.action === 'edit' && !auth.allowPrint) || data.action === 'add'"
                   dark
                   text
                   @click="print('picking', data)"
