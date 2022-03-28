@@ -4,7 +4,7 @@
     :width="options.width"
     persistent
     scrollable
-    @keydown.esc="cancel()"
+    @keydown.esc="close()"
   >
     <v-card>
       <v-toolbar
@@ -16,7 +16,7 @@
         <v-spacer></v-spacer>
         <v-btn
           icon
-          @click="cancel()"
+          @click="close()"
         >
           <v-icon>mdi-window-close</v-icon>
         </v-btn>
@@ -58,7 +58,7 @@
         dark
         small
         tile
-        @click="cancel()"
+        @click="close()"
       >
         <v-icon left>mdi-close-circle</v-icon>
         Batal
@@ -97,17 +97,6 @@ export default {
       this.data = data
       this.title = this.data.type === 'S' ? 'Ringkasan' : 'Terperinci'
       this.getHierarchy()
-    },
-    cancel() {
-      if (this.data.type === 'S') {
-        this.data.isCode = null
-        this.data.isCodeValue = null
-      } else {
-        this.data.isDetCode = null
-        this.data.isDetCodeValue = null
-      }
-      this.data.type = null
-      this.close()
     },
     close() {
       this.dialog = false
