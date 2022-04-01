@@ -129,6 +129,17 @@
             <span>Ubah</span>
           </v-tooltip>
         </template>
+        <template v-slot:[`item.lat`]="{ item }">
+          <v-tooltip v-if="item.lat !== null" bottom>
+            <template v-if="item.lat !== null" v-slot:activator="{ on, attrs }">
+              <span @click="showMap(`${item.lat} : ${item.lng}`)" v-bind="attrs" v-on="on">
+                <v-icon small >mdi-eye-outline</v-icon>
+              </span>
+            </template>
+            <span class="text-caption">Tampilkan di map</span>
+          </v-tooltip>
+          <p v-if="item.lat !== null">{{ `${item.lat} : ${item.lng}` }}</p>
+        </template>
         <template v-slot:[`item.mark`]="{ item }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -334,6 +345,7 @@
       </v-card-text>
     </v-card>
     <confirm ref="confirm"></confirm>
+    <attendance-map ref="attendanceMap"></attendance-map>
   </div>
 </template>
 
@@ -347,12 +359,14 @@ import auth from '@/services/authorization.service'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
+import AttendanceMap from '@/components/dialog/attendance/AttendanceMap.vue'
 
 export default {
   components:{
     AdvancedSearch,
     ExportExcel,
-    Confirm
+    Confirm,
+    AttendanceMap
   },
 
   data: () => ({
@@ -372,6 +386,7 @@ export default {
         { text: 'Nama', value: 'name', divider: true, width: '200', excelColWidth:'20' },
         { text: 'Alamat', value: 'address1', divider: true, width: '180', excelColWidth:'18' },
         { text: 'Telepon', value: 'phone', divider: true, width: '120', excelColWidth:'12' },
+        { text: 'Koordinat', value: 'lat', divider: true, width: '100', excelColWidth:'18' },
         { text: 'Status', value: 'mark', width: '150', excelColWidth:'15' }
       ],
       data: [],
@@ -561,6 +576,12 @@ export default {
         this.reset()
         this.getList()
       }
+    },
+    showMap(coordinat) {
+      const arr = coordinat.split(' : ')
+      const latitude = Number(arr[0])
+      const longitude = Number(arr[1])
+      this.$refs.attendanceMap.show(latitude, longitude)
     }
   }
 }

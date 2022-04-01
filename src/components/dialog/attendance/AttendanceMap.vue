@@ -92,7 +92,7 @@ export default {
         lng: lon,
         isSales: true
       }
-      if (lat !== null && lon !== null && useRadius) {
+      if (lat !== null && lon !== null) {
         this.locationMarkers.push({ position: marker })
       }
       
