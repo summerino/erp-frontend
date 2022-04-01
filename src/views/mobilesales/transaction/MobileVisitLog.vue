@@ -134,15 +134,15 @@
           {{ item.total | formatCurrency }}
         </template>
         <template v-slot:[`item.lat`]="{ item }">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
+          <v-tooltip v-if="item.lat !== null" bottom>
+            <template v-if="item.lat !== null" v-slot:activator="{ on, attrs }">
               <span @click="showMap(`${item.lat} : ${item.lng}`)" v-bind="attrs" v-on="on">
                 <v-icon small >mdi-eye-outline</v-icon>
               </span>
             </template>
             <span class="text-caption">Tampilkan di map</span>
           </v-tooltip>
-          {{ item.lat }} : {{ item.lng}}
+          <p v-if="item.lat !== null">{{ `${item.lat} : ${item.lng}` }}</p>
         </template>
         <template v-slot:[`item.radius`]="{ item }">
           <v-tooltip bottom>
@@ -153,7 +153,7 @@
             </template>
             <span class="text-caption">Tampilkan di map</span>
           </v-tooltip>
-          {{ item.lat }} : {{ item.lng}}
+          <p :class="`${item.radius.radiusColor}--text`" >{{ `${item.radius.distance} M`}}</p>
         </template>
         <template v-slot:[`item.image`]="{ item }">
           <span v-if="item.image != null || item.image != undefined">

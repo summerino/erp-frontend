@@ -31,6 +31,7 @@
             <gmap-marker
               :key="index"
               v-for="(m, index) in locationMarkers"
+              :icon="m.position.isSales ? truckIcon : shopIcon"
               :position="m.position"
             ></gmap-marker>
             <gmap-circle
@@ -40,6 +41,10 @@
               :visible="true"
               :options="{fillColor:data.radiusColor,fillOpacity:0.5}"
             ></gmap-circle>
+            <gmap-polyline
+              v-if="locationMarkers.length > 0"
+              :path="locationMarkers"
+              :options="{ strokeColor: '#ff0000' }" />
           </gmap-map>
         </div>
         <div v-else class="custom-map">
@@ -70,6 +75,8 @@ export default {
       width: 800
     },
     useRadius: null,
+    shopIcon: { url: '../../images/shop-marker.png' },
+    truckIcon: { url: '../../images/truck-marker.png' },
     data: {}
   }),
 
@@ -79,17 +86,22 @@ export default {
       this.useRadius = useRadius
       this.dialog = true
       
+      
       const marker = {
         lat: lat,
-        lng: lon
+        lng: lon,
+        isSales: true
       }
-      this.locationMarkers.push({ position: marker })
+      if (lat !== null && lon !== null) {
+        this.locationMarkers.push({ position: marker })
+      }
       
       if (data !== null) {
         this.data = data
         const dataMarker = {
           lat: this.data.lat,
-          lng: this.data.lng
+          lng: this.data.lng,
+          isSales: false
         }
         this.locationMarkers.push({ position: dataMarker })
       }
