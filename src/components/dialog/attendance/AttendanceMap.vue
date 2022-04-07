@@ -42,8 +42,8 @@
               :options="{fillColor:data.radiusColor,fillOpacity:0.5}"
             ></gmap-circle>
             <gmap-polyline
-              v-if="locationMarkers.length > 0"
-              :path="locationMarkers"
+              v-if="paths.length > 0"
+              :path="paths"
               :options="{ strokeColor: '#ff0000' }" />
           </gmap-map>
         </div>
@@ -77,6 +77,7 @@ export default {
     useRadius: null,
     shopIcon: { url: '../../images/shop-marker.png' },
     truckIcon: { url: '../../images/truck-marker.png' },
+    paths: [],
     data: {}
   }),
 
@@ -94,6 +95,7 @@ export default {
       }
       if (lat !== null && lon !== null) {
         this.locationMarkers.push({ position: marker })
+        this.paths.push(marker)
       }
       
       if (data !== null) {
@@ -104,6 +106,7 @@ export default {
           isSales: false
         }
         this.locationMarkers.push({ position: dataMarker })
+        this.paths.push(dataMarker)
       }
 
       this.center = marker
