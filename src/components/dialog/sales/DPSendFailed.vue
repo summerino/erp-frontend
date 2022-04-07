@@ -105,11 +105,28 @@
                     <v-currency-field
                       v-model="item.qty"
                       :decimal-length="0"
+                      :disabled="item.itemId <= 0"
                       :readonly="checkAll"
                       class="text-body-2 text-right mt-0"
                       dense
                       @change="qtyChange(item)"
                     ></v-currency-field>
+                  </template>
+                  <template v-slot:[`item.unitName`]="{ item }">
+                    <v-autocomplete
+                      v-model="item.unitId"
+                      :disabled="item.itemId <= 0"
+                      :items="item.units"
+                      :readonly="checkAll"
+                      :rules="rules.required"
+                      item-text="unitName"
+                      item-value="unitId"
+                      class="text-body-2 mt-0"
+                      dense
+                      required
+                      @change="itemUnitChange(item)"
+                    >
+                    </v-autocomplete>
                   </template>
                 </v-data-table>
               </v-col>
@@ -240,7 +257,8 @@ export default {
               warehouseCode: this.warehouseCode,
               type: 0,
               unitName: this.data[i].unitName,
-              detailId: this.data[i].id
+              detailId: this.data[i].id,
+              units: this.data.filter(x => x.itemId === this.data[i].itemId).map(function (data) { return { unitId: data.unitId, unitName: data.unitName } })
             }
             const uItem = this.rowItem.undeliveredItems.find(x => x.itemId === item.itemId && x.unitId === item.unitId && x.type === 0)
             if (uItem && this.rowItem.id > 0) {
@@ -273,7 +291,8 @@ export default {
                 warehouseCode: this.warehouseCode,
                 type: 1,
                 unitName: this.dataFreeItem[i].unitName,
-                detailId: this.dataFreeItem[i].id
+                detailId: this.dataFreeItem[i].id,
+                units: this.data.filter(x => x.itemId === this.dataFreeItem[i].itemId).map(function (data) { return { unitId: data.unitId, unitName: data.unitName } })
               }
               const uItem = this.rowItem.undeliveredItems.find(x => x.itemId === item.itemId && x.unitId === item.unitId && x.type === 1)
               if (uItem && this.rowItem.id > 0) {
@@ -289,7 +308,18 @@ export default {
         })
     },
     itemIdChange(item) {
-      const data_i = this.data.find(i => i.itemId === item.itemId)
+      //const data_i = this.data.find(i => i.itemId === item.itemId)
+      item.units = this.data.filter(x => x.itemId === item.itemId).map(function (data) { return { unitId: data.unitId, unitName: data.unitName } })
+      // if (data_i) {
+      //   item.itemId = data_i.itemId
+      //   item.uomId = data_i.uomId
+      //   item.unitId = data_i.unitId
+      //   item.qty = data_i.qty
+      //   item.unitName = data_i.unitName
+      // }
+    },
+    itemUnitChange(item) {
+      const data_i = this.data.find(i => i.itemId === item.itemId && i.unitId === item.unitId)
       if (data_i) {
         item.itemId = data_i.itemId
         item.uomId = data_i.uomId
@@ -330,7 +360,8 @@ export default {
             qty: this.data[i].qty,
             warehouseCode: this.warehouseCode,
             type: 0,
-            unitName: this.data[i].unitName
+            unitName: this.data[i].unitName,
+            units: this.data.filter(x => x.itemId === this.data[i].itemId).map(function (data) { return { unitId: data.unitId, unitName: data.unitName } })
           }
           this.grid.data.push(item) 
           this.rowItem.undeliveredItems = this.grid.data
@@ -338,7 +369,7 @@ export default {
       }
     },
     qtyChange(item) {
-      const data_i = this.data.find(i => i.itemId === item.itemId)
+      const data_i = this.data.find(i => i.itemId === item.itemId && i.unitId === item.unitId)
       if (item.qty > data_i.qty) {
         this.$store.dispatch('app/showInfo', 'Total qty tidak terkirim tidak boleh lebih besar dari qty dikirim.')
         item.qty = data_i.qty
@@ -349,12 +380,12 @@ export default {
         this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
-      const valueArr = this.grid.data.map(function (item) { return item.itemId })
+      const valueArr = this.grid.data.map(function (item) { return `${item.itemId}${item.unitId}` })
       const isDuplicate = valueArr.some(function (item, idx) { 
         return valueArr.indexOf(item) !== idx 
       })
       if (isDuplicate) {
-        this.$store.dispatch('app/showInfo', 'Barang tidak boleh duplikat.')
+        this.$store.dispatch('app/showInfo', 'Barang dengan satuan yang sama tidak boleh duplikat.')
       } else {
         this.rowItem.notesFailShipment = this.notes
         this.rowItem.failedSendAll = this.checkAll
