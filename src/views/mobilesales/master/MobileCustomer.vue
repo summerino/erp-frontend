@@ -339,6 +339,27 @@
                   ></v-text-field>
                 </v-col>
               </v-row>
+
+              <v-row no-gutters>
+                <v-col cols="12" md="6" class="pr-md-3">
+                  <v-currency-field
+                    v-model="data.lat"
+                    :decimal-length="6"
+                    label="Koordinat Garis Lintang (Latitude)"
+                    class="mt-0"
+                    allow-negative
+                  ></v-currency-field>
+                </v-col>
+                <v-col cols="12" md="6" class="pl-md-3">
+                  <v-currency-field
+                    v-model="data.lng"
+                    :decimal-length="6"
+                    label="Koordinat Garis Bujur (Longitude)"
+                    class="mt-0"
+                    allow-negative
+                  ></v-currency-field>
+                </v-col>
+              </v-row>
             </v-container>
           </v-card>
         </v-form>
