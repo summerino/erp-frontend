@@ -449,7 +449,7 @@
               {{ item[n.value] | formatCurrency }}
             </span>
             <span :key="n.value" v-else-if="n.columnType === 'DateTime'">
-              {{ (item[n.value] !== null ? item[n.value] | formatDate('dd-MMM-yyyy') : '') }}
+              {{ (item[n.value] !== null ? formatDateLocal(item[n.value], 'dd-MMM-yyyy') : '') }}
             </span>
             <v-tooltip :key="n.value" v-else-if="n.columnType === 'Boolean'" bottom>
               <template v-slot:activator="{ on, attrs }">
@@ -520,6 +520,7 @@ export default {
 
   created: function () {
     this.getTemplateLists()
+    this.reset()
     auth.getAction(this.endpoint, this.menuId.customDynamicReport)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -604,8 +605,12 @@ export default {
       this.filter = true
     },
     getList() {
+      if (this.data.templateId === null) {
+        this.$store.dispatch('app/showInfo', 'Pilih template laporan terlebih dahulu.')
+        return
+      }
       this.grid.data = []
-      this.grid.column = []
+      this.grid.columns = []
       this.grid.total = 0
       api.getAll(this.endpoint.general.customDynamicReport, {
         params: {
@@ -785,6 +790,11 @@ export default {
         }
       }
       return a 
+    },
+    formatDateLocal(value, filterFormat) {
+      if (value) {
+        return format(parseISO(value), filterFormat)
+      }
     }
   }
 }
