@@ -905,7 +905,6 @@ export default {
         categoryId: '',
         costOfGoodSold: '',
         valuationMethod: 0,
-        stockType: 0,
         uomId: 0,
         uomSellId: 0,
         sellPrice: '',
