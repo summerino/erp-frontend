@@ -648,12 +648,22 @@ export default {
     },
     async approve() {
       let result = { success: false, message: '' }
-      const resp = await api.updatemaster(`${this.endpoint.mobileWarehouse.deliveryItem}/approve`, this.selected)
-      result = resp.data
+      const respValid = await api.updatemaster(`${this.endpoint.mobileWarehouse.deliveryItem}/check-undeliv`, this.selected)
+      result = respValid.data
       if (result.success) {
-        this.$store.dispatch('app/showSuccess', result.message)
-        this.reset()
-        this.getList()
+        if (
+          await this.$refs.confirm.open(
+            'Peringatan',
+            `Terdapat gagal kirim untuk barang ${result.data.itemName} - ${result.data.unitName} dengan jumlah ${result.data.qty}. Apakah Anda yakin untuk melakukan persetujuan?`)
+        ) {
+          const resp = await api.updatemaster(`${this.endpoint.mobileWarehouse.deliveryItem}/approve`, this.selected)
+          result = resp.data
+          if (result.success) {
+            this.$store.dispatch('app/showSuccess', result.message)
+            this.reset()
+            this.getList()
+          }
+        }
       }
     },
     async reject() {
