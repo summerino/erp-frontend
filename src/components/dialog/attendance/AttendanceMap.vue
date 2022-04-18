@@ -84,6 +84,7 @@ export default {
   methods:{
     show(lat, lon, data = null, useRadius = false) {
       this.locationMarkers = []
+      this.paths = []
       this.useRadius = useRadius
       this.dialog = true
       
