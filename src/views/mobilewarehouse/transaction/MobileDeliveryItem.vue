@@ -484,6 +484,7 @@ export default {
     },
     valid: false,
     selected: [],
+    warehouses: [],
     data: {}
   }),
 
@@ -654,7 +655,7 @@ export default {
         if (
           await this.$refs.confirm.open(
             'Peringatan',
-            `Terdapat gagal kirim untuk barang ${result.data.itemName} - ${result.data.unitName} dengan jumlah ${result.data.qty}. Apakah Anda yakin untuk melakukan persetujuan?`)
+            `Data dengan Kode ${result.data.code} terdapat data gagal kirim untuk barang ${result.data.itemName} - ${result.data.unitName} dengan jumlah ${result.data.qty}. Apakah Anda yakin untuk melakukan persetujuan?`)
         ) {
           const resp = await api.updatemaster(`${this.endpoint.mobileWarehouse.deliveryItem}/approve`, this.selected)
           result = resp.data
@@ -663,6 +664,14 @@ export default {
             this.reset()
             this.getList()
           }
+        }
+      } else {
+        const resp = await api.updatemaster(`${this.endpoint.mobileWarehouse.deliveryItem}/approve`, this.selected)
+        result = resp.data
+        if (result.success) {
+          this.$store.dispatch('app/showSuccess', result.message)
+          this.reset()
+          this.getList()
         }
       }
     },
