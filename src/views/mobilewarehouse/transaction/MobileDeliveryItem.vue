@@ -423,7 +423,74 @@
       </v-card>
     </v-dialog>
 
-    <confirm ref="confirm"></confirm>
+    <v-dialog
+      v-model="dialog.approve"
+      transition="dialog-bottom-transition"
+      fullscreen
+      hide-overlay
+      persistent
+      scrollable
+      @keydown.esc="close"
+    >
+      <v-card :style="{ background: $vuetify.theme.themes[theme].surface }">
+        <v-toolbar
+          color="red darken-5"
+          max-height="64"
+          dark
+        >
+          <v-toolbar-title>Peringantan</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-toolbar-items>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'enter']"
+                  dark
+                  text
+                  @click="approveConfirm"
+                  @shortkey="approveConfirm"
+                >Setujui</v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Enter)</span>
+            </v-tooltip>
+          </v-toolbar-items>
+          <v-divider vertical></v-divider>
+          <v-btn icon dark @click="close">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+
+        <v-card-text class="px-2">
+          <v-form
+            ref="form"
+          >
+            <v-row dense>
+              <v-col cols="12">
+                <v-card>
+                  <v-card-title>Apakah anda yakin untuk melakukan persetujuan ? 
+                    Berikut data gagal kirim yang ada di transaksi rencana pengiriman</v-card-title>
+                  <v-divider horizontal></v-divider>
+                  <v-data-table
+                    :headers="gridApprove.columns"
+                    :items="gridApprove.data"
+                    :items-per-page="-1"
+                    height="300"
+                    class="elevation`-1"
+                    dense
+                    disable-sort
+                    fixed-header
+                    hide-default-footer
+                  >
+                  </v-data-table>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -436,13 +503,11 @@ import auth from '@/services/authorization.service'
 
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
-import Confirm from '@/components/dialog/Confirm'
 
 export default {
   components: {
     AdvancedSearch,
-    ExportExcel,
-    Confirm
+    ExportExcel
   },
 
   data: () => ({
@@ -450,7 +515,8 @@ export default {
       text: 'Kode', value: 'code', dataType: 'text'
     }],
     dialog: {
-      add: false
+      add: false,
+      approve: false
     },
     tab: {
       user: null,
@@ -478,6 +544,15 @@ export default {
         { text: 'Inisial', value: 'itemInitial', divider: true, width: '120' },
         { text: 'Nama', value: 'itemName', divider: true, width: '300' },
         { text: 'Qty', value: 'realizeQty', align: 'right', divider: true, width: '90' },
+        { text: 'Satuan', value: 'unitName', divider: true, width: '90' }
+      ],
+      data: []
+    },
+    gridApprove: {
+      columns: [
+        { text: 'Kd. Rencana Pengiriman', value: 'dlvPlanCode', divider: true, width: '150' },
+        { text: 'Inisial Barang', value: 'itemInitial', divider: true, width: '120' },
+        { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '90' },
         { text: 'Satuan', value: 'unitName', divider: true, width: '90' }
       ],
       data: []
@@ -590,6 +665,7 @@ export default {
         })
     },
     close() {
+      this.dialog.approve = false
       this.dialog.add = false
       this.reset()
     },
@@ -652,19 +728,8 @@ export default {
       const respValid = await api.updatemaster(`${this.endpoint.mobileWarehouse.deliveryItem}/check-undeliv`, this.selected)
       result = respValid.data
       if (result.success) {
-        if (
-          await this.$refs.confirm.open(
-            'Peringatan',
-            `Data dengan Kode ${result.data.code} terdapat data gagal kirim untuk barang ${result.data.itemName} - ${result.data.unitName} dengan jumlah ${result.data.qty}. Apakah Anda yakin untuk melakukan persetujuan?`)
-        ) {
-          const resp = await api.updatemaster(`${this.endpoint.mobileWarehouse.deliveryItem}/approve`, this.selected)
-          result = resp.data
-          if (result.success) {
-            this.$store.dispatch('app/showSuccess', result.message)
-            this.reset()
-            this.getList()
-          }
-        }
+        this.dialog.approve = true
+        this.gridApprove.data = result.data
       } else {
         const resp = await api.updatemaster(`${this.endpoint.mobileWarehouse.deliveryItem}/approve`, this.selected)
         result = resp.data
@@ -673,6 +738,18 @@ export default {
           this.reset()
           this.getList()
         }
+      }
+    },
+    async approveConfirm() {
+      let result = { success: false, message: '' }
+
+      const resp = await api.updatemaster(`${this.endpoint.mobileWarehouse.deliveryItem}/approve`, this.selected)
+      result = resp.data
+      if (result.success) {
+        this.dialog.approve = false
+        this.$store.dispatch('app/showSuccess', result.message)
+        this.reset()
+        this.getList()
       }
     },
     async reject() {
