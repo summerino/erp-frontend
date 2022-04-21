@@ -179,7 +179,7 @@
                   v-shortkey="['ctrl', 's']"
                   color="blue darken-2"
                   class="font-weight-regular"
-                  :disabled="isRejected || !auth.allowUpdate"
+                  :disabled="!main && (isRejected || !auth.allowUpdate)"
                   dark
                   small
                   tile
@@ -419,6 +419,7 @@ export default {
       search: null
     },
     valid: false,
+    data: {},
     selected: [],
     types: []
   }),
@@ -559,17 +560,19 @@ export default {
         return
       }
 
-      const data = this.data
+      if (!this.main && (!this.isRejected || auth.allowUpdate)) {
+        const data = this.data
 
-      let result = { success: false, message: '' }
-      const resp = await api.update(this.endpoint.mobileSales.customer, data.code, data)
-      result = resp.data
+        let result = { success: false, message: '' }
+        const resp = await api.update(this.endpoint.mobileSales.customer, data.code, data)
+        result = resp.data
 
-      if (result.success) {
-        this.$store.dispatch('app/showSuccess', result.message)
-        this.back()
-        this.reset()
-        this.getList()
+        if (result.success) {
+          this.$store.dispatch('app/showSuccess', result.message)
+          this.back()
+          this.reset()
+          this.getList()
+        }
       }
     },
     back() {

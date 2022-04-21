@@ -177,7 +177,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="isRejected || !auth.allowUpdate"
+                  :disabled="!isActive || !auth.allowUpdate"
                   dark
                   text
                   @click="save(true)"
@@ -206,7 +206,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="isRejected || !auth.allowUpdate"
+                  :disabled="!isActive || !auth.allowUpdate"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -612,8 +612,8 @@ export default {
     formatDate() {
       return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
     },
-    isRejected() {
-      return (this.data?.mark?.toUpperCase() === 'REJ')
+    isActive() {
+      return (this.data?.mark?.toUpperCase() === 'A')
     }
   },
 
@@ -703,21 +703,23 @@ export default {
         return
       }
       
-      const data = this.data
-      data.itemDetails = this.gridItem.data
-      
-      let result = { success: false, message: '' }
-      const resp = await api.update(this.endpoint.mobileWarehouse.deliveryItem, data.code, data)
-      result = resp.data
+      if (this.isActive || auth.allowUpdate) { 
+        const data = this.data
+        data.itemDetails = this.gridItem.data
+        
+        let result = { success: false, message: '' }
+        const resp = await api.update(this.endpoint.mobileWarehouse.deliveryItem, data.code, data)
+        result = resp.data
 
-      if (result.success) {
-        this.$store.dispatch('app/showSuccess', result.message)
-        if (closeDialog) {
-          this.dialog.add = false
-        } else {
-          this.data.code = result.data
+        if (result.success) {
+          this.$store.dispatch('app/showSuccess', result.message)
+          if (closeDialog) {
+            this.dialog.add = false
+          } else {
+            this.data.code = result.data
+          }
+          this.getList(!closeDialog)
         }
-        this.getList(!closeDialog)
       }
     },
     async exportExcel() {

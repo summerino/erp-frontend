@@ -212,7 +212,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  disabled
+                  :disabled="data.scheduled || (!custRejected && !data.scheduled)"
                   dark
                   text
                   @click="save(true)"
@@ -241,7 +241,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  disabled
+                  :disabled="data.scheduled || (!custRejected && !data.scheduled)"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -314,11 +314,11 @@
                           v-model="data.custCode"
                           :items="customers"
                           :item-text="item => `${item.initial} - ${item.name}`"
+                          :readonly="data.scheduled || (!custRejected && !data.scheduled)"
                           :rules="rules.required"
                           label="Pelanggan"
                           item-value="code"
                           class="mt-0"
-                          readonly
                           required
                         ></v-autocomplete>
                       </v-col>
@@ -612,6 +612,7 @@ export default {
       total: 0,
       search: null
     },
+    custRejected: false,
     valid: false,
     customers: [],
     employees: [],
@@ -722,7 +723,7 @@ export default {
       this.dialog.add = false
       this.reset()
     },
-    edit(item) {
+    async edit(item) {
       if (!item) return
 
       this.dialog.add = true
@@ -736,18 +737,39 @@ export default {
         approvedDate: (item.approvedDate === null) ? null : format(parseISO(item.approvedDate), 'dd-MMM-yyyy HH:mm:ss'),
         rejectedDate: (item.rejectedDate === null) ? null : format(parseISO(item.rejectedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
-    },
-    getCustomerLists() {
-      api.getAll(`${this.endpoint.general.customer.customer}/lists`, {
+
+      const custResult = await api.getAll(this.endpoint.mobileSales.customer, {
         params: {
-          sorts: JSON.stringify([{
-            field: 'initial',
-            direction: 'asc'
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: this.data.custCode
           }])
         }
       })
+
+      if (custResult.data.tableData.length > 0) {
+        this.custRejected = custResult.data.tableData[0].mark === 'REJ'
+        if (this.custRejected) {
+          const result = await api.getAll(`${this.endpoint.general.customer.customer}/lists`, {
+            params: {
+              sorts: JSON.stringify([{
+                field: 'initial',
+                direction: 'asc'
+              }])
+            }
+          })
+
+          this.customers = result.data.tableData
+        } else {
+          this.getCustomerLists()
+        }
+      }
+    },
+    getCustomerLists() {
+      api.getAll(`${this.endpoint.mobileSales.customer}/union`)
         .then(response => {
-          this.customers = response.data.tableData
+          this.customers = response.data
         })
     },
     getSalesmanLists() {
@@ -821,6 +843,31 @@ export default {
     },
     showImage(link) {
       this.$refs.displayImage.show(link)
+    },
+    async save(closeDialog) {
+      if (!this.dialog.add) return
+      if (!this.$refs.form.validate()) {
+        this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
+        return
+      }
+      
+      const data = this.data
+      if (this.custRejected && !data.scheduled) {
+      
+        let result = { success: false, message: '' }
+        const resp = await api.update(this.endpoint.mobileSales.visitLog, data.code, data)
+        result = resp.data
+
+        if (result.success) {
+          this.$store.dispatch('app/showSuccess', result.message)
+          if (closeDialog) {
+            this.dialog.add = false
+          } else {
+            this.data.code = result.data
+          }
+          this.getList(!closeDialog)
+        }
+      }
     }
   }
 }
