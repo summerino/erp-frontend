@@ -180,7 +180,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="isRejected || !auth.allowUpdate"
+                  :disabled="dialog.add && (inActive || !auth.allowUpdate)"
                   dark
                   text
                   @click="save(true)"
@@ -209,7 +209,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="isRejected || !auth.allowUpdate"
+                  :disabled="dialog.add && (inActive || !auth.allowUpdate)"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -415,7 +415,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isRejected || !auth.allowUpdate"
+                                :disabled="dialog.add && (inActive || !auth.allowUpdate)"
                                 class="blue--text"
                                 small
                                 tile
@@ -447,7 +447,7 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
-                                  :disabled="isRejected || !auth.allowUpdate"
+                                  :disabled="dialog.add && (inActive || !auth.allowUpdate)"
                                   color="red"
                                   icon
                                   small
@@ -477,7 +477,7 @@
                               v-model="item.amount"
                               :decimal-length="2"
                               :min="1"
-                              :readonly="isRejected"
+                              :readonly="dialog.add && (inActive || !auth.allowUpdate)"
                               class="text-body-2 text-right mt-0"
                               dense
                             ></v-currency-field>
@@ -665,8 +665,8 @@ export default {
     formatDate() {
       return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
     },
-    isRejected() {
-      return (this.data?.mark?.toUpperCase() === 'REJ')
+    inActive() {
+      return (this.data?.mark?.toUpperCase() !== 'A')
     }
   },
 
@@ -773,21 +773,23 @@ export default {
         return
       }
       
-      const data = this.data
-      data.itemDetails = this.gridDet.data
-      
-      let result = { success: false, message: '' }
-      const resp = await api.update(this.endpoint.mobileSales.salesCost, data.code, data)
-      result = resp.data
+      if (this.dialog.add && (!this.inActive || auth.allowUpdate)) {
+        const data = this.data
+        data.itemDetails = this.gridDet.data
+        
+        let result = { success: false, message: '' }
+        const resp = await api.update(this.endpoint.mobileSales.salesCost, data.code, data)
+        result = resp.data
 
-      if (result.success) {
-        this.$store.dispatch('app/showSuccess', result.message)
-        if (closeDialog) {
-          this.dialog.add = false
-        } else {
-          this.data.code = result.data
+        if (result.success) {
+          this.$store.dispatch('app/showSuccess', result.message)
+          if (closeDialog) {
+            this.dialog.add = false
+          } else {
+            this.data.code = result.data
+          }
+          this.getList(!closeDialog)
         }
-        this.getList(!closeDialog)
       }
     },
     addItem() {

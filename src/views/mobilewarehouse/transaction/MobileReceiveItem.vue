@@ -714,21 +714,23 @@ export default {
         return
       }
       
-      const data = this.data
-      data.itemDetails = this.gridItem.data
-      
-      let result = { success: false, message: '' }
-      const resp = await api.update(this.endpoint.mobileWarehouse.receiveItem, data.code, data)
-      result = resp.data
+      if (this.isActive || auth.allowUpdate) {
+        const data = this.data
+        data.itemDetails = this.gridItem.data
+        
+        let result = { success: false, message: '' }
+        const resp = await api.update(this.endpoint.mobileWarehouse.receiveItem, data.code, data)
+        result = resp.data
 
-      if (result.success) {
-        this.$store.dispatch('app/showSuccess', result.message)
-        if (closeDialog) {
-          this.dialog.add = false
-        } else {
-          this.data.code = result.data
+        if (result.success) {
+          this.$store.dispatch('app/showSuccess', result.message)
+          if (closeDialog) {
+            this.dialog.add = false
+          } else {
+            this.data.code = result.data
+          }
+          this.getList(!closeDialog)
         }
-        this.getList(!closeDialog)
       }
     },
     async removeItem(item) {
