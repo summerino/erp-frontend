@@ -133,6 +133,9 @@
         <template v-slot:[`item.total`]="{ item }">
           {{ item.total | formatCurrency }}
         </template>
+        <template v-slot:[`item.customerName`]="{ item }">
+          {{ item.custCode }} - {{ item.customerName }}
+        </template>
         <template v-slot:[`item.mark`]="{ item }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -1118,16 +1121,9 @@ export default {
         })
     },
     getCustomerLists() {
-      api.getAll(`${this.endpoint.general.customer.customer}/lists`, {
-        params: {
-          sorts: JSON.stringify([{
-            field: 'initial',
-            direction: 'asc'
-          }])
-        }
-      })
+      api.getAll(`${this.endpoint.mobileSales.customer}/union`)
         .then(response => {
-          this.customers = response.data.tableData
+          this.customers = response.data
         })
     },
     getPaymentTermLists() {
