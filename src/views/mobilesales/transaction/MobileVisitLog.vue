@@ -133,6 +133,9 @@
         <template v-slot:[`item.total`]="{ item }">
           {{ item.total | formatCurrency }}
         </template>
+        <template v-slot:[`item.customerName`]="{ item }">
+          {{ item.custCode }} - {{ item.customerName }}
+        </template>
         <template v-slot:[`item.lat`]="{ item }">
           <v-tooltip v-if="item.lat !== null" bottom>
             <template v-if="item.lat !== null" v-slot:activator="{ on, attrs }">

@@ -647,16 +647,9 @@ export default {
       }
     },
     getCustomerLists() {
-      api.getAll(`${this.endpoint.general.customer.customer}/lists`, {
-        params: {
-          sorts: JSON.stringify([{
-            field: 'initial',
-            direction: 'asc'
-          }])
-        }
-      })
+      api.getAll(`${this.endpoint.mobileSales.customer}/union`)
         .then(response => {
-          this.customers = response.data.tableData
+          this.customers = response.data
         })
     },
     getSalesmanLists() {
