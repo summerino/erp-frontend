@@ -287,7 +287,7 @@
                         <v-autocomplete
                           v-model="data.custCode"
                           :items="customers"
-                          :item-text="item => `${item.initial} - ${item.name}`"
+                          :item-text="item => `${item.code} - ${item.name}`"
                           :rules="rules.required"
                           label="Pelanggan"
                           item-value="code"

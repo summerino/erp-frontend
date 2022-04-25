@@ -133,8 +133,8 @@
         <template v-slot:[`item.total`]="{ item }">
           {{ item.total | formatCurrency }}
         </template>
-        <template v-slot:[`item.customerName`]="{ item }">
-          {{ item.custCode }} - {{ item.customerName }}
+        <template v-slot:[`item.custName`]="{ item }">
+          {{ item.custCode }} - {{ item.custName }}
         </template>
         <template v-slot:[`item.mark`]="{ item }">
           <v-tooltip bottom>

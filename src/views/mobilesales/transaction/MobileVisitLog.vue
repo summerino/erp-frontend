@@ -316,7 +316,7 @@
                         <v-autocomplete
                           v-model="data.custCode"
                           :items="customers"
-                          :item-text="item => `${item.initial} - ${item.name}`"
+                          :item-text="item => `${item.code} - ${item.name}`"
                           :readonly="data.scheduled || (!custRejected && !data.scheduled)"
                           :rules="rules.required"
                           label="Pelanggan"
