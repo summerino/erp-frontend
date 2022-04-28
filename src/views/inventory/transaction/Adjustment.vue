@@ -752,7 +752,7 @@ export default {
       this.grid.search = vm.search
       this.getList(vm.bindToForm, vm.filters)
     },
-    getList(bindToForm = false, filters = []) {
+    async getList(bindToForm = false, filters = []) {
       const sorts = []
 
       for (let i = 0; i < this.grid.options.sortBy.length; i++) {
@@ -761,7 +761,7 @@ export default {
           direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
         })
       }
-      api.getAll(this.endpoint.inventory.adjustment, {
+      const respGetAll = await api.getAll(this.endpoint.inventory.adjustment, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -770,14 +770,32 @@ export default {
           filters: JSON.stringify(filters)
         }
       })
-        .then(response => {
-          this.grid.data = response.data.tableData
-          this.grid.total = response.data.rowCount
-          if (bindToForm) {
-            const item = this.grid.data.find(h => h.code === this.data.code)
-            this.edit(item)
-          }
-        })
+
+      this.grid.data = respGetAll.data.tableData
+      this.grid.total = respGetAll.data.rowCount
+
+      if (bindToForm) {
+        const item = this.grid.data.find(h => h.code === this.data.code)
+        if (item) {
+          this.edit(item)
+        } else {
+          const respGetOne = await api.getAll(this.endpoint.inventory.adjustment, {
+            params: {
+              search: this.grid.search,
+              skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
+              take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
+              sorts: JSON.stringify(sorts),
+              filters: JSON.stringify([{
+                field: 'code',
+                operator: 'eq',
+                keyword: this.data.code
+              }])
+            }
+          })
+
+          this.edit(respGetOne.data.tableData[0])
+        }
+      }
     },
     getSystemParameter() {
       api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
@@ -1016,6 +1034,7 @@ export default {
         item.different = 0
         this.convertUOM(item, oldUnit.seq, unit.seq)
       }
+      item.qtyOpname = item.qtyOnHand
     },
     qtyOpnameChange(item, clearDiffUnits = false) {
       item.different = item.qtyOpname - item.qtyOnHand
@@ -1182,7 +1201,7 @@ export default {
                 baseQtyOnHand: item.qtyOnHand,
                 baseUnitId: baseUnitId,
                 qtyOnTransit: 0,
-                qtyOpname: 0,
+                qtyOpname: item.qtyOnHand,
                 differentUnit: null,
                 differentUnits: [],
                 different: 0,
