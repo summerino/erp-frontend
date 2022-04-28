@@ -17,7 +17,7 @@
                 :readonly="filter.isAdvancedSearch"
                 @click:append-outer="advancedSearch"
                 @keyup.enter="getList(false)"
-              ></v-text-field>            
+              ></v-text-field>
               <v-tooltip bottom>
                 <template v-slot:activator="{ on, attrs }">
                   <v-btn
@@ -460,21 +460,6 @@
                       transition="false"
                       eager
                     >
-                      <v-row no-gutters>
-                        <v-col cols="12">
-                          <v-autocomplete
-                            v-model="data.issuedBy"
-                            :items="employees"
-                            :item-text="item => `${item.initial} - ${item.firstName}`"
-                            :rules="rules.required"
-                            label="Dikeluarkan Oleh"
-                            item-value="id"
-                            class="mt-0"
-                            required
-                          ></v-autocomplete>
-                        </v-col>
-                      </v-row>
-
                       <v-row no-gutters>
                         <v-col cols="6">
                           <v-text-field
@@ -937,8 +922,6 @@ export default {
     }, {
       text: 'Kd. Ord. Pembelian', value: 'poCode', dataType: 'text'
     }, {
-      text: 'Dikeluarkan Oleh', value: 'issuedInitial', dataType: 'text'
-    }, {
       text: 'Tgl. Jatuh Tempo', value: 'dueDate', dataType: 'datetime'
     }, {
       text: 'No. Ref', value: 'refNo', dataType: 'text'
@@ -964,7 +947,6 @@ export default {
         { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
         { text: 'Nilai Sudah Dibayar', value: 'paidAmount', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
         { text: 'Sisa', value: 'remaining', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
-        { text: 'Dikeluarkan Oleh', value: 'issuedInitial', divider: true, width: '200', excelColWidth:'23' },
         { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'No. Ref.', value: 'refNo', width: '120', excelColWidth:'15' },
         { text: 'Status', value: 'mark', width: '50' }
@@ -1097,7 +1079,6 @@ export default {
         supAddr: null,
         supPhone: null,
         supFax: null,
-        issuedBy: null,
         curr: 'IDR',
         notes: null,
         paidAmount: 0,
