@@ -1240,10 +1240,18 @@ export default {
       }
 
       for (let i = 0; i < this.gridBonus.data.length; i++)  {
-        if (this.gridBonus.data[i].qty > this.gridBonus.data[i].outstandingQty) {
-          this.$store.dispatch('app/showInfo', 'Terdapat barang bonus yang qty-nya melebihi qty tersedia')
-          return
+        if (this.data.action === 'add') {
+          if (this.gridBonus.data[i].qty > this.gridBonus.data[i].outstandingQty) {
+            this.$store.dispatch('app/showInfo', 'Terdapat barang bonus yang qty-nya melebihi qty tersedia')
+            return
+          }
+        } else if (this.data.action === 'edit') {
+          if (this.gridBonus.data[i].qty > this.gridBonus.data[i].outstandingQty + this.gridBonus.data[i].oldQty) {
+            this.$store.dispatch('app/showInfo', 'Terdapat barang bonus yang qty-nya melebihi qty tersedia')
+            return
+          }
         }
+        
       }
 
       const data = this.data
