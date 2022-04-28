@@ -659,7 +659,7 @@ export default {
         { text: 'Alamat', value: 'address1', divider: true, width: '200', excelColWidth:'20' },
         { text: 'Telepon', value: 'phone', divider: true, width: '120', excelColWidth:'12' },
         { text: 'Batas Kredit', value: 'creditLimit', divider: true, width: '90', excelColWidth:'10' },
-        // { text: 'Penggunaan Kredit', value: 'creditUsed', divider: true, width: '90', excelColWidth:'10' },
+        { text: 'Penggunaan Kredit', value: 'creditUsed', divider: true, width: '90', excelColWidth:'10' },
         { text: 'Status', value: 'isActive', width: '90', excelColWidth:'10', isBool: true }
       ],
       data: [],
