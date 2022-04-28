@@ -268,8 +268,8 @@
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-text-field
                   v-model="data.email"
-                  :rules="[rules.required[0], rules.email[0]]"
-                  :counter="30"
+                  :rules="[rules.email[0], rules.max50chars[0]]"
+                  :counter="50"
                   class="mt-0"
                   label="Email"
                 ></v-text-field>

@@ -242,7 +242,7 @@
                 <v-col cols="12" md="6" class="pr-md-3">
                   <v-text-field
                     v-model="data.email"
-                    :rules="[rules.required[0], rules.email[0], rules.max50chars[0]]"
+                    :rules="[rules.email[0], rules.max50chars[0]]"
                     :counter="50"
                     class="mt-0"
                     label="Email"
@@ -659,7 +659,7 @@ export default {
         { text: 'Alamat', value: 'address1', divider: true, width: '200', excelColWidth:'20' },
         { text: 'Telepon', value: 'phone', divider: true, width: '120', excelColWidth:'12' },
         { text: 'Batas Kredit', value: 'creditLimit', divider: true, width: '90', excelColWidth:'10' },
-        { text: 'Penggunaan Kredit', value: 'creditUsed', divider: true, width: '90', excelColWidth:'10' },
+        // { text: 'Penggunaan Kredit', value: 'creditUsed', divider: true, width: '90', excelColWidth:'10' },
         { text: 'Status', value: 'isActive', width: '90', excelColWidth:'10', isBool: true }
       ],
       data: [],
