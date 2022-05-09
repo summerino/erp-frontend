@@ -534,7 +534,7 @@ export default {
     itemCategories: [],
     items: [],
     srcTrans: [{ id: 1, name: 'Order Penjualan' }, { id: 2, name: 'Retur Penjualan' }],
-    statuses: [{ id: 'A', name: 'Aktif' }, { id: 'INV', name: 'Sudah Difakturkan' }, { id: 'V', name: 'Void' }],
+    statuses: [{ id: 'A', name: 'Aktif' }, { id: 'INV', name: 'Sudah Difakturkan' }, { id: 'V', name: 'Void' }, { id: 'NV', name: 'Bukan Void' }],
     types: [{ id: 1, name: 'Berdasarkan Kode' }, { id: 2, name: 'Berdasarkan Pelanggan' },
       { id: 3, name: 'Berdasarkan Barang' }, { id: 4, name: 'Berdasarkan Kategori Barang' },
       { id: 5, name: 'Berdasarkan Rincian Detail' }],

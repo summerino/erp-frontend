@@ -477,7 +477,7 @@ export default {
     itemCategories: [],
     items: [],
     statuses: [{ id: 'A', name: 'Aktif' }, { id: 'PR', name: 'Diterima Sebagian' }, { id: 'CMP', name: 'Diterima Seluruhnya' },
-      { id: 'CLS', name: 'Ditutup' }, { id: 'V', name: 'Void' }],
+      { id: 'CLS', name: 'Ditutup' }, { id: 'V', name: 'Void' }, { id: 'NV', name: 'Bukan Void' }],
     suppliers: [],
     types: [{ id: 1, name: 'Berdasarkan Kode' }, { id: 2, name: 'Berdasarkan Pemasok' },
       { id: 3, name: 'Berdasarkan Barang' }, { id: 4, name: 'Berdasarkan Kategori Barang' },
