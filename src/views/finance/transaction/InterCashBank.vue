@@ -660,6 +660,8 @@ export default {
       text: 'Kd. Akun Tujuan', value: 'coaCodeTo', dataType: 'text'
     }, {
       text: 'Nama Akun Tujuan', value: 'coaNameTo', dataType: 'text'
+    }, {
+      text: 'Status', value: 'mark', dataType: 'text'
     }],
     dialog: {
       add: false

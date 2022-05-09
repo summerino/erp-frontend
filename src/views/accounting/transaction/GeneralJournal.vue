@@ -544,11 +544,11 @@ export default {
     ExportExcel
   },
   data: () => ({
-    filterFields: [{
-      text: 'Kode', value: 'code', dataType: 'text'
-    }, {
-      text: 'Tanggal', value: 'date', dataType: 'datetime'
-    }],
+    filterFields: [
+      { text: 'Kode', value: 'code', dataType: 'text' },
+      { text: 'Tanggal', value: 'date', dataType: 'datetime' },
+      { text: 'Status', value: 'mark', dataType: 'text' }
+    ],
     dialog: {
       add: false
     },

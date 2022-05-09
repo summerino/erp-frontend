@@ -790,6 +790,8 @@ export default {
       text: 'Diterima Oleh', value: 'receiveInitial', dataType: 'text'
     }, {
       text: 'No. Ref.', value: 'refNo', dataType: 'text'
+    }, {
+      text: 'Status', value: 'mark', dataType: 'text'
     }],
     dialog: {
       add: false

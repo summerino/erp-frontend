@@ -637,6 +637,8 @@ export default {
       text: 'Gudang Asal', value: 'warehouseInitialFrom', dataType: 'text'
     }, {
       text: 'Gudang Tujuan', value: 'warehouseInitialTo', dataType: 'text'
+    }, {
+      text: 'Status', value: 'mark', dataType: 'text'
     }],
     dialog: {
       add: false

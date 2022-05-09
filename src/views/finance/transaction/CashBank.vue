@@ -664,6 +664,8 @@ export default {
       text: 'Kd. Akun', value: 'coaCode', dataType: 'text'
     }, {
       text: 'Nama Akun', value: 'coaName', dataType: 'text'
+    }, {
+      text: 'Status', value: 'mark', dataType: 'text'
     }],
     dialog: {
       add: false

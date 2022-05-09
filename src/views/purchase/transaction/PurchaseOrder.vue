@@ -954,6 +954,8 @@ export default {
       text: 'Diminta Oleh', value: 'requestInitial', dataType: 'text'
     }, {
       text: 'Pemasok', value: 'supName', dataType: 'text'
+    }, {
+      text: 'Status', value: 'mark', dataType: 'text'
     }],
     dialog: {
       add: false

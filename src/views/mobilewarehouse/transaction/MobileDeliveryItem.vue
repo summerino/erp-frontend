@@ -511,9 +511,10 @@ export default {
   },
 
   data: () => ({
-    filterfields: [{
-      text: 'Kode', value: 'code', dataType: 'text'
-    }],
+    filterfields: [
+      { text: 'Kode', value: 'code', dataType: 'text' },
+      { text: 'Status', value: 'mark', dataType: 'text' }
+    ],
     dialog: {
       add: false,
       approve: false

@@ -925,6 +925,8 @@ export default {
       text: 'Tgl. Jatuh Tempo', value: 'dueDate', dataType: 'datetime'
     }, {
       text: 'No. Ref', value: 'refNo', dataType: 'text'
+    }, {
+      text: 'Status', value: 'mark', dataType: 'text'
     }],
     dialog: {
       add: false

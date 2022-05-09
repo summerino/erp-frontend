@@ -1109,17 +1109,14 @@ export default {
   },
 
   data: () => ({
-    filterfields: [{
-      text: 'Kode', value: 'code', dataType: 'text'
-    }, {
-      text: 'Tanggal', value: 'date', dataType: 'datetime'
-    }, {
-      text: 'Penjual', value: 'salesInitial', dataType: 'text'
-    }, {
-      text: 'Kd. Pelanggan', value: 'custCode', dataType: 'text'
-    }, {
-      text: 'Nama Pelanggan', value: 'custName', dataType: 'text'
-    }],
+    filterfields: [
+      { text: 'Kode', value: 'code', dataType: 'text' },
+      { text: 'Tanggal', value: 'date', dataType: 'datetime' },
+      { text: 'Penjual', value: 'salesInitial', dataType: 'text' },
+      { text: 'Kd. Pelanggan', value: 'custCode', dataType: 'text' },
+      { text: 'Nama Pelanggan', value: 'custName', dataType: 'text' },
+      { text: 'Status', value: 'mark', dataType: 'text' }
+    ],
     dialog: {
       add: false
     },

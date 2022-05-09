@@ -810,21 +810,16 @@ export default {
   },
 
   data: () => ({
-    filterFields: [{
-      text: 'Kode', value: 'code', dataType: 'text'
-    }, {
-      text: 'Tanggal', value: 'date', dataType: 'datetime'
-    }, {
-      text: 'Inisial Penjual', value: 'salesmanInitial', dataType: 'text'
-    }, {
-      text: 'Nama Penjual', value: 'salesmanName', dataType: 'text'
-    }, {
-      text: 'Inisial Grup Penjual', value: 'groupInitial', dataType: 'text'
-    }, {
-      text: 'Nama Grup Penjual', value: 'groupName', dataType: 'text'
-    }, {
-      text: 'Sumber Transaksi', value: 'sourceTransaction', dataType: 'text'
-    }],
+    filterFields: [
+      { text: 'Kode', value: 'code', dataType: 'text' },
+      { text: 'Tanggal', value: 'date', dataType: 'datetime' },
+      { text: 'Inisial Penjual', value: 'salesmanInitial', dataType: 'text' },
+      { text: 'Nama Penjual', value: 'salesmanName', dataType: 'text' },
+      { text: 'Inisial Grup Penjual', value: 'groupInitial', dataType: 'text' },
+      { text: 'Nama Grup Penjual', value: 'groupName', dataType: 'text' },
+      { text: 'Sumber Transaksi', value: 'sourceTransaction', dataType: 'text' },
+      { text: 'Status', value: 'mark', dataType: 'text' }
+    ],
     dialog: {
       add: false
     },

@@ -610,6 +610,8 @@ export default {
       text: 'Gudang', value: 'warehouseInitial', dataType: 'text'
     }, {
       text: 'Catatan', value: 'notes', dataType: 'text'
+    }, {
+      text: 'Status', value: 'mark', dataType: 'text'
     }],
     dialog: {
       add: false
@@ -623,10 +625,10 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'18' },
-        { text: 'Tanggal', value: 'date', divider: true, width: '150', excelColWidth:'18', isDateTime: true },
+        { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Tipe', value: 'types', divider: true, width: '150', excelColWidth:'18' },
-        { text: 'Gudang', value: 'warehouseInitial', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Gudang', value: 'warehouseInitial', divider: true, width: '150', excelColWidth:'20' },
         { text: 'Catatan', value: 'notes', divider: true, width: '200', excelColWidth:'25' },
         { text: 'Status', value: 'mark', width: '50' }
       ],

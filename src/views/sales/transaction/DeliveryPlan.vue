@@ -812,21 +812,12 @@ export default {
       data: []
     },
     filterfields: [
-      {
-        text: 'Kode', value: 'code', dataType: 'text'
-      },
-      {
-        text: 'No. Kendaraan', value: 'vehicleNo', dataType: 'text'
-      },
-      {
-        text: 'Supir', value: 'driverInitial', dataType: 'text'
-      },
-      {
-        text: 'Gudang', value: 'warehouseInitial', dataType: 'text'
-      }, 
-      {
-        text: 'Tanggal', value: 'date', dataType: 'datetime'
-      }     
+      { text: 'Kode', value: 'code', dataType: 'text' },
+      { text: 'No. Kendaraan', value: 'vehicleNo', dataType: 'text' },
+      { text: 'Supir', value: 'driverInitial', dataType: 'text' },
+      { text: 'Gudang', value: 'warehouseInitial', dataType: 'text' }, 
+      { text: 'Tanggal', value: 'date', dataType: 'datetime' },
+      { text: 'Status', value: 'mark', dataType: 'text' }     
     ],
     valid: false,
     dataStartDate: null,

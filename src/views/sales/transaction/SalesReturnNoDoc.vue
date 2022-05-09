@@ -970,6 +970,8 @@ export default {
       text: 'Gudang', value: 'warehouseCode', dataType: 'text'
     }, {
       text: 'Dijual Oleh', value: 'salesInitial', dataType: 'text'
+    }, {
+      text: 'Status', value: 'mark', dataType: 'text'
     }],
     dialog: {
       add: false

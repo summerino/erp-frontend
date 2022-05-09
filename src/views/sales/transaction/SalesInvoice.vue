@@ -913,6 +913,8 @@ export default {
       text: 'Kd. Ord. Penjualan', value: 'soCode', dataType: 'text'
     }, {
       text: 'Tgl. Jatuh Tempo', value: 'dueDate', dataType: 'datetime'
+    }, {
+      text: 'Status', value: 'mark', dataType: 'text'
     }],
     dialog: {
       add: false

@@ -559,11 +559,11 @@ export default {
   },
 
   data: () => ({
-    filterfields: [{
-      text: 'Kode', value: 'code', dataType: 'text'
-    }, {
-      text: 'Tanggal', value: 'date', dataType: 'datetime'
-    }],
+    filterfields: [
+      { text: 'Kode', value: 'code', dataType: 'text' },
+      { text: 'Tanggal', value: 'date', dataType: 'datetime' },
+      { text: 'Status', value: 'mark', dataType: 'text' }
+    ],
     dialog: {
       add: false
     },

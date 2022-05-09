@@ -691,15 +691,13 @@ export default {
     ReportViewer
   },
   data: () => ({
-    filterFields: [{
-      text: 'Kode', value: 'code', dataType: 'text'
-    }, {
-      text: 'Tanggal', value: 'date', dataType: 'datetime'
-    }, {
-      text: 'Tgl. Jatuh Tempo', value: 'dueDate', dataType: 'datetime'
-    }, {
-      text: 'Pemasok', value: 'supInitial', dataType: 'text'
-    }],
+    filterFields: [
+      { text: 'Kode', value: 'code', dataType: 'text' },
+      { text: 'Tanggal', value: 'date', dataType: 'datetime' },
+      { text: 'Tgl. Jatuh Tempo', value: 'dueDate', dataType: 'datetime' },
+      { text: 'Pemasok', value: 'supInitial', dataType: 'text' },
+      { text: 'Status', value: 'mark', dataType: 'text' }
+    ],
     dialog: {
       add: false
     },

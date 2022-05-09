@@ -987,6 +987,8 @@ export default {
       text: 'Pemasok', value: 'supName', dataType: 'text'
     }, {
       text: 'Dikirim Oleh', value: 'shippedInitial', dataType: 'text'
+    }, {
+      text: 'Status', value: 'mark', dataType: 'text'
     }],
     dialog: {
       add: false

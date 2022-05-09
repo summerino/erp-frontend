@@ -568,6 +568,8 @@ export default {
       text: 'Digunakan', value: 'used', dataType: 'text'
     }, {
       text: 'Saldo', value: 'outstanding', dataType: 'text'
+    }, {
+      text: 'Status', value: 'mark', dataType: 'text'
     }],
     dialog: {
       add: false
