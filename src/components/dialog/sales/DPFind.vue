@@ -170,12 +170,14 @@ export default {
           { text: 'Kode', value: 'code' },
           { text: 'Tanggal', value: 'date' },
           { text: 'Nama Pelanggan', value: 'custName' },
+          { text: 'Nama Penjual', value: 'salesName' },
           { text: 'Wilayah Pelanggan', value: 'custArea' }
         ],
         item2: [
           { text: 'Kode', value: 'code' },
           { text: 'Tanggal', value: 'date' },
           { text: 'Nama Pelanggan', value: 'custName' },
+          { text: 'Nama Penjual', value: 'salesName' },
           { text: 'Wilayah Pelanggan', value: 'custArea' },
           { text: 'Tipe Transaksi', value: 'type' }
         ]
@@ -186,6 +188,7 @@ export default {
           { text: 'Kode Transaksi', value: 'code', divider: true, width: '160' },
           { text: 'Tipe', value: 'type', divider: true, width: '160' },
           { text: 'Nama Pelanggan', value: 'custName', divider: true, width: '160' },
+          { text: 'Nama Penjual', value: 'salesName', divider: true, width: '160' },
           { text: 'Alamat', value: 'custAddress', divider: true, width: '160' },
           { text: 'Wilayah', value: 'custArea', divider: true, width: '160' },
           { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
