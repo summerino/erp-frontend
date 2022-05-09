@@ -580,7 +580,7 @@ export default {
     ],
     itemCategories: [],
     items: [],
-    statuses: [{ id: 'A', name: 'Aktif' }, { id: 'INV', name: 'Sudah Difakturkan' }, { id: 'V', name: 'Void' }],
+    statuses: [{ id: 'A', name: 'Aktif' }, { id: 'INV', name: 'Sudah Difakturkan' }, { id: 'V', name: 'Void' }, { id: 'NV', name: 'Bukan Void' }],
     suppliers: [],
     types: [{ id: 1, name: 'Berdasarkan Kode' }, { id: 2, name: 'Berdasarkan Pemasok' },
       { id: 3, name: 'Berdasarkan Barang' }, { id: 4, name: 'Berdasarkan Kategori Barang' },
