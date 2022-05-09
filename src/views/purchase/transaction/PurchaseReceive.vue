@@ -964,7 +964,8 @@ export default {
         finalDiscPercent: 0,
         finalDisc: 0,
         taxAmount: 0,
-        total: 0
+        total: 0,
+        warehouseCode: null
       }
       this.lblTransCode = 'Kode Order Pembelian'
       this.gridItem.data = []
@@ -1276,7 +1277,7 @@ export default {
           dpp: 0,
           totTax: 0,
           totDPP: 0,
-          warehouseCode: null,
+          warehouseCode: this.data.warehouseCode,
           type: 1,
           typeName: 'Bonus',
           state: 'A'
@@ -1462,6 +1463,9 @@ export default {
         this.data.includeTax = item.includeTax
         this.data.taxAmount = item.taxAmount
         this.data.total = item.total
+        if (this.data.srcTrans === 1) {
+          this.data.warehouseCode = item.warehouseCode
+        }
 
         // Get supplier details
         this.bindSupData(this.data)
@@ -1504,7 +1508,7 @@ export default {
                 this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
                 this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyRcv
                 this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
-                this.gridItem.data[i].warehouseCode = item.warehouseCodeIn
+                this.gridItem.data[i].warehouseCode = item.type === 2 ? item.warehouseCodeIn : item.warehouseCode
                 this.gridItem.data[i].type = 0
                 this.gridItem.data[i].typeName = 'Normal'
                 this.calcItemPrice(this.gridItem.data[i], false)
