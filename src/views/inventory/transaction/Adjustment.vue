@@ -1037,6 +1037,8 @@ export default {
         this.convertUOM(item, oldUnit.seq, unit.seq)
       }
       item.qtyOpname = item.qtyOnHand
+      item.different = Math.round(item.qtyOnHand) - item.qtyOnHand
+      item.qtyAdjust = item.different
     },
     qtyOpnameChange(item, clearDiffUnits = false) {
       item.different = item.qtyOpname - item.qtyOnHand
