@@ -376,20 +376,7 @@ export default {
       this.getCOALists()
     },
     getCOALists() {
-      
-      api.getAll(`${this.endpoint.accounting.coa}/lists`, {
-        params: {
-          filters: JSON.stringify([{
-            field: 'typeId',
-            operator: 'neq',
-            keyword: 1
-          }, {
-            field: 'code',
-            operator: 'doesnotcontain',
-            keyword: this.types.filter(x => x.coaCode).map(x => x.coaCode)
-          }])
-        }
-      })
+      api.getAll(`${this.endpoint.accounting.coa}/list-general-transaction`)
         .then(response => {
           this.coas = response.data.tableData
         })
