@@ -860,19 +860,7 @@ export default {
       }
     },
     getAccountLists() {
-      api.getAll(`${this.endpoint.accounting.coa}/lists-non-syspar`, {
-        params: {
-          // filters: JSON.stringify([{
-          //   field: 'type',
-          //   operator: 'eq',
-          //   keyword: 3
-          // }]),
-          sorts: JSON.stringify([{
-            field: 'code',
-            direction: 'asc'
-          }])
-        }
-      })
+      api.getAll(`${this.endpoint.accounting.coa}/list-general-journal`)
         .then(response => {
           this.accounts = response.data.tableData
         })
