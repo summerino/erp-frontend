@@ -75,6 +75,7 @@ export default {
   interCashBank: 83,
   cbReport: 96,
   outstandingchequeReport: 149,
+  cfReport: 157,
 
   // Accounting
   coa: 66,

@@ -27,5 +27,12 @@ export default [
     meta: {
       authRequired: true
     }
+  }, {
+    path: '/finance/report/cash-flow-report',
+    name: 'cash-flow-report',
+    component: () => import(/* webpackChunkName: "cash-flow-report" */ '@/views/finance/report/CashFlowReport.vue'),
+    meta: {
+      authRequired: true
+    }
   }
 ]

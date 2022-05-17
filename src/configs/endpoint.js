@@ -92,7 +92,8 @@ export default {
     interCashBank: 'inter-cash-bank',
     cashBankType: 'cash-bank-type',
     cbReport: 'cb-report',
-    ocReport: 'outstanding-cheque-report'
+    ocReport: 'outstanding-cheque-report',
+    cfReport: 'cash-flow-report'
   },
 
   accounting: {
