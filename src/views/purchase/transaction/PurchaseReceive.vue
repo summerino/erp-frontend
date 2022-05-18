@@ -1056,8 +1056,8 @@ export default {
         params: {
           filters: JSON.stringify([{
             field: 'type',
-            operator: 'eq',
-            keyword: 1
+            operator: 'contains',
+            keyword: [1, 4]
           }]),
           sorts: JSON.stringify([{
             field: 'initial',
