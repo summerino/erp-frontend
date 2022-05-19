@@ -637,6 +637,9 @@
                           <template v-slot:[`item.taxAmount`]="{ item }">
                             {{ item.taxAmount | formatCurrency }}
                           </template>
+                          <template v-slot:[`item.exemptTaxAmount`]="{ item }">
+                            {{ item.exemptTaxAmount | formatCurrency }}
+                          </template>
                           <template v-slot:[`item.shipmentFee`]="{ item }">
                             {{ item.shipmentFee | formatCurrency }}
                           </template>
@@ -967,6 +970,7 @@ export default {
         { text: 'Kode Penerimaan', value: 'rcvCode', divider: true, width: '200' },
         { text: 'Total Sebelum Pajak', value: 'dpp', align: 'right', divider: true, width: '120' },
         { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '120' },
+        { text: 'Pajak Yang Dibebaskan', value: 'exemptTaxAmount', align: 'right', divider: true, width: '120' },
         { text: 'Biaya Pengiriman', value: 'shipmentFee', align: 'right', divider: true, width: '120' },
         { text: 'Biaya Penanganan', value: 'handlingFee', align: 'right', divider: true, width: '120' },
         { text: 'Total', value: 'total', align: 'right', width: '120' }
@@ -1351,6 +1355,7 @@ export default {
           subTotal: 0,
           finalDisc: 0,
           taxAmount: 0,
+          exemptTaxAmount: 0,
           total: 0,
           dpp: 0,
           state: 'A'
@@ -1418,6 +1423,7 @@ export default {
         item.subTotal = data_d.subTotal
         item.finalDisc = data_d.finalDisc
         item.taxAmount = data_d.taxAmount
+        item.exemptTaxAmount = data_d.exemptTaxAmount
         item.total = data_d.total
         item.dpp = data_d.dpp
         if (item.state !== 'A') {

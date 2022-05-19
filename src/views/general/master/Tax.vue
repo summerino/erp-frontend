@@ -200,13 +200,25 @@
               </v-col>
             </v-row>
             <v-row no-gutters>
-              <v-col cols="12" md="6" class="pr-md-3">
+              <v-col cols="12">
                 <v-autocomplete
                   v-model="data.typeId"
                   :items="types"
                   :item-text="item => `${item.value}`"
                   label="Tipe"
                   item-value="id"
+                  class="mt-0"
+                ></v-autocomplete>
+              </v-col>
+            </v-row>
+            <v-row no-gutters>
+              <v-col cols="12" md="6" class="pr-md-3">
+                <v-autocomplete
+                  v-model="data.coaCode"
+                  :items="coas"
+                  :item-text="item => `${item.code} - ${item.name}`"
+                  label="Akun"
+                  item-value="code"
                   class="mt-0"
                 ></v-autocomplete>
               </v-col>
@@ -220,15 +232,23 @@
               </v-col>
             </v-row>
             <v-row no-gutters>
-              <v-col cols="12">
+              <v-col cols="12" md="6" class="pr-md-3">
                 <v-autocomplete
-                  v-model="data.coaCode"
+                  v-model="data.exemptCoaCode"
                   :items="coas"
                   :item-text="item => `${item.code} - ${item.name}`"
-                  label="Akun"
+                  label="Akun Pembebasan"
                   item-value="code"
                   class="mt-0"
                 ></v-autocomplete>
+              </v-col>
+              <v-col cols="12" md="6" class="pl-md-3">
+                <v-currency-field
+                  v-model="data.exemptRate"
+                  label="Persentase Yang Dibebaskan"
+                  suffix="%"
+                  class="mt-0"
+                ></v-currency-field>
               </v-col>
             </v-row>
           </v-container>
@@ -265,7 +285,9 @@ export default {
         { text: 'Nama', value: 'name', divider: true, width: '200', excelColWidth:'20' },
         { text: 'Tipe', value: 'typeId', divider: true, width: '180', excelColWidth:'20' },
         { text: 'Akun', value: 'coaCode', divider: true, width: '180', excelColWidth:'20' },
-        { text: 'Persentase', value: 'rate', divider: true, width: '150', excelColWidth:'15' }
+        { text: 'Persentase', value: 'rate', divider: true, width: '150', excelColWidth:'15' },
+        { text: 'Akun Pembebasan', value: 'exemptCoaCode', divider: true, width: '180', excelColWidth:'20' },
+        { text: 'Persentase Yang Dibebaskan', value: 'exemptRate', width: '150', excelColWidth:'15' }
       ],
       data: [],
       options: {

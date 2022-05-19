@@ -679,6 +679,9 @@
                           <template v-slot:[`item.taxAmount`]="{ item }">
                             {{ item.taxAmount | formatCurrency }}
                           </template>
+                          <template v-slot:[`item.exemptTaxAmount`]="{ item }">
+                            {{ item.exemptTaxAmount | formatCurrency }}
+                          </template>
                           <template v-slot:[`item.nettPrice`]="{ item }">
                             {{ item.nettPrice | formatCurrency }}
                           </template>
@@ -875,6 +878,15 @@
                       ></v-currency-field>
                     </v-row>
 
+                    <v-row no-gutters>
+                      <v-currency-field
+                        v-model="data.exemptTaxAmount"
+                        :allow-negative="false"
+                        label="Jumlah Pajak Yang Dibebaskan"
+                        class="text-right mt-0"
+                        readonly
+                      ></v-currency-field>
+                    </v-row>
                     <!-- <v-row no-gutters>
                       <v-currency-field
                         v-model="data.total"
@@ -997,6 +1009,7 @@ export default {
         { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '120' },
         { text: 'Diskon Header', value: 'finalDiscHeader', align: 'right', divider: true, width: '120' },
         { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '120' },
+        { text: 'Pajak Yang Dibebaskan', value: 'exemptTaxAmount', align: 'right', divider: true, width: '120' },
         { text: 'Harga Nett', value: 'nettPrice', align: 'right', divider: true, width: '120' },
         { text: 'Harga Total', value: 'total', align: 'right', divider: true, width: '120' },
         { text: 'Catatan', value: 'notes', width: '200' }
@@ -1546,10 +1559,12 @@ export default {
           finalDiscHeader: 0,
           taxId: null,
           taxAmount: 0,
+          exemptTaxAmount: 0,
           nettPrice: 0,
           total: 0,
           dpp: 0,
           totTax: 0,
+          totExemptTax: 0,
           totDPP: 0,
           notes: null,
           state: 'A'
@@ -1606,10 +1621,12 @@ export default {
         item.disc = 0
         item.taxId = data_i.purchaseTaxId
         item.taxAmount = 0
+        item.exemptTaxAmount = 0
         item.nettPrice = data_i.buyPrice
         item.total = data_i.buyPrice
         item.dpp = data_i.buyPrice
         item.totTax = 0
+        item.totExemptTax = 0
         item.totDPP = data_i.buyPrice
         item.notes = null
         item.coaInventory = data_i.coaInventory
@@ -1670,11 +1687,13 @@ export default {
       if (tax) {
         if (this.data.includeTax) {
           item.taxAmount = (item.unitPrice - item.disc) - ((item.unitPrice - item.disc) / (1 + (tax.rate / 100)))
+          item.exemptTaxAmount = (item.unitPrice - item.disc) - ((item.unitPrice - item.disc) / (1 + (tax.exemptRate / 100)))
           item.nettPrice = item.unitPrice - item.disc
-          item.dpp = item.unitPrice - item.disc - item.taxAmount
+          item.dpp = item.unitPrice - item.disc - item.taxAmount + item.exemptTaxAmount
         } else {
           item.taxAmount = (item.unitPrice - item.disc) * (tax.rate / 100)
-          item.nettPrice = item.unitPrice - item.disc + item.taxAmount
+          item.exemptTaxAmount = (item.unitPrice - item.disc) * (tax.exemptRate / 100)
+          item.nettPrice = item.unitPrice - item.disc + item.taxAmount - item.exemptTaxAmount
           item.dpp = item.unitPrice - item.disc
         }
       }
@@ -1683,6 +1702,7 @@ export default {
       this.calcItemTax(item)
       item.total = item.qty * item.nettPrice
       item.totTax = item.qty * item.taxAmount
+      item.totExemptTax = item.qty * item.exemptTaxAmount
       item.totDPP = item.qty * item.dpp
 
       if (calcPrice) {
@@ -1714,6 +1734,7 @@ export default {
     calcPrice() {
       this.data.subTotal = _sumBy(this.gridItem.data, 'total')
       this.data.taxAmount = _sumBy(this.gridItem.data, 'totTax')
+      this.data.exemptTaxAmount = _sumBy(this.gridItem.data, 'totExemptTax')
       this.data.dpp = _sumBy(this.gridItem.data, 'totDPP') - this.data.finalDisc
       this.calcGrandTotal()
     },
