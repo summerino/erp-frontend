@@ -656,6 +656,9 @@
                           <template v-slot:[`item.taxAmount`]="{ item }">
                             {{ item.taxAmount | formatCurrency }}
                           </template>
+                          <template v-slot:[`item.exemptTaxAmount`]="{ item }">
+                            {{ item.exemptTaxAmount | formatCurrency }}
+                          </template>
                           <template v-slot:[`item.nettPrice`]="{ item }">
                             {{ item.nettPrice | formatCurrency }}
                           </template>
@@ -1142,6 +1145,7 @@ export default {
         noTax: this.defNonTax,
         includeTax: this.defTaxInc,
         taxAmount: 0,
+        exemptTaxAmount: 0,
         taxInvoiceDate: null,
         taxInvoiceNo: null,
         totalIn: 0,
@@ -1496,11 +1500,14 @@ export default {
           unitName: null,
           unitPrice: 0,
           taxAmount: 0,
-          taxAmountTemp: 0,
+          taxAmountTemp: 0,        
+          exemptTaxAmount: 0,
+          exemptTaxAmountTemp: 0,
           nettPrice: 0,
           total: 0,
           dpp: 0,
           totTax: 0,
+          totExemptTax: 0,
           totDPP: 0,
           totalIn: 0,
           totalOut: 0,
@@ -1580,6 +1587,7 @@ export default {
           { text: 'Satuan', value: 'unitName', divider: true, width: '90' },
           { text: 'Harga Satuan', value: 'unitPrice', align: 'right', divider: true, width: '120' },
           { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '120' },
+          { text: 'Pajak Yang Dibebaskan', value: 'exemptTaxAmount', align: 'right', divider: true, width: '120' },
           { text: 'Harga Bersih', value: 'nettPrice', align: 'right', divider: true, width: '120' },
           { text: 'Total Harga', value: 'total', align: 'right', divider: true, width: '120' }
         ]
@@ -1601,6 +1609,7 @@ export default {
           { text: 'Satuan', value: 'unitName', divider: true, width: '90' },
           { text: 'Harga Satuan', value: 'unitPrice', align: 'right', divider: true, width: '120' },
           { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '120' },
+          { text: 'Pajak Yang Dibebaskan', value: 'exemptTaxAmount', align: 'right', divider: true, width: '120' },
           { text: 'Harga Bersih', value: 'nettPrice', align: 'right', divider: true, width: '120' },
           { text: 'Total Harga', value: 'total', align: 'right', divider: true, width: '120' }
         ]
@@ -1621,6 +1630,7 @@ export default {
       if (this.data.noTax) {
         for (let i = 0; i < this.gridItem.data.length; i++) {
           this.gridItem.data[i].taxAmount = 0 
+          this.gridItem.data[i].exemptTaxAmount = 0 
         }
         for (let i = 0; i < this.gridDiffItem.data.length; i++) {
           this.gridDiffItem.data[i].taxAmount = 0 
@@ -1628,7 +1638,8 @@ export default {
         this.data.includeTax = false
       } else {
         for (let i = 0; i < this.gridItem.data.length; i++) {
-          this.gridItem.data[i].taxAmount = this.gridItem.data[i].taxAmountTemp 
+          this.gridItem.data[i].taxAmount = this.gridItem.data[i].taxAmountTemp
+          this.gridItem.data[i].exemptTaxAmount = this.gridItem.data[i].exemptTaxAmountTemp 
         }
         for (let i = 0; i < this.gridDiffItem.data.length; i++) {
           this.gridDiffItem.data[i].taxAmount = 0 
@@ -1658,6 +1669,8 @@ export default {
         item.taxId = data_i.salesTaxId
         item.taxAmount = 0
         item.taxAmountTemp = 0
+        item.exemptTaxAmount = 0
+        item.exemptTaxAmountTemp = 0
         item.nettPrice = data_i.sellPrice
         item.dpp = data_i.sellPrice
         if (item.state !== 'A') {
@@ -1730,17 +1743,22 @@ export default {
       if (tax) {
         if ((!this.data.includeTax || this.data.includeTax) && this.data.noTax) {
           item.taxAmount = 0
+          item.exemptTaxAmount = 0
           item.nettPrice = item.unitPrice
           item.dpp = item.unitPrice
         } else if (this.data.includeTax) {
           item.taxAmount = (item.unitPrice) - ((item.unitPrice) / (1 + (tax.rate / 100)))
+          item.exemptTaxAmount = (item.unitPrice) - ((item.unitPrice) / (1 + (tax.exemptRate / 100)))
           item.taxAmountTemp = item.taxAmount
+          item.exemptTaxAmountTemp = item.exemptTaxAmount
           item.nettPrice = item.unitPrice
-          item.dpp = item.unitPrice - item.taxAmount
+          item.dpp = item.unitPrice - item.taxAmount + item.exemptTaxAmount
         } else {
           item.taxAmount = (item.unitPrice) * (tax.rate / 100)
+          item.exemptTaxAmount = (item.unitPrice) * (tax.exemptRate / 100)
           item.taxAmountTemp = item.taxAmount
-          item.nettPrice = item.unitPrice + item.taxAmount
+          item.exemptTaxAmountTemp = item.exemptTaxAmount
+          item.nettPrice = item.unitPrice + item.taxAmount - item.exemptTaxAmount
           item.dpp = item.unitPrice
         }
       }
@@ -1749,6 +1767,7 @@ export default {
       this.calcItemTax(item)
       item.total = item.qty * item.nettPrice
       item.totTax = item.qty * item.taxAmount
+      item.totExemptTax = item.qty * item.exemptTaxAmount
       item.totDPP = item.qty * item.dpp
 
       if (calcPrice) {
@@ -1764,6 +1783,7 @@ export default {
     calcPrice() {
       this.data.subTotalIn = _sumBy(this.gridItem.data, 'total')
       this.data.taxAmountIn = _sumBy(this.gridItem.data, 'totTax')
+      this.data.exemptTaxAmountIn = _sumBy(this.gridItem.data, 'totExemptTax')
       this.data.dppOut = _sumBy(this.gridItem.data, 'totDPP')
 
       this.data.subTotalOut = _sumBy(this.gridDiffItem.data, 'total')
@@ -1771,7 +1791,7 @@ export default {
       this.data.dppIn = _sumBy(this.gridDiffItem.data, 'totDPP')
       
       this.data.dpp = this.data.dppOut + this.data.dppIn
-      this.data.taxAmount = this.data.taxAmountIn + this.data.taxAmountOut
+      this.data.taxAmount = this.data.taxAmountIn - this.data.exemptTaxAmountIn + this.data.taxAmountOut
 
       this.calcGrandTotal()
     },
