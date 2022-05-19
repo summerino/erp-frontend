@@ -966,6 +966,7 @@ export default {
         subTotal: 0,
         finalDisc: 0,
         taxAmount: 0,
+        exemptTaxAmount: 0,
         total: 0
       }
       this.lblTransCode = 'Kode Order Penjualan'
@@ -1355,6 +1356,7 @@ export default {
       this.data.finalDisc = 0
       this.data.includeTax = 0
       this.data.taxAmount = 0
+      this.data.exemptTaxAmount = 0
       this.data.total = 0
       this.gridItem.data = []
       this.gridRelated.data = []
@@ -1407,11 +1409,13 @@ export default {
       if (tax) {
         if (this.data.includeTax) {
           item.taxAmount = (item.unitPrice - item.disc) - ((item.unitPrice - item.disc) / (1 + (tax.rate / 100)))
+          item.exemptTaxAmount = (item.unitPrice - item.disc) - ((item.unitPrice - item.disc) / (1 + (tax.exemptRate / 100)))
           item.nettPrice = item.unitPrice - item.disc
-          item.dpp = item.unitPrice - item.disc - item.taxAmount
+          item.dpp = item.unitPrice - item.disc - item.taxAmount + item.exemptTaxAmount
         } else {
           item.taxAmount = (item.unitPrice - item.disc) * (tax.rate / 100)
-          item.nettPrice = item.unitPrice - item.disc + item.taxAmount
+          item.exemptTaxAmount = (item.unitPrice - item.disc) * (tax.exemptRate / 100)
+          item.nettPrice = item.unitPrice - item.disc + item.taxAmount - item.exemptTaxAmount
           item.dpp = item.unitPrice - item.disc
         }
       }
@@ -1420,6 +1424,7 @@ export default {
       //this.calcItemTax(item)
       item.total = item.qty * item.nettPrice
       item.totTax = item.qty * item.taxAmount
+      item.totExemptTax = item.qty * item.exemptTaxAmount
       item.totDPP = item.qty * item.dpp
       
       if (calcPrice) {
@@ -1429,6 +1434,7 @@ export default {
     calcPrice() {
       this.data.subTotal = _sumBy(this.gridItem.data, 'total')
       this.data.taxAmount = _sumBy(this.gridItem.data, 'totTax')
+      this.data.exemptTaxAmount = _sumBy(this.gridItem.data, 'totExemptTax')
       this.data.dpp = _sumBy(this.gridItem.data, 'totDPP') - this.data.finalDisc
       this.calcGrandTotal()
     },
@@ -1459,6 +1465,7 @@ export default {
         this.data.finalDisc = item.finalDisc
         this.data.includeTax = item.includeTax
         this.data.taxAmount = item.taxAmount
+        this.data.exemptTaxAmount = item.exemptTaxAmount
         this.data.total = item.total
         const test = true
         if (!item.called || test) {
@@ -1529,6 +1536,7 @@ export default {
         this.data.subTotal = 0
         this.data.finalDisc = 0
         this.data.taxAmount = 0
+        this.data.exemptTaxAmount = 0
         this.data.total = 0
         this.gridItem.data = []
       }

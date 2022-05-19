@@ -607,6 +607,9 @@
                           <template v-slot:[`item.taxAmount`]="{ item }">
                             {{ item.taxAmount | formatCurrency }}
                           </template>
+                          <template v-slot:[`item.exemptTaxAmount`]="{ item }">
+                            {{ item.exemptTaxAmount | formatCurrency }}
+                          </template>
                           <template v-slot:[`item.nettPrice`]="{ item }">
                             {{ item.nettPrice | formatCurrency }}
                           </template>
@@ -939,6 +942,15 @@
                       ></v-currency-field>
                     </v-row>
 
+                    <v-row no-gutters>
+                      <v-currency-field
+                        v-model="data.exemptTaxAmount"
+                        :allow-negative="false"
+                        label="Jumlah Pajak Yang Dibebaskan"
+                        class="text-right mt-0"
+                        readonly
+                      ></v-currency-field>
+                    </v-row>
                     <!-- <v-row no-gutters>
                       <v-currency-field
                         v-model="data.total"
@@ -1036,6 +1048,7 @@ export default {
         { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '120' },
         { text: 'Diskon Header', value: 'finalDiscHeader', align: 'right', divider: true, width: '120' },
         { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '120' },
+        { text: 'Pajak Yang Dibebaskan', value: 'exemptTaxAmount', align: 'right', divider: true, width: '120' },
         { text: 'Harga Nett', value: 'nettPrice', align: 'right', divider: true, width: '120' },
         { text: 'Harga Total', value: 'total', align: 'right', divider: true, width: '120' },
         { text: 'Catatan', value: 'notes', width: '200' }
@@ -1101,6 +1114,7 @@ export default {
       finalDisc: 0,
       includeTax: false,
       taxAmount: 0,
+      exemptTaxAmount: 0,
       total: 0
     },
     seenByOthers: false,
@@ -1169,6 +1183,7 @@ export default {
         finalDisc: 0,
         includeTax: this.defTaxInc,
         taxAmount: 0,
+        exemptTaxAmount: 0,
         total: 0,
         dlvDate : format(new Date(), 'yyyy-MM-dd'),
         isSoDlv : false,
@@ -1558,10 +1573,12 @@ export default {
           finalDiscHeader: 0,
           taxId: null,
           taxAmount: 0,
+          exemptTaxAmount: 0,
           nettPrice: 0,
           total: 0,
           dpp: 0,
           totTax: 0,
+          totExemptTax: 0,
           totDPP: 0,
           notes: null,
           state: 'A',
@@ -1654,10 +1671,12 @@ export default {
         item.disc = 0
         item.taxId = data_i.salesTaxId
         item.taxAmount = 0
+        item.exemptTaxAmount = 0
         item.nettPrice = data_i.sellPrice
         item.total = data_i.sellPrice
         item.dpp = data_i.sellPrice
         item.totTax = 0
+        item.totExemptTax = 0
         item.totDPP = data_i.sellPrice
         item.notes = null
         item.coaInventory = data_i.coaInventory
@@ -1718,11 +1737,13 @@ export default {
       if (tax) {
         if (this.data.includeTax) {
           item.taxAmount = (item.unitPrice - item.disc) - ((item.unitPrice - item.disc) / (1 + (tax.rate / 100)))
+          item.exemptTaxAmount = (item.unitPrice - item.disc) - ((item.unitPrice - item.disc) / (1 + (tax.exemptRate / 100)))
           item.nettPrice = item.unitPrice - item.disc
-          item.dpp = item.unitPrice - item.disc - item.taxAmount
+          item.dpp = item.unitPrice - item.disc - item.taxAmount + item.exemptTaxAmount
         } else {
           item.taxAmount = (item.unitPrice - item.disc) * (tax.rate / 100)
-          item.nettPrice = item.unitPrice - item.disc + item.taxAmount
+          item.exemptTaxAmount = (item.unitPrice - item.disc) * (tax.exemptRate / 100)
+          item.nettPrice = item.unitPrice - item.disc + item.taxAmount - item.exemptTaxAmount
           item.dpp = item.unitPrice - item.disc
         }
       }
@@ -1731,6 +1752,7 @@ export default {
       this.calcItemTax(item)
       item.total = item.qty * item.nettPrice
       item.totTax = item.qty * item.taxAmount
+      item.totExemptTax = item.qty * item.exemptTaxAmount
       item.totDPP = item.qty * item.dpp
 
       if (calcPrice) {
@@ -1762,6 +1784,7 @@ export default {
     calcPrice() {
       this.data.subTotal = _sumBy(this.gridItem.data, 'total')
       this.data.taxAmount = _sumBy(this.gridItem.data, 'totTax')
+      this.data.exemptTaxAmount = _sumBy(this.gridItem.data, 'totExemptTax')
       this.data.dpp = _sumBy(this.gridItem.data, 'totDPP') - this.data.finalDisc
       this.calcGrandTotal()
     },
@@ -1831,555 +1854,6 @@ export default {
         }
       }
     },
-    // async calcPromo() {
-    //   const dataPromo = this.gridPromo.data.filter(x => x.usePromo === true)
-    //   const gridData = this.gridItem.data
-    //   const mainData = this.data
-    //   mainData.finalDisc = 0
-    //   mainData.finalDiscPercent = 0
-    //   const bonusPromo = [] 
-    //   for (let k = 0; k < gridData.length; k++) {
-    //     if (dataPromo.length > 0) {
-    //       let totalDisc = 0 
-    //       const discPromo = []
-    //       for (let i = 0; i < dataPromo.length; i++) {
-    //         for (let j = 0; j < dataPromo[i].itemDetails.length; j++) {
-    //           const applyTo = dataPromo[i].itemDetails[j].applyTo
-    //           if (applyTo === 1) {
-    //             if (dataPromo[i].itemDetails[j].itemId === gridData[k].itemId) {
-    //               if (dataPromo[i].itemDetails[j].promoType === 1) {
-    //                 // Apply to Barang - Promo Method Reguler
-    //                 if (dataPromo[i].itemDetails[j].isPercentage) {
-    //                   totalDisc += gridData[k].unitPrice * (dataPromo[i].itemDetails[j].valuePercentage / 100)
-    //                   discPromo.push({
-    //                     id: randomNumber(-1, -1000),
-    //                     promoDetailId: dataPromo[i].itemDetails[j].id,
-    //                     promoCode: dataPromo[i].code,
-    //                     name: dataPromo[i].name, 
-    //                     promoMethod: 1, 
-    //                     value: dataPromo[i].itemDetails[j].valuePercentage, 
-    //                     nettPrice: 0, 
-    //                     coaCode: dataPromo[i].coaCost, 
-    //                     amount: gridData[k].unitPrice * (dataPromo[i].itemDetails[j].valuePercentage / 100), 
-    //                     fromPromo: true, 
-    //                     isPercentage: dataPromo[i].itemDetails[j].isPercentage
-    //                   })
-    //                 } else {
-    //                   totalDisc += dataPromo[i].itemDetails[j].valueAmount
-    //                   discPromo.push({
-    //                     id: randomNumber(-1, -1000),
-    //                     promoDetailId: dataPromo[i].itemDetails[j].id,
-    //                     promoCode: dataPromo[i].code,
-    //                     name: dataPromo[i].name, 
-    //                     promoMethod: 2, 
-    //                     value: dataPromo[i].itemDetails[j].valueAmount,  
-    //                     nettPrice: 0, 
-    //                     coaCode: dataPromo[i].coaCost, 
-    //                     amount: dataPromo[i].itemDetails[j].valueAmount, 
-    //                     fromPromo: true, 
-    //                     isPercentage: dataPromo[i].itemDetails[j].isPercentage
-    //                   })
-    //                 }
-    //               } else if (dataPromo[i].itemDetails[j].promoType === 2) {
-    //                 // Apply to Barang - Promo Method Qty Barang
-    //                 const tierData = dataPromo[i].itemDetails[j].promoTierList.find(x => gridData[k].qty >= x.fromQty && gridData[k].qty <= x.toQty)
-    //                 if (tierData) {
-    //                   if (dataPromo[i].itemDetails[j].isPercentage) {
-    //                     if (tierData.applyToAllUnit) {
-    //                       const promoUnit = gridData[k].units.find(x => x.id === tierData.saleUnit)
-    //                       const itemUnit = gridData[k].units.find(x => x.id === gridData[k].unitId)
-    //                       if (itemUnit.seq >= promoUnit.seq) {
-    //                         totalDisc += gridData[k].unitPrice * (tierData.value / 100)
-    //                         discPromo.push({
-    //                           id: randomNumber(-1, -1000),
-    //                           promoDetailId: dataPromo[i].itemDetails[j].id,
-    //                           promoCode: dataPromo[i].code,
-    //                           name: dataPromo[i].name, 
-    //                           promoMethod: 1, 
-    //                           value: tierData.value, 
-    //                           nettPrice: 0, 
-    //                           coaCode: dataPromo[i].coaCost, 
-    //                           amount: gridData[k].unitPrice * (tierData.value / 100), 
-    //                           fromPromo: true, 
-    //                           isPercentage: dataPromo[i].itemDetails[j].isPercentage
-    //                         })
-    //                       }
-    //                     } else if (gridData[k].unitId === tierData.saleUnit) {
-    //                       totalDisc += gridData[k].unitPrice * (tierData.value / 100)
-    //                       discPromo.push({
-    //                         id: randomNumber(-1, -1000),
-    //                         promoDetailId: dataPromo[i].itemDetails[j].id,
-    //                         promoCode: dataPromo[i].code,
-    //                         name: dataPromo[i].name, 
-    //                         promoMethod: 1, 
-    //                         value: tierData.value, 
-    //                         nettPrice: 0, 
-    //                         coaCode: dataPromo[i].coaCost, 
-    //                         amount: gridData[k].unitPrice * (tierData.value / 100), 
-    //                         fromPromo: true, 
-    //                         isPercentage: dataPromo[i].itemDetails[j].isPercentage
-    //                       })
-    //                     }
-    //                   } else if (tierData.applyToAllUnit) {
-    //                     const promoUnit = gridData[k].units.find(x => x.id === tierData.saleUnit)
-    //                     const itemUnit = gridData[k].units.find(x => x.id === gridData[k].unitId)
-    //                     if (itemUnit.seq >= promoUnit.seq) {
-    //                       totalDisc += tierData.value
-    //                       discPromo.push({
-    //                         id: randomNumber(-1, -1000),
-    //                         promoDetailId: dataPromo[i].itemDetails[j].id,
-    //                         promoCode: dataPromo[i].code,
-    //                         name: dataPromo[i].name, 
-    //                         promoMethod: 2, 
-    //                         value: tierData.value, 
-    //                         nettPrice: 0, 
-    //                         coaCode: dataPromo[i].coaCost, 
-    //                         amount: tierData.value, 
-    //                         fromPromo: true, 
-    //                         isPercentage: dataPromo[i].itemDetails[j].isPercentage
-    //                       })
-    //                     }
-    //                   } else if (gridData[k].unitId === tierData.saleUnit) {
-    //                     totalDisc += tierData.value
-    //                     discPromo.push({
-    //                       id: randomNumber(-1, -1000),
-    //                       promoDetailId: dataPromo[i].itemDetails[j].id,
-    //                       promoCode: dataPromo[i].code,
-    //                       name: dataPromo[i].name, 
-    //                       promoMethod: 2, 
-    //                       value: tierData.value, 
-    //                       nettPrice: 0, 
-    //                       coaCode: dataPromo[i].coaCost, 
-    //                       amount: tierData.value, 
-    //                       fromPromo: true, 
-    //                       isPercentage: dataPromo[i].itemDetails[j].isPercentage
-    //                     })
-    //                   }
-    //                 }
-    //               } else if (dataPromo[i].itemDetails[j].promoType === 3) {
-    //                 // Apply to Barang - Promo Method Bonus
-    //                 const tierData = dataPromo[i].itemDetails[j].promoTierList.find(x => gridData[k].qty >= x.fromQty && gridData[k].qty <= x.toQty)
-    //                 if (tierData) {
-    //                   if (tierData.isMultiple) {
-    //                     if (gridData[k].unitId === tierData.saleUnit) {
-    //                       const freeItem = _cloneDeep(this.items.find(x => x.id === tierData.freeGoodItemId))
-    //                       freeItem.units = await this.getUnitItemLists(freeItem)
-    //                       freeItem.itemId = freeItem.id
-    //                       this.itemIdChange(freeItem)
-    //                       freeItem.unitId = parseInt(tierData.unitFreeGood)
-    //                       this.unitItemChange(freeItem)
-    //                       freeItem.unitName = freeItem.units.find(x => x.id === parseInt(tierData.unitFreeGood)).unitEquivalent
-    //                       const multipleValue = Math.floor(gridData[k].qty / tierData.fromQty)
-    //                       const item = {
-    //                         id: randomNumber(-1, -1000),
-    //                         initial: freeItem.initial,
-    //                         name: freeItem.name,
-    //                         orderDetailId: gridData[k].id,
-    //                         promoCode: dataPromo[i].code,
-    //                         uomId: freeItem.uomId,
-    //                         itemId: tierData.freeGoodItemId,
-    //                         unitId: tierData.unitFreeGood,
-    //                         unitName: freeItem.unitName,
-    //                         qty: tierData.value * multipleValue,
-    //                         qtyClosed: 0,
-    //                         unitPrice: freeItem.unitPrice,
-    //                         coaCode: dataPromo[i].coaCost
-    //                       }
-    //                       bonusPromo.push(item)
-    //                     }
-    //                   } else if (gridData[k].unitId === tierData.saleUnit) {
-    //                     const freeItem = _cloneDeep(this.items.find(x => x.id === tierData.freeGoodItemId))
-    //                     freeItem.units = await this.getUnitItemLists(freeItem)
-    //                     freeItem.itemId = freeItem.id
-    //                     this.itemIdChange(freeItem)
-    //                     freeItem.unitId = parseInt(tierData.unitFreeGood)
-    //                     this.unitItemChange(freeItem)
-    //                     freeItem.unitName = freeItem.units.find(x => x.id === parseInt(tierData.unitFreeGood)).unitEquivalent
-    //                     const item = {
-    //                       id: randomNumber(-1, -1000),
-    //                       initial: freeItem.initial,
-    //                       name: freeItem.name,
-    //                       orderDetailId: gridData[k].id,
-    //                       promoCode: dataPromo[i].code,
-    //                       uomId: freeItem.uomId,
-    //                       itemId: tierData.freeGoodItemId,
-    //                       unitId: tierData.unitFreeGood,
-    //                       unitName: freeItem.unitName,
-    //                       qty: tierData.value,
-    //                       qtyClosed: 0,
-    //                       unitPrice: freeItem.unitPrice,
-    //                       coaCode: dataPromo[i].coaCost
-    //                     }
-    //                     bonusPromo.push(item)
-    //                   }
-    //                 }
-    //               } else if (dataPromo[i].itemDetails[j].promoType === 4) {
-    //                 // Apply to Barang - Promo Method Payment Term
-    //                 const tierData = dataPromo[i].itemDetails[j].promoTierList.find(x => x.paymentTermId === this.data.paymentTermId)
-    //                 if (tierData) {
-    //                   if (tierData.isPercentage) {
-    //                     totalDisc += gridData[k].unitPrice * (tierData.value / 100)
-    //                     discPromo.push({
-    //                       id: randomNumber(-1, -1000),
-    //                       promoDetailId: dataPromo[i].itemDetails[j].id,
-    //                       promoCode: dataPromo[i].code,
-    //                       name: dataPromo[i].name, 
-    //                       promoMethod: 1, 
-    //                       value: tierData.value, 
-    //                       nettPrice: 0, 
-    //                       coaCode: dataPromo[i].coaCost, 
-    //                       amount: gridData[k].unitPrice * (tierData.value / 100), 
-    //                       fromPromo: true, 
-    //                       isPercentage: dataPromo[i].itemDetails[j].isPercentage
-    //                     })
-    //                   } else {
-    //                     totalDisc += tierData.value
-    //                     discPromo.push({
-    //                       id: randomNumber(-1, -1000),
-    //                       promoDetailId: dataPromo[i].itemDetails[j].id,
-    //                       promoCode: dataPromo[i].code, 
-    //                       name: dataPromo[i].name, 
-    //                       promoMethod: 2, 
-    //                       value: tierData.value, 
-    //                       nettPrice: 0, 
-    //                       coaCode: dataPromo[i].coaCost, 
-    //                       amount: tierData.value, 
-    //                       fromPromo: true, 
-    //                       isPercentage: dataPromo[i].itemDetails[j].isPercentage
-    //                     })
-    //                   }
-    //                 }
-    //               }
-    //             }
-    //           } else if (applyTo === 3) {
-    //             const dtItem = this.items.find(i => i.id === gridData[k].itemId)
-    //             if (dtItem.categoryId === dataPromo[i].itemDetails[j].itemId) {
-    //               if (dataPromo[i].itemDetails[j].promoType === 1) {
-    //                 // Apply to Kategori Barang - Promo Method Reguler
-    //                 if (dataPromo[i].itemDetails[j].isPercentage) {
-    //                   totalDisc += gridData[k].unitPrice * (dataPromo[i].itemDetails[j].valuePercentage / 100)
-    //                   discPromo.push({
-    //                     id: randomNumber(-1, -1000),
-    //                     promoDetailId: dataPromo[i].itemDetails[j].id,
-    //                     promoCode: dataPromo[i].code,
-    //                     name: dataPromo[i].name, 
-    //                     promoMethod: 1, 
-    //                     value: dataPromo[i].itemDetails[j].valuePercentage, 
-    //                     nettPrice: 0, 
-    //                     coaCode: dataPromo[i].coaCost, 
-    //                     amount: gridData[k].unitPrice * (dataPromo[i].itemDetails[j].valuePercentage / 100), 
-    //                     fromPromo: true, 
-    //                     isPercentage: dataPromo[i].itemDetails[j].isPercentage
-    //                   })
-    //                 } else {
-    //                   totalDisc += dataPromo[i].itemDetails[j].valueAmount
-    //                   discPromo.push({
-    //                     id: randomNumber(-1, -1000),
-    //                     promoDetailId: dataPromo[i].itemDetails[j].id,
-    //                     promoCode: dataPromo[i].code, 
-    //                     name: dataPromo[i].name, 
-    //                     promoMethod: 2, 
-    //                     value: dataPromo[i].itemDetails[j].valueAmount, 
-    //                     nettPrice: 0, 
-    //                     coaCode: dataPromo[i].coaCost, 
-    //                     amount: dataPromo[i].itemDetails[j].valueAmount, 
-    //                     fromPromo: true, 
-    //                     isPercentage: dataPromo[i].itemDetails[j].isPercentage
-    //                   })
-    //                 }
-    //               } else if (dataPromo[i].itemDetails[j].promoType === 2) {
-    //                 // Apply to Kategori Barang - Promo Method Qty Barang
-    //                 const tierData = dataPromo[i].itemDetails[j].promoTierList.find(x => gridData[k].qty >= x.fromQty && gridData[k].qty <= x.toQty)
-    //                 if (tierData) {
-    //                   if (dataPromo[i].itemDetails[j].isPercentage) {
-    //                     totalDisc += gridData[k].unitPrice * (tierData.value / 100)
-    //                     discPromo.push({
-    //                       id: randomNumber(-1, -1000),
-    //                       promoDetailId: dataPromo[i].itemDetails[j].id,
-    //                       promoCode: dataPromo[i].code, 
-    //                       name: dataPromo[i].name, 
-    //                       promoMethod: 1, 
-    //                       value: tierData.value, 
-    //                       nettPrice: 0, 
-    //                       coaCode: dataPromo[i].coaCost, 
-    //                       amount: gridData[k].unitPrice * (tierData.value / 100), 
-    //                       fromPromo: true, 
-    //                       isPercentage: dataPromo[i].itemDetails[j].isPercentage
-    //                     })
-    //                   } else {
-    //                     totalDisc += tierData.value
-    //                     discPromo.push({
-    //                       id: randomNumber(-1, -1000),
-    //                       promoDetailId: dataPromo[i].itemDetails[j].id,
-    //                       promoCode: dataPromo[i].code,
-    //                       name: dataPromo[i].name, 
-    //                       promoMethod: 2, 
-    //                       value: tierData.value, 
-    //                       nettPrice: 0, 
-    //                       coaCode: dataPromo[i].coaCost, 
-    //                       amount: tierData.value, 
-    //                       fromPromo: true, 
-    //                       isPercentage: dataPromo[i].itemDetails[j].isPercentage
-    //                     })
-    //                   }
-    //                 }
-    //               } else if (dataPromo[i].itemDetails[j].promoType === 3) {
-    //                 // Apply to Kategori Barang - Promo Method Bonus
-    //                 const tierData = dataPromo[i].itemDetails[j].promoTierList.find(x => gridData[k].qty >= x.fromQty && gridData[k].qty <= x.toQty)
-    //                 if (tierData) {
-    //                   if (tierData.isMultiple) {
-    //                     if (gridData[k].unitId === tierData.saleUnit) {
-    //                       const freeItem = _cloneDeep(this.items.find(x => x.id === tierData.freeGoodItemId))
-    //                       freeItem.units = await this.getUnitItemLists(freeItem)
-    //                       freeItem.itemId = freeItem.id
-    //                       this.itemIdChange(freeItem)
-    //                       freeItem.unitId = parseInt(tierData.unitFreeGood)
-    //                       this.unitItemChange(freeItem)
-    //                       freeItem.unitName = freeItem.units.find(x => x.id === parseInt(tierData.unitFreeGood)).unitEquivalent
-    //                       const multipleValue = Math.floor(gridData[k].qty / tierData.fromQty)
-    //                       const item = {
-    //                         id: randomNumber(-1, -1000),
-    //                         initial: freeItem.initial,
-    //                         name: freeItem.name,
-    //                         orderDetailId: gridData[k].id,
-    //                         promoCode: dataPromo[i].code,
-    //                         uomId: freeItem.uomId,
-    //                         itemId: tierData.freeGoodItemId,
-    //                         unitId: tierData.unitFreeGood,
-    //                         unitName: freeItem.unitName,
-    //                         qty: tierData.value * multipleValue,
-    //                         qtyClosed: 0,
-    //                         unitPrice: freeItem.unitPrice,
-    //                         coaCode: dataPromo[i].coaCost
-    //                       }
-    //                       bonusPromo.push(item)
-    //                     }
-    //                   } else if (gridData[k].unitId === tierData.saleUnit) {
-    //                     const freeItem = _cloneDeep(this.items.find(x => x.id === tierData.freeGoodItemId))
-    //                     freeItem.units = await this.getUnitItemLists(freeItem)
-    //                     freeItem.itemId = freeItem.id
-    //                     this.itemIdChange(freeItem)
-    //                     freeItem.unitId = parseInt(tierData.unitFreeGood)
-    //                     this.unitItemChange(freeItem)
-    //                     freeItem.unitName = freeItem.units.find(x => x.id === parseInt(tierData.unitFreeGood)).unitEquivalent
-    //                     const item = {
-    //                       id: randomNumber(-1, -1000),
-    //                       initial: freeItem.initial,
-    //                       name: freeItem.name,
-    //                       orderDetailId: gridData[k].id,
-    //                       promoCode: dataPromo[i].code,
-    //                       uomId: freeItem.uomId,
-    //                       itemId: tierData.freeGoodItemId,
-    //                       unitId: tierData.unitFreeGood,
-    //                       unitName: freeItem.unitName,
-    //                       qty: tierData.value,
-    //                       qtyClosed: 0,
-    //                       unitPrice: freeItem.unitPrice,
-    //                       coaCode: dataPromo[i].coaCost
-    //                     }
-    //                     bonusPromo.push(item)
-    //                   }
-    //                 }
-    //               } else if (dataPromo[i].itemDetails[j].promoType === 4) {
-    //                 // Apply to Kategori Barang - Promo Method Payment Term
-    //                 const tierData = dataPromo[i].itemDetails[j].promoTierList.find(x => x.paymentTermId === this.data.paymentTermId)
-    //                 if (tierData) {
-    //                   if (tierData.isPercentage) {
-    //                     totalDisc += gridData[k].unitPrice * (tierData.value / 100)
-    //                     discPromo.push({
-    //                       id: randomNumber(-1, -1000),
-    //                       promoDetailId: dataPromo[i].itemDetails[j].id,
-    //                       promoCode: dataPromo[i].code,
-    //                       name: dataPromo[i].name, 
-    //                       promoMethod: 1, 
-    //                       value: tierData.value, 
-    //                       nettPrice: 0, 
-    //                       coaCode: dataPromo[i].coaCost, 
-    //                       amount: gridData[k].unitPrice * (tierData.value / 100), 
-    //                       fromPromo: true, 
-    //                       isPercentage: dataPromo[i].itemDetails[j].isPercentage
-    //                     })
-    //                   } else {
-    //                     totalDisc += tierData.value
-    //                     discPromo.push({
-    //                       id: randomNumber(-1, -1000),
-    //                       promoDetailId: dataPromo[i].itemDetails[j].id,
-    //                       promoCode: dataPromo[i].code, 
-    //                       name: dataPromo[i].name, 
-    //                       promoMethod: 2, 
-    //                       value: tierData.value, 
-    //                       nettPrice: 0, 
-    //                       coaCode: dataPromo[i].coaCost, 
-    //                       amount: tierData.value, 
-    //                       fromPromo: true, 
-    //                       isPercentage: dataPromo[i].itemDetails[j].isPercentage
-    //                     })
-    //                   }
-    //                 }
-    //               }
-    //             }
-    //           } else if (applyTo === 2) { 
-    //             if (dataPromo[i].itemDetails[j].promoType === 5) {     
-    //               // Apply to Faktur - Nilai Trans           
-    //               const tierData = dataPromo[i].itemDetails[j].promoTierList.find(x => mainData.subTotal >= x.fromQty && mainData.subTotal <= x.toQty)
-    //               if (tierData) {
-    //                 if (tierData.isPercentage) {
-    //                   const prorateValue = (gridData[k].unitPrice / _sumBy(gridData, 'unitPrice')) * (gridData[k].unitPrice * (tierData.value / 100)) / gridData[k].qty
-    //                   totalDisc += prorateValue
-    //                   discPromo.push({
-    //                     id: randomNumber(-1, -1000),
-    //                     promoDetailId: dataPromo[i].itemDetails[j].id,
-    //                     promoCode: dataPromo[i].code,
-    //                     name: dataPromo[i].name, 
-    //                     promoMethod: 1, 
-    //                     value: tierData.value, 
-    //                     nettPrice: 0, 
-    //                     coaCode: dataPromo[i].coaCost, 
-    //                     amount: prorateValue, 
-    //                     fromPromo: true, 
-    //                     isPercentage: dataPromo[i].itemDetails[j].isPercentage
-    //                   })
-    //                 } else {
-    //                   const prorateValue = (gridData[k].unitPrice / _sumBy(gridData, 'unitPrice')) * tierData.value / gridData[k].qty
-    //                   totalDisc += prorateValue
-    //                   discPromo.push({
-    //                     id: randomNumber(-1, -1000),
-    //                     promoDetailId: dataPromo[i].itemDetails[j].id,
-    //                     promoCode: dataPromo[i].code, 
-    //                     name: dataPromo[i].name, 
-    //                     promoMethod: 2, 
-    //                     value: tierData.value, 
-    //                     nettPrice: 0, 
-    //                     coaCode: dataPromo[i].coaCost, 
-    //                     amount: prorateValue, 
-    //                     fromPromo: true, 
-    //                     isPercentage: dataPromo[i].itemDetails[j].isPercentage
-    //                   })
-    //                 }
-    //               }
-    //             } else {
-    //               // Apply to Faktur - Promo Method Payment Term
-    //               const tierData = dataPromo[i].itemDetails[j].promoTierList.find(x => x.paymentTermId === this.data.paymentTermId)
-    //               if (tierData) {
-    //                 if (tierData.isPercentage) {
-    //                   const prorateValue = (gridData[k].unitPrice / _sumBy(gridData, 'unitPrice')) * (gridData[k].unitPrice * (tierData.value / 100)) / gridData[k].qty
-    //                   totalDisc += prorateValue
-    //                   discPromo.push({
-    //                     id: randomNumber(-1, -1000),
-    //                     promoDetailId: dataPromo[i].itemDetails[j].id,
-    //                     promoCode: dataPromo[i].code,
-    //                     name: dataPromo[i].name, 
-    //                     promoMethod: 1, 
-    //                     value: tierData.value, 
-    //                     nettPrice: 0, 
-    //                     coaCode: dataPromo[i].coaCost, 
-    //                     amount: prorateValue, 
-    //                     fromPromo: true, 
-    //                     isPercentage: dataPromo[i].itemDetails[j].isPercentage
-    //                   })
-    //                 } else {
-    //                   const prorateValue = (gridData[k].unitPrice / _sumBy(gridData, 'unitPrice')) * tierData.value / gridData[k].qty
-    //                   totalDisc += prorateValue
-    //                   discPromo.push({
-    //                     id: randomNumber(-1, -1000),
-    //                     promoDetailId: dataPromo[i].itemDetails[j].id,
-    //                     promoCode: dataPromo[i].code, 
-    //                     name: dataPromo[i].name, 
-    //                     promoMethod: 2, 
-    //                     value: tierData.value, 
-    //                     nettPrice: 0, 
-    //                     coaCode: dataPromo[i].coaCost, 
-    //                     amount: prorateValue, 
-    //                     fromPromo: true, 
-    //                     isPercentage: dataPromo[i].itemDetails[j].isPercentage
-    //                   })
-    //                 }
-    //               }
-    //             }
-    //           }
-    //         }
-    //       }
-          
-    //       if (discPromo.length > 0 && gridData[k].discPromo.length === 0) {
-    //         gridData[k].discPromo = discPromo
-    //         gridData[k].disc = totalDisc
-    //         this.unitItemChangePromo(gridData[k])
-    //         this.calcItemPrice(gridData[k], false)
-    //       } else if (discPromo.length > 0 && gridData[k].discPromo.length > 0) {
-    //         const nDiscPromo = []
-    //         for (let ip = 0; ip < discPromo.length; ip++) {
-    //           const dPromo = gridData[k].discPromo.find(x => x.promoDetailId === discPromo[ip].promoDetailId)
-    //           if (!dPromo) {
-    //             if (!('oldValue' in discPromo[ip]) && !discPromo[ip].isPercentage) {
-    //               discPromo[ip].oldValue = discPromo[ip].value
-    //             }
-    //             nDiscPromo.push(discPromo[ip])
-    //           }
-    //         }
-
-    //         for (let iq = 0; iq < gridData[k].discPromo.length; iq++) {
-    //           if (!('oldValue' in gridData[k].discPromo[iq]) && !gridData[k].discPromo[iq].isPercentage) {
-    //             gridData[k].discPromo[iq].oldValue = gridData[k].discPromo[iq].value
-    //           }
-    //           nDiscPromo.push(gridData[k].discPromo[iq])
-    //         }
-    //         if (nDiscPromo.length > 0) {
-    //           gridData[k].discPromo = nDiscPromo
-    //           gridData[k].disc = _sumBy(gridData[k].discPromo, 'amount') 
-    //           this.unitItemChangePromo(gridData[k])
-    //           this.calcItemPrice(gridData[k], false)
-    //         }
-    //       } else if (discPromo.length === 0) {
-    //         const nDiscPromo = []
-    //         for (let iq = 0; iq < gridData[k].discPromo.length; iq++) {
-    //           if (!('oldValue' in gridData[k].discPromo[iq]) && !gridData[k].discPromo[iq].isPercentage) {
-    //             gridData[k].discPromo[iq].oldValue = gridData[k].discPromo[iq].value
-    //           }
-    //           nDiscPromo.push(gridData[k].discPromo[iq])
-    //         }
-    //         if (nDiscPromo.length > 0) {
-    //           gridData[k].discPromo = nDiscPromo
-    //           gridData[k].disc = _sumBy(gridData[k].discPromo, 'amount') 
-    //           this.calcItemPrice(gridData[k], false)
-    //         } else {
-    //           gridData[k].discPromo = []
-    //           gridData[k].disc = 0
-    //           this.calcItemPrice(gridData[k], false)
-    //         }
-    //       }
-    //     } else {
-    //       const nDiscPromo = []
-    //       for (let iq = 0; iq < gridData[k].discPromo.length; iq++) {
-    //         if (!('promoDetailId' in gridData[k].discPromo[iq]) || gridData[k].discPromo[iq].promoDetailId === null) {
-    //           nDiscPromo.push(gridData[k].discPromo[iq])
-    //         }
-    //       }
-    //       if (nDiscPromo.length > 0) {
-    //         gridData[k].discPromo = nDiscPromo
-    //         gridData[k].disc = _sumBy(gridData[k].discPromo, 'amount') 
-    //         this.unitItemChangePromo(gridData[k])
-    //         this.calcItemPrice(gridData[k], false)
-    //       } else {
-    //         gridData[k].discPromo = []
-    //         gridData[k].disc = 0
-    //         this.calcItemPrice(gridData[k], false)
-    //       }
-    //     }
-        
-    //   }
-    //   this.gridBonus.data = bonusPromo
-    //   this.calcPrice() 
-    //   // this.gridBonus.data = bonusPromo
-    //   // mainData.subTotal = _sumBy(this.gridItem.data, 'total')
-    //   // mainData.finalDisc += mainData.subTotal * (mainData.finalDiscPercent / 100)
-    //   // mainData.finalDiscPercent = mainData.finalDisc / mainData.subTotal * 100
-    //   // if (mainData.includeTax) {
-    //   //   mainData.total = mainData.subTotal - mainData.finalDisc
-    //   // } else {
-    //   //   mainData.total = mainData.subTotal - mainData.finalDisc + mainData.taxAmount
-    //   // }
-    //   // this.data = mainData    
-    // },
     setDefaultWarehouse() {
       const userInfo = this.userInfo = auth.getUserInfo()
       const defWarehouse = this.warehouses.find(w => w.isDefault)
