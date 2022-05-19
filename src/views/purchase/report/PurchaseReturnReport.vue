@@ -335,6 +335,11 @@
               {{ item.taxAmount | formatCurrency }}
             </span>
           </template>
+          <template v-slot:[`item.exemptTaxAmount`]="{ item }">
+            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.exemptTaxAmount | formatCurrency }}
+            </span>
+          </template>
           <template v-slot:[`item.total`]="{ item }">
             <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
               {{ item.total | formatCurrency }}
@@ -363,6 +368,11 @@
           <template v-slot:[`item.totalTaxAmount`]="{ item }">
             <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
               {{ item.totalTaxAmount | formatCurrency }}
+            </span>
+          </template>
+          <template v-slot:[`item.totalExemptTaxAmount`]="{ item }">
+            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+              {{ item.totalExemptTaxAmount | formatCurrency }}
             </span>
           </template>
           <template v-slot:[`item.totalNettPrice`]="{ item }">
@@ -415,6 +425,7 @@ export default {
       { text: 'Sub Total', value: 'grossAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'DPP', value: 'dpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Pajak Yang Dibebaskan', value: 'exemptTaxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Total', value: 'total', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
     codeColumn: [
@@ -426,6 +437,7 @@ export default {
       { text: 'Sub Total', value: 'grossAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },      
       { text: 'DPP', value: 'dpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Pajak Yang Dibebaskan', value: 'exemptTaxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Total', value: 'total', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Status', value: 'status',  width: '160', excelColWidth:'20' }
     ],
@@ -439,6 +451,7 @@ export default {
       { text: 'Sub Total', value: 'grossAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'DPP', value: 'dpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Pajak Yang Dibebaskan', value: 'exemptTaxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Total', value: 'total', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
     detailColumn: [
@@ -456,10 +469,12 @@ export default {
       { text: 'Harga Kotor', value: 'grossAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'DPP', value: 'dpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Pajak Yang Dibebaskan', value: 'exemptTaxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Harga Nett', value: 'nettPrice', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Total Harga Kotor', value: 'totalGrossAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Total DPP', value: 'totalDpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Total Pajak', value: 'totalTaxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Total Pajak Yang Dibebaskan', value: 'totalExemptTaxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Total Harga Nett', value: 'totalNettPrice', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Status', value: 'status', width: '160', excelColWidth:'20' }
     ],
@@ -472,6 +487,7 @@ export default {
       { text: 'Sub Total', value: 'grossAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'DPP', value: 'dpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Pajak Yang Dibebaskan', value: 'exemptTaxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Total', value: 'total', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
     itemCategories: [],
