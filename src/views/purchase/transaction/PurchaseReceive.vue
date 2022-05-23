@@ -1177,6 +1177,19 @@ export default {
           this.gridRelated.data = response.data.tableData
         })
 
+      // Get purchase order warehouse
+      api.getAll(this.endpoint.purchase.order, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: this.data.transCode
+          }])
+        }
+      }).then(response => {
+        this.data.warehouseCode = response.data.tableData[0].warehouseCode
+      })
+
       // Set focus to receive code field
       setTimeout(() => {
         this.$refs.code.focus()
