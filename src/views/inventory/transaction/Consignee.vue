@@ -804,7 +804,25 @@ export default {
           this.grid.total = response.data.rowCount
           if (bindToForm) {
             const item = this.grid.data.find(h => h.code === this.data.code)
-            this.edit(item)
+            if (item) {
+              this.edit(item)
+            } else {
+              api.getAll(this.endpoint.inventory.consignee, {
+                params: {
+                  skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
+                  take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
+                  sorts: JSON.stringify(sorts),
+                  filters: JSON.stringify([{
+                    field: 'code',
+                    operator: 'eq',
+                    keyword: this.data.code
+                  }])
+                }
+              })
+                .then(response => {
+                  this.edit(response.data.tableData[0])
+                })
+            }
           }
         })
     },
