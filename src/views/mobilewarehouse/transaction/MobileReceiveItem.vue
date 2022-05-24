@@ -387,7 +387,7 @@
                       <v-row no-gutters>
                         <v-col cols="6">
                           <v-text-field
-                            v-model.trim="data.approveInitial"
+                            v-model.trim="data.approvedInitial"
                             label="Disetujui Oleh"
                             class="mt-0"
                             readonly
