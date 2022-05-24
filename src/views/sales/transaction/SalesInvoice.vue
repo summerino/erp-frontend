@@ -194,6 +194,9 @@
         <template v-slot:[`item.custName`]="{ item }">
           {{ item.custCode }} - {{ item.custName }}
         </template>
+        <template v-slot:[`item.salesName`]="{ item }">
+          {{ item.salesInitial }} - {{ item.salesName }}
+        </template>
         <template v-slot:[`item.fromDirectInvoice`]="{ item }">
           {{ item.fromDirectInvoice ? 'Penjualan Langsung' : 'Faktur Penjualan' }}
         </template>
@@ -910,6 +913,10 @@ export default {
     }, {
       text: 'Nama Pelanggan', value: 'custName', dataType: 'text'
     }, {
+      text: 'Inisial Penjual', value: 'salesInitial', dataType: 'text'
+    }, {
+      text: 'Nama Penjual', value: 'salesName', dataType: 'text'
+    }, {
       text: 'Kd. Ord. Penjualan', value: 'soCode', dataType: 'text'
     }, {
       text: 'Tgl. Jatuh Tempo', value: 'dueDate', dataType: 'datetime'
@@ -935,6 +942,7 @@ export default {
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'20', isDateTime: true },
         { text: 'Tipe', value: 'fromDirectInvoice', divider: true, width: '170', excelColWidth:'20', isBool: true, customValues: [{state: true, value: 'Penjualan Langsung'}, {state: false, value: 'Faktur Penjualan'}] },
         { text: 'Pelanggan', value: 'custName', divider: true, width: '270', excelColWidth:'35', customValues: ['custCode', 'custName'] },
+        { text: 'Penjual', value: 'salesName', divider: true, width: '270', excelColWidth:'35', customValues: ['salesInitial', 'salesName'] },
         { text: 'Kd. Ord. Penjualan', value: 'soCode', divider: true, width: '150', excelColWidth:'18' },
         { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
         { text: 'Nilai Sudah Dibayar', value: 'paidAmount', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
