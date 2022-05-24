@@ -612,6 +612,22 @@
                               </template>
                             </v-autocomplete>
                           </template>
+                          <template v-slot:[`item.unitName`]="{ item }">
+                            <v-autocomplete
+                              v-if="item.type == 1"
+                              v-model="item.unitId"
+                              :items="item.units"
+                              :rules="rules.required"
+                              item-text="unitEquivalent"
+                              item-value="id"
+                              class="text-body-2 mt-0"
+                              dense
+                              required
+                            ></v-autocomplete>
+                            <span v-else>
+                              {{ item.unitName }}
+                            </span>
+                          </template>
                           <template v-slot:[`item.qty`]="{ item }">
                             <v-currency-field
                               v-model="item.qty"
@@ -1290,6 +1306,7 @@ export default {
           dpp: 0,
           totTax: 0,
           totDPP: 0,
+          units: [],
           warehouseCode: this.data.warehouseCode,
           type: 1,
           typeName: 'Bonus',
@@ -1411,6 +1428,8 @@ export default {
           item.state = 'M'
         }
 
+        // Get unit item lists
+        this.getUnitItemLists(item)
         // Calc item price
         // this.calcItemPrice(item)
       }
@@ -1575,6 +1594,14 @@ export default {
       if (item === 'tax') {
         this.data.taxInvoiceDate = null
       }
+    },
+    getUnitItemLists(item) {
+      api.getAll(`${this.endpoint.inventory.uom}/item`, {
+        params: { uomId: item.uomId }
+      })
+        .then(response => {
+          item.units = response.data.tableData
+        })
     }
   }
 }
