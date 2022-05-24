@@ -612,6 +612,22 @@
                               </template>
                             </v-autocomplete>
                           </template>
+                          <template v-slot:[`item.unitName`]="{ item }">
+                            <v-autocomplete
+                              v-if="item.type == 1"
+                              v-model="item.unitId"
+                              :items="item.units"
+                              :rules="rules.required"
+                              item-text="unitEquivalent"
+                              item-value="id"
+                              class="text-body-2 mt-0"
+                              dense
+                              required
+                            ></v-autocomplete>
+                            <span v-else>
+                              {{ item.unitName }}
+                            </span>
+                          </template>
                           <template v-slot:[`item.qty`]="{ item }">
                             <v-currency-field
                               v-model="item.qty"
@@ -1057,8 +1073,8 @@ export default {
         params: {
           filters: JSON.stringify([{
             field: 'type',
-            operator: 'eq',
-            keyword: 1
+            operator: 'contains',
+            keyword: [1, 4]
           }]),
           sorts: JSON.stringify([{
             field: 'initial',
@@ -1178,6 +1194,19 @@ export default {
           this.gridRelated.data = response.data.tableData
         })
 
+      // Get purchase order warehouse
+      api.getAll(this.endpoint.purchase.order, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: this.data.transCode
+          }])
+        }
+      }).then(response => {
+        this.data.warehouseCode = response.data.tableData[0].warehouseCode
+      })
+
       // Set focus to receive code field
       setTimeout(() => {
         this.$refs.code.focus()
@@ -1280,6 +1309,7 @@ export default {
           totTax: 0,
           totExemptTax: 0,
           totDPP: 0,
+          units: [],
           warehouseCode: this.data.warehouseCode,
           type: 1,
           typeName: 'Bonus',
@@ -1402,6 +1432,8 @@ export default {
           item.state = 'M'
         }
 
+        // Get unit item lists
+        this.getUnitItemLists(item)
         // Calc item price
         // this.calcItemPrice(item)
       }
@@ -1572,6 +1604,14 @@ export default {
       if (item === 'tax') {
         this.data.taxInvoiceDate = null
       }
+    },
+    getUnitItemLists(item) {
+      api.getAll(`${this.endpoint.inventory.uom}/item`, {
+        params: { uomId: item.uomId }
+      })
+        .then(response => {
+          item.units = response.data.tableData
+        })
     }
   }
 }

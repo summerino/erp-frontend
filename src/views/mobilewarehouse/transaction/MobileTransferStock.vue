@@ -416,10 +416,11 @@
                           fixed-header
                           hide-default-footer
                         >
-                          <template v-slot:[`item.qty`]="{ item }">
+                          <template v-slot:[`item.realizeQty`]="{ item }">
                             <v-currency-field
-                              v-model="item.qty"
+                              v-model="item.realizeQty"
                               :decimal-length="0"
+                              :readonly="data.type === 'IN'"
                               class="text-body-2 text-right mt-0"
                               dense
                             ></v-currency-field>

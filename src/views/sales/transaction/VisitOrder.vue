@@ -1329,7 +1329,7 @@ export default {
         const item = {
           id: randomNumber(-1, -1000),
           invCode: null,
-          failCollect: null,
+          failCollect: false,
           notesFailCollect: null,
           customerName: null,
           transactionDate: null,
@@ -1527,7 +1527,7 @@ export default {
               const item = {
                 id: randomNumber(-1, -1000),
                 invCode: null,
-                failCollect: null,
+                failCollect: false,
                 notesFailCollect: null,
                 customerName: null,
                 transactionDate: null,

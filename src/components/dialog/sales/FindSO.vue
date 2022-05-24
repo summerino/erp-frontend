@@ -210,6 +210,10 @@ export default {
             field: 'mark',
             operator: 'doesnotcontain',
             keyword: this.MarkExclude
+          }, {
+            field: 'fromDirectInvoice',
+            operator: 'eq',
+            keyword: false
           }]),
           sorts: JSON.stringify([{
             field: this.data.by,
