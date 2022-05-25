@@ -320,6 +320,7 @@
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-checkbox
                   v-model="data.showInMobile"
+                  :disabled="data.isParent"
                   label="Tampilkan di mobile?"
                 ></v-checkbox>
               </v-col>
