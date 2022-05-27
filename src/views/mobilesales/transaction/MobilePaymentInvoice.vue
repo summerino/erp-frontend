@@ -329,17 +329,14 @@
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12" md="6" class="pl-1">
-                        <v-autocomplete
-                          v-model="data.coaCode"
-                          :items="coas"
-                          :item-text="item => `${item.code} - ${item.name}`"
+                        <v-text-field
                           :rules="rules.required"
+                          :value="formatCOA"
                           label="Akun"
-                          item-value="code"
                           class="mt-0"
                           readonly
                           required
-                        ></v-autocomplete>
+                        ></v-text-field>
                       </v-col>
                     </v-row>
 
@@ -521,7 +518,6 @@ export default {
       search: null
     },
     valid: false,
-    coas: [],
     customers: [],
     employees: [],
     selected: [],
@@ -533,7 +529,6 @@ export default {
     this.getList()
     this.getCustomerLists()
     this.getSalesmanLists()
-    this.getCOAList()
     auth.getAction(this.endpoint, this.menuId.mobilePaymentInvoice)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -578,6 +573,9 @@ export default {
     },
     formatDate() {
       return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
+    },
+    formatCOA() {
+      return `${this.data.coaCode} - ${this.data.coaName}`
     }
   },
 
@@ -667,24 +665,6 @@ export default {
       })
         .then(response => {
           this.employees = response.data.tableData
-        })
-    },
-    getCOAList() {
-      api.getAll(`${this.endpoint.accounting.coa}/lists`, {
-        params: {
-          filters: JSON.stringify([{
-            field: 'isActive',
-            operator: 'eq',
-            keyword: true
-          }, {
-            field: 'showInMobile',
-            operator: 'eq',
-            keyword: true
-          }])
-        }
-      })
-        .then(response => {
-          this.coas = response.data.tableData
         })
     },
     async exportExcel() {
