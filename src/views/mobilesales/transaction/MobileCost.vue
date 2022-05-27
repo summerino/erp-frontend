@@ -130,6 +130,9 @@
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
+        <template v-slot:[`item.salesmanInitial`]="{ item }">
+          {{ item.salesmanInitial }} - {{ item.salesmanName }}
+        </template>
         <template v-slot:[`item.total`]="{ item }">
           {{ item.total | formatCurrency }}
         </template>
@@ -576,7 +579,7 @@ export default {
         { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
-        { text: 'Penjual', value: 'salesmanInitial', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Penjual', value: 'salesmanInitial', divider: true, width: '150', excelColWidth:'18', customValues: ['salesmanInitial', 'salesmanName'] },
         { text: 'Nilai Total', value: 'total', divider: true, align:'right', width: '100', excelColWidth:'15', isCurrency: true },
         { text: 'Status', value: 'mark', width: '50' }
       ],

@@ -125,6 +125,22 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
+                :disabled="item.type === 1 || !auth.allowClose"
+                color="blue darken-2"
+                icon
+                small
+                @click="closeReturn(item)"
+              >
+                <v-icon small>mdi-lock</v-icon>
+              </v-btn>
+            </template>
+            <span class="text-caption">Tutup</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                v-bind="attrs"
+                v-on="on"
                 :disabled="item.mark.toUpperCase() === 'V' || !auth.allowPrint"
                 color="teal darken-2"
                 icon
@@ -152,7 +168,7 @@
               <v-chip
                 v-bind="attrs"
                 v-on="on"
-                :color="item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
+                :color="item.mark.toUpperCase() === 'CLS' ? 'grey darken-1' : item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
                 class="px-1"
                 dark
                 small
@@ -209,7 +225,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'enter']"
-                  :disabled="isVoid || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
+                  :disabled="isVoid || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers)) || isClosed"
                   dark
                   text
                   @click="save(true)"
@@ -238,7 +254,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="isVoid || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
+                  :disabled="isVoid || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers)) || isClosed"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -546,7 +562,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid || hasRelatedTrans || (data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
+                                :disabled="isVoid || hasRelatedTrans || (data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate) || isClosed"
                                 class="blue--text"
                                 small
                                 tile
@@ -578,7 +594,7 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
-                                  :disabled="isVoid || hasRelatedTrans || (data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
+                                  :disabled="isVoid || hasRelatedTrans || (data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate) || isClosed"
                                   color="red"
                                   icon
                                   small
@@ -596,7 +612,7 @@
                               v-model="item.itemId"
                               :items="items"
                               :rules="rules.required"
-                              :readonly="hasRelatedTrans"
+                              :readonly="hasRelatedTrans || isClosed"
                               item-text="initial"
                               item-value="id"
                               class="text-body-2 mt-0"
@@ -625,7 +641,7 @@
                               v-model="item.qty"
                               :decimal-length="0"
                               :min="1"
-                              :readonly="hasRelatedTrans"
+                              :readonly="hasRelatedTrans || isClosed"
                               class="text-body-2 text-right mt-0"
                               dense
                               @change="calcItemPrice(item)"
@@ -635,7 +651,7 @@
                             <v-autocomplete
                               v-model="item.unitId"
                               :items="item.units"
-                              :readonly="hasRelatedTrans"
+                              :readonly="hasRelatedTrans || isClosed"
                               item-text="unitEquivalent"
                               item-value="id"
                               class="text-body-2 mt-0"
@@ -678,7 +694,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'alt', 'i']"
-                                :disabled="isVoid || hasRelatedTrans"
+                                :disabled="isVoid || hasRelatedTrans || isClosed"
                                 class="blue--text"
                                 small
                                 tile
@@ -712,7 +728,7 @@
                                   color="red"
                                   icon
                                   small
-                                  :disabled="isVoid || hasRelatedTrans"
+                                  :disabled="isVoid || hasRelatedTrans || isClosed"
                                   @click="removeDiffItem(item)"
                                 >
                                   <v-icon small>mdi-close-thick</v-icon>
@@ -725,6 +741,7 @@
                             <v-autocomplete
                               ref="itemId"
                               v-model="item.itemId"
+                              :readonly="hasRelatedTrans || isClosed"
                               :items="items"
                               :rules="rules.required"
                               item-text="initial"
@@ -753,6 +770,7 @@
                               v-model="item.qty"
                               :decimal-length="0"
                               :min="1"
+                              :readonly="hasRelatedTrans || isClosed"
                               class="text-body-2 text-right mt-0"
                               dense
                               @change="calcItemPrice(item)"
@@ -763,7 +781,7 @@
                               v-model="item.unitId"
                               :items="item.units"
                               :rules="rules.required"
-                              :readonly="hasRelatedTrans"
+                              :readonly="hasRelatedTrans || isClosed"
                               item-text="unitEquivalent"
                               item-value="id"
                               class="text-body-2 mt-0"
@@ -991,7 +1009,7 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '120' },
+        { value: 'action', sortable: false, divider: true, width: '150' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Tipe', value: 'typeName', divider: true, width: '160', excelColWidth:'19' },
@@ -1122,6 +1140,9 @@ export default {
     },
     isVoid() {
       return (this.data?.mark?.toUpperCase() === 'V')
+    },
+    isClosed() {
+      return (this.data?.mark?.toUpperCase() === 'CLS')
     }
   },
 
@@ -1423,6 +1444,21 @@ export default {
           'Apakah anda yakin ingin membuat void data ini?')
       ) {
         api.delete(this.endpoint.sales.return, item.code, {data: item})
+          .then(response => {
+            if (response.data.success) {
+              this.$store.dispatch('app/showSuccess', response.data.message)
+              this.getList()
+            }
+          })
+      }
+    },
+    async closeReturn(item) {
+      if (
+        await this.$refs.confirm.open(
+          'Tutup?',
+          'Apakah anda yakin ingin menutup data ini?')
+      ) {
+        api.update(`${this.endpoint.sales.return}/close`, item.code, item)
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)

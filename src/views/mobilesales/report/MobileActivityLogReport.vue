@@ -261,7 +261,7 @@ export default {
       { text: 'Tanggal', value: 'date', divider: true, width: '25%', excelColWidth:'20', isDateTime: true },
       { text: 'Username', value: 'username', divider: true, width: '25%', excelColWidth:'20' },
       { text: 'Tipe Kode', value: 'typeCode', align: 'right', divider: true, width: '25%', excelColWidth:'20' },
-      { text: 'Catatan', value: 'note', align: 'right', width: '25%', excelColWidth:'20' }
+      { text: 'Catatan', value: 'notes', align: 'right', width: '25%', excelColWidth:'20' }
     ],
     typeCodes: [{ id: 'SRV', name: 'Server' }, { id: 'CACHE', name: 'Cache' }, { id: 'CONN', name: 'Connectivity' }, { id: 'HH', name: 'Handheld' }],
     users: [],
