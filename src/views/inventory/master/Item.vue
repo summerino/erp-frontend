@@ -813,7 +813,7 @@ export default {
         { text: 'Qty Dipesan', value: 'qtyOnOrder', align: 'right', divider: true, width: '120' },
         { text: 'Qty Tersedia', value: 'qtyOnAvailable', align: 'right', divider: true, width: '120' },
         { text: 'Qty Indent', value: 'qtyOnIndent', align: 'right', divider: true, width: '120' },
-        { text: 'Qty Titik Pemesanan Kembali', value: 'qtyReorderPoint', align: 'right', divider: true, width: '120'},
+        // { text: 'Qty Titik Pemesanan Kembali', value: 'qtyReorderPoint', align: 'right', divider: true, width: '120'},
         { text: 'Qty Transfer', value: 'qtyOnTransfer', align: 'right', divider: true, width: '120' },
         { text: 'Diperbarui Tgl.', value: 'updatedDate', divider: true, width: '60' }
       ],

@@ -130,6 +130,9 @@
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
+        <template v-slot:[`item.salesmanInitial`]="{ item }">
+          {{ item.salesmanInitial }} - {{ item.salesmanName }}
+        </template>
         <template v-slot:[`item.customerName`]="{ item }">
           {{ item.custCode }} - {{ item.customerName }}
         </template>
@@ -329,17 +332,14 @@
                         ></v-text-field>
                       </v-col>
                       <v-col cols="12" md="6" class="pl-1">
-                        <v-autocomplete
-                          v-model="data.coaCode"
-                          :items="coas"
-                          :item-text="item => `${item.code} - ${item.name}`"
+                        <v-text-field
                           :rules="rules.required"
+                          :value="formatCOA"
                           label="Akun"
-                          item-value="code"
                           class="mt-0"
                           readonly
                           required
-                        ></v-autocomplete>
+                        ></v-text-field>
                       </v-col>
                     </v-row>
 
@@ -505,7 +505,7 @@ export default {
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
         { text: 'Kd. Log Kunjungan', value: 'visitLogCode', divider: true, width: '160', excelColWidth:'20' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '130', excelColWidth:'15', isDateTime: true },
-        { text: 'Penjual', value: 'salesmanInitial', divider: true, width: '140', excelColWidth:'18' },
+        { text: 'Penjual', value: 'salesmanInitial', divider: true, width: '140', excelColWidth:'18', customValues: ['salesmanInitial', 'salesmanName'] },
         { text: 'Pelanggan', value: 'customerName', divider: true, width: '220', excelColWidth:'40', customValues: ['custCode', 'customerName'] },
         { text: 'Akun', value: 'coaName', divider: true, width: '180', excelColWidth:'40', customValues: ['coaCode', 'coaName'] },
         { text: 'Kd. Trans.', value: 'transCode', divider: true, width: '160', excelColWidth:'20' },
@@ -521,7 +521,6 @@ export default {
       search: null
     },
     valid: false,
-    coas: [],
     customers: [],
     employees: [],
     selected: [],
@@ -533,7 +532,6 @@ export default {
     this.getList()
     this.getCustomerLists()
     this.getSalesmanLists()
-    this.getCOAList()
     auth.getAction(this.endpoint, this.menuId.mobilePaymentInvoice)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -578,6 +576,9 @@ export default {
     },
     formatDate() {
       return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
+    },
+    formatCOA() {
+      return `${this.data.coaCode} - ${this.data.coaName}`
     }
   },
 
@@ -667,24 +668,6 @@ export default {
       })
         .then(response => {
           this.employees = response.data.tableData
-        })
-    },
-    getCOAList() {
-      api.getAll(`${this.endpoint.accounting.coa}/lists`, {
-        params: {
-          filters: JSON.stringify([{
-            field: 'isActive',
-            operator: 'eq',
-            keyword: true
-          }, {
-            field: 'showInMobile',
-            operator: 'eq',
-            keyword: true
-          }])
-        }
-      })
-        .then(response => {
-          this.coas = response.data.tableData
         })
     },
     async exportExcel() {
