@@ -130,6 +130,9 @@
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
+        <template v-slot:[`item.salesmanInitial`]="{ item }">
+          {{ item.salesmanInitial }} - {{ item.salesmanName }}
+        </template>
         <template v-slot:[`item.customerName`]="{ item }">
           {{ item.custCode }} - {{ item.customerName }}
         </template>
@@ -502,7 +505,7 @@ export default {
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
         { text: 'Kd. Log Kunjungan', value: 'visitLogCode', divider: true, width: '160', excelColWidth:'20' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '130', excelColWidth:'15', isDateTime: true },
-        { text: 'Penjual', value: 'salesmanInitial', divider: true, width: '140', excelColWidth:'18' },
+        { text: 'Penjual', value: 'salesmanInitial', divider: true, width: '140', excelColWidth:'18', customValues: ['salesmanInitial', 'salesmanName'] },
         { text: 'Pelanggan', value: 'customerName', divider: true, width: '220', excelColWidth:'40', customValues: ['custCode', 'customerName'] },
         { text: 'Akun', value: 'coaName', divider: true, width: '180', excelColWidth:'40', customValues: ['coaCode', 'coaName'] },
         { text: 'Kd. Trans.', value: 'transCode', divider: true, width: '160', excelColWidth:'20' },
