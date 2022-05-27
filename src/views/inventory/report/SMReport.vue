@@ -679,7 +679,7 @@ export default {
           this.data.filterName = this.data.oldFilterName
           this.data.initial = this.data.oldInitial
           this.data.name = this.data.oldName
-          this.data.itemId = null
+          this.data.itemId = this.data.oldItemId
           this.filter = false
           this.getList()
           this.main = false
@@ -696,7 +696,7 @@ export default {
         this.data.isSM = false
         this.grid.columns = this.whColumn
         this.grid.options.sortBy = ['initial']
-        this.data.itemId = null
+        this.data.itemId = this.data.oldItemId
         this.data.whCode = null
         this.filter = true
         this.getList()
@@ -736,6 +736,7 @@ export default {
           this.getList()
           this.main = false
         } else if (this.data.type === 2) {
+          this.data.oldItemId = this.data.itemId
           this.data.filterName = 'Gudang'
           this.data.initial = item.initial
           this.data.name = item.name
