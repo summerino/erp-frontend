@@ -27,6 +27,13 @@ export default [{
     authRequired: true
   }
 }, {
+  path: '/sales/transaction/credit-limit-approval',
+  name: 'credit-limit-approval',
+  component: () => import(/* webpackChunkName: "credit-limit-approval" */ '@/views/sales/transaction/CreditLimitApproval.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
   path: '/sales/transaction/sales-order',
   name: 'sales-order',
   component: () => import(/* webpackChunkName: "sales-order" */ '@/views/sales/transaction/SalesOrder.vue'),
