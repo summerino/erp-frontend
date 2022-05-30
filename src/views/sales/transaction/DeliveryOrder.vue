@@ -210,7 +210,7 @@
                   text
                   @click="save(true)"
                   @shortkey="save(true)"
-                  :disabled="(data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
+                  :disabled="isVoid || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers)) || isOverLimit"
                 >Simpan & Tutup</v-btn>
               </template>
               <span class="text-caption">(Ctrl + Enter)</span>
@@ -235,7 +235,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 's']"
-                  :disabled="isVoid || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
+                  :disabled="isVoid || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers)) || isOverLimit"
                   @click="save(false)"
                   @shortkey="save(false)"
                 >
@@ -257,7 +257,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 'alt', 'i']"
-                  :disabled="isSaveNInvoiceAble || !allowInsertSalesInvoice || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
+                  :disabled="isVoid || isSaveNInvoiceAble || !allowInsertSalesInvoice || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers)) || isOverLimit"
                   @click="saveInv()"
                   @shortkey="saveInv()"
                 >
@@ -738,7 +738,7 @@
     <report-viewer ref="reportViewer"></report-viewer>
     <find-so
       ref="findSO"
-      :mark-exclude="['V', 'CLS', 'CMP']"
+      :mark-exclude="['V', 'CLS', 'CMP', 'OL']"
       @dblclick:row="bindTransData"
     ></find-so>
     <find-return
@@ -942,6 +942,9 @@ export default {
     },
     formatInvoiceDate() {
       return this.data.taxInvoiceDate ? format(parseISO(this.data.taxInvoiceDate), 'dd-MMM-yyyy') : ''
+    },
+    isOverLimit() {
+      return (this.data?.mark?.toUpperCase() === 'OL')
     }
   },
 
@@ -1373,7 +1376,7 @@ export default {
             }, {
               field: 'mark',
               operator: 'doesnotcontain',
-              keyword: ['V', 'CLS', 'CMP']
+              keyword: ['V', 'CLS', 'CMP', 'OL']
             }])
           }
         })

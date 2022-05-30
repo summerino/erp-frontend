@@ -229,7 +229,7 @@
                   text
                   @click="save(true)"
                   @shortkey="save(true)"
-                  :disabled="(data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
+                  :disabled="isVoid || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers)) || isOverLimit"
                 >Simpan & Tutup</v-btn>
               </template>
               <span class="text-caption">(Ctrl + Enter)</span>
@@ -256,7 +256,7 @@
                   v-shortkey="['ctrl', 's']"
                   @click="save(false)"
                   @shortkey="save(false)"
-                  :disabled="(data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
+                  :disabled="isVoid || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers)) || isOverLimit"
                 >
                   <v-list-item-title>
                     <v-tooltip bottom>
@@ -382,6 +382,7 @@
                           v-model="data.salesBy"
                           :items="employees"
                           :item-text="item => `${item.initial} - ${item.firstName}`"
+                          :readonly="isOverLimit"
                           :rules="rules.required"
                           label="Penjual"
                           item-value="id"
@@ -442,7 +443,7 @@
                             v-model="data.custCode"
                             :items="customers"
                             :item-text="item => `${item.code} - ${item.initial}`"
-                            :readonly="hasRelatedTrans"
+                            :readonly="hasRelatedTrans || isOverLimit"
                             :rules="rules.required"
                             label="Kode"
                             item-value="code"
@@ -463,7 +464,7 @@
                           >
                             <template v-slot:append-outer>
                               <v-btn
-                                :disabled="hasRelatedTrans"
+                                :disabled="hasRelatedTrans || isOverLimit"
                                 color="primary"
                                 icon
                                 @click="showFindCustDialog"
@@ -559,6 +560,7 @@
                           v-model="data.paymentTermId"
                           :items="paymentTerms"
                           :item-text="item => `${item.initial} - ${item.name}`"
+                          :readonly="isOverLimit"
                           :rules="rules.required"
                           :disabled="hasRelatedTrans"
                           label="Pembayaran"
@@ -574,6 +576,7 @@
                           <v-autocomplete
                           v-model="data.billingAddressId"
                           :items="customerAddresses"
+                          :readonly="isOverLimit"
                           :rules="rules.required"
                           item-text="initial"
                           label="Alamat Tagih"
@@ -596,6 +599,7 @@
                             v-model="data.warehouseCode"
                             :items="warehouses"
                             :item-text="item => `${item.initial} - ${item.name}`"
+                            :readonly="isOverLimit"
                             :rules="rules.required"
                             label="Gudang"
                             item-value="code"
@@ -609,6 +613,7 @@
                         <v-col cols="12">
                           <v-checkbox
                             v-model="data.includeTax"
+                            :readonly="isOverLimit"
                             :disabled="hasRelatedTrans"
                             label="Termasuk Pajak"
                             class="shrink mt-0"
@@ -682,7 +687,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid || hasRelatedTrans || (data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
+                                :disabled="isVoid || hasRelatedTrans || (data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate) || isOverLimit"
                                 class="blue--text"
                                 small
                                 tile
@@ -718,7 +723,7 @@
                                   icon
                                   small
                                   @click="removeItem(item)"
-                                  :disabled="hasRelatedTrans || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate))"
+                                  :disabled="isVoid || hasRelatedTrans || (!auth.allowInsert && (data.action === 'edit' && !auth.allowUpdate)) || isOverLimit"
                                 >
                                   <v-icon small>mdi-close-thick</v-icon>
                                 </v-btn>
@@ -731,7 +736,7 @@
                               ref="itemId"
                               v-model="item.itemId"
                               :items="items"
-                              :readonly="hasRelatedTrans"
+                              :readonly="hasRelatedTrans || isOverLimit"
                               :rules="rules.required"
                               item-text="initial"
                               item-value="id"
@@ -745,7 +750,7 @@
                                   color="primary"
                                   icon
                                   x-small
-                                  :disabled="hasRelatedTrans"
+                                  :disabled="hasRelatedTrans || isOverLimit"
                                   @click="showFindItemDialog(item)"
                                 >
                                   <v-icon>
@@ -760,7 +765,7 @@
                               v-model="item.qty"
                               :decimal-length="0"
                               :min="1"
-                              :readonly="hasRelatedTrans"
+                              :readonly="hasRelatedTrans || isOverLimit"
                               class="text-body-2 text-right mt-0"
                               dense
                               @change="calcItemPrice(item);"
@@ -770,7 +775,7 @@
                             <v-autocomplete
                               v-model="item.unitId"
                               :items="item.units"
-                              :readonly="hasRelatedTrans"
+                              :readonly="hasRelatedTrans || isOverLimit"
                               :rules="rules.required"
                               item-text="unitEquivalent"
                               item-value="id"
@@ -783,7 +788,7 @@
                           <template v-slot:[`item.unitPrice`]="{ item }">
                             <v-currency-field
                               v-model="item.unitPrice"
-                              :readonly="hasRelatedTrans"
+                              :readonly="hasRelatedTrans || isOverLimit"
                               :rules="rules.above0"
                               class="text-body-2 text-right mt-0"
                               dense
@@ -800,7 +805,7 @@
                             >
                               <template v-slot:append>
                                 <v-btn
-                                  :disabled="hasRelatedTrans"
+                                  :disabled="hasRelatedTrans || isOverLimit"
                                   color="primary"
                                   icon
                                   x-small
@@ -831,6 +836,7 @@
                           <template v-slot:[`item.notes`]="{ item }">
                             <v-text-field
                               v-model="item.notes"
+                              :readonly="isVoid || isOverLimit"
                               :rules="rules.max256chars"
                               class="text-body-2 mt-0"
                               dense
@@ -899,6 +905,7 @@
                     >
                       <v-textarea
                         v-model="data.notes"
+                        :readonly="isVoid || isOverLimit"
                         :rules="rules.max256chars"
                         label="Catatan"
                         counter="256"
@@ -1313,6 +1320,9 @@ export default {
         }
       }
       return true
+    },
+    isOverLimit() {
+      return (this.data?.mark?.toUpperCase() === 'OL')
     }
   },
 
@@ -1748,31 +1758,67 @@ export default {
       }
       
       const data = this.data
-      for (let i = 0; i < this.gridItem.data.length; i++) {
-        const bonusData = this.gridBonus.data.filter(x => x.orderDetailId === this.gridItem.data[i].id)
-        this.gridItem.data[i].freeItemDetails = bonusData
-        this.gridItem.data[i].discountItemDetails = this.gridItem.data[i].discPromo
-      }
-      data.itemDetails = this.gridItem.data
+      const respValidation = await api.updatemaster(`${this.endpoint.sales.order}/check-over-limit`, data)
+      if (respValidation.data.success) {
+        if (
+          await this.$refs.confirm.open(
+            `Penggunaan Kredit Pelanggan ${ data.custCode } - ${ data.custName } Melebihi Batas`,
+            'Apakah anda yakin ingin melanjutkan?')
+        ) {
+          for (let i = 0; i < this.gridItem.data.length; i++) {
+            const bonusData = this.gridBonus.data.filter(x => x.orderDetailId === this.gridItem.data[i].id)
+            this.gridItem.data[i].freeItemDetails = bonusData
+            this.gridItem.data[i].discountItemDetails = this.gridItem.data[i].discPromo
+          }
+          data.itemDetails = this.gridItem.data
 
-      let result = { success: false, message: '' }
-      if (data.action === 'add') {
-        const resp = await api.create(this.endpoint.sales.order, data)
-        result = resp.data
-      } else if (data.action === 'edit') {
-        data.listPromo = this.gridPromo.data
-        const resp = await api.update(this.endpoint.sales.order, data.code, data)
-        result = resp.data
-      }
+          let result = { success: false, message: '' }
+          if (data.action === 'add') {
+            const resp = await api.create(this.endpoint.sales.order, data)
+            result = resp.data
+          } else if (data.action === 'edit') {
+            data.listPromo = this.gridPromo.data
+            const resp = await api.update(this.endpoint.sales.order, data.code, data)
+            result = resp.data
+          }
 
-      if (result.success) {
-        this.$store.dispatch('app/showSuccess', result.message)
-        if (closeDialog) {
-          this.dialog.add = false
-        } else {
-          this.data.code = result.data
+          if (result.success) {
+            this.$store.dispatch('app/showSuccess', result.message)
+            if (closeDialog) {
+              this.dialog.add = false
+            } else {
+              this.data.code = result.data
+            }
+            this.getList(!closeDialog)
+          }
         }
-        this.getList(!closeDialog)
+      } else {
+        for (let i = 0; i < this.gridItem.data.length; i++) {
+          const bonusData = this.gridBonus.data.filter(x => x.orderDetailId === this.gridItem.data[i].id)
+          this.gridItem.data[i].freeItemDetails = bonusData
+          this.gridItem.data[i].discountItemDetails = this.gridItem.data[i].discPromo
+        }
+        data.itemDetails = this.gridItem.data
+
+        let result = { success: false, message: '' }
+        if (data.action === 'add') {
+          const resp = await api.create(this.endpoint.sales.order, data)
+          result = resp.data
+        } else if (data.action === 'edit') {
+          data.listPromo = this.gridPromo.data
+          const resp = await api.update(this.endpoint.sales.order, data.code, data)
+          result = resp.data
+        }
+
+        if (result.success) {
+          this.$store.dispatch('app/showSuccess', result.message)
+          if (closeDialog) {
+            this.dialog.add = false
+          } else {
+            this.data.code = result.data
+          }
+          this.getList(!closeDialog)
+        }
       }
     },
     async saveDlv() {
