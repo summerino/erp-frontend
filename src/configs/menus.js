@@ -52,6 +52,7 @@ export default {
   salesInvoice: 46,
   directInvoice: 46, 
   salesReturn: 47,
+  overlimitApproval: 158,
   deliveryPlan: 48,
   creditMemo: 49,
   visitPlan: 54,
@@ -65,6 +66,7 @@ export default {
   armReport: 132,
   araReport: 134,
   cmReport: 138,
+  releaseOverlimitReport: 159,
   
   // Expedition
   expeditionInvoice: 70,

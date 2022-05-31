@@ -27,13 +27,6 @@ export default [{
     authRequired: true
   }
 }, {
-  path: '/sales/transaction/credit-limit-approval',
-  name: 'credit-limit-approval',
-  component: () => import(/* webpackChunkName: "credit-limit-approval" */ '@/views/sales/transaction/CreditLimitApproval.vue'),
-  meta: {
-    authRequired: true
-  }
-}, {
   path: '/sales/transaction/sales-order',
   name: 'sales-order',
   component: () => import(/* webpackChunkName: "sales-order" */ '@/views/sales/transaction/SalesOrder.vue'),
@@ -65,6 +58,13 @@ export default [{
   path: '/sales/transaction/sales-return-wo-doc',
   name: 'sales-return-wo-doc',
   component: () => import(/* webpackChunkName: "sales-return-wo-doc" */ '@/views/sales/transaction/SalesReturnNoDoc.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/sales/transaction/overlimit-approval',
+  name: 'overlimit-approval',
+  component: () => import(/* webpackChunkName: "overlimit-approval" */ '@/views/sales/transaction/OverlimitApproval.vue'),
   meta: {
     authRequired: true
   }

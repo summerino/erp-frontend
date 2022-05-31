@@ -4,7 +4,7 @@
       <v-card-title class="indigo--text text--lighten-2 pb-1">
         <v-row no-gutters>
           <v-col cols="12" md="4">
-            Persetujuan Batas Kredit
+            Persetujuan Kelebihan Batas Kredit
           </v-col>
           <v-col cols="12" md="6">
             <v-row no-gutters>
