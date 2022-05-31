@@ -471,6 +471,11 @@ export default {
         return
       }
 
+      if (this.data.exemptRate > this.data.rate) {
+        this.$store.dispatch('app/showInfo', 'Persentase pajak yang dibebaskan tidak boleh lebih besar dari persentase pajak.')
+        return
+      }
+
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
         const resp = await api.create(this.endpoint.general.tax, this.data)
