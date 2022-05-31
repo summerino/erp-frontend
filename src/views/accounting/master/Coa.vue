@@ -627,7 +627,7 @@ export default {
         })
     },
     getParentAccountLists() {
-      api.getAll(`${this.endpoint.accounting.coa}/parents`, {
+      api.getAll(this.endpoint.accounting.coa, {
         params: {
           filters: JSON.stringify([{
             field: 'isActive',
