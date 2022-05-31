@@ -1404,6 +1404,12 @@ export default {
         keyword: false
       })
 
+      filters.push({
+        field: 'mark',
+        operator: 'neq',
+        keyword: 'OL'
+      })
+
       const respGetAll = await api.getAll(this.endpoint.sales.order, {
         params: {
           search: this.grid.search,
@@ -1828,8 +1834,20 @@ export default {
         return
       }
       const data = this.data
-      data.itemDetails = this.gridItem.data
-      this.$refs.soSd.open(data)
+      const respValidation = await api.updatemaster(`${this.endpoint.sales.order}/check-over-limit`, data)
+      if (respValidation.data.success) {
+        if (
+          await this.$refs.confirm.open(
+            `Penggunaan Kredit Pelanggan ${ data.custCode } - ${ data.custName } Melebihi Batas`,
+            'Data Surat Jalan tidak akan terbentuk. Apakah anda yakin ingin melanjutkan?')
+        ) {
+          data.itemDetails = this.gridItem.data
+          this.$refs.soSd.open(data)
+        }
+      } else {
+        data.itemDetails = this.gridItem.data
+        this.$refs.soSd.open(data)
+      }
     },
     closeDlv() {
       this.dialog.add = false
@@ -1842,8 +1860,20 @@ export default {
         return
       }
       const data = this.data
-      data.itemDetails = this.gridItem.data
-      this.$refs.soSi.open(data, true)
+      const respValidation = await api.updatemaster(`${this.endpoint.sales.order}/check-over-limit`, data)
+      if (respValidation.data.success) {
+        if (
+          await this.$refs.confirm.open(
+            `Penggunaan Kredit Pelanggan ${ data.custCode } - ${ data.custName } Melebihi Batas`,
+            'Data Surat Jalan & Faktur tidak akan terbentuk. Apakah anda yakin ingin melanjutkan?')
+        ) {
+          data.itemDetails = this.gridItem.data
+          this.$refs.soSi.open(data, true)
+        }
+      } else {
+        data.itemDetails = this.gridItem.data
+        this.$refs.soSi.open(data, true)
+      }
     },
     closeInv() {
       this.dialog.add = false
