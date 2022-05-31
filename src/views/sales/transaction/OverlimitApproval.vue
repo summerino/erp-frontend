@@ -156,7 +156,7 @@ export default {
   }),
   created: function () {
     this.getList()
-    auth.getAction(this.endpoint, this.menuId.approval)
+    auth.getAction(this.endpoint, this.menuId.overlimitApproval)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -169,7 +169,7 @@ export default {
       }, {
         text: 'Transaksi'
       }, {
-        text: 'Persetujuan Batas Kredit'
+        text: 'Persetujuan Kelebihan Batas Kredit'
       }])
       this.$store.commit('app/setGridDefaultHeight', this.$el.clientHeight)
     }, 0)
