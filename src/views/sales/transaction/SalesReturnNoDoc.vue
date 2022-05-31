@@ -125,7 +125,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="item.type === 1 || !auth.allowClose"
+                :disabled="item.mark.toUpperCase() !== 'A' || item.type === 1 || !auth.allowClose"
                 color="blue darken-2"
                 icon
                 small
@@ -1468,7 +1468,7 @@ export default {
     },
     async save(closeDialog) {
       document.activeElement.blur()
-      if (!this.dialog.add) return
+      if (!this.dialog.add || this.isClosed) return
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
