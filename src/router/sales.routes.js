@@ -159,4 +159,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/sales/report/release-overlimit-report',
+  name: 'release-overlimit-report',
+  component: () => import(/* webpackChunkName: "release-overlimit-report" */ '@/views/sales/report/ReleaseOverlimitReport.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
