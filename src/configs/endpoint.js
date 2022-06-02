@@ -80,7 +80,8 @@ export default {
     siReport: 'sales-invoice-report',
     srReport: 'sales-return-report',
     stReport: 'sales-target-report',
-    creditLimitApproval: 'credit-limit-approval'
+    creditLimitApproval: 'credit-limit-approval',
+    roReport: 'release-overlimit-report'
   },
 
   expedition: {
