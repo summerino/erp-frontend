@@ -171,7 +171,11 @@
             </template>
             <span class="text-caption">Void</span>
           </v-tooltip>
-          <v-tooltip bottom>
+          <v-menu
+            bottom
+            eager
+            open-on-hover
+          >
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 v-bind="attrs"
@@ -180,13 +184,37 @@
                 color="teal darken-2"
                 icon
                 small
-                @click="print(item)"
               >
                 <v-icon small>mdi-printer</v-icon>
               </v-btn>
             </template>
-            <span class="text-caption">Cetak</span>
-          </v-tooltip>
+            <v-list
+              class="cursor-pointer"
+              color="teal darken-2"
+              dark
+            >
+              <v-list-item
+                dense
+                @click="print('inv', item)"
+              >
+                <v-list-item-title>
+                  <span class="text-caption">
+                    Cetak Faktur Penjualan
+                  </span>
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item
+                dense
+                @click="print('receipt', item)"
+              >
+                <v-list-item-title>
+                  <span class="text-caption">
+                    Cetak Tanda Terima Faktur
+                  </span>
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </template>
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
@@ -258,15 +286,31 @@
                 <v-btn
                   v-bind="attrs"
                   v-on="on"
-                  v-shortkey="['ctrl', 'alt', 'p']"
+                  v-shortkey="['ctrl', 'alt', 'i']"
                   :disabled="isVoid || (data.action === 'edit' && !auth.allowPrint) || data.action === 'add'"
                   dark
                   text
-                  @click="print(data)"
-                  @shortkey="print(data)"
-                >Cetak</v-btn>
+                  @click="print('inv', data)"
+                  @shortkey="print('inv', data)"
+                >Cetak Faktur Penjualan</v-btn>
               </template>
-              <span class="text-caption">(Ctrl + Alt + P)</span>
+              <span class="text-caption">(Ctrl + Alt + I)</span>
+            </v-tooltip>
+            <v-divider vertical></v-divider>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'r']"
+                  :disabled="isVoid || (data.action === 'edit' && !auth.allowPrint) || data.action === 'add'"
+                  dark
+                  text
+                  @click="print('receipt', data)"
+                  @shortkey="print('receipt', data)"
+                >Cetak Tanda Terima</v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Alt + R)</span>
             </v-tooltip>
             <v-divider vertical></v-divider>
             <v-tooltip bottom>
@@ -1323,8 +1367,12 @@ export default {
           })
       }
     },
-    print(item) {
-      this.$refs.reportViewer.open('sales-invoice', item.code)
+    print(caller, item) {
+      if (caller === 'inv') {
+        this.$refs.reportViewer.open('sales-invoice', item.code)
+      } else if (caller === 'receipt') {
+        this.$refs.reportViewer.open('invoice-receipt', item.code)
+      }
     },
     async save(closeDialog) {
       if (!this.dialog.add) return
