@@ -610,22 +610,6 @@
                               <span class="text-caption">Hapus</span>
                             </v-tooltip>
                           </template>
-                          <template v-slot:[`item.transCode`]="{ item }">
-                            <v-autocomplete
-                              ref="transCode"
-                              v-model="item.transCode"
-                              :items="data.srcTrans === 1 ? receives : deliveries"
-                              :readonly="isVoid || hasRelatedTrans"
-                              :rules="rules.required"
-                              item-text="code"
-                              item-value="code"
-                              class="text-body-2 mt-0"
-                              dense
-                              required
-                              @change="transCodeChange(item)"
-                            >
-                            </v-autocomplete>
-                          </template>
                           <template v-slot:[`item.date`]="{ item }">
                             {{ item.date | formatDate('dd-MMM-yyyy') }}
                           </template>
@@ -666,13 +650,19 @@
     </v-dialog>
     <confirm ref="confirm"></confirm>
     <report-viewer ref="reportViewer"></report-viewer>
+    <ei-find
+      ref="eiFind"
+      :src-trans="data.srcTrans"
+      :list-code="listCode"
+      :grid-detail="gridDetail.data"
+      :ei-code="data.code"
+    ></ei-find>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
-import { randomNumber } from '@/helpers/math-helpers'
 
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
@@ -682,13 +672,15 @@ import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 import ReportViewer from '@/components/dialog/ReportViewer'
+import EiFind from '@/components/dialog/EIFind'
 
 export default {
   components:{
     AdvancedSearch,
     ExportExcel,
     Confirm,
-    ReportViewer
+    ReportViewer,
+    EiFind
   },
   data: () => ({
     filterFields: [
@@ -750,8 +742,7 @@ export default {
     valid: false,
     dataStartDate: null,
     sources: [{ id: 1, name: 'Penerimaan Pembelian' }, { id: 2, name: 'Surat Jalan' }],
-    deliveries: [],
-    receives: [],
+    listCode: [],
     suppliers: [],
     data: {},
     seenByOthers: false
@@ -760,8 +751,6 @@ export default {
   created: function () {
     this.getList()
     this.getSystemParameter()
-    this.getDeliveryLists()
-    this.getReceiveLists()
     this.getSupplierLists()
     auth.getAction(this.endpoint, this.menuId.expeditionInvoice)
       .then((response) => {
@@ -786,6 +775,12 @@ export default {
     'grid.options': {
       handler() {
         this.getList()
+      },
+      deep: true
+    },
+    'gridDetail.data': {
+      handler() {
+        this.getListCode()
       },
       deep: true
     }
@@ -935,16 +930,6 @@ export default {
         params: { code: item.code }
       })
         .then(response => {
-          for (let i = 0; i < response.data.tableData.length; i++) {
-            let data_t = response.data.tableData[i] 
-            if (this.data.srcTrans === 1) {
-              data_t = this.receives.find(r => r.code.toUpperCase() === response.data.tableData[i].transCode.toUpperCase())
-            } else {
-              data_t = this.deliveries.find(d => d.code.toUpperCase() === response.data.tableData[i].transCode.toUpperCase())
-            }
-            response.data.tableData[i].date = data_t.date
-            response.data.tableData[i].mark = data_t.mark
-          }
           this.gridDetail.data = response.data.tableData
         })
 
@@ -998,20 +983,7 @@ export default {
       }, 0)
     },
     addDetail() {
-      if (this.gridDetail.data.length === 0 || (this.gridDetail.data.slice(-1)[0]?.transCode ?? null)) {
-        const item = {
-          id: randomNumber(-1, -1000),
-          code: this.data.code,
-          transCode: null,
-          date: null,
-          mark: null
-        }
-        this.gridDetail.data.push(item)
-
-        setTimeout(() => {
-          this.$refs.transCode.focus()
-        }, 0)
-      }
+      this.$refs.eiFind.open(this.gridDetail.data)
     },
     async remove(item) {
       if (
@@ -1036,59 +1008,17 @@ export default {
       ) {
         const idx = this.gridDetail.data.findIndex(i => i.id === item.id)
         this.gridDetail.data.splice(idx, 1)
+        this.listCode.splice(idx, 1)
       }
     },
-    getReceiveLists() {
-      api.getAll(this.endpoint.purchase.receive, {
-        params: {
-          filters: JSON.stringify([{
-            field: 'mark',
-            operator: 'neq',
-            keyword: 'V'
-          }]),
-          sorts: JSON.stringify([{
-            field: 'code',
-            direction: 'asc'
-          }])
-        }
-      })
-        .then(response => {
-          this.receives = response.data.tableData
-        })
-    },
-    getDeliveryLists() {
-      api.getAll(this.endpoint.sales.delivery, {
-        params: {
-          filters: JSON.stringify([{
-            field: 'mark',
-            operator: 'neq',
-            keyword: 'V'
-          }]),
-          sorts: JSON.stringify([{
-            field: 'code',
-            direction: 'asc'
-          }])
-        }
-      })
-        .then(response => {
-          this.deliveries = response.data.tableData
-        })
+    getListCode() {
+      this.listCode.splice(0, this.listCode.length)
+      for (let i = 0; i < this.gridDetail.data.length; i++) {
+        this.listCode.push(this.gridDetail.data[i].transCode)
+      }
     },
     srcTransChange() {
       this.gridDetail.data = []
-    },
-    transCodeChange(item) {
-      let data_t = item
-      if (this.data.srcTrans === 1) {
-        data_t = this.receives.find(r => r.code.toUpperCase() === item.transCode.toUpperCase())
-      } else {
-        data_t = this.deliveries.find(d => d.code.toUpperCase() === item.transCode.toUpperCase())
-      }
-
-      if (data_t) {
-        item.date = data_t.date
-        item.mark = data_t.mark
-      }
     },
     print(item) {
       this.$refs.reportViewer.open('expedition-invoice', item.code)
