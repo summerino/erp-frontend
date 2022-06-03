@@ -125,7 +125,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="item.mark.toUpperCase() !== 'A' || item.type === 1 || !auth.allowClose"
+                :disabled="item.mark.toUpperCase() === 'V' || item.mark.toUpperCase() === 'CLS' || item.mark.toUpperCase() === 'CMP' || item.type === 1 || !auth.allowClose"
                 color="blue darken-2"
                 icon
                 small
