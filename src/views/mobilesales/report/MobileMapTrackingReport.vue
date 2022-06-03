@@ -118,7 +118,7 @@
       </v-col>
     </v-row>
 
-    <v-row dense>
+    <v-row v-if="this.data.type !== 3" dense>
       <v-col cols="12">
         <v-card>
           <gmap-map
@@ -155,6 +155,40 @@
         </v-card>
       </v-col> 
     </v-row>
+
+    <v-row else dense>
+      <v-col cols="12">
+          <v-card>
+          <v-data-table
+            :headers="grid.columns"
+            :height="grid.height"
+            :items="grid.data"
+            class="elevation-1"
+            disable-sort
+            disable-pagination
+            fixed-header
+            hide-default-footer
+          >
+          <template v-slot:[`item.trackedDate`]="{ item }">
+            {{ item.trackedDate | formatDate('HH:mm:ss') }}
+          </template>
+          <template v-slot:[`item.lat`]="{ item }">
+            <v-tooltip v-if="item.lat !== null" bottom>
+              <template v-if="item.lat !== null" v-slot:activator="{ on, attrs }">
+                <span @click="showMapGrid(`${item.lat} : ${item.lng}`)" v-bind="attrs" v-on="on">
+                  <v-icon small >mdi-eye-outline</v-icon>
+                </span>
+              </template>
+              <span class="text-caption">Tampilkan di map</span>
+            </v-tooltip>
+            <span v-if="item.lat !== null">{{ `&nbsp;${item.lat} : ${item.lng}` }}</span>
+          </template>
+          </v-data-table>
+        </v-card>
+      </v-col> 
+    </v-row>
+
+    <attendance-map ref="attendanceMap"></attendance-map>
   </div>
 </template>
 
@@ -165,12 +199,24 @@ import { format, parseISO }  from 'date-fns'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
 
+import AttendanceMap from '@/components/dialog/attendance/AttendanceMap.vue'
+
 export default {
+  components: {
+    AttendanceMap
+  },
+
   data: () => ({
     menu: {
       date: false
     },
     filter: false,
+    grid: {
+      height: 800,
+      columns: [{ text: 'Waktu Pelacakan', value: 'trackedDate', divider: true, width: '50%', excelColWidth:'35', isDateTime: true },
+        { text: 'Koordinat', value: 'lat', width: '50%', excelColWidth:'35' }],
+      data: []
+    },
     employees: [],
     data: {},
     center: { lat: -6.2293867, lng: 106.6894286 },
@@ -193,7 +239,7 @@ export default {
     },
     shopIcon: { url: '../../images/shop-marker.png' },
     truckIcon: { url: '../../images/truck-marker.png' },
-    types: [{ id: 1, name: 'Riwayat Pelacakan' }, { id: 2, name: 'Posisi Terakhir'}],
+    types: [{ id: 1, name: 'Riwayat Pelacakan (Peta)' }, { id: 3, name: 'Riwayat Pelacakan (Daftar)' }, { id: 2, name: 'Posisi Terakhir'}],
     countInterval: null
   }),
 
@@ -263,13 +309,17 @@ export default {
       this.filter = true
     },
     getData() {
-      clearInterval(this.countInterval)
-      this.showMap()
+      if (this.data.type !== 3) {
+        clearInterval(this.countInterval)
+        this.showMap()
 
-      if (this.isLastPosition) {
-        this.countInterval = setInterval(() => {
-          this.showMap()
-        }, 5000)
+        if (this.isLastPosition) {
+          this.countInterval = setInterval(() => {
+            this.showMap()
+          }, 5000)
+        }
+      } else {
+        this.getList()
       }
     },
     showMap() {
@@ -373,6 +423,24 @@ export default {
         this.infoWinOpen = true
         this.currentIdx = idx
       }
+    },
+    getList() {
+      api.getAll(this.endpoint.mobileSales.mapTrackingReport, {
+        params: {
+          date: this.data.date,
+          salesId: this.data.salesId,
+          type: this.data.type
+        }
+      })
+        .then(response => {
+          this.grid.data = response.data.tracking
+        })
+    },
+    showMapGrid(coordinat) {
+      const arr = coordinat.split(' : ')
+      const latitude = Number(arr[0])
+      const longitude = Number(arr[1])
+      this.$refs.attendanceMap.show(latitude, longitude)
     }
   }
 }
