@@ -109,7 +109,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="!auth.allowVoid || item.mark === 'V'"
+                :disabled="!auth.allowVoid || item.mark === 'V' || item.mark === 'REJ'"
                 color="red"
                 icon
                 small
@@ -125,7 +125,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="item.mark.toUpperCase() === 'V' || !auth.allowPrint"
+                :disabled="item.mark.toUpperCase() === 'V' || item.mark.toUpperCase() === 'REJ' || !auth.allowPrint"
                 color="teal darken-2"
                 icon
                 small
@@ -152,7 +152,7 @@
               <v-chip
                 v-bind="attrs"
                 v-on="on"
-                :color="item.mark.toUpperCase() === 'V' ? 'error' : 'green'"
+                :color="item.mark.toUpperCase() === 'V' || item.mark.toUpperCase() === 'REJ' ? 'error' : 'green'"
                 class="px-1"
                 dark
                 small
@@ -203,6 +203,23 @@
               <span class="text-caption">(Ctrl + Alt + P)</span>
             </v-tooltip>
             <v-divider vertical></v-divider>
+            <v-tooltip v-if="ableToRejected" bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-if="ableToRejected"
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'r']"
+                  :disabled="(data.action === 'edit' && !auth.allowReject) || data.action === 'add'"
+                  dark
+                  text
+                  @click="reject()"
+                  @shortkey="reject()"
+                >Tolak</v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Alt + R)</span>
+            </v-tooltip>
+            <v-divider v-if="ableToRejected" vertical></v-divider>
             <v-tooltip bottom>
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
@@ -781,6 +798,9 @@ export default {
     },
     formatChequeDate() {
       return this.data.chequeDate ? format(parseISO(this.data.chequeDate), 'dd-MMM-yyyy') : ''
+    },
+    ableToRejected() {
+      return this.isShowCheque && this.data.chequeDate !== null && this.data.mark === 'A'
     }
   },
   methods: {
@@ -1058,6 +1078,21 @@ export default {
         }
       }
       this.data.amount = totalHeader
+    },
+    async reject() {
+      if (!this.ableToRejected) {
+        this.$store.dispatch('app/showInfo', 'Data tidak bisa ditolak.')
+        return
+      }
+
+      const data = this.data
+      const resp = await api.update(`${this.endpoint.finance.cashBank}/reject`, data.code, data)
+
+      if (resp.data.success) {
+        this.$store.dispatch('app/showSuccess', resp.data.message)
+        this.dialog.add = false
+        this.getList()
+      }
     }
   }
 }
