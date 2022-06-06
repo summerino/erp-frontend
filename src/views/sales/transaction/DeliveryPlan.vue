@@ -534,92 +534,89 @@
                       transition="false"
                     >
                       <v-card>
-                        <v-row dense>
-                          <v-col cols="12">
-                            <v-app-bar dense flat>
-                              <v-spacer></v-spacer>
-                              <v-tooltip bottom>
-                                <template v-slot:activator="{ on, attrs }">
-                                  <v-btn
-                                    v-bind="attrs"
-                                    v-on="on"
-                                    v-shortkey="['ctrl', 'i']"
-                                    :disabled="isVoid || hasRelatedTrans || (data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
-                                    class="blue--text"
-                                    small
-                                    tile
-                                    @click="addDetail"
-                                    @shortkey="addDetail"
-                                  >
-                                    <v-icon left>mdi-plus</v-icon>
-                                    Tambah
-                                  </v-btn>
-                                </template>
-                                <span class="text-caption">(Ctrl + I)</span>
-                              </v-tooltip>
-                            </v-app-bar>
+                        <v-app-bar dense flat>
+                          <v-spacer></v-spacer>
+                          <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                v-bind="attrs"
+                                v-on="on"
+                                v-shortkey="['ctrl', 'i']"
+                                :disabled="isVoid || hasRelatedTrans || (data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
+                                class="blue--text"
+                                small
+                                tile
+                                @click="addDetail"
+                                @shortkey="addDetail"
+                              >
+                                <v-icon left>mdi-plus</v-icon>
+                                Tambah
+                              </v-btn>
+                            </template>
+                            <span class="text-caption">(Ctrl + I)</span>
+                          </v-tooltip>
+                        </v-app-bar>
 
-                            <v-data-table
-                              :headers="gridItem.columns"
-                              :items="gridItem.data"
-                              :items-per-page="-1"
-                              height="300"
-                              class="elevation-1"
+                        <v-data-table
+                          :headers="gridItem.columns"
+                          :items="gridItem.data"
+                          :items-per-page="-1"
+                          height="300"
+                          class="elevation-1"
+                          dense
+                          disable-sort
+                          fixed-header
+                          hide-default-footer
+                        >
+                          <template v-slot:[`item.action`]="{ item }">
+                            <v-tooltip bottom>
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-btn
+                                  v-bind="attrs"
+                                  v-on="on"
+                                  :disabled="isVoid || hasRelatedTrans || (data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
+                                  color="red"
+                                  icon
+                                  small
+                                  @click="removeItem(item)"
+                                >
+                                  <v-icon small>mdi-close-thick</v-icon>
+                                </v-btn>
+                              </template>
+                              <span class="text-caption">Hapus</span>
+                            </v-tooltip>
+                          </template>
+                          <template v-slot:[`item.volume`]="{ item }">
+                            {{ item.volume === null ? 0 : item.volume }} M³
+                          </template>
+                          <template v-slot:[`item.weight`]="{ item }">
+                            {{ item.weight === null ? 0 : item.weight }} Kg
+                          </template>
+                          <template v-slot:[`item.detail`]="{ item }">
+                            <v-tooltip bottom>
+                              <template v-slot:activator="{ on, attrs }">
+                                <v-btn
+                                  v-bind="attrs"
+                                  v-on="on"
+                                  color="blue"
+                                  icon
+                                  x-small
+                                  @click="showDPSendFailedDialog(item)"
+                                >
+                                  <v-icon small>mdi-cube-send</v-icon>
+                                </v-btn>
+                              </template>
+                              <span class="text-caption">Detail</span>
+                            </v-tooltip>
+                          </template>
+                          <template v-slot:[`item.isFailShipment`]="{ item }">
+                            <v-checkbox
+                              v-model="item.isFailShipment"
                               dense
-                              disable-sort
-                              fixed-header
-                              hide-default-footer
-                            >
-                              <template v-slot:[`item.action`]="{ item }">
-                                <v-tooltip bottom>
-                                  <template v-slot:activator="{ on, attrs }">
-                                    <v-btn
-                                      v-bind="attrs"
-                                      v-on="on"
-                                      :disabled="isVoid || hasRelatedTrans || (data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
-                                      color="red"
-                                      icon
-                                      small
-                                      @click="removeItem(item)"
-                                    >
-                                      <v-icon small>mdi-close-thick</v-icon>
-                                    </v-btn>
-                                  </template>
-                                  <span class="text-caption">Hapus</span>
-                                </v-tooltip>
-                              </template>
-                              <template v-slot:[`item.volume`]="{ item }">
-                                {{ item.volume === null ? 0 : item.volume }} M³
-                              </template>
-                              <template v-slot:[`item.weight`]="{ item }">
-                                {{ item.weight === null ? 0 : item.weight }} Kg
-                              </template>
-                              <template v-slot:[`item.detail`]="{ item }">
-                                <v-tooltip bottom>
-                                  <template v-slot:activator="{ on, attrs }">
-                                    <v-btn
-                                      v-bind="attrs"
-                                      v-on="on"
-                                      color="blue"
-                                      icon
-                                      x-small
-                                      @click="showDPSendFailedDialog(item)"
-                                    >
-                                      <v-icon small>mdi-cube-send</v-icon>
-                                    </v-btn>
-                                  </template>
-                                  <span class="text-caption">Detail</span>
-                                </v-tooltip>
-                              </template>
-                              <template v-slot:[`item.isFailShipment`]="{ item }">
-                                <v-checkbox
-                                  v-model="item.isFailShipment"
-                                  readonly
-                                ></v-checkbox>
-                              </template>
-                            </v-data-table>
-                          </v-col>
-                        </v-row>
+                              readonly
+                            ></v-checkbox>
+                          </template>
+                        </v-data-table>
                       </v-card>
                     </v-tab-item>
 
@@ -647,8 +644,9 @@
                 </v-card>
               </v-col>
             </v-row>
-            <v-row>
-              <v-col cols="12" md="12">
+
+            <v-row dense>
+              <v-col cols="12">
                 <v-card>
                   <v-tabs v-model="tab.calc">
                     <v-tab key="detail">Volume / Berat</v-tab>
@@ -791,14 +789,14 @@ export default {
     gridItem: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '80' },
-        { text: 'No. Dokumen', value: 'transCode', divider: true, width: '120' },
+        { text: 'No. Dokumen', value: 'transCode', divider: true, width: '160' },
         { text: 'Penjual', value: 'salesName', divider: true, width: '120' },
         { text: 'Nama Pelanggan', value: 'custName', divider: true, width: '120' },
         { text: 'Alamat', value: 'custAddress', divider: true, width: '120' },
         { text: 'Wilayah', value: 'custArea', divider: true, width: '120' },
-        { text: 'Volume', value: 'volume', align: 'right', divider: true, width: '120' },
-        { text: 'Bobot', value: 'weight', align: 'right', divider: true, width: '120' },
-        { text: 'Detail Barang Gagal Kirim', value: 'detail', divider: true, width: '120' },
+        { text: 'Volume', value: 'volume', align: 'right', divider: true, width: '100' },
+        { text: 'Bobot', value: 'weight', align: 'right', divider: true, width: '100' },
+        { text: 'Detail Barang Gagal Kirim', value: 'detail', divider: true, width: '100' },
         { text: 'Gagal Kirim', value: 'isFailShipment', divider: true, width: '100' }
       ],
       data: []
