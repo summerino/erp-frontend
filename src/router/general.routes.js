@@ -34,13 +34,6 @@ export default [{
     authRequired: true
   }
 }, {
-  path: '/general/master/currency',
-  name: 'currency',
-  component: () => import(/* webpackChunkName: "currency" */ '@/views/general/master/Currency.vue'),
-  meta: {
-    authRequired: true
-  }
-}, {
   path: '/general/master/vehicle',
   name: 'vehicle',
   component: () => import(/* webpackChunkName: "vehicle" */ '@/views/general/master/Vehicle.vue'),
@@ -69,6 +62,20 @@ export default [{
     authRequired: true
   }
 }, {
+  path: '/general/master/dynamic-report-template',
+  name: 'dynamic-report-template',
+  component: () => import(/* webpackChunkName: "dynamic-report-template" */ '@/views/general/master/DynamicReportTemplate.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/general/master/currency',
+  name: 'currency',
+  component: () => import(/* webpackChunkName: "currency" */ '@/views/general/master/Currency.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
   path: '/general/approval',
   name: 'approval',
   component: () => import(/* webpackChunkName: "approval" */ '@/views/general/transaction/Approval.vue'),
@@ -79,13 +86,6 @@ export default [{
   path: '/general/active-transaction',
   name: 'active-transaction',
   component: () => import(/* webpackChunkName: "active-transaction" */ '@/views/general/transaction/ActiveTransaction.vue'),
-  meta: {
-    authRequired: true
-  }
-}, {
-  path: '/general/master/dynamic-report-template',
-  name: 'dynamic-report-template',
-  component: () => import(/* webpackChunkName: "dynamic-report-template" */ '@/views/general/master/DynamicReportTemplate.vue'),
   meta: {
     authRequired: true
   }
