@@ -9,10 +9,10 @@ export default {
   vehicleType: 25,
   tax: 26,
   paymentTerm: 57,
+  dynamicReportTemplate: 154,
   currency: 8,
   approval: 72,
   activeTransaction: 150,
-  dynamicReportTemplate: 154,
   customDynamicReport: 156,
 
   // Inventory
@@ -46,16 +46,16 @@ export default {
   // Sales
   area: 42,
   salesmanGroup: 58,
-  promo: 56,
   salesmanTarget: 151,
+  promo: 56,
   salesOrder: 44,
   salesDelivery: 45,
   salesInvoice: 46,
   directInvoice: 46, 
   salesReturn: 47,
   overlimitApproval: 158,
-  deliveryPlan: 48,
   creditMemo: 49,
+  deliveryPlan: 48,
   visitPlan: 54,
   visitOrder: 55,
   salesOrderReport: 145,
@@ -68,6 +68,7 @@ export default {
   araReport: 134,
   arcReport: 161,
   cmReport: 138,
+  deliveryPlanReport: 162,
   releaseOverlimitReport: 159,
   
   // Expedition
