@@ -40,6 +40,7 @@ export default {
   apReport: 92,
   apmReport: 131,
   apaReport: 133,
+  apcReport: 160,
   dmReport: 137,
 
   // Sales
@@ -64,6 +65,7 @@ export default {
   arReport: 93,
   armReport: 132,
   araReport: 134,
+  arcReport: 161,
   cmReport: 138,
   
   // Expedition
@@ -113,7 +115,6 @@ export default {
   mobileVisitPerformanceReport: 128,
   mobileActivityLogReport: 129,
   mobileMapTrackingReport: 130,
-
 
   // Mobile Warehouse
   mobileReceiveItem: 124,
