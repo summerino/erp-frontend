@@ -93,7 +93,8 @@ export default {
           { text: 'Pelanggan', value: 'custName', divider: true, width: '100' },
           { text: 'Qty Dipesan', value: 'qty', divider: true, width: '100' },
           { text: 'Qty Terkirim', value: 'qtyDlv', divider: true, width: '100' },
-          { text: 'Qty Sisa', value: 'qtyRemain', divider: true, width: '100' }
+          { text: 'Qty Sisa', value: 'qtyRemain', divider: true, width: '100' },
+          { text: 'Satuan', value: 'unitName', width: '100' }
         ]
       } else if (from === 2) {
         this.grid.columns = [
@@ -102,14 +103,16 @@ export default {
           { text: 'Tipe', value: 'type', divider: true, width: '100' },
           { text: 'Qty Indent', value: 'qty', divider: true, width: '100' },
           { text: 'Qty Terima', value: 'qtyRcv', divider: true, width: '100' },
-          { text: 'Qty Sisa', value: 'qtyRemain', divider: true, width: '100' }
+          { text: 'Qty Sisa', value: 'qtyRemain', divider: true, width: '100' },
+          { text: 'Satuan', value: 'unitName', width: '100' }
         ]
       } else {
         this.grid.columns = [
           { text: 'No. Dokumen', value: 'code', divider: true, width: '100' },
           { text: 'Tgl. Transaksi', value: 'date', divider: true, width: '100' },
           { text: 'Tipe', value: 'type', divider: true, width: '100' },
-          { text: 'Qty Transfer', value: 'qty', divider: true, width: '100' }
+          { text: 'Qty Transfer', value: 'qty', divider: true, width: '100' },
+          { text: 'Satuan', value: 'unitName', width: '100' }
         ]
       }
       this.getRelatedTrans(item, from)
