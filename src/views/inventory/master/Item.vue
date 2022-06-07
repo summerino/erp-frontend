@@ -1192,14 +1192,15 @@ export default {
     },
     loadSubGroup() {
       const item = this.itemCtg.find(x => x.id === this.data.categoryId)
-
-      // Get Sub Group
-      api.getAll(`${this.endpoint.inventory.item.group}/item-by-id`, {
-        params: { id: item.groupId }
-      })
-        .then(response => {
-          this.subGroupRef = response.data.tableData
+      if (item) {
+        // Get Sub Group
+        api.getAll(`${this.endpoint.inventory.item.group}/item-by-id`, {
+          params: { id: item.groupId }
         })
+          .then(response => {
+            this.subGroupRef = response.data.tableData
+          })
+      }
     },
     loadUnitQuantity() {
       this.quantityViewRef = [{value: 1, text: 'Satuan Terkecil'}, {value: 2, text: 'Satuan Beli'}, {value: 3, text: 'Satuan Jual'}]
