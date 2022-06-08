@@ -309,6 +309,9 @@
           <template v-slot:[`item.date`]="{ item }">
             {{ item.date | formatDate('dd-MMM-yyyy') }}
           </template>
+          <template v-slot:[`item.dueDate`]="{ item }">
+            {{ item.dueDate | formatDate('dd-MMM-yyyy') }}
+          </template>
           <template v-slot:[`item.totalTrans`]="{ item }">
             <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
               {{ item.totalTrans }}
