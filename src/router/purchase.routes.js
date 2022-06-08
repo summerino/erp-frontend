@@ -76,6 +76,13 @@ export default [{
     authRequired: true
   }
 }, {
+  path: '/purchase/report/ap-card-report',
+  name: 'ap-card-report',
+  component: () => import(/* webpackChunkName: "ap-card-report" */ '@/views/purchase/report/APCardReport.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
   path: '/purchase/report/ap-mutation-report',
   name: 'ap-mutation-report',
   component: () => import(/* webpackChunkName: "ap-mutation-report" */ '@/views/purchase/report/APMutationReport.vue'),

@@ -120,7 +120,7 @@
             </template>
             <span class="text-caption">Void</span>
           </v-tooltip>
-          <v-tooltip bottom>
+          <!-- <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 v-bind="attrs"
@@ -135,7 +135,7 @@
               </v-btn>
             </template>
             <span class="text-caption">Tutup</span>
-          </v-tooltip>
+          </v-tooltip> -->
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-btn
@@ -1455,21 +1455,21 @@ export default {
           })
       }
     },
-    async closeReturn(item) {
-      if (
-        await this.$refs.confirm.open(
-          'Tutup?',
-          'Apakah anda yakin ingin menutup data ini?')
-      ) {
-        api.update(`${this.endpoint.purchase.return}/close`, item.code, item)
-          .then(response => {
-            if (response.data.success) {
-              this.$store.dispatch('app/showSuccess', response.data.message)
-              this.getList()
-            }
-          })
-      }
-    },
+    // async closeReturn(item) {
+    //   if (
+    //     await this.$refs.confirm.open(
+    //       'Tutup?',
+    //       'Apakah anda yakin ingin menutup data ini?')
+    //   ) {
+    //     api.update(`${this.endpoint.purchase.return}/close`, item.code, item)
+    //       .then(response => {
+    //         if (response.data.success) {
+    //           this.$store.dispatch('app/showSuccess', response.data.message)
+    //           this.getList()
+    //         }
+    //       })
+    //   }
+    // },
     print(item) {
       this.$refs.reportViewer.open('purchase-return-wo-doc', item.code)
     },
