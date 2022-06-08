@@ -118,7 +118,7 @@
       </v-col>
     </v-row>
 
-    <v-row v-if="this.data.type !== 3" dense>
+    <v-row v-if="this.data.type === 1 || this.data.type === 2" dense>
       <v-col cols="12">
         <v-card>
           <gmap-map
@@ -156,7 +156,7 @@
       </v-col> 
     </v-row>
 
-    <v-row else dense>
+    <v-row v-else-if="this.data.type === 3" dense>
       <v-col cols="12">
           <v-card>
           <v-data-table
