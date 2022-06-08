@@ -150,7 +150,7 @@ export default {
       grid: {
         columns: [],
         data: [],
-        height: 400
+        height: 600
       },
       doColumn : [
         { text: 'Kode Transaksi', value: 'code', divider: true, width: '160' },
