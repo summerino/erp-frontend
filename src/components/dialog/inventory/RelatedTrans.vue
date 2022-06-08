@@ -23,30 +23,28 @@
       </v-toolbar>
 
       <v-card-text class="px-2 pt-1">
-          <v-card>
-            <v-row dense>
-              <v-col cols="12">
-                <v-data-table
-                  :headers="grid.columns"
-                  :items="grid.data"
-                  :items-per-page="-1"
-                  height="300"
-                  class="elevation-1"
-                  dense
-                  disable-sort
-                  fixed-header
-                  hide-default-footer
-                >
-                <template v-slot:[`item.date`]="{ item }">
-                  {{ item.date | formatDate('dd-MMM-yyyy') }}
-                </template>
-                <template v-slot:[`item.custName`]="{ item }">
-                  {{ item.custCode }}- {{ item.custName }}
-                </template>
-                </v-data-table>
-              </v-col>
-            </v-row>
-          </v-card>
+        <v-row dense>
+          <v-col cols="12">
+            <v-data-table
+              :headers="grid.columns"
+              :items="grid.data"
+              :items-per-page="-1"
+              height="300"
+              class="elevation-1"
+              dense
+              disable-sort
+              fixed-header
+              hide-default-footer
+            >
+            <template v-slot:[`item.date`]="{ item }">
+              {{ item.date | formatDate('dd-MMM-yyyy') }}
+            </template>
+            <template v-slot:[`item.custName`]="{ item }">
+              {{ item.custCode }} - {{ item.custName }}
+            </template>
+            </v-data-table>
+          </v-col>
+        </v-row>
       </v-card-text>
     </v-card>
   </v-dialog>
