@@ -2,7 +2,6 @@ export default {
   master: 'master',
   
   general: {
-    currency: 'currency',
     customer: {
       customer: 'customer',
       type: 'customer-type'
@@ -17,26 +16,27 @@ export default {
       type: 'vehicle-type'
     },
     tax: 'tax',
-    master: 'master',
     paymentTerm: 'payment-term',
+    dynamicReportTemplate: 'dynamic-report-template',
+    currency: 'currency',
+    master: 'master',
     approval: 'approval',
     activeTransaction: 'active-transaction',
-    dynamicReportTemplate: 'dynamic-report-template',
     customDynamicReport: 'custom-dynamic-report'
   },
 
   inventory: {
     item: {
+      item: 'item',
       category: 'item-category',
-      group: 'item-group',
-      item: 'item'
+      group: 'item-group'
     },
     uom: 'uom',
     warehouse: 'warehouse',
     transferStock: 'transfer-stock',
     consignee: 'consignee',
     adjustment: 'adjustment',
-    beginBalanceStock: 'bb',
+    beginBalanceStock: 'bb-stock',
     warehouseQuantity: 'warehouse-quantity',
     smReport: 'sm-report'
   },
@@ -47,15 +47,15 @@ export default {
     invoice: 'purchase-invoice',
     return: 'purchase-return',
     debitMemo: 'debit-memo',
-    apReport: 'ap-report',
-    apcReport: 'ap-card-report',
-    apmReport: 'ap-mutation-report',
-    apaReport: 'ap-aging-report',
-    dmReport: 'debit-memo-report',
     poReport: 'purchase-order-report',
     rcvReport: 'purchase-receive-report',
     invReport: 'purchase-invoice-report',
-    prReport: 'purchase-return-report'
+    prReport: 'purchase-return-report',
+    apReport: 'ap-report',
+    apmReport: 'ap-mutation-report',
+    apaReport: 'ap-aging-report',
+    apcReport: 'ap-card-report',
+    dmReport: 'debit-memo-report'
   },
 
   sales: {
@@ -68,20 +68,21 @@ export default {
     invoice: 'sales-invoice',
     directInvoice: 'direct-invoice',
     return: 'sales-return',
-    plan: 'delivery-plan',
+    overlimitApproval: 'overlimit-approval',
     creditMemo: 'credit-memo',
+    plan: 'delivery-plan',
     visitPlan: 'visit-plan',
     visitOrder: 'visit-order',
-    arReport: 'ar-report',
-    armReport: 'ar-mutation-report',
-    araReport: 'ar-aging-report',
-    cmReport: 'credit-memo-report',
     soReport: 'sales-order-report',
     doReport: 'sales-delivery-report',
     siReport: 'sales-invoice-report',
     srReport: 'sales-return-report',
     stReport: 'sales-target-report',
-    creditLimitApproval: 'credit-limit-approval',
+    arReport: 'ar-report',
+    armReport: 'ar-mutation-report',
+    araReport: 'ar-aging-report',
+    arcReport: 'ar-card-report',
+    cmReport: 'credit-memo-report',
     roReport: 'release-overlimit-report'
   },
 
@@ -95,8 +96,8 @@ export default {
     interCashBank: 'inter-cash-bank',
     cashBankType: 'cash-bank-type',
     cbReport: 'cb-report',
-    ocReport: 'outstanding-cheque-report',
-    cfReport: 'cash-flow-report'
+    cfReport: 'cash-flow-report',
+    ocReport: 'outstanding-cheque-report'
   },
 
   accounting: {
@@ -150,7 +151,7 @@ export default {
     transferStock: 'mobile-transfer-stock'
   },
   
-  systemManagement:{
+  systemManagement: {
     companyProfile: 'company-profile',
     user: 'user',
     role: 'role',

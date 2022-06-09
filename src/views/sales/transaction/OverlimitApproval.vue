@@ -220,7 +220,7 @@ export default {
         keyword: 'OL'
       })
 
-      api.getAll(this.endpoint.sales.creditLimitApproval, {
+      api.getAll(this.endpoint.sales.overlimitApproval, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -236,7 +236,7 @@ export default {
     },   
     async save() {
       let result = { success: false, message: '' }
-      const resp = await api.create(this.endpoint.sales.creditLimitApproval, this.selected)
+      const resp = await api.create(this.endpoint.sales.overlimitApproval, this.selected)
       result = resp.data
       if (result.success) {
         this.$store.dispatch('app/showSuccess', result.message)
