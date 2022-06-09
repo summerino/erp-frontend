@@ -6,7 +6,7 @@
           <v-card-title class="indigo--text text--lighten-2 pb-1">
             <v-row v-if="main" no-gutters>
               <v-col cols="12" md="6">
-                Laporan Faktur Penjualan
+                Laporan Rencana Pengiriman
               </v-col>
               <v-col cols="12" md="6" class="text-right">
                 <v-tooltip bottom>
@@ -56,7 +56,7 @@
                           :filters="exportFilter"
                           :grid="grid"
                           :gridDefOpts="gridDefOpts"
-                          title="Daftar Laporan Faktur Penjualan"
+                          title="Daftar Laporan Rencana Pengiriman"
                         ></export-excel>
                       </v-list-item-title>
                     </v-list-item>
@@ -86,7 +86,7 @@
             </v-row>
             <v-row v-else no-gutters>
               <v-col cols="12" md="8">
-                Laporan Faktur Penjualan - Detail {{ this.data.typeName }} - {{ this.data.detailName}}
+                Laporan Rencana Pengiriman - Detail {{ this.data.typeName }} - {{ this.data.detailName}}
               </v-col>
               <v-col cols="12" md="4" class="text-right">
                 <v-menu
@@ -116,7 +116,7 @@
                           :filters="exportFilter"
                           :grid="grid"
                           :gridDefOpts="gridDefOpts"
-                          :title="`Daftar Laporan Faktur Penjualan - Detail ${ this.data.typeName } - ${ this.data.detailName }`"
+                          :title="`Daftar Laporan Rencana Pengiriman - Detail ${ this.data.typeName } - ${ this.data.detailName }`"
                         ></export-excel>
                       </v-list-item-title>
                     </v-list-item>
@@ -289,7 +289,7 @@
             :options.sync="grid.options"
             :sort-by="grid.options.sortBy"
             :sort-desc="grid.options.sortDesc"
-            :class="['elevation-1', this.main && this.data.type < 5 ? 'row-pointer' : '']"
+            :class="['elevation-1', this.main && this.data.type < 4 ? 'row-pointer' : '']"
             fixed-header
             hide-default-footer
             disable-pagination
@@ -309,47 +309,9 @@
           <template v-slot:[`item.date`]="{ item }">
             {{ item.date | formatDate('dd-MMM-yyyy') }}
           </template>
-          <template v-slot:[`item.dueDate`]="{ item }">
-            {{ item.dueDate | formatDate('dd-MMM-yyyy') }}
-          </template>
-          <template v-slot:[`item.totalTrans`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.totalTrans }}
-            </span>
-          </template>
           <template v-slot:[`item.qty`]="{ item }">
             <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
               {{ item.qty | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.subTotal`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.subTotal | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.disc`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.disc | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.discHeader`]="{ item }">
-           <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.discHeader | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.dpp`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.dpp | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.taxAmount`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.taxAmount | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.exemptTaxAmount`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.exemptTaxAmount | formatCurrency }}
             </span>
           </template>
           <template v-slot:[`item.total`]="{ item }">
@@ -357,55 +319,8 @@
               {{ item.total | formatCurrency }}
             </span>
           </template>
-          <template v-slot:[`item.grossAmount`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.grossAmount | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.nettPrice`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.nettPrice | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.totalGrossAmount`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.totalGrossAmount | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.totalDisc`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.totalDisc | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.totalDiscHeader`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.totalDiscHeader | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.totalAfterDisc`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.totalAfterDisc | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.totalDpp`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.totalDpp | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.totalTaxAmount`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.totalTaxAmount | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.totalExemptTaxAmount`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.totalExemptTaxAmount | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.totalNettPrice`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.totalNettPrice | formatCurrency }}
-            </span>
+          <template v-slot:[`item.warehouseCode`]="{ item }">
+            {{ item.warehouseCode }} - {{ item.warehouseInitial }}
           </template>
           </v-data-table>
         </v-card>
@@ -445,107 +360,57 @@ export default {
       total: 0
     },
     filter: false,
-    custColumn: [
-      { text: 'Kode', value: 'code', divider: true, width: '120', excelColWidth:'12' },
-      { text: 'Nama', value: 'name', divider: true, width: '300', excelColWidth:'40' },
-      { text: 'Jml. Transaksi', value: 'totalTrans', align: 'right', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Harga Kotor', value: 'grossAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Diskon H', value: 'discHeader', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Sub Total', value: 'subTotal', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'DPP', value: 'dpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Pajak Yang Dibebaskan', value: 'exemptTaxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Total', value: 'total', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
-    ],
     codeColumn: [
       { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
-      { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
       { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
-      { text: 'Kd. Order', value: 'orderCode', divider: true, width: '160', excelColWidth:'20' },
-      { text: 'Kd. Pelanggan', value: 'custCode', divider: true, width: '100', excelColWidth:'18' },
-      { text: 'Nm. Pelanggan', value: 'custName', divider: true, width: '300', excelColWidth:'40' },
-      { text: 'Harga Kotor', value: 'grossAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Diskon H', value: 'discHeader', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Sub Total', value: 'subTotal', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'DPP', value: 'dpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Pajak Yang Dibebaskan', value: 'exemptTaxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Total', value: 'total', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Gudang', value: 'warehouseCode', divider: true, width: '150', excelColWidth:'18', customValues: ['warehouseCode', 'warehouseInitial'] },
+      { text: 'Ins. Barang', value: 'itemInitial', divider: true, width: '120', excelColWidth:'12' },
+      { text: 'Nm. Barang', value: 'itemName', divider: true, width: '120', excelColWidth:'12' },
+      { text: 'Ins. Kategori', value: 'itemCategoryInitial', divider: true, width: '120', excelColWidth:'12' },
+      { text: 'Jml. Trans.', value: 'total', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Satuan', value: 'unitName', divider: true, width: '120', excelColWidth:'12' },
       { text: 'Status', value: 'status', width: '160', excelColWidth:'20' }
     ],
     itemColumn: [
       { text: 'Ins. Barang', value: 'initial', divider: true, width: '120', excelColWidth:'12' },
       { text: 'Nm. Barang', value: 'name', divider: true, width: '300', excelColWidth:'40' },
       { text: 'Ins. Kategori', value: 'categoryInitial', divider: true, width: '120', excelColWidth:'12' },
-      { text: 'Jml. Transaksi', value: 'totalTrans', align: 'right', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Jml. Transaksi', value: 'total', align: 'right', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Satuan', value: 'unitName', divider: true, width: '120', excelColWidth:'12' },
-      { text: 'Harga Kotor', value: 'grossAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Diskon H', value: 'discHeader', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Sub Total', value: 'subTotal', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'DPP', value: 'dpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Pajak Yang Dibebaskan', value: 'exemptTaxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Total', value: 'total', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
+      { text: 'Satuan', value: 'unitName', width: '120', excelColWidth:'12' }
     ],
     detailColumn: [
       { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
-      { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
       { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
-      { text: 'Kd. Order', value: 'orderCode', divider: true, width: '160', excelColWidth:'20' },
-      { text: 'No. Fkt. Pajak', value: 'taxInvoiceNo', divider: true, width: '160', excelColWidth:'20' },
-      { text: 'Tgl. Fkt. Pajak', value: 'taxInvoiceDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+      { text: 'Gudang', value: 'warehouseCode', divider: true, width: '100', excelColWidth:'18', customValues: ['warehouseCode', 'warehouseInitial'] },
+      { text: 'Kd. Trans', value: 'transCode', divider: true, width: '100', excelColWidth:'18' },
+      { text: 'Tipe', value: 'type', divider: true, width: '100', excelColWidth:'18' },
       { text: 'Kd. Pelanggan', value: 'custCode', divider: true, width: '100', excelColWidth:'18' },
       { text: 'Nm. Pelanggan', value: 'custName', divider: true, width: '300', excelColWidth:'40' },
-      { text: 'Kd. Pengiriman', value: 'doCode', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Nm. Penjual', value: 'salesName', divider: true, width: '300', excelColWidth:'40' },
       { text: 'Ins. Barang', value: 'itemInitial', divider: true, width: '120', excelColWidth:'12' },
       { text: 'Nm. Barang', value: 'itemName', divider: true, width: '300', excelColWidth:'40' },
-      { text: 'Ins. Kategori', value: 'categoryInitial', divider: true, width: '120', excelColWidth:'12' },
-      { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Satuan', value: 'unitName', divider: true, width: '120', excelColWidth:'12' },
-      { text: 'Harga Kotor', value: 'grossAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Diskon H', value: 'discHeader', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Sub Total', value: 'subTotal', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'DPP', value: 'dpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Pajak Yang Dibebaskan', value: 'exemptTaxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Harga Nett', value: 'nettPrice', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Total Harga Kotor', value: 'totalGrossAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Total Diskon', value: 'totalDisc', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Total Diskon H', value: 'totalDiscHeader', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Total Stlh. Diskon', value: 'totalAfterDisc', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Total DPP', value: 'totalDpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Total Pajak', value: 'totalTaxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Total Pajak Yang Dibebaskan', value: 'totalExemptTaxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Total Harga Nett', value: 'totalNettPrice', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Status', value: 'status',  width: '160', excelColWidth:'20' }
+      { text: 'Ins. Kategori', value: 'itemCategoryInitial', divider: true, width: '120', excelColWidth:'12' },
+      { text: 'Jml. Trans.', value: 'total', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Satuan', value: 'unitName', divider: true, width: '300', excelColWidth:'40' },
+      { text: 'Status', value: 'status', width: '160', excelColWidth:'20' }
     ],
     categoryColumn: [
       { text: 'Ins. Kategori', value: 'initial', divider: true, width: '120', excelColWidth:'12' },
       { text: 'Nm. Kategori', value: 'name', divider: true, width: '300', excelColWidth:'40' },
-      { text: 'Jml. Transaksi', value: 'totalTrans', align: 'right', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Jml. Transaksi', value: 'total', align: 'right', divider: true, width: '100', excelColWidth:'20' },
       { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '100', excelColWidth:'20' },
-      { text: 'Satuan', value: 'unitName', divider: true, width: '120', excelColWidth:'12' },
-      { text: 'Harga Kotor', value: 'grossAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Diskon H', value: 'discHeader', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Sub Total', value: 'subTotal', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'DPP', value: 'dpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Pajak Yang Dibebaskan', value: 'exemptTaxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Total', value: 'total', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
+      { text: 'Satuan', value: 'unitName', width: '120', excelColWidth:'12' }
     ],
     itemCategories: [],
     items: [],
-    statuses: [{ id: 'A', name: 'Aktif' }, { id: 'V', name: 'Void' }],
+    statuses: [{ id: 'A', name: 'Aktif' }, { id: 'NAPR', name: 'Belum Disetujui' }, 
+      { id: 'APR', name: 'Disetujui' }, { id: 'V', name: 'Void' }],
     customers: [],
-    types: [{ id: 1, name: 'Berdasarkan Kode' }, { id: 2, name: 'Berdasarkan Pelanggan' },
-      { id: 3, name: 'Berdasarkan Barang' }, { id: 4, name: 'Berdasarkan Kategori Barang' },
-      { id: 5, name: 'Berdasarkan Rincian Detail' }],
+    types: [{ id: 1, name: 'Berdasarkan Kode' }, { id: 2, name: 'Berdasarkan Barang' },
+      { id: 3, name: 'Berdasarkan Kategori Barang' }, { id: 4, name: 'Berdasarkan Rincian Detail' }],
     data: {},
     exportFilter:{
       fields : [
@@ -567,7 +432,7 @@ export default {
     this.getCustomerLists()
     this.getItemLists()
     this.getItemCategoryLists()
-    auth.getAction(this.endpoint, this.menuId.salesInvoiceReport)
+    auth.getAction(this.endpoint, this.menuId.deliveryPlanReport)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
       })
@@ -580,7 +445,7 @@ export default {
       }, {
         text: 'Laporan'
       }, {
-        text: 'Faktur Penjualan'
+        text: 'Rencana Pengiriman'
       }])
       this.setGridDefaultHeight()
     }, 0)
@@ -628,14 +493,13 @@ export default {
     getList() {
       if (this.main) {
         this.grid.columns = this.data.type === 1 ? this.codeColumn : 
-          this.data.type === 2 ? this.custColumn : 
-            this.data.type === 3 ? this.itemColumn :
-              this.data.type === 4 ? this.categoryColumn : this.detailColumn
+          this.data.type === 2 ? this.itemColumn : 
+            this.data.type === 3 ? this.categoryColumn : this.detailColumn
       } else {
         this.grid.columns = this.detailColumn
       }
       
-      api.getAll(this.endpoint.sales.siReport, {
+      api.getAll(this.endpoint.sales.dpReport, {
         params: {
           type: this.data.type,
           startDate: this.data.startDate,
@@ -708,18 +572,12 @@ export default {
         } else if (this.data.type === 2) {
           const type = this.types.find(x => x.id === 2)
           this.data.typeName = type.name
-          this.data.customer = item.code
-          const cust = this.customers.find(x => x.code === item.code)
-          this.data.detailName = `${cust.initial} - ${cust.name} (${cust.code})`
-        } else if (this.data.type === 3) {
-          const type = this.types.find(x => x.id === 3)
-          this.data.typeName = type.name
           const uItem = this.items.find(x => x.initial === item.initial)
           this.data.itemId = uItem.id
           this.data.unitId = item.unitId
           this.data.detailName = `${item.initial} - ${item.name}`
-        } else if (this.data.type === 4) {
-          const type = this.types.find(x => x.id === 4)
+        } else if (this.data.type === 3) {
+          const type = this.types.find(x => x.id === 3)
           this.data.typeName = type.name
           const uCtg = this.itemCategories.find(x => x.initial === item.initial)
           this.data.categoryId = uCtg.id
