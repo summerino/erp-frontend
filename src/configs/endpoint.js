@@ -79,7 +79,8 @@ export default {
     doReport: 'sales-delivery-report',
     siReport: 'sales-invoice-report',
     srReport: 'sales-return-report',
-    stReport: 'sales-target-report'
+    stReport: 'sales-target-report',
+    dpReport: 'delivery-plan-report'
   },
 
   expedition: {
