@@ -146,6 +146,13 @@ export default [{
     authRequired: true
   }
 }, {
+  path: '/sales/report/delivery-plan-report',
+  name: 'delivery-plan-report',
+  component: () => import(/* webpackChunkName: "delivery-plan-report" */ '@/views/sales/report/DeliveryPlanReport.vue'),
+  meta: {
+    authRequired: true
+  }
+},  {
   path: '/sales/report/credit-memo-report',
   name: 'credit-memo-report',
   component: () => import(/* webpackChunkName: "credit-memo-report" */ '@/views/sales/report/CreditMemoReport.vue'),
