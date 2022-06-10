@@ -1844,7 +1844,7 @@ export default {
     closePopup() {
       this.reset()
       this.getList()
-    },
+    }
   } 
 }
 </script>
