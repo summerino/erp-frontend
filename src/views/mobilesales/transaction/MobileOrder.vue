@@ -731,6 +731,10 @@
     <so-promo
       ref="soPr"
     ></so-promo>
+    <mobile-order-overlimit
+      ref="moo"
+      @closeParent="closePopup"
+    ></mobile-order-overlimit>
   </div>
 </template>
 
@@ -747,13 +751,15 @@ import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 import SoPromo from '@/components/dialog/sales/SOPromo'
+import MobileOrderOverlimit from '@/components/dialog/MobileOrderOverlimit'
 
 export default {
   components: {
     AdvancedSearch,
     ExportExcel,
     Confirm,
-    SoPromo
+    SoPromo,
+    MobileOrderOverlimit
   },
 
   data: () => ({
@@ -1352,12 +1358,18 @@ export default {
     },
     async approve() {
       let result = { success: false, message: '' }
-      const resp = await api.updatemaster(`${this.endpoint.mobileSales.order}/approve`, this.selected)
-      result = resp.data
-      if (result.success) {
-        this.$store.dispatch('app/showSuccess', result.message)
-        this.reset()
-        this.getList()
+
+      const respValidation = await api.updatemaster(`${this.endpoint.mobileSales.order}/validate-overlimit`, this.selected)
+      if (respValidation.data.rowCount > 0) {
+        this.$refs.moo.open(this.selected, respValidation.data.tableData)
+      } else {
+        const resp = await api.updatemaster(`${this.endpoint.mobileSales.order}/approve`, this.selected)
+        result = resp.data
+        if (result.success) {
+          this.$store.dispatch('app/showSuccess', result.message)
+          this.reset()
+          this.getList()
+        }
       }
     },
     async reject() {
@@ -1828,7 +1840,11 @@ export default {
     },
     showPromoDialog(item) {
       this.$refs.soPr.open(item, this.accounts)
-    }
+    },
+    closePopup() {
+      this.reset()
+      this.getList()
+    },
   } 
 }
 </script>
