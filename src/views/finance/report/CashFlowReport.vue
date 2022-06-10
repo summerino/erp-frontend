@@ -394,8 +394,8 @@ export default {
     },
     filter: false,
     sumColumn: [
-      { text: 'Deskripsi', value: 'description', divider: true, width: '150', excelColWidth:'25' },
-      { text: 'Total', value: 'amountAll', align: 'right', divider: true, width: '200', excelColWidth:'30', isCurrency: true },
+      { text: 'Deskripsi', value: 'description', divider: true, width: '300', excelColWidth:'50' },
+      { text: 'Total', value: 'amountAll', align: 'right', divider: true, width: '160', excelColWidth:'25', isCurrency: true },
       { text: 'KAS', value: 'amount1', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
       { text: 'KAS KECIL GK', value: 'amount2', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
       { text: 'KAS KECIL WL', value: 'amount3', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
@@ -430,10 +430,10 @@ export default {
       { text: '', value: 'amountOc', align: 'right', width: '33%', excelColWidth:'20', isCurrency: true }
     ],
     detColumn: [
-      { text: 'Deskripsi', value: 'description', divider: true, width: '150', excelColWidth:'25' },
-      { text: 'Kode', value: 'coa', divider: true, width: '150', excelColWidth:'25'},
-      { text: 'Catatan', value: 'notes', divider: true, width: '150', excelColWidth:'25'},
-      { text: 'Kd. Trans.', value: 'transCode', divider: true, width: '150', excelColWidth:'25'},
+      { text: 'Deskripsi', value: 'description', divider: true, width: '300', excelColWidth:'50' },
+      { text: 'Kode', value: 'cbCode', divider: true, width: '160', excelColWidth:'20'},
+      { text: 'Catatan', value: 'notes', divider: true, width: '200', excelColWidth:'50'},
+      { text: 'Kd. Trans.', value: 'transCode', divider: true, width: '160', excelColWidth:'20'},
       { text: 'KAS', value: 'amount1', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
       { text: 'KAS KECIL GK', value: 'amount2', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
       { text: 'KAS KECIL WL', value: 'amount3', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
@@ -464,7 +464,7 @@ export default {
     ],
     detCoaColumn: [
       { text: 'Deskripsi', value: 'description', divider: true, width: '25%', excelColWidth:'25' },
-      { text: 'Kode', value: 'coa', divider: true, width: '25%', excelColWidth:'25'},
+      { text: 'Kode', value: 'cbCode', divider: true, width: '25%', excelColWidth:'25'},
       { text: 'Catatan', value: 'notes', divider: true, width: '25%', excelColWidth:'25'},
       { text: 'Kd. Trans.', value: 'transCode', divider: true, width: '25%', excelColWidth:'25'},
       { text: '', value: 'amountOc', align: 'right', width: '25%', excelColWidth:'20', isCurrency: true }
