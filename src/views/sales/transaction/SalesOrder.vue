@@ -1404,12 +1404,6 @@ export default {
         keyword: false
       })
 
-      filters.push({
-        field: 'mark',
-        operator: 'neq',
-        keyword: 'OL'
-      })
-
       const respGetAll = await api.getAll(this.endpoint.sales.order, {
         params: {
           search: this.grid.search,
