@@ -224,7 +224,7 @@
                   :items="salesmen"
                   :item-text="item => `${item.initial} - ${item.firstName}`"
                   label="Penjual"
-                  item-value="code"
+                  item-value="id"
                   class="mt-0"
                   dense
                   clearable
