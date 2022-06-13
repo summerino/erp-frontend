@@ -238,7 +238,7 @@ export default {
             item.nettPrice = item.discPromo[i].nettPrice
           } else {
             if (item.discPromo[i].promoMethod === 1 || item.discPromo[i].isPercentage) {
-              item.discPromo[i].nettPrice = item.nettPrice - (item.nettPrice * (item.discPromo[i].value / 100))
+              item.discPromo[i].nettPrice = item.nettPrice - (item.unitPrice * (item.discPromo[i].value / 100))
             } else {
               item.discPromo[i].nettPrice = item.nettPrice - item.discPromo[i].value
             }
@@ -324,7 +324,7 @@ export default {
             this.data.disc = this.grid.data[i].amount
           } else {
             if (this.grid.data[i].promoMethod === 1 || this.grid.data[i].isPercentage) {
-              this.grid.data[i].amount = this.data.nettPrice * (this.grid.data[i].value / 100)
+              this.grid.data[i].amount = this.data.unitPrice * (this.grid.data[i].value / 100)
             } else {
               this.grid.data[i].amount = this.grid.data[i].value
             }
