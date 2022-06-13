@@ -2014,7 +2014,8 @@ export default {
         if (item.state !== 'A') {
           item.state = 'M'
         }
-
+        item.discPromo = []
+        
         // Get unit item lists
         this.getUnitItemLists(item)
 
@@ -2194,53 +2195,6 @@ export default {
     },
     changeSales() {
       this.setDefaultWarehouse()
-    },
-    unitItemChangePromo(item) {
-      if (item.discPromo.length > 0) {
-        const oldUnit = item.units.find(u => u.id === item.oldUnitId)
-        const unit = item.units.find(u => u.id === item.unitId)
-        for (let i = 0; i < item.discPromo.length; i++) {
-          if (i === 0) {
-            if (item.discPromo[i].promoMethod === 1  || item.discPromo[i].isPercentage) {
-              item.discPromo[i].amount = item.unitPrice * (item.discPromo[i].value / 100)
-            } else if (item.uomConversion !== undefined) {
-              const cseq = oldUnit.seq < unit.seq
-              const vle = 'oldValue' in item.discPromo[i] ? item.discPromo[i].oldValue : item.discPromo[i].value
-              item.discPromo[i].amount = cseq ? vle * item.uomConversion : vle / item.uomConversion
-              item.discPromo[i].value = item.discPromo[i].amount
-            }
-            const calcValue = item.unitPrice - item.discPromo[i].amount
-            item.discPromo[i].nettPrice = calcValue < 0 ? 0 : calcValue
-            item.disc = item.discPromo[i].amount
-          } else {
-            if (item.discPromo[i].promoMethod === 1  || item.discPromo[i].isPercentage) {
-              item.discPromo[i].amount = item.nettPrice * (item.discPromo[i].value / 100)
-            } else if (item.uomConversion !== undefined) {              
-              const cseq = oldUnit.seq < unit.seq
-              const vle = 'oldValue' in item.discPromo[i] ? item.discPromo[i].oldValue : item.discPromo[i].value
-              item.discPromo[i].amount = cseq ? vle * item.uomConversion : vle / item.uomConversion
-              item.discPromo[i].value = item.discPromo[i].amount
-            }
-            const calcValue = item.nettPrice - item.discPromo[i].amount
-            item.discPromo[i].nettPrice = calcValue < 0 ? 0 : calcValue
-            item.disc += item.discPromo[i].amount
-          }
-          const calcValue = item.unitPrice - item.disc
-          item.nettPrice = calcValue < 0 ? 0 : calcValue
-        }
-      } else {
-        item.disc = 0
-        item.nettPrice = item.unitPrice
-      }
-    },
-    addOldValue(item) {
-      if (item.discPromo.length > 0) {
-        for (let i = 0; i < item.discPromo.length; i++) {
-          const cPercent = Math.round(item.discPromo[i].value / item.unitPrice * 100)
-          const cValue = Math.round(item.oldUnitPrice * (cPercent / 100))
-          item.discPromo[i].oldValue = cValue
-        }
-      }
     },
     changeDate() {
       this.gridPromo.data = []
