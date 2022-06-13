@@ -319,12 +319,46 @@
           :headers="grid.columns"
           :height="grid.height"
           :items="grid.data"
+          :options.sync="grid.options"
+          :sort-by="grid.options.sortBy"
+          :sort-desc="grid.options.sortDesc"
           class="elevation-1"
-          disable-sort
           fixed-header
           hide-default-footer
           disable-pagination
         >
+          <template v-slot:[`item.action`]="{ item }">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  color="blue"
+                  icon
+                  small
+                  @click="moveCoa(item,'up')"
+                >
+                  <v-icon small>mdi-arrow-up</v-icon>
+                </v-btn>
+              </template>
+              <span>Pindahkan ke atas</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  color="blue"
+                  icon
+                  small
+                  @click="moveCoa(item,'down')"
+                >
+                  <v-icon small>mdi-arrow-down</v-icon>
+                </v-btn>
+              </template>
+              <span>Pindahkan ke bawah</span>
+            </v-tooltip>
+          </template>
         </v-data-table>
       </v-card-text>
     </v-card>
@@ -450,10 +484,15 @@ export default {
     grid: {
       height: 300,
       columns: [
-        { text: 'Kode Akun', value: 'code', divider: true, width: '100', excelColWidth:'15' },
-        { text: 'Nama Akun', value: 'name', width: '300', excelColWidth:'40' }
+        { text: 'Kode Akun', value: 'code', sortable: false, divider: true, width: '100', excelColWidth:'15' },
+        { text: 'Nama Akun', value: 'name', sortable: false, width: '300', excelColWidth:'40' },
+        { value: 'action', sortable: false, divider: true, width: '10%' }
       ],
-      data: []
+      data: [],
+      options: {
+        sortBy: [],
+        sortDesc: [false, false]
+      }
     },
     gridUsed: {
       height: 300,
@@ -616,6 +655,7 @@ export default {
         return
       }
 
+      this.data.coas = this.grid.data
       let result = { success: false, message: '' }
       if (this.data.action === 'add') {
         const resp = await api.create(this.endpoint.accounting.incomeStatementFormat, this.data)
@@ -646,6 +686,8 @@ export default {
       }
     },
     getCoa(item) {
+      this.grid.options.sortBy = [item.category === 'S' ? 'isSeq' : 'isDetSeq', 'code']
+
       api.getAll(this.endpoint.accounting.coa, {
         params: {
           filters: JSON.stringify([{
@@ -712,6 +754,32 @@ export default {
         this.$store.dispatch('app/showSuccess', result.message)
         this.getSubFormat(this.data)
         this.getUnSubFormat(this.data)
+      }
+    },
+    moveCoa(item, type) {
+      const maxValue = this.data.category === 'S' ? Math.max(...this.grid.data.map(x => x.isSeq)) : Math.max(...this.grid.data.map(x => x.isDetSeq))
+      if (type === 'up' && (this.data.category === 'S' ? (item.isSeq > 1) : (item.isDetSeq > 1))) {
+        const amountData = this.grid.data.find(x => (this.data.category === 'S' ? x.isSeq === (item.isSeq - 1) : x.isDetSeq === (item.isDetSeq - 1)))
+        if (this.data.category === 'S') {
+          const value = item.isSeq
+          item.isSeq = amountData.isSeq
+          amountData.isSeq = value
+        } else {
+          const value = item.isDetSeq
+          item.isDetSeq = amountData.isDetSeq
+          amountData.isDetSeq = value
+        }
+      } else if (type === 'down' && (this.data.category === 'S' ? (item.isSeq < maxValue) : (item.isDetSeq < maxValue))) {
+        const amountData = this.grid.data.find(x => (this.data.category === 'S' ? x.isSeq === (item.isSeq + 1) : x.isDetSeq === (item.isDetSeq + 1)))
+        if (this.data.category === 'S') {
+          const value = item.isSeq
+          item.isSeq = amountData.isSeq
+          amountData.isSeq = value
+        } else {
+          const value = item.isDetSeq
+          item.isDetSeq = amountData.isDetSeq
+          amountData.isDetSeq = value
+        }
       }
     }
   }
