@@ -83,7 +83,9 @@ const state = {
   grid: {
     height: 300,
     pageSize: 50,
-    pageSizes: [50, 100, 200, 500]
+    pageSizes: [50, 100, 200, 500],
+    rptPageSize: 1000,
+    rptPageSizes: [1000, 1500, 2000, -1]
   },
 
   // App.vue loading overlay

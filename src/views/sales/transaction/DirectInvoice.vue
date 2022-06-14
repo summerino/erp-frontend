@@ -1793,6 +1793,7 @@ export default {
       }
     },
     calcItemPrice(item, calcPrice = true) {
+      this.calcDisc(item)
       this.calcItemTax(item)
       item.total = item.qty * item.nettPrice
       item.totTax = item.qty * item.taxAmount
@@ -1958,6 +1959,39 @@ export default {
     },
     changeDate() {
       this.gridPromo.data = []
+    },
+    calcDisc(item) {
+      if (item.discPromo) {
+        for (let i = 0; i < item.discPromo.length; i++) {
+          if (i === 0) {
+            if (item.discPromo[i].promoMethod === 1 || item.discPromo[i].isPercentage) {
+              item.discPromo[i].nettPrice = item.unitPrice - (item.unitPrice * (item.discPromo[i].value / 100))
+            } else {
+              item.discPromo[i].nettPrice = item.unitPrice - item.discPromo[i].value
+            }
+            item.nettPrice = item.discPromo[i].nettPrice
+            item.disc = item.unitPrice - item.nettPrice
+          } else {
+            if (item.discPromo[i].promoMethod === 1 || item.discPromo[i].isPercentage) {
+              item.discPromo[i].nettPrice = item.nettPrice - (item.unitPrice * (item.discPromo[i].value / 100))
+            } else {
+              item.discPromo[i].nettPrice = item.nettPrice - item.discPromo[i].value
+            }
+            item.nettPrice = item.discPromo[i].nettPrice
+            item.disc = item.unitPrice - item.nettPrice
+          }
+          if (item.discPromo[i].isPercentage) {
+            item.discPromo[i].promoMethod = 1
+          } else {
+            item.discPromo[i].promoMethod = 2
+          }
+          if (item.discPromo[i].promoCode) {
+            item.discPromo[i].fromPromo = true
+          } else {
+            item.discPromo[i].fromPromo = false
+          }
+        }
+      }
     }
   }
 }

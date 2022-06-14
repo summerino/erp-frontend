@@ -293,6 +293,7 @@ export default {
         this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
         return
       }
+      this.data.disc = this.data.unitPrice - this.data.nettPrice
       this.close()
     },
     checkIsPercentage(item) {
