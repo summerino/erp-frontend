@@ -118,6 +118,7 @@
           <span v-if="item.type === 1">Karyawan</span>
           <span v-else-if="item.type === 2">Penjual</span>
           <span v-else-if="item.type === 3">Supir</span>
+          <span v-else-if="item.type === 4">Gudang</span>
           <span v-else>Tidak diketahui</span>
         </template>
         <template v-slot:[`item.isActive`]="{ item }">
