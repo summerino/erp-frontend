@@ -280,120 +280,119 @@
 
     <v-row dense>
       <v-col cols="12">
-          <v-card>
-          <v-data-table  
+        <v-card>
+          <v-data-table
             :headers="grid.columns"
+            :footer-props="{ itemsPerPageOptions: gridDefOpts.rptPageSizes }"
             :height="grid.height"
             :items="grid.data"
-            :items-per-page="-1"
+            :items-per-page="gridDefOpts.rptPageSize"
             :options.sync="grid.options"
             :sort-by="grid.options.sortBy"
             :sort-desc="grid.options.sortDesc"
             :class="['elevation-1', this.main && this.data.type < 5 ? 'row-pointer' : '']"
             fixed-header
-            hide-default-footer
-            disable-pagination
             disable-sort
             @dblclick:row="dblclickRow"
           >
-          <template v-slot:[`item.code`]="{ item }">
-            <span :class="item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.code }}
-            </span>
-          </template>
-          <template v-slot:[`item.name`]="{ item }">
-            <span :class="item.name === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.name }}
-            </span>
-          </template>
-          <template v-slot:[`item.date`]="{ item }">
-            {{ item.date | formatDate('dd-MMM-yyyy') }}
-          </template>
-          <template v-slot:[`item.totalTrans`]="{ item }">
+            <template v-slot:[`item.code`]="{ item }">
+              <span :class="item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.code }}
+              </span>
+            </template>
+            <template v-slot:[`item.name`]="{ item }">
+              <span :class="item.name === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.name }}
+              </span>
+            </template>
+            <template v-slot:[`item.date`]="{ item }">
+              {{ item.date | formatDate('dd-MMM-yyyy') }}
+            </template>
+            <template v-slot:[`item.totalTrans`]="{ item }">
+              <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.totalTrans }}
+              </span>
+            </template>
+            <template v-slot:[`item.qty`]="{ item }">
+              <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.qty | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.subTotal`]="{ item }">
+              <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.subTotal | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.disc`]="{ item }">
+              <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.disc | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.discHeader`]="{ item }">
             <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.totalTrans }}
-            </span>
-          </template>
-          <template v-slot:[`item.qty`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.qty | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.subTotal`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.subTotal | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.disc`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.disc | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.discHeader`]="{ item }">
-           <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.discHeader | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.dpp`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.dpp | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.taxAmount`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.taxAmount | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.total`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.total | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.grossAmount`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.grossAmount | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.nettPrice`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.nettPrice | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.totalGrossAmount`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.totalGrossAmount | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.totalDisc`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.totalDisc | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.totalDiscHeader`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.totalDiscHeader | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.totalAfterDisc`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.totalAfterDisc | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.totalDpp`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.totalDpp | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.totalTaxAmount`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.totalTaxAmount | formatCurrency }}
-            </span>
-          </template>
-          <template v-slot:[`item.totalNettPrice`]="{ item }">
-            <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
-              {{ item.totalNettPrice | formatCurrency }}
-            </span>
-          </template>
+                {{ item.discHeader | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.dpp`]="{ item }">
+              <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.dpp | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.taxAmount`]="{ item }">
+              <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.taxAmount | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.total`]="{ item }">
+              <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.total | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.grossAmount`]="{ item }">
+              <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.grossAmount | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.nettPrice`]="{ item }">
+              <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.nettPrice | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.totalGrossAmount`]="{ item }">
+              <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.totalGrossAmount | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.totalDisc`]="{ item }">
+              <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.totalDisc | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.totalDiscHeader`]="{ item }">
+              <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.totalDiscHeader | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.totalAfterDisc`]="{ item }">
+              <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.totalAfterDisc | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.totalDpp`]="{ item }">
+              <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.totalDpp | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.totalTaxAmount`]="{ item }">
+              <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.totalTaxAmount | formatCurrency }}
+              </span>
+            </template>
+            <template v-slot:[`item.totalNettPrice`]="{ item }">
+              <span :class="item.name === 'Total' || item.code === 'Total' ? 'font-weight-black' : 'font-weight-medium'">
+                {{ item.totalNettPrice | formatCurrency }}
+              </span>
+            </template>
           </v-data-table>
         </v-card>
       </v-col> 
@@ -582,7 +581,7 @@ export default {
     setGridDefaultHeight() {
       this.grid.height = 100
       setTimeout(() => {
-        this.grid.height = this.$el.clientHeight - this.$refs.filter.clientHeight - 61
+        this.grid.height = this.$el.clientHeight - this.$refs.filter.clientHeight - 120
       }, 0)
     },
     reset() {
@@ -830,5 +829,4 @@ export default {
     }
   }
 }
-
 </script>
