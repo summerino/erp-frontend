@@ -13,7 +13,7 @@
         max-height="64"
         dark
       >
-        <v-toolbar-title>Batas Kredit</v-toolbar-title>
+        <v-toolbar-title>Persetujuan Kelebihan Batas Kredit</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn
           class="ma-2"
@@ -138,6 +138,7 @@ export default {
     reset() {
       this.grid.data = []
       this.data = []
+      this.reason = null
     },
     open(selected, overlimit) {
       this.dialog = true

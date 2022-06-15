@@ -107,6 +107,8 @@
       </v-data-table>
     </v-card>
     <confirm ref="confirm"></confirm>
+    <overlimit ref="overlimit"
+    @closeParent="closePopup"></overlimit>
   </div>
 </template>
 
@@ -119,12 +121,15 @@ import auth from '@/services/authorization.service'
 import AdvancedSearch from '@/components/common/AdvancedSearch'
 import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
+import Overlimit from '@/components/dialog/sales/Overlimit'
+
 
 export default {
   components:{
     AdvancedSearch,
     ExportExcel,
-    Confirm
+    Confirm,
+    Overlimit
   },
 
   data: () => ({
@@ -235,16 +240,13 @@ export default {
         })
     },   
     async save() {
-      let result = { success: false, message: '' }
-      const resp = await api.create(this.endpoint.sales.overlimitApproval, this.selected)
-      result = resp.data
-      if (result.success) {
-        this.$store.dispatch('app/showSuccess', result.message)
-        this.getList()
-      }
+      this.$refs.overlimit.open(this.selected)
     },
     async exportExcel() {
       this.exportExcel.export()
+    },
+    closePopup() {
+      this.getList()
     }
   }
 }
