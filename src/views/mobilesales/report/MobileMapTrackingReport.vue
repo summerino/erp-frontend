@@ -161,13 +161,13 @@
           <v-card>
           <v-data-table
             :headers="grid.columns"
+            :footer-props="{ itemsPerPageOptions: gridDefOpts.rptPageSizes }"
             :height="grid.height"
             :items="grid.data"
+            :items-per-page="gridDefOpts.rptPageSize"
             class="elevation-1"
             disable-sort
-            disable-pagination
             fixed-header
-            hide-default-footer
           >
           <template v-slot:[`item.trackedDate`]="{ item }">
             {{ item.trackedDate | formatDate('HH:mm:ss') }}

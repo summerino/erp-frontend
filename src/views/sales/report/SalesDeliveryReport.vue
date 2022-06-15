@@ -296,16 +296,15 @@
           <v-card>
           <v-data-table  
             :headers="grid.columns"
+            :footer-props="{ itemsPerPageOptions: gridDefOpts.rptPageSizes }"
             :height="grid.height"
             :items="grid.data"
-            :items-per-page="-1"
+            :items-per-page="gridDefOpts.rptPageSize"
             :options.sync="grid.options"
             :sort-by="grid.options.sortBy"
             :sort-desc="grid.options.sortDesc"
             :class="['elevation-1', this.main && this.data.type < 5 ? 'row-pointer' : '']"
             fixed-header
-            hide-default-footer
-            disable-pagination
             disable-sort
             @dblclick:row="dblclickRow"
           >
@@ -600,7 +599,7 @@ export default {
     setGridDefaultHeight() {
       this.grid.height = 100
       setTimeout(() => {
-        this.grid.height = this.$el.clientHeight - this.$refs.filter.clientHeight - 61
+        this.grid.height = this.$el.clientHeight - this.$refs.filter.clientHeight - 120
       }, 0)
     },
     reset() {
