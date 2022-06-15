@@ -217,15 +217,15 @@
         <v-card>
           <v-data-table  
             :headers="grid.columns"
+            :footer-props="{ itemsPerPageOptions: gridDefOpts.rptPageSizes }"
             :height="gridDefOpts.height"
             :items="grid.data"
+            :items-per-page="gridDefOpts.rptPageSize"
             :options.sync="grid.options"
             :sort-by="grid.options.sortBy"
             :sort-desc="grid.options.sortDesc"
             :class="['elevation-1', this.data.type === 2 ? 'row-pointer' : !this.data.isSM ? 'row-pointer' : '']"
             fixed-header
-            disable-pagination
-            hide-default-footer
           >
             <template v-slot:[`item.date`]="{ item }">
               {{ item.date | formatDate('dd-MMM-yyyy') }}
