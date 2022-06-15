@@ -182,17 +182,16 @@
           <v-card>
           <v-data-table  
             :headers="grid.columns"
+            :footer-props="{ itemsPerPageOptions: gridDefOpts.rptPageSizes }"
             :height="grid.height"
             :items="grid.data"
-            :items-per-page="-1"
+            :items-per-page="gridDefOpts.rptPageSize"
             :options.sync="grid.options"
             :sort-by="this.data.type === null ? grid.options.sortBy : null"
             :sort-desc="this.data.type === null ? grid.options.sortDesc : null"
             :disable-sort="this.data.type === null ? false : true"
             class="elevation-1"
             fixed-header
-            hide-default-footer
-            disable-pagination
           >
           <template v-slot:[`item.code`]="{ item }">
             <span :class="item.isBold ? 'font-weight-black' : 'font-weight-medium'">
@@ -344,7 +343,7 @@ export default {
     setGridDefaultHeight() {
       this.grid.height = 100
       setTimeout(() => {
-        this.grid.height = this.$el.clientHeight - this.$refs.filter.clientHeight - 61
+        this.grid.height = this.$el.clientHeight - this.$refs.filter.clientHeight - 120
       }, 0)
     },
     reset() {
