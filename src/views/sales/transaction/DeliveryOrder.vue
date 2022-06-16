@@ -548,7 +548,7 @@
                     <v-tab key="item">Barang</v-tab>
                     <v-tab key="bonus">Bonus</v-tab>
                     <v-tab key="related-trans">Transaksi Terkait</v-tab>
-                    <v-tab key="tax">Faktur Pajak</v-tab>
+                    <v-tab v-if="arRecogTime !== 'SI'" key="tax">Faktur Pajak</v-tab>
 
                     <v-tab-item
                       key="item"
@@ -678,6 +678,7 @@
                     </v-tab-item>
                     
                     <v-tab-item
+                      v-if="arRecogTime !== 'SI'"
                       key="tax"
                       transition="false"
                     >
@@ -863,7 +864,8 @@ export default {
     lblTransCode: null,
     sources: [{ id: 1, name: 'Order Penjualan' }, { id: 2, name: 'Retur Penjualan' }],
     allowInsertSalesInvoice: false,
-    seenByOthers: false
+    seenByOthers: false,
+    arRecogTime: null
   }),
 
   created: function () {
@@ -873,6 +875,7 @@ export default {
     this.getWarehouseLists()
     this.getTaxLists()
     this.getDriverLists()
+    this.getSysARRecog()
     auth.getAction(this.endpoint, this.menuId.salesDelivery)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -1573,6 +1576,17 @@ export default {
       if (item === 'tax') {
         this.data.taxInvoiceDate = null
       }
+    },
+    getSysARRecog() {
+      const codes = ['AR_RECOG_TIME']
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          codes: JSON.stringify(codes)
+        }
+      })
+        .then(response => {
+          this.arRecogTime = response.data.tableData[0].value
+        })
     }
   }
 }
