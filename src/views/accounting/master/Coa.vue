@@ -458,7 +458,9 @@ export default {
         cbType: null,
         vouCode: null,
         showInMobile: false,
-        isActive: true
+        isActive: true,
+        isCode: null,
+        isDetCode: null
       }
 
       // Reset form validation
@@ -541,6 +543,8 @@ export default {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
               this.getList()
+              this.getAccountLists()
+              this.getParentAccountLists()
             }
           })
       }
@@ -548,6 +552,11 @@ export default {
     async save() {
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
+        return
+      }
+
+      if (this.data.id === this.data.parentId) {
+        this.$store.dispatch('app/showInfo', 'Tidak bisa memilih induk akun ini.')
         return
       }
 
@@ -567,6 +576,8 @@ export default {
         this.$store.dispatch('app/showSuccess', result.message)
         this.back()
         this.getList()
+        this.getAccountLists()
+        this.getParentAccountLists()
       }
     },
     async exportExcel() {
