@@ -690,7 +690,7 @@
                               <v-text-field
                                 v-model="data.taxInvoiceNo"
                                 :rules="rules.max16chars"
-                                label="No Faktur Pajak"
+                                label="No. Faktur Pajak"
                                 class="mt-0"
                               ></v-text-field>
                             </v-col>
