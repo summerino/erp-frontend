@@ -395,34 +395,7 @@ export default {
     filter: false,
     sumColumn: [
       { text: 'Deskripsi', value: 'description', divider: true, width: '300', excelColWidth:'50' },
-      { text: 'Total', value: 'amountAll', align: 'right', divider: true, width: '160', excelColWidth:'25', isCurrency: true },
-      { text: 'KAS', value: 'amount1', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'KAS KECIL GK', value: 'amount2', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'KAS KECIL WL', value: 'amount3', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'KAS POOL FUNDING', value: 'amount4', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'AGRIS PT. APNM', value: 'amount5', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'DANAMON TAB PT. APNM', value: 'amount6', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'BRI PT. APNM', value: 'amount7', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'BNI PT. APNM', value: 'amount8', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'BCA PT. APNM', value: 'amount9', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'AGRIS TAB CATRIN OR HENDRIK LIMAH', value: 'amount10', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'AGRIS GIRO HENDRIK LIMAH', value: 'amount11', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'AGRIS TAB HENDRIK LIMAH', value: 'amount12', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'BNI HENDRIK LIMAH', value: 'amount13', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'DANAMON YOAN OR CATRIN', value: 'amount14', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'PANIN TAB HENDRIK LIMAH', value: 'amount15', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'PANIN GIRO HENDRIK LIMAH', value: 'amount16', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'MEGA PT. APNM', value: 'amount17', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'BANK POOL FUNDING', value: 'amount18', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'AGRIS PT. SMS', value: 'amount19', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'EKONOMI PT. SMS', value: 'amount20', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'DANAMON TAB PT. SMS', value: 'amount21', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'DANAMON GIRO PT. SMS', value: 'amount22', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'BCA PT. SMS', value: 'amount23', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'BCA CATRIN OR HENDRIK LIMAH', value: 'amount24', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'BCA GIRO CATRIN / HENDRIK LIMAH', value: 'amount25', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'BRI PT. SMS', value: 'amount26', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'BANK MANDIRI PT. SMS', value: 'amount27', align: 'right', width: '120', excelColWidth:'20', isCurrency: true }
+      { text: 'Total', value: 'amountAll', align: 'right', divider: true, width: '160', excelColWidth:'25', isCurrency: true }
     ],
     sumCoaColumn: [
       { text: 'Deskripsi', value: 'description', divider: true, width: '33%', excelColWidth:'25' },
@@ -433,34 +406,7 @@ export default {
       { text: 'Deskripsi', value: 'description', divider: true, width: '300', excelColWidth:'50' },
       { text: 'Kode', value: 'cbCode', divider: true, width: '160', excelColWidth:'20'},
       { text: 'Catatan', value: 'notes', divider: true, width: '200', excelColWidth:'50'},
-      { text: 'Kd. Trans.', value: 'transCode', divider: true, width: '160', excelColWidth:'20'},
-      { text: 'KAS', value: 'amount1', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'KAS KECIL GK', value: 'amount2', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'KAS KECIL WL', value: 'amount3', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'KAS POOL FUNDING', value: 'amount4', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'AGRIS PT. APNM', value: 'amount5', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'DANAMON TAB PT. APNM', value: 'amount6', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'BRI PT. APNM', value: 'amount7', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'BNI PT. APNM', value: 'amount8', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'BCA PT. APNM', value: 'amount9', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'AGRIS TAB CATRIN OR HENDRIK LIMAH', value: 'amount10', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'AGRIS GIRO HENDRIK LIMAH', value: 'amount11', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'AGRIS TAB HENDRIK LIMAH', value: 'amount12', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'BNI HENDRIK LIMAH', value: 'amount13', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'DANAMON YOAN OR CATRIN', value: 'amount14', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'PANIN TAB HENDRIK LIMAH', value: 'amount15', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'PANIN GIRO HENDRIK LIMAH', value: 'amount16', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'MEGA PT. APNM', value: 'amount17', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'BANK POOL FUNDING', value: 'amount18', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'AGRIS PT. SMS', value: 'amount19', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'EKONOMI PT. SMS', value: 'amount20', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'DANAMON TAB PT. SMS', value: 'amount21', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'DANAMON GIRO PT. SMS', value: 'amount22', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'BCA PT. SMS', value: 'amount23', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'BCA CATRIN OR HENDRIK LIMAH', value: 'amount24', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'BCA GIRO CATRIN / HENDRIK LIMAH', value: 'amount25', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'BRI PT. SMS', value: 'amount26', align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true },
-      { text: 'BANK MANDIRI PT. SMS', value: 'amount27', align: 'right', width: '120', excelColWidth:'20', isCurrency: true }
+      { text: 'Kd. Trans.', value: 'transCode', divider: true, width: '160', excelColWidth:'20'}
     ],
     detCoaColumn: [
       { text: 'Deskripsi', value: 'description', divider: true, width: '25%', excelColWidth:'25' },
@@ -583,6 +529,10 @@ export default {
       })
         .then(response => {
           this.coas = response.data.tableData
+          for (let i = 0; i < this.coas.length; i++) {
+            this.sumColumn.push({ text: this.coas[i].name, value: `amount${i + 1}`, align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true })
+            this.detColumn.push({ text: this.coas[i].name, value: `amount${i + 1}`, align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true })
+          }
         })
     },
     appendFilter() {
