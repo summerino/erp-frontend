@@ -1965,16 +1965,20 @@ export default {
         for (let i = 0; i < item.discPromo.length; i++) {
           if (i === 0) {
             if (item.discPromo[i].promoMethod === 1 || item.discPromo[i].isPercentage) {
+              item.discPromo[i].amount = (item.unitPrice * (item.discPromo[i].value / 100))
               item.discPromo[i].nettPrice = item.unitPrice - (item.unitPrice * (item.discPromo[i].value / 100))
             } else {
+              item.discPromo[i].amount = item.discPromo[i].value
               item.discPromo[i].nettPrice = item.unitPrice - item.discPromo[i].value
             }
             item.nettPrice = item.discPromo[i].nettPrice
             item.disc = item.unitPrice - item.nettPrice
           } else {
             if (item.discPromo[i].promoMethod === 1 || item.discPromo[i].isPercentage) {
+              item.discPromo[i].amount = (item.unitPrice * (item.discPromo[i].value / 100))
               item.discPromo[i].nettPrice = item.nettPrice - (item.unitPrice * (item.discPromo[i].value / 100))
             } else {
+              item.discPromo[i].amount = item.discPromo[i].value
               item.discPromo[i].nettPrice = item.nettPrice - item.discPromo[i].value
             }
             item.nettPrice = item.discPromo[i].nettPrice
