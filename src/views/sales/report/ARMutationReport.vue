@@ -148,9 +148,20 @@
           <v-card-text v-if="this.filter" class="pa-2">
             <v-row no-gutters>
               <v-col cols="12" md="2">
-                <v-autocomplete
+                <v-autocomplete v-if="arRecogTime === 'SI'"
                   v-model="data.type"
-                  :items="types"                  
+                  :items="typesInv"                  
+                  label="Tipe Laporan"
+                  item-text="name"
+                  item-value="id"
+                  class="mt-0"
+                  dense
+                  @change="clearTable()"
+                >
+                </v-autocomplete>
+                <v-autocomplete v-else
+                  v-model="data.type"
+                  :items="typesDlv"                  
                   label="Tipe Laporan"
                   item-text="name"
                   item-value="id"
@@ -377,10 +388,24 @@ export default {
       { text: 'Nilai Bayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Saldo Akhir', value: 'endingBalance', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
+    invColumn: [
+      { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+      { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'18', isDateTime: true },
+      { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kd. Order', value: 'srcCode', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Penjual', value: 'slsName', divider: true, width: '150', excelColWidth:'20' },
+      { text: 'Kd. Pelanggan', value: 'custCode', divider: true, width: '100', excelColWidth:'18' },
+      { text: 'Nm. Pelanggan', value: 'custName', divider: true, width: '300', excelColWidth:'40' },
+      { text: 'Saldo Awal', value: 'beginningBalance', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Nilai Transaksi', value: 'transAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Nilai Bayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Saldo Akhir', value: 'endingBalance', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
+    ],
     customers: [],
     salesmen: [],
     statuses: [{ id: 'NP', name: 'Belum Lunas' }, { id: 'P', name: 'Lunas' }],
-    types: [{ id: 1, name: 'Berdasarkan Surat Jalan / Penjualan Langsung' }, { id: 2, name: 'Berdasarkan Pelanggan' }],
+    typesDlv: [{ id: 1, name: 'Berdasarkan Surat Jalan / Penjualan Langsung' }, { id: 2, name: 'Berdasarkan Pelanggan' }],
+    typesInv: [{ id: 1, name: 'Berdasarkan Faktur / Saldo Awal' }, { id: 2, name: 'Berdasarkan Pelanggan' }],
     data: {},
     exportFilter:{
       fields : [
@@ -393,7 +418,8 @@ export default {
       ],
       operator: [{ text: 'Sama dgn.', value: 'eq'}],
       searches: []
-    }  
+    },
+    arRecogTime: null  
   }),
 
   created: function () {
@@ -455,7 +481,7 @@ export default {
       this.filter = true
     },
     getList() {
-      this.grid.columns = this.data.type === 1 ? this.dlvColumn : this.custColumn
+      this.grid.columns = this.data.type === 1 ? this.arRecogTime !== 'SI' ? this.dlvColumn : this.invColumn : this.custColumn
       
       api.getAll(this.endpoint.sales.armReport, {
         params: {
@@ -627,6 +653,17 @@ export default {
         this.data.startDate = null
       }
       this.clearTable()
+    },
+    getSysARRecog() {
+      const codes = ['AR_RECOG_TIME']
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          codes: JSON.stringify(codes)
+        }
+      })
+        .then(response => {
+          this.arRecogTime = response.data.tableData[0].value
+        })
     }
   }
 }

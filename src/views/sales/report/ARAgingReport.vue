@@ -148,9 +148,20 @@
           <v-card-text v-if="this.filter" class="pa-2">
             <v-row no-gutters>
               <v-col cols="12" md="2">
-                <v-autocomplete
+                <v-autocomplete v-if="arRecogTime === 'SI'"
                   v-model="data.type"
-                  :items="types"                  
+                  :items="typesInv"                  
+                  label="Tipe Laporan"
+                  item-text="name"
+                  item-value="id"
+                  class="mt-0"
+                  dense
+                  @change="clearTable()"
+                >
+                </v-autocomplete>
+                <v-autocomplete v-else
+                  v-model="data.type"
+                  :items="typesDlv"                  
                   label="Tipe Laporan"
                   item-text="name"
                   item-value="id"
@@ -397,6 +408,30 @@ export default {
       { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
       { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'18', isDateTime: true },
       { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kd. Sumber', value: 'srcCode', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kd. Faktur', value: 'invCode', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Nm. Penjual', value: 'slsName', divider: true, width: '150', excelColWidth:'20' },
+      { text: 'Sisa Piutang', value: 'remainderAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Lewat > 90 Hari', value: 'past90', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Lewat 61-90 Hari', value: 'past61To90', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Lewat 31-60 Hari', value: 'past31To60', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Lewat 15-30 Hari', value: 'past15To30', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Lewat 8-14 Hari', value: 'past8To14', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Lewat 1-7 Hari', value: 'past1To7', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Jth. Tempo Hari Ini', value: 'dueToday', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Jth. Tempo 1-7 Hari', value: 'due1To7', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Jth. Tempo 8-14 Hari', value: 'due8To14', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Jth. Tempo 15-30 Hari', value: 'due15To30', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Jth. Tempo 31-60 Hari', value: 'due31To60', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Jth. Tempo 61-90 Hari', value: 'due61To90', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Jth. Tempo > 90 Hari', value: 'due90', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
+    ],
+    invColumn: [
+      { text: 'Kd. Pelanggan', value: 'custCode', divider: true, width: '100', excelColWidth:'18' },
+      { text: 'Nm. Pelanggan', value: 'custName', divider: true, width: '300', excelColWidth:'40' },
+      { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+      { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'18', isDateTime: true },
+      { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
       { text: 'Kd. Order', value: 'srcCode', divider: true, width: '160', excelColWidth:'20' },
       { text: 'Nm. Penjual', value: 'slsName', divider: true, width: '150', excelColWidth:'20' },
       { text: 'Sisa Piutang', value: 'remainderAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
@@ -420,7 +455,8 @@ export default {
       { id: 'DueToday', name: 'Jth. Tempo Hari Ini' }, { id: 'Due1To7', name: 'Jth. Tempo 1-7 Hari' }, { id: 'Due8To14', name: 'Jth. Tempo 8-14 Hari' },
       { id: 'Due15To30', name: 'Jth. Tempo 15-30 Hari' }, { id: 'Due31To60', name: 'Jth. Tempo 31-60 Hari' }, { id: 'Due61To90', name: 'Jth. Tempo 61-90 Hari' },
       { id: 'Due90', name: 'Jth. Tempo > 90 Hari' }],
-    types: [{ id: 1, name: 'Berdasarkan Surat Jalan/Penjualan Langsung' }, { id: 2, name: 'Berdasarkan Pelanggan' }],
+    typesDlv: [{ id: 1, name: 'Berdasarkan Surat Jalan/Penjualan Langsung' }, { id: 2, name: 'Berdasarkan Pelanggan' }],
+    typesInv: [{ id: 1, name: 'Berdasarkan Faktur / Saldo Awal' }, { id: 2, name: 'Berdasarkan Pelanggan' }],
     salesmen: [],
     data: {},
     exportFilter:{
@@ -433,7 +469,8 @@ export default {
       ],
       operator: [{ text: 'Sama dgn.', value: 'eq'}],
       searches: []
-    }  
+    },
+    arRecogTime: null    
   }),
 
   created: function () {
@@ -491,7 +528,7 @@ export default {
       this.filter = true
     },
     getList() {
-      this.grid.columns = this.data.type === 1 ? this.dlvColumn : this.cusColumn
+      this.grid.columns = this.data.type === 1 ? this.arRecogTime !== 'SI' ? this.dlvColumn : this.invColumn : this.cusColumn
       
       api.getAll(this.endpoint.sales.araReport, {
         params: {
@@ -633,6 +670,17 @@ export default {
     clearTable() {
       this.grid.data = []
       this.grid.columns = []
+    },
+    getSysARRecog() {
+      const codes = ['AR_RECOG_TIME']
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          codes: JSON.stringify(codes)
+        }
+      })
+        .then(response => {
+          this.arRecogTime = response.data.tableData[0].value
+        })
     }
   }
 }

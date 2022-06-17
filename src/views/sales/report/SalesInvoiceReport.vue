@@ -495,6 +495,37 @@ export default {
       { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
       { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
       { text: 'Kd. Order', value: 'orderCode', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kd. Pelanggan', value: 'custCode', divider: true, width: '100', excelColWidth:'18' },
+      { text: 'Nm. Pelanggan', value: 'custName', divider: true, width: '300', excelColWidth:'40' },
+      { text: 'Kd. Pengiriman', value: 'doCode', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Ins. Barang', value: 'itemInitial', divider: true, width: '120', excelColWidth:'12' },
+      { text: 'Nm. Barang', value: 'itemName', divider: true, width: '300', excelColWidth:'40' },
+      { text: 'Ins. Kategori', value: 'categoryInitial', divider: true, width: '120', excelColWidth:'12' },
+      { text: 'Qty', value: 'qty', align: 'right', divider: true, width: '100', excelColWidth:'20' },
+      { text: 'Satuan', value: 'unitName', divider: true, width: '120', excelColWidth:'12' },
+      { text: 'Harga Kotor', value: 'grossAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Diskon H', value: 'discHeader', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Sub Total', value: 'subTotal', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'DPP', value: 'dpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Pajak Yang Dibebaskan', value: 'exemptTaxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Harga Nett', value: 'nettPrice', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Total Harga Kotor', value: 'totalGrossAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Total Diskon', value: 'totalDisc', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Total Diskon H', value: 'totalDiscHeader', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Total Stlh. Diskon', value: 'totalAfterDisc', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Total DPP', value: 'totalDpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Total Pajak', value: 'totalTaxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Total Pajak Yang Dibebaskan', value: 'totalExemptTaxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Total Harga Nett', value: 'totalNettPrice', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Status', value: 'status',  width: '160', excelColWidth:'20' }
+    ],
+    detailInvColumn: [
+      { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+      { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+      { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Kd. Order', value: 'orderCode', divider: true, width: '160', excelColWidth:'20' },
       { text: 'No. Fkt. Pajak', value: 'taxInvoiceNo', divider: true, width: '160', excelColWidth:'20' },
       { text: 'Tgl. Fkt. Pajak', value: 'taxInvoiceDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
       { text: 'Kd. Pelanggan', value: 'custCode', divider: true, width: '100', excelColWidth:'18' },
@@ -558,7 +589,8 @@ export default {
       ],
       operator: [{ text: 'Sama dgn.', value: 'eq'}],
       searches: []
-    }  
+    },
+    arRecogTime: null  
   }),
 
   created: function () {
@@ -566,6 +598,7 @@ export default {
     this.getCustomerLists()
     this.getItemLists()
     this.getItemCategoryLists()
+    this.getSysARRecog()
     auth.getAction(this.endpoint, this.menuId.salesInvoiceReport)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -629,7 +662,7 @@ export default {
         this.grid.columns = this.data.type === 1 ? this.codeColumn : 
           this.data.type === 2 ? this.custColumn : 
             this.data.type === 3 ? this.itemColumn :
-              this.data.type === 4 ? this.categoryColumn : this.detailColumn
+              this.data.type === 4 ? this.categoryColumn : this.arRecogTime !== 'SI' ? this.detailColumn : this.detailInvColumn
       } else {
         this.grid.columns = this.detailColumn
       }
@@ -850,6 +883,17 @@ export default {
       api.getAll(`${this.endpoint.inventory.item.category}/lists`, {})
         .then(response => {
           this.itemCategories = response.data.tableData
+        })
+    },
+    getSysARRecog() {
+      const codes = ['AR_RECOG_TIME']
+      api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          codes: JSON.stringify(codes)
+        }
+      })
+        .then(response => {
+          this.arRecogTime = response.data.tableData[0].value
         })
     }
   }
