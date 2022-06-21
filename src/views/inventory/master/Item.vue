@@ -462,6 +462,15 @@
                                     >
                                     {{ item.qtyOnTransfer }}</v-chip>
                                   </template>
+                                  <template v-slot:[`item.qtyOnTransit`]="{ item }">
+                                    <v-chip
+                                    label
+                                    link
+                                    small
+                                    @click="detailQty(item, 4)"
+                                    >
+                                    {{ item.qtyOnTransit }}</v-chip>
+                                  </template>
                                   <template v-slot:[`item.updatedDate`]="{ item }">
                                     {{ item.updatedDate | formatDate('dd-MMM-yyyy') }}
                                   </template>                                
@@ -815,6 +824,7 @@ export default {
         { text: 'Qty Indent', value: 'qtyOnIndent', align: 'right', divider: true, width: '120' },
         // { text: 'Qty Titik Pemesanan Kembali', value: 'qtyReorderPoint', align: 'right', divider: true, width: '120'},
         { text: 'Qty Transfer', value: 'qtyOnTransfer', align: 'right', divider: true, width: '120' },
+        { text: 'Qty Dalam Pengiriman', value: 'qtyOnTransit', align: 'right', divider: true, width: '120' },
         { text: 'Diperbarui Tgl.', value: 'updatedDate', divider: true, width: '60' }
       ],
       data: [],
