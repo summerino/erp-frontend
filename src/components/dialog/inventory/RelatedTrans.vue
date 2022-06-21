@@ -104,12 +104,20 @@ export default {
           { text: 'Qty Sisa', value: 'qtyRemain', divider: true, width: '100' },
           { text: 'Satuan', value: 'unitName', width: '100' }
         ]
-      } else {
+      } else if (from === 3) {
         this.grid.columns = [
           { text: 'No. Dokumen', value: 'code', divider: true, width: '100' },
           { text: 'Tgl. Transaksi', value: 'date', divider: true, width: '100' },
           { text: 'Tipe', value: 'type', divider: true, width: '100' },
           { text: 'Qty Transfer', value: 'qty', divider: true, width: '100' },
+          { text: 'Satuan', value: 'unitName', width: '100' }
+        ]
+      } else {
+        this.grid.columns = [
+          { text: 'No. Dokumen', value: 'code', divider: true, width: '100' },
+          { text: 'Tgl. Transaksi', value: 'date', divider: true, width: '100' },
+          { text: 'Tipe', value: 'type', divider: true, width: '100' },
+          { text: 'Qty Dalam Pengiriman', value: 'qty', divider: true, width: '100' },
           { text: 'Satuan', value: 'unitName', width: '100' }
         ]
       }
