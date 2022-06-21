@@ -1,6 +1,6 @@
 {
   "name": "sahassa-erp",
-  "version": "22.6.17",
+  "version": "22.6.21",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -19,7 +19,7 @@
     "v-currency-field": "^3.1.1",
     "vue": "^2.6.14",
     "vue-head": "^2.2.0",
-    "vue-i18n": "^8.27.1",
+    "vue-i18n": "^8.27.2",
     "vue-router": "^3.5.4",
     "vue-shortkey": "^3.1.7",
     "vue-spinner": "^1.0.4",
@@ -32,7 +32,7 @@
     "@vue/cli-plugin-eslint": "^4.5.18",
     "@vue/cli-service": "^4.5.18",
     "babel-eslint": "^10.1.0",
-    "core-js": "^3.23.1",
+    "core-js": "^3.23.2",
     "eslint": "^6.8.0",
     "eslint-plugin-vue": "^6.2.2",
     "sass": "^1.52.3",
