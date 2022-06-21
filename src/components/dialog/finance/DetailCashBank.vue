@@ -161,7 +161,7 @@
                 <template v-slot:[`item.transAmount`]="{ item }">
                   <v-currency-field
                     v-model="item.transAmount"
-                    :readonly="!selected.find(x => x.code === item.code) || data.type === 'DPC' || data.type === 'DPS'"
+                    :readonly="!selected.find(x => x.code === item.code) || data.type === 'DEPC' || data.type === 'DEPS'"
                     class="text-body-2 text-right mt-0"
                     @keydown="changeAmount"
                     @keyup="changeAmount"
@@ -423,9 +423,9 @@ export default {
         url = `${this.endpoint.finance.cashBank}/ap`
       } else if (this.data.type === 'EPAP') {
         url = `${this.endpoint.finance.cashBank}/ep-ap`
-      } else if (this.data.type === 'DPC' || this.data.type === 'RDPC' || this.data.type === 'SR') {
+      } else if (this.data.type === 'DEPC' || this.data.type === 'RDEPC' || this.data.type === 'SR') {
         url = `${this.endpoint.finance.cashBank}/credit-memo?type=${this.data.type}`
-      } else if (this.data.type === 'DPS' || this.data.type === 'RDPS' || this.data.type === 'PR') {
+      } else if (this.data.type === 'DEPS' || this.data.type === 'RDEPS' || this.data.type === 'PR') {
         url = `${this.endpoint.finance.cashBank}/debit-memo?type=${this.data.type}`
       }
       return url
@@ -494,7 +494,7 @@ export default {
         ]
         this.filters = this.supplierFilters
         this.data.by = 'supName'
-      } else if (this.data.type === 'DPC' || this.data.type === 'RDPC' || this.data.type === 'SR') {
+      } else if (this.data.type === 'DEPC' || this.data.type === 'RDEPC' || this.data.type === 'SR') {
         this.grid.columns = [
           { text: 'Kode', value: 'code', divider: true, width: '170' },
           { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
@@ -507,7 +507,7 @@ export default {
         ]
         this.filters = this.customerFilters
         this.data.by = 'custName'
-      } else if (this.data.type === 'DPS' || this.data.type === 'RDPS' || this.data.type === 'PR') {
+      } else if (this.data.type === 'DEPS' || this.data.type === 'RDEPS' || this.data.type === 'PR') {
         this.grid.columns = [
           { text: 'Kode', value: 'code', divider: true, width: '170' },
           { text: 'Pemasok', value: 'supName', divider: true, width: '200' },
@@ -580,14 +580,14 @@ export default {
       }
     },
     getTypeAmount() {
-      if (this.data.type === 'AR' || this.data.type === 'DPC' || this.data.type === 'RDPS' || this.data.type === 'PR') {
+      if (this.data.type === 'AR' || this.data.type === 'DEPC' || this.data.type === 'RDEPS' || this.data.type === 'PR') {
         return 'C'
       } else {
         return 'D'
       }
     },
     getFieldForNote() {
-      if (this.data.type === 'AR' || this.data.type === 'DPC' || this.data.type === 'RDPC' || this.data.type === 'SR') {
+      if (this.data.type === 'AR' || this.data.type === 'DEPC' || this.data.type === 'RDEPC' || this.data.type === 'SR') {
         return 'custName'
       } else {
         return 'supName'

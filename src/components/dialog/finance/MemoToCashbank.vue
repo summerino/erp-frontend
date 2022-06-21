@@ -150,7 +150,7 @@ export default {
         })
     },
     getCOACodeList() {
-      const codes = ['DPS_COA', 'DPC_COA']
+      const codes = ['DEPS_COA', 'DEPC_COA']
       api.getAll(`${this.endpoint.systemManagement.parameter}/lists`, {
         params: {
           codes: JSON.stringify(codes)
@@ -169,28 +169,28 @@ export default {
         this.data.itemDetails[0].typeAmount = 'D'
         createdFrom = `Debit Memo ${this.memo.code}`
         custOrSup = this.memo.supName
-        type = 'DPS'
+        type = 'DEPS'
         this.data.amount = -this.memo.amount
       } else if (this.source === 'debit-memo' && this.transactionType === 'retur') {
         this.data.type = 'D'
         this.data.itemDetails[0].typeAmount = 'C'
         createdFrom = `Debit Memo ${this.memo.code}`
         custOrSup = this.memo.supName
-        type = 'RDPS'
+        type = 'RDEPS'
         this.data.amount = -this.memo.amount
       } else if (this.source === 'credit-memo' && this.transactionType === 'payment') {
         this.data.type = 'D'
         this.data.itemDetails[0].typeAmount = 'C'
         createdFrom = `Credit Memo ${this.memo.code}`
         custOrSup = this.memo.custName
-        type = 'DPC'
+        type = 'DEPC'
         this.data.amount = this.memo.amount
       } else if (this.source === 'credit-memo' && this.transactionType === 'retur') {
         this.data.type = 'C'
         this.data.itemDetails[0].typeAmount = 'D'
         createdFrom = `Credit Memo ${this.memo.code}`
         custOrSup = this.memo.custName
-        type = 'RDPC'
+        type = 'RDEPC'
         this.data.amount = this.memo.amount
       }
       this.data.date = this.memo.date
@@ -201,10 +201,10 @@ export default {
       this.data.itemDetails[0].notes = custOrSup
       this.data.itemDetails[0].type = type
       
-      if (type === 'DPC' || type === 'RDPC') {
-        this.getCoaCode('DPC')
-      } else if (type === 'DPS' || type === 'RDPS') {
-        this.getCoaCode('DPS')
+      if (type === 'DEPC' || type === 'RDEPC') {
+        this.getCoaCode('DEPC')
+      } else if (type === 'DEPS' || type === 'RDEPS') {
+        this.getCoaCode('DEPS')
       }
 
     },

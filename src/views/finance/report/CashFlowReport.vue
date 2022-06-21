@@ -487,7 +487,6 @@ export default {
       this.filter = true
     },
     getList() {
-
       if (this.data.coaCode !== null) {
         this.grid.columns = this.data.type === 1 ? this.sumCoaColumn : this.detCoaColumn
         const selectedCoa = this.coas.find(x => x.code === this.data.coaCode)
