@@ -947,7 +947,7 @@ export default {
           direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
         })
       }
-      api.getAll(this.endpoint.sales.plan, {
+      api.getAll(this.endpoint.sales.deliveryPlan, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -964,7 +964,7 @@ export default {
             if (item) {
               this.edit(item)
             } else {
-              api.getAll(this.endpoint.sales.plan, {
+              api.getAll(this.endpoint.sales.deliveryPlan, {
                 params: {
                   search: this.grid.search,
                   skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -1108,7 +1108,7 @@ export default {
       }
 
       // Get item details
-      api.getAll(`${this.endpoint.sales.plan}/item`, {
+      api.getAll(`${this.endpoint.sales.deliveryPlan}/item`, {
         params: { code: item.code }
       })
         .then(response => {
@@ -1148,7 +1148,7 @@ export default {
           'Void?',
           'Apakah anda yakin ingin membuat void data ini?')
       ) {
-        api.delete(this.endpoint.sales.plan, item.code, {data: item})
+        api.delete(this.endpoint.sales.deliveryPlan, item.code, {data: item})
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -1182,10 +1182,10 @@ export default {
 
       let result = { success: false, message: '' }
       if (data.action === 'add') {
-        const resp = await api.create(this.endpoint.sales.plan, data)
+        const resp = await api.create(this.endpoint.sales.deliveryPlan, data)
         result = resp.data
       } else if (data.action === 'edit') {
-        const resp = await api.update(this.endpoint.sales.plan, data.code, data)
+        const resp = await api.update(this.endpoint.sales.deliveryPlan, data.code, data)
         result = resp.data
       }
 

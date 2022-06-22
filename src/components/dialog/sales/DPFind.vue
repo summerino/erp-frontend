@@ -244,7 +244,7 @@ export default {
     search() {
       const srcTrans = this.srcTrans
       if (srcTrans === 2) {
-        api.getAll(`${this.endpoint.sales.plan}/all-trans`, {
+        api.getAll(`${this.endpoint.sales.deliveryPlan}/all-trans`, {
           params: {
             warehouseCode: this.warehouseCode,
             filters: JSON.stringify([{
@@ -258,7 +258,7 @@ export default {
             this.grid.data = response.data.tableData.filter(x => !this.listCode.includes(x.code) && new Date(x.date) <= new Date(this.dateTrans) && x.type === 'Surat Jalan' && x.mark === 'A')
           })
       } else if (srcTrans === 1) {
-        api.getAll(`${this.endpoint.sales.plan}/all-trans`, {
+        api.getAll(`${this.endpoint.sales.deliveryPlan}/all-trans`, {
           params: {
             warehouseCode: this.warehouseCode,
             filters: JSON.stringify([{
@@ -272,7 +272,7 @@ export default {
             this.grid.data = response.data.tableData.filter(x => !this.listCode.includes(x.code) && new Date(x.date) <= new Date(this.dateTrans) && x.type === 'Penjualan Langsung')
           })
       } else if (srcTrans === 3) {
-        api.getAll(`${this.endpoint.sales.plan}/all-trans`, {
+        api.getAll(`${this.endpoint.sales.deliveryPlan}/all-trans`, {
           params: {
             warehouseCode: this.warehouseCode,
             filters: JSON.stringify([{
