@@ -487,6 +487,8 @@ export default {
       this.filter = true
     },
     getList() {
+      this.getCOAList()
+
       if (this.data.coaCode !== null) {
         this.grid.columns = this.data.type === 1 ? this.sumCoaColumn : this.detCoaColumn
         const selectedCoa = this.coas.find(x => x.code === this.data.coaCode)
@@ -523,6 +525,10 @@ export default {
             field: 'typeId',
             operator: 'eq',
             keyword: 1
+          }]),
+          sorts: JSON.stringify([{
+            field: 'code',
+            direction: 'asc'
           }])
         }
       })
