@@ -462,6 +462,7 @@ export default {
       { text: 'Sub Total', value: 'subTotal', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'DPP', value: 'dpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Pajak Yang Dibebaskan', value: 'exemptTaxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Harga Nett', value: 'nettPrice', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Total Harga Kotor', value: 'totalGrossAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Total Diskon', value: 'totalDisc', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
@@ -469,6 +470,7 @@ export default {
       { text: 'Total Stlh. Diskon', value: 'totalAfterDisc', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Total DPP', value: 'totalDpp', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Total Pajak', value: 'totalTaxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Total Pajak Yang Dibebaskan', value: 'totalExemptTaxAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Total Harga Nett', value: 'totalNettPrice', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
     itemGroups: [],
