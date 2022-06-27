@@ -965,6 +965,7 @@ export default {
         qtyOnIndent: 0,
         qtyReorderPoint: 0,
         qtyOnTransfer: 0,
+        qtyOnTransit: 0,
         uomConversion: 0,
         updatedDate: null
       }
@@ -1262,6 +1263,7 @@ export default {
       item.qtyOnIndent /= conversionValue
       item.qtyReorderPoint /= conversionValue
       item.qtyOnTransfer /= conversionValue
+      item.qtyOnTransit /= conversionValue
     },
     calcQtyAvailable(qtySystem, qtyOrder) {
       return (qtySystem - qtyOrder < 0) ? 0 : qtySystem - qtyOrder
