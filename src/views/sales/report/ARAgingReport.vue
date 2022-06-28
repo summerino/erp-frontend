@@ -475,6 +475,7 @@ export default {
 
   created: function () {
     this.reset()
+    this.getSysARRecog()
     this.getCustomerLists()
     this.getSalesmanLists()
     auth.getAction(this.endpoint, this.menuId.araReport)

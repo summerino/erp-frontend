@@ -309,7 +309,7 @@ export default {
       { text: 'Sisa', value: 'remainderAmount', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
     ],
     types: [{ id: 1, name: 'Berdasarkan Nota Kredit' }, { id: 2, name: 'Berdasarkan Pelanggan' }],
-    statuses: [{ id: 'A', name: 'Belum Dibayarkan' }, { id: 'PU', name: 'Digunakan Sebagian' }, { id: 'FU', name: 'Digunakan Seluruhnya' }],
+    statuses: [{ id: 'PP', name: 'Belum Dibayarkan' }, { id: 'OS', name: 'Belum Habis Terpakai' }, { id: 'A', name: 'Belum Digunakan' }, { id: 'PU', name: 'Digunakan Sebagian' }, { id: 'FU', name: 'Digunakan Seluruhnya' }],
     customers: [],
     data: {},
     exportFilter:{
