@@ -53,6 +53,7 @@ export default {
   salesInvoice: 46,
   directInvoice: 46, 
   salesReturn: 47,
+  salesDownPayment: 163,
   overlimitApproval: 158,
   creditMemo: 49,
   deliveryPlan: 48,
