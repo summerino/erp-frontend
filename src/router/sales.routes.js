@@ -76,16 +76,16 @@ export default [{
     authRequired: true
   }
 }, {
-  path: '/sales/transaction/delivery-plan',
-  name: 'delivery-plan',
-  component: () => import(/* webpackChunkName: "delivery-plan" */ '@/views/sales/transaction/DeliveryPlan.vue'),
+  path: '/sales/transaction/sales-down-payment',
+  name: 'sales-down-payment',
+  component: () => import(/* webpackChunkName: "sales-down-payment" */ '@/views/sales/transaction/SalesDownPayment.vue'),
   meta: {
     authRequired: true
   }
 }, {
-  path: '/sales/transaction/sales-down-payment',
-  name: 'sales-down-payment',
-  component: () => import(/* webpackChunkName: "sales-down-payment" */ '@/views/sales/transaction/SalesDownPayment.vue'),
+  path: '/sales/transaction/delivery-plan',
+  name: 'delivery-plan',
+  component: () => import(/* webpackChunkName: "delivery-plan" */ '@/views/sales/transaction/DeliveryPlan.vue'),
   meta: {
     authRequired: true
   }
@@ -159,17 +159,17 @@ export default [{
   meta: {
     authRequired: true
   }
-}, {
-  path: '/sales/report/delivery-plan-report',
-  name: 'delivery-plan-report',
-  component: () => import(/* webpackChunkName: "delivery-plan-report" */ '@/views/sales/report/DeliveryPlanReport.vue'),
-  meta: {
-    authRequired: true
-  }
 },  {
   path: '/sales/report/credit-memo-report',
   name: 'credit-memo-report',
   component: () => import(/* webpackChunkName: "credit-memo-report" */ '@/views/sales/report/CreditMemoReport.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
+  path: '/sales/report/delivery-plan-report',
+  name: 'delivery-plan-report',
+  component: () => import(/* webpackChunkName: "delivery-plan-report" */ '@/views/sales/report/DeliveryPlanReport.vue'),
   meta: {
     authRequired: true
   }
