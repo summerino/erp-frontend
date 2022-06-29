@@ -720,6 +720,13 @@ export default {
           direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
         })
       }
+
+      filters.push({
+        field: 'srcTrans',
+        operator: 'doesnotcontain',
+        keyword: [3, 4]
+      })
+
       api.getAll(this.endpoint.sales.creditMemo, {
         params: {
           search: this.grid.search,

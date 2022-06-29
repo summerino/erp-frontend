@@ -845,7 +845,7 @@ export default {
         keyword: [3, 4]
       })
 
-      api.getAll(this.endpoint.sales.creditMemo, {
+      api.getAll(this.endpoint.sales.downPayment, {
         params: {
           search: this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -862,7 +862,7 @@ export default {
             if (item) {
               this.edit(item)
             } else {
-              api.getAll(this.endpoint.sales.creditMemo, {
+              api.getAll(this.endpoint.sales.downPayment, {
                 params: {
                   search: this.grid.search,
                   skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -972,13 +972,23 @@ export default {
       this.amountChange()
 
       // Get related transaction details
-      api.getAll(`${this.endpoint.sales.creditMemo}/related-trans`, {
+      api.getAll(`${this.endpoint.sales.downPayment}/related-trans`, {
         params: { code: item.code }
       })
         .then(response => {
           this.gridRelated.data = response.data.tableData
         })
 
+      if (!this.isReturn) {
+        // Get return related transaction details
+        api.getAll(`${this.endpoint.sales.downPayment}/return-related-trans`, {
+          params: { code: item.code }
+        })
+          .then(response => {
+            this.gridRelated.data.push(response.data.tableData[0])
+          })
+      }
+      
       // Set focus to return code field
       setTimeout(() => {
         this.$refs.code.focus()
@@ -1011,7 +1021,7 @@ export default {
           'Void?',
           'Apakah anda yakin ingin membuat void data ini?')
       ) {
-        api.delete(this.endpoint.sales.creditMemo, item.code, {data: item})
+        api.delete(this.endpoint.sales.downPayment, item.code, {data: item})
           .then(response => {
             if (response.data.success) {
               this.$store.dispatch('app/showSuccess', response.data.message)
@@ -1032,10 +1042,10 @@ export default {
       data.currCode = 'IDR'
       let result = { success: false, message: '' }
       if (data.action === 'add') {
-        const resp = await api.create(this.endpoint.sales.creditMemo, data)
+        const resp = await api.create(this.endpoint.sales.downPayment, data)
         result = resp.data
       } else if (data.action === 'edit') {
-        const resp = await api.update(this.endpoint.sales.creditMemo, data.code, data)
+        const resp = await api.update(this.endpoint.sales.downPayment, data.code, data)
         result = resp.data
       }
 
@@ -1056,6 +1066,7 @@ export default {
         this.data.custName = item.custName
         this.data.currCode = item.currCode
 
+        this.data.amount = item.total
         this.data.total = item.total
         this.data.tempTotal = item.total
         this.data.taxAmount = item.taxAmount

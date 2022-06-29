@@ -427,6 +427,8 @@ export default {
         url = `${this.endpoint.finance.cashBank}/credit-memo?type=${this.data.type}`
       } else if (this.data.type === 'DEPS' || this.data.type === 'RDEPS' || this.data.type === 'PR') {
         url = `${this.endpoint.finance.cashBank}/debit-memo?type=${this.data.type}`
+      } else if (this.data.type === 'SDP' || this.data.type === 'RSDP') {
+        url = `${this.endpoint.finance.cashBank}/sdp?type=${this.data.type}`
       }
       return url
     },
@@ -494,7 +496,7 @@ export default {
         ]
         this.filters = this.supplierFilters
         this.data.by = 'supName'
-      } else if (this.data.type === 'DEPC' || this.data.type === 'RDEPC' || this.data.type === 'SR') {
+      } else if (this.data.type === 'DEPC' || this.data.type === 'RDEPC' || this.data.type === 'SR' || this.data.type === 'SDP' || this.data.type === 'RSDP') {
         this.grid.columns = [
           { text: 'Kode', value: 'code', divider: true, width: '170' },
           { text: 'Pelanggan', value: 'custName', divider: true, width: '200' },
@@ -580,14 +582,14 @@ export default {
       }
     },
     getTypeAmount() {
-      if (this.data.type === 'AR' || this.data.type === 'DEPC' || this.data.type === 'RDEPS' || this.data.type === 'PR') {
+      if (this.data.type === 'AR' || this.data.type === 'DEPC' || this.data.type === 'RDEPS' || this.data.type === 'PR' || this.data.type === 'SDP') {
         return 'C'
       } else {
         return 'D'
       }
     },
     getFieldForNote() {
-      if (this.data.type === 'AR' || this.data.type === 'DEPC' || this.data.type === 'RDEPC' || this.data.type === 'SR') {
+      if (this.data.type === 'AR' || this.data.type === 'DEPC' || this.data.type === 'RDEPC' || this.data.type === 'SR' || this.data.type === 'SDP' || this.data.type === 'RSDP') {
         return 'custName'
       } else {
         return 'supName'
