@@ -83,6 +83,13 @@ export default [{
     authRequired: true
   }
 }, {
+  path: '/sales/transaction/sales-down-payment',
+  name: 'sales-down-payment',
+  component: () => import(/* webpackChunkName: "sales-down-payment" */ '@/views/sales/transaction/SalesDownPayment.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
   path: '/sales/transaction/visit-plan',
   name: 'visit-plan',
   component: () => import(/* webpackChunkName: "visit-plan" */ '@/views/sales/transaction/VisitPlan.vue'),
