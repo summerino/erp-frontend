@@ -86,7 +86,8 @@ export default {
     cmReport: 'credit-memo-report',
     dpReport: 'sales-down-payment-report',
     dlvPlanReport: 'delivery-plan-report',
-    roReport: 'release-overlimit-report'
+    roReport: 'release-overlimit-report',
+    sdpReport: 'sales-down-payment-report'
   },
 
   expedition: {

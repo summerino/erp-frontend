@@ -71,6 +71,7 @@ export default {
   cmReport: 138,
   deliveryPlanReport: 162,
   releaseOverlimitReport: 159,
+  sdpReport: 164,
   
   // Expedition
   expeditionInvoice: 70,
