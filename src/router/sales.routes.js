@@ -180,4 +180,11 @@ export default [{
   meta: {
     authRequired: true
   }
+}, {
+  path: '/sales/report/sales-down-payment-report',
+  name: 'sales-down-payment-report',
+  component: () => import(/* webpackChunkName: "sales-down-payment-report" */ '@/views/sales/report/SalesDownPaymentReport.vue'),
+  meta: {
+    authRequired: true
+  }
 }]
