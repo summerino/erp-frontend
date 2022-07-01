@@ -1320,6 +1320,7 @@ export default {
           unitPrice: 0,
           itemSellPrice: 0,
           disc: 0,
+          finalDiscHeader: 0,
           nettPrice: 0,
           total: 0,
           typeId: 1,
@@ -1414,15 +1415,15 @@ export default {
       const tax = this.taxes.find(t => t.id === item.taxId)
       if (tax) {
         if (this.data.includeTax) {
-          item.taxAmount = (item.unitPrice - item.disc) - ((item.unitPrice - item.disc) / (1 + (tax.rate / 100)))
-          item.exemptTaxAmount = (item.unitPrice - item.disc) - ((item.unitPrice - item.disc) / (1 + (tax.exemptRate / 100)))
-          item.nettPrice = item.unitPrice - item.disc
-          item.dpp = item.unitPrice - item.disc - item.taxAmount + item.exemptTaxAmount
+          item.taxAmount = (item.unitPrice - item.disc - item.finalDiscHeader) - ((item.unitPrice - item.disc - item.finalDiscHeader) / (1 + (tax.rate / 100)))
+          item.exemptTaxAmount = (item.unitPrice - item.disc - item.finalDiscHeader) - ((item.unitPrice - item.disc - item.finalDiscHeader) / (1 + (tax.exemptRate / 100)))
+          item.nettPrice = item.unitPrice - item.disc - item.finalDiscHeader
+          item.dpp = item.unitPrice - item.disc - item.finalDiscHeader - item.taxAmount + item.exemptTaxAmount
         } else {
-          item.taxAmount = (item.unitPrice - item.disc) * (tax.rate / 100)
-          item.exemptTaxAmount = (item.unitPrice - item.disc) * (tax.exemptRate / 100)
-          item.nettPrice = item.unitPrice - item.disc + item.taxAmount - item.exemptTaxAmount
-          item.dpp = item.unitPrice - item.disc
+          item.taxAmount = (item.unitPrice - item.disc - item.finalDiscHeader) * (tax.rate / 100)
+          item.exemptTaxAmount = (item.unitPrice - item.disc - item.finalDiscHeader) * (tax.exemptRate / 100)
+          item.nettPrice = item.unitPrice - item.disc - item.finalDiscHeader + item.taxAmount - item.exemptTaxAmount
+          item.dpp = item.unitPrice - item.disc - item.finalDiscHeader
         }
       }
     },
