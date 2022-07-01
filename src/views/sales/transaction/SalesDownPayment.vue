@@ -930,9 +930,9 @@ export default {
       this.data = {
         ...item,
         action: 'edit',
-        originalDate: item.date
-        // updatedDate: (item.updatedDate === null) ? null : format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss'),
-        // approvedDate: (item.approvedDate === null) ? null : format(parseISO(item.approvedDate), 'dd-MMM-yyyy HH:mm:ss')
+        originalDate: item.date,
+        updatedDate: (item.updatedDate === null) ? null : format(parseISO(item.updatedDate), 'dd-MMM-yyyy HH:mm:ss'),
+        created: (item.createdDate === null) ? null : format(parseISO(item.createdDate), 'dd-MMM-yyyy HH:mm:ss')
       }
 
       // Get customer details
@@ -985,7 +985,9 @@ export default {
           params: { code: item.code }
         })
           .then(response => {
-            this.gridRelated.data.push(response.data.tableData[0])
+            if (response.data.tableData.length > 0) {
+              this.gridRelated.data.push(response.data.tableData[0])
+            }
           })
       }
       

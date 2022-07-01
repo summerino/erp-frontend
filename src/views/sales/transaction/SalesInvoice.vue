@@ -642,6 +642,7 @@
                     <v-tab key="memo">Nota</v-tab>
                     <v-tab key="related-trans">Transaksi Terkait</v-tab>
                     <v-tab v-if="arRecogTime === 'SI'" key="tax">Faktur Pajak</v-tab>
+                    <v-tab v-if="allowSalesDownPayment" key="sales-down-payment">Uang Muka Setelah Nota</v-tab>
 
                     <v-tab-item
                       key="detail-trans"
@@ -890,6 +891,49 @@
                         </v-card-text>
                       </v-card>
                     </v-tab-item>
+                    <v-tab-item
+                      key="sales-down-payment"
+                      transition="false"
+                    >
+                      <v-data-table
+                        :headers="gridSalesDownPayment.columns"
+                        :items="gridSalesDownPayment.data"
+                        :items-per-page="-1"
+                        height="300"
+                        class="elevation-1"
+                        dense
+                        disable-sort
+                        fixed-header
+                        hide-default-footer
+                      >
+                        <template v-slot:[`item.action`]="{ item }">
+                          <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                v-bind="attrs"
+                                v-on="on"
+                                color="red"
+                                icon
+                                small
+                                @click="removeMemo(item)"
+                              >
+                                <v-icon small>mdi-close-thick</v-icon>
+                              </v-btn>
+                            </template>
+                            <span class="text-caption">Hapus</span>
+                          </v-tooltip>
+                        </template>
+                        <template v-slot:[`item.date`]="{ item }">
+                          {{ item.date | formatDate('dd-MMM-yyyy') }}
+                        </template>
+                        <template v-slot:[`item.creditMemoAmount`]="{ item }">
+                          {{ item.creditMemoAmount | formatCurrency }}
+                        </template>
+                        <template v-slot:[`item.creditMemoTaxAmount`]="{ item }">
+                          {{ item.creditMemoTaxAmount | formatCurrency }}
+                        </template>
+                      </v-data-table>
+                    </v-tab-item>
                   </v-tabs>
                 </v-card>
               </v-col>
@@ -1088,6 +1132,15 @@ export default {
       ],
       data: []
     },
+    gridSalesDownPayment: {
+      columns: [
+        { text: 'Kode', value: 'creditMemoCode', divider: true },
+        { text: 'Tanggal', value: 'date', divider: true },
+        { text: 'Nilai', value: 'creditMemoAmount', align: 'right', divider: true },
+        { text: 'Pajak', value: 'creditMemoTaxAmount', align: 'right', divider: true }
+      ],
+      data: []
+    },
     valid: false,
     dataStartDate: null,
     employees: [],
@@ -1095,7 +1148,8 @@ export default {
     paymentTerms: [],
     data: {},
     seenByOthers: false,
-    arRecogTime: null
+    arRecogTime: null,
+    salesDownPaymentAction: []
   }),
 
   created: function () {
@@ -1107,6 +1161,10 @@ export default {
     auth.getAction(this.endpoint, this.menuId.salesInvoice)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
+      })
+    auth.getAction(this.endpoint, this.menuId.salesDownPayment)
+      .then((response) => {
+        this.salesDownPaymentAction = response.data
       })
     this.$store.commit('app/setFilterFields', this.filterFields)
   },
@@ -1162,6 +1220,9 @@ export default {
     },
     formatInvoiceDate() {
       return this.data.taxInvoiceDate ? format(parseISO(this.data.taxInvoiceDate), 'dd-MMM-yyyy') : ''
+    },
+    allowSalesDownPayment() {
+      return this.arRecogTime === 'SI' && this.salesDownPaymentAction.length > 0
     }
   },
 
@@ -1397,6 +1458,16 @@ export default {
           this.gridMemo.data = response.data.tableData
         })
 
+      if (this.allowSalesDownPayment) {
+        // Get Sales Down Payment List
+        api.getAll(`${this.endpoint.sales.invoice}/sales-down-payment`, {
+          params: { code: item.code }
+        })
+          .then(response => {
+            this.gridSalesDownPayment.data = response.data.tableData
+          })
+      }
+
       // Set focus to invoice code field
       setTimeout(() => {
         this.$refs.code.focus()
@@ -1440,7 +1511,8 @@ export default {
       const data = this.data
       data.details = this.gridDet.data
       data.memos = this.gridMemo.data
-      
+      data.salesDownPayments = this.gridSalesDownPayment.data
+
       let result = { success: false, message: '' }
       if (data.action === 'add') {
         const resp = await api.create(this.endpoint.sales.invoice, data)
@@ -1579,6 +1651,10 @@ export default {
           // Get sales delivery details
           this.getDOLists(true)
         }
+
+        if (this.allowSalesDownPayment) {
+          this.getSalesDownPayment()
+        }
       } else {
         this.data.custCode = null
         this.data.custName = null
@@ -1639,6 +1715,40 @@ export default {
       if (item === 'tax') {
         this.data.taxInvoiceDate = null
       }
+    },
+    getSalesDownPayment() {
+      api.getAll(this.endpoint.sales.downPayment, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'srcTrans',
+            operator: 'eq',
+            keyword: 3
+          },
+          {
+            field: 'transCode',
+            operator: 'eq',
+            keyword: this.data.soCode
+          },
+          {
+            field: 'mark',
+            operator: 'eq',
+            keyword: 'PP'
+          }])
+        }
+      })
+        .then(response => {
+          const data = []
+          for (let i = 0; i < response.data.tableData.length; i++) {
+            data.push({
+              creditMemoCode: response.data.tableData[i].code,
+              date: response.data.tableData[i].date,
+              creditMemoAmount: response.data.tableData[i].amount,
+              creditMemoTaxAmount: response.data.tableData[i].taxAmount,
+              src: 'DP'
+            })
+          }
+          this.gridSalesDownPayment.data = data
+        })
     }
   }
 }
