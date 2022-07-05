@@ -28,7 +28,7 @@ module.exports = {
     // Stylistic Issues
     'array-bracket-newline': ['off', 'consistent'],
     'array-bracket-spacing': 'error',
-    'brace-style': ["error", "1tbs", { "allowSingleLine": true }],
+    'brace-style': ['error', '1tbs', { 'allowSingleLine': true }],
     'block-spacing': 'error',
     'comma-dangle': 'error',
     'comma-spacing': 'error',
@@ -70,7 +70,8 @@ module.exports = {
 
     // Vue
     'vue/html-quotes': ['error', 'double'],
-    'vue/multi-word-component-names': 'off'
+    'vue/multi-word-component-names': 'off',
+    'vue/no-mutating-props': 'off'
   },
   parserOptions: {
     parser: 'babel-eslint'
