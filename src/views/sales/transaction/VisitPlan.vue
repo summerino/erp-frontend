@@ -75,7 +75,7 @@
                 :color="selectedEvent.color"
                 dark
               >
-                <v-toolbar-title v-html="selectedEvent.titleCard"></v-toolbar-title>
+                <v-toolbar-title>{{ selectedEvent.titleCard }}</v-toolbar-title>
               </v-toolbar>
               <v-card-text>
                 <v-data-table
