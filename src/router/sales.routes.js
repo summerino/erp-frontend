@@ -146,6 +146,13 @@ export default [{
     authRequired: true
   }
 }, {
+  path: '/sales/report/ar-card-report',
+  name: 'ar-card-report',
+  component: () => import(/* webpackChunkName: "ar-card-report" */ '@/views/sales/report/ARCardReport.vue'),
+  meta: {
+    authRequired: true
+  }
+}, {
   path: '/sales/report/ar-mutation-report',
   name: 'ar-mutation-report',
   component: () => import(/* webpackChunkName: "ar-mutation-report" */ '@/views/sales/report/ARMutationReport.vue'),
