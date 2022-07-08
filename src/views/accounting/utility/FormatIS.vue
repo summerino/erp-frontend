@@ -229,6 +229,7 @@
                   item-value="id"
                   class="mt-0"
                   dense
+                  @change="changeTypeCategory()"
                 >
                 </v-autocomplete>
               </v-col>
@@ -694,11 +695,16 @@ export default {
             field: item.category === 'S' ? 'isCode' : 'isDetCode',
             operator: 'eq',
             keyword: item.code
+          }]),
+          sorts: JSON.stringify([{
+            field: item.category === 'S' ? 'isSeq' : 'isDetSeq',
+            direction: 'desc'
           }])
         }
       })
         .then(response => {
           this.grid.data = response.data.tableData
+          this.changeTypeCategory()
         })
     },
     subTotal(item) {
@@ -780,6 +786,19 @@ export default {
           item.isDetSeq = amountData.isDetSeq
           amountData.isDetSeq = value
         }
+      }
+    },
+    changeTypeCategory() {
+      let maxValue = this.grid.data.length
+      for (let i = 0; i < this.grid.data.length; i++) {
+        if (this.data.category === 'S') {
+          this.grid.data[i].isDetSeq = null
+          this.grid.data[i].isSeq = maxValue
+        } else {
+          this.grid.data[i].isSeq = null
+          this.grid.data[i].isDetSeq = maxValue
+        }
+        maxValue -= 1
       }
     }
   }
