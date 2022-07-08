@@ -817,14 +817,14 @@ export default {
     },
     gridQuantity: {
       columns: [
-        { text: 'Lokasi Gudang', value: 'warehouseInitial', divider: true, width: '200'  },
+        { text: 'Lokasi Gudang', value: 'warehouseInitial', divider: true, width: '250'  },
         { text: 'Qty Sistem', value: 'qtyOnHand', align: 'right', divider: true, width: '120' },
         { text: 'Qty Dipesan', value: 'qtyOnOrder', align: 'right', divider: true, width: '120' },
         { text: 'Qty Tersedia', value: 'qtyOnAvailable', align: 'right', divider: true, width: '120' },
         { text: 'Qty Indent', value: 'qtyOnIndent', align: 'right', divider: true, width: '120' },
         // { text: 'Qty Titik Pemesanan Kembali', value: 'qtyReorderPoint', align: 'right', divider: true, width: '120'},
         { text: 'Qty Transfer', value: 'qtyOnTransfer', align: 'right', divider: true, width: '120' },
-        { text: 'Qty Dalam Pengiriman', value: 'qtyOnTransit', align: 'right', divider: true, width: '120' },
+        { text: 'Qty Transit', value: 'qtyOnTransit', align: 'right', divider: true, width: '120' },
         { text: 'Diperbarui Tgl.', value: 'updatedDate', divider: true, width: '60' }
       ],
       data: [],
