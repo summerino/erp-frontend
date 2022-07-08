@@ -865,7 +865,8 @@ export default {
     sources: [{ id: 1, name: 'Order Penjualan' }, { id: 2, name: 'Retur Penjualan' }],
     allowInsertSalesInvoice: false,
     seenByOthers: false,
-    arRecogTime: null
+    arRecogTime: null,
+    userInfo: null
   }),
 
   created: function () {
@@ -1474,6 +1475,7 @@ export default {
         this.data.taxAmount = item.taxAmount
         this.data.exemptTaxAmount = item.exemptTaxAmount
         this.data.total = item.total
+        this.data.warehouseCode = item.warehouseCode
         const test = true
         if (!item.called || test) {
           // Get customer details
