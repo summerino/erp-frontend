@@ -233,8 +233,6 @@
             :sort-desc="grid.options.sortDesc"
             :class="['elevation-1', this.data.type === 2 ? 'row-pointer' : '']"
             fixed-header
-            hide-default-footer
-            disable-pagination
             @dblclick:row="dblclickRow"
           >
           <template v-slot:[`item.date`]="{ item }">

@@ -180,13 +180,12 @@
           <v-card>
           <v-data-table  
             :headers="grid.columns"
+            :footer-props="{ itemsPerPageOptions: gridDefOpts.rptPageSizes }"
             :height="grid.height"
             :items="grid.data"
-            :items-per-page="-1"
+            :items-per-page="gridDefOpts.rptPageSize"
             class="elevation-1"
             fixed-header
-            hide-default-footer
-            disable-pagination
             disable-sort
           >
           <template v-slot:[`item.description`]="{ item }">
@@ -474,7 +473,7 @@ export default {
     setGridDefaultHeight() {
       this.grid.height = 100
       setTimeout(() => {
-        this.grid.height = this.$el.clientHeight - this.$refs.filter.clientHeight - 61
+        this.grid.height = this.$el.clientHeight - this.$refs.filter.clientHeight - 120
       }, 0)
     },
     reset() {
@@ -534,6 +533,18 @@ export default {
       })
         .then(response => {
           this.coas = response.data.tableData
+
+          this.sumColumn = []
+          this.detColumn = []
+          
+          this.sumColumn.push({ text: 'Deskripsi', value: 'description', divider: true, width: '300', excelColWidth:'50' })
+          this.sumColumn.push({ text: 'Total', value: 'amountAll', align: 'right', divider: true, width: '160', excelColWidth:'25', isCurrency: true })
+
+          this.detColumn.push({ text: 'Deskripsi', value: 'description', divider: true, width: '300', excelColWidth:'50' })
+          this.detColumn.push({ text: 'Kode', value: 'cbCode', divider: true, width: '160', excelColWidth:'20'})
+          this.detColumn.push({ text: 'Catatan', value: 'notes', divider: true, width: '200', excelColWidth:'50'})
+          this.detColumn.push({ text: 'Kd. Trans.', value: 'transCode', divider: true, width: '160', excelColWidth:'20'})
+
           for (let i = 0; i < this.coas.length; i++) {
             this.sumColumn.push({ text: this.coas[i].name, value: `amount${i + 1}`, align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true })
             this.detColumn.push({ text: this.coas[i].name, value: `amount${i + 1}`, align: 'right', divider: true, width: '120', excelColWidth:'20', isCurrency: true })
