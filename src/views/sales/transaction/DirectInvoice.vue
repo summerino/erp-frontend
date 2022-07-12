@@ -26,15 +26,31 @@
                 <v-btn
                   v-bind="attrs"
                   v-on="on"
-                  v-shortkey="['ctrl', 'alt', 'p']"
+                  v-shortkey="['ctrl', 'alt', 'i']"
                   :disabled="isVoid || (data.action === 'edit' && !auth.allowPrint) || data.action === 'add'"
                   dark
                   text
-                  @click="print(data)"
-                  @shortkey="print(data)"
-                >Cetak</v-btn>
+                  @click="print('inv', data)"
+                  @shortkey="print('inv', data)"
+                >Cetak Faktur Penjualan</v-btn>
               </template>
-              <span class="text-caption">(Ctrl + Alt + P)</span>
+              <span class="text-caption">(Ctrl + Alt + I)</span>
+            </v-tooltip>
+            <v-divider vertical></v-divider>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'r']"
+                  :disabled="isVoid || (data.action === 'edit' && !auth.allowPrint) || data.action === 'add'"
+                  dark
+                  text
+                  @click="print('receipt', data)"
+                  @shortkey="print('receipt', data)"
+                >Cetak Tanda Terima</v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Alt + R)</span>
             </v-tooltip>
             <v-divider vertical></v-divider>
             <v-tooltip bottom>
@@ -969,6 +985,7 @@
     </v-dialog>
 
     <confirm ref="confirm"></confirm>
+    <report-viewer ref="reportViewer"></report-viewer>
     <find-customer
       ref="findCust"
       @dblclick:row="bindCustData"
@@ -1002,6 +1019,7 @@ import auth from '@/services/authorization.service'
 import activeTrans from '@/services/activeTransaction.service'
 
 import Confirm from '@/components/dialog/Confirm'
+import ReportViewer from '@/components/dialog/ReportViewer'
 import FindCustomer from '@/components/dialog/general/FindCustomer'
 import FindItem from '@/components/dialog/inventory/FindItem'
 import SoPromo from '@/components/dialog/sales/SOPromo'
@@ -1010,6 +1028,7 @@ import Memo from '@/components/dialog/Memo.vue'
 export default {
   components: {
     Confirm,
+    ReportViewer,
     FindCustomer,
     FindItem,
     SoPromo,
@@ -1500,6 +1519,13 @@ export default {
               this.$store.dispatch('app/showSuccess', response.data.message)
             }
           })
+      }
+    },
+    print(caller, item) {
+      if (caller === 'inv') {
+        this.$refs.reportViewer.open('sales-invoice', item.code)
+      } else if (caller === 'receipt') {
+        this.$refs.reportViewer.open('invoice-receipt', item.code)
       }
     },
     async save(closeDialog) {
