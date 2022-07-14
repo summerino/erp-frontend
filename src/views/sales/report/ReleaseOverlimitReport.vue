@@ -193,7 +193,7 @@
             fixed-header
           >
           <template v-slot:[`item.releasedDate`]="{ item }">
-            {{ item.releasedDate | formatDate('dd-MMM-yyyy') }}
+            {{ item.releasedDate | formatDate('dd-MMM-yyyy HH:mm:ss') }}
           </template>
           <template v-slot:[`item.total`]="{ item }">
             {{ item.total | formatCurrency }}
