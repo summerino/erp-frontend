@@ -1966,7 +1966,8 @@ export default {
           creditMemoCode: data[i].code,
           date: data[i].date,
           type: data[i].type,
-          creditMemoAmount: data[i].transAmount          
+          creditMemoAmount: data[i].transAmount,
+          src: 'CM'          
         })
       }
     },
