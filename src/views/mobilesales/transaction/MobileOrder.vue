@@ -812,7 +812,9 @@ export default {
         { text: 'Satuan', value: 'unitName', divider: true, width: '90' },
         { text: 'Harga Satuan', value: 'unitPrice', align: 'right', divider: true, width: '120' },
         { text: 'Diskon', value: 'disc', align: 'right', divider: true, width: '120' },
+        { text: 'Diskon Header', value: 'finalDiscHeader', align: 'right', divider: true, width: '120' },
         { text: 'Pajak', value: 'taxAmount', align: 'right', divider: true, width: '120' },
+        { text: 'Pajak Yang Dibebaskan', value: 'exemptTaxAmount', align: 'right', divider: true, width: '120' },
         { text: 'Harga Nett', value: 'nettPrice', align: 'right', divider: true, width: '120' },
         { text: 'Harga Total', value: 'total', align: 'right', divider: true, width: '120' },
         { text: 'Catatan', value: 'notes', width: '200' }
