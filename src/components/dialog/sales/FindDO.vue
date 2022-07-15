@@ -116,7 +116,8 @@ import api from '@/services/axios.service'
 
 export default {
   props: {
-    soCode: String
+    soCode: String,
+    listDoCode: Array
   },
 
   data() {
@@ -129,7 +130,7 @@ export default {
         items: [
           { text: 'Kode', value: 'code' },
           { text: 'Tanggal', value: 'date' },
-          { text: 'Kode Trans.', value: 'soCode' }
+          { text: 'Kode Trans.', value: 'transCode' }
         ]
       },
       rowItem: {},
@@ -137,7 +138,7 @@ export default {
         columns: [
           { text: 'Kode', value: 'code', divider: true, width: '160' },
           { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
-          { text: 'Kode Trans.', value: 'soCode', divider: true, width: '160' },
+          { text: 'Kode Trans.', value: 'transCode', divider: true, width: '160' },
           { text: 'Nilai', value: 'total', align: 'right', width: '120' },
           { text: 'Dikirim Oleh', value: 'shippedInitial', divider: true, width: '200' }
         ],
@@ -175,13 +176,12 @@ export default {
     search() {
       api.getAll(this.endpoint.sales.delivery, {
         params: {
-          soCode: this.soCode,
           filters: JSON.stringify([{
             field: this.data.by,
             operator: this.data.by === 'date' ? 'eq' : 'contains',
             keyword: this.data.value
           }, {
-            field: 'soCode',
+            field: 'transCode',
             operator: 'eq',
             keyword: this.soCode
           }, {
@@ -196,7 +196,7 @@ export default {
         }
       })
         .then(response => {
-          this.grid.data = response.data.tableData
+          this.grid.data = response.data.tableData.filter(x => !this.listDoCode.includes(x.code))
         })
     },
     searchByChange() {
