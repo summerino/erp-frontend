@@ -241,7 +241,8 @@ export default {
       { text: 'Dirilis Oleh', value: 'releasedBy', divider: true, width: '120', excelColWidth:'18' },
       { text: 'Kd. Pelanggan', value: 'custCode', divider: true, width: '120', excelColWidth:'18' },
       { text: 'Nm. Pelanggan', value: 'custName', divider: true, width: '200', excelColWidth:'20' },
-      { text: 'Total', value: 'total', align: 'right', divider: true, width: '150', excelColWidth:'20', isCurrency: true }
+      { text: 'Total', value: 'total', align: 'right', divider: true, width: '150', excelColWidth:'20', isCurrency: true },
+      { text: 'Alasan Dirilis', value: 'releasedReason', width: '120', excelColWidth:'18' }
     ],
     customers: [],
     employees: [],
