@@ -993,6 +993,7 @@
     <find-do
       ref="findDO"
       :so-code="data.soCode"
+      :list-do-code="gridDet.data.map(x => x.doCode)"
       @dblclick:row="bindDOData"
     ></find-do>
     <memo
