@@ -381,6 +381,7 @@
 <script>
 import { mapState } from 'vuex'
 import { format, parseISO }  from 'date-fns'
+import { sortBy as _sortBy } from 'lodash'
 import { randomNumber } from '@/helpers/math-helpers'
 
 import api from '@/services/axios.service'
@@ -676,6 +677,8 @@ export default {
       return `Menu ${this.menuList.find(x => x.id === id).name}`
     },
     listingAction(item) {
+      if (!item) return
+
       api.getAll(`${this.endpoint.systemManagement.menu}/lists`, {
         params: { id: item }
       })
@@ -693,14 +696,15 @@ export default {
           this.menuName = this.getMenuName(item)
 
           for (let i = 0; i < this.menuAction.length; i++) {
-            const isExist = this.listAction.find(x => x.id === this.menuAction[i].actionId)
-            if (isExist) {
-              this.listAction.find(x => x.id === this.menuAction[i].actionId).isActive = true
+            const idx = this.listAction.findIndex(x => x.id === this.menuAction[i].actionId)
+            if (idx >= 0) {
+              this.listAction[idx].isActive = true
+              this.listAction[idx].seq = this.menuAction[i].seq
             }
           }
 
           const filterList = this.listAction.filter(x => x.isActive)
-          this.listAction = filterList
+          this.listAction = _sortBy(filterList, ['seq', 'id'])
 
           for (let j = 0; j < this.selectionAction.length; j++) {
             if (this.selectionAction[j].menuId === item) {
