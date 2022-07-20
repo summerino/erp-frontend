@@ -558,7 +558,7 @@
                                 v-bind="attrs"
                                 v-on="on"
                                 v-shortkey="['ctrl', 'i']"
-                                :disabled="isVoid || hasRelatedTrans || (data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
+                                :disabled="isVoid || hasRelatedTrans || (data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate) || hasPayments"
                                 class="blue--text"
                                 small
                                 tile
@@ -590,7 +590,7 @@
                                 <v-btn
                                   v-bind="attrs"
                                   v-on="on"
-                                  :disabled="isVoid || hasRelatedTrans || (data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate)"
+                                  :disabled="isVoid || hasRelatedTrans || (data.action === 'add' && !auth.allowCreate) || (data.action === 'edit' && !auth.allowUpdate) || hasPayments"
                                   color="red"
                                   icon
                                   small
@@ -607,7 +607,7 @@
                               ref="rcvCode"
                               v-model="item.rcvCode"
                               :items="receives"
-                              :readonly="hasRelatedTrans"
+                              :readonly="hasRelatedTrans || hasPayments"
                               :rules="rules.required"
                               item-text="code"
                               item-value="code"
@@ -618,7 +618,7 @@
                             >
                               <template v-slot:append>
                                 <v-btn
-                                  :disabled="hasRelatedTrans"
+                                  :disabled="hasRelatedTrans || hasPayments"
                                   color="primary"
                                   icon
                                   x-small
@@ -1068,6 +1068,9 @@ export default {
     },
     formatInvoiceDate() {
       return this.data.taxInvoiceDate ? format(parseISO(this.data.taxInvoiceDate), 'dd-MMM-yyyy') : ''
+    },
+    hasPayments() {
+      return (this.data?.mark?.toUpperCase() === 'PP' || this.data?.mark?.toUpperCase() === 'CMP')
     }
   },
 
