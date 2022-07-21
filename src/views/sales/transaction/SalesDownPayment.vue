@@ -519,7 +519,6 @@
                                         v-model="data.amount"
                                         label="Nilai"
                                         class="text-right mt-0"
-                                        readonly
                                         ></v-currency-field>
                                     </v-col>
                                     <v-col cols="12" md="6" class="pl-md-1">
