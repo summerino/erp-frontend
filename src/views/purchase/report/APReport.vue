@@ -116,7 +116,7 @@
                           :filters="exportFilter"
                           :grid="grid"
                           :gridDefOpts="gridDefOpts"
-                          title="Daftar Laporan Hutang - Detail Berdasarkan Pemasok"
+                          :title="`Daftar Laporan Hutang - Detail Berdasarkan Pemasok - ${ this.data.supInitial } - ${ this.data.supName } (${ this.data.supCode })`"
                         ></export-excel>
                       </v-list-item-title>
                     </v-list-item>
