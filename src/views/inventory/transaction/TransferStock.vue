@@ -1227,6 +1227,10 @@ export default {
             field: 'type',
             operator: 'eq',
             keyword: 'IN'
+          }, {
+            field: 'mark',
+            operator: 'eq',
+            keyword: 'A'
           }])
         }
       })
