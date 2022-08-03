@@ -633,6 +633,9 @@
                           <template v-slot:[`item.taxAmount`]="{ item }">
                             {{ item.taxAmount | formatCurrency }}
                           </template>
+                          <template v-slot:[`item.exemptTaxAmount`]="{ item }">
+                            {{ item.exemptTaxAmount | formatCurrency }}
+                          </template>
                           <template v-slot:[`item.nettPrice`]="{ item }">
                             {{ item.nettPrice | formatCurrency }}
                           </template>
@@ -1046,8 +1049,10 @@ export default {
           unitName: null,
           unitPrice: 0,
           disc: 0,
+          finalDiscHeader: 0,
           taxId: null,
           taxAmount: 0,
+          exemptTaxAmount: 0,
           nettPrice: 0,
           total: 0,
           dpp: 0,
@@ -1229,6 +1234,7 @@ export default {
         item.disc = 0
         item.taxId = data_i.salesTaxId
         item.taxAmount = 0
+        item.exemptTaxAmount = 0
         item.nettPrice = data_i.sellPrice
         item.total = data_i.sellPrice
         item.dpp = data_i.sellPrice
@@ -1291,13 +1297,15 @@ export default {
       const tax = this.taxes.find(t => t.id === item.taxId)
       if (tax) {
         if (this.data.includeTax) {
-          item.taxAmount = Math.round((item.unitPrice - item.disc) - ((item.unitPrice - item.disc) / (1 + (tax.rate / 100))))
-          item.nettPrice = item.unitPrice - item.disc
-          item.dpp = item.unitPrice - item.disc - item.taxAmount
+          item.taxAmount = (item.unitPrice - item.disc - item.finalDiscHeader) - ((item.unitPrice - item.disc - item.finalDiscHeader) / (1 + (tax.rate / 100)))
+          item.exemptTaxAmount = (item.unitPrice - item.disc - item.finalDiscHeader) - ((item.unitPrice - item.disc - item.finalDiscHeader) / (1 + (tax.exemptRate / 100)))
+          item.nettPrice = item.unitPrice - item.disc - item.finalDiscHeader
+          item.dpp = item.unitPrice - item.disc - item.finalDiscHeader - item.taxAmount + item.exemptTaxAmount
         } else {
-          item.taxAmount = Math.round((item.unitPrice - item.disc) * (tax.rate / 100))
-          item.nettPrice = item.unitPrice - item.disc + item.taxAmount
-          item.dpp = item.unitPrice - item.disc
+          item.taxAmount = (item.unitPrice - item.disc - item.finalDiscHeader) * (tax.rate / 100)
+          item.exemptTaxAmount = (item.unitPrice - item.disc - item.finalDiscHeader) * (tax.exemptRate / 100)
+          item.nettPrice = item.unitPrice - item.disc - item.finalDiscHeader + item.taxAmount - item.exemptTaxAmount
+          item.dpp = item.unitPrice - item.disc - item.finalDiscHeader
         }
       }
     },
