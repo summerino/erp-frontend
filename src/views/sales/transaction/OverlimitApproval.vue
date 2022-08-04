@@ -141,7 +141,7 @@ export default {
       { text: 'Sumber Transaksi', value: 'sourceTrans', dataType: 'text' }],
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '100' },
+        { value: 'action', sortable: false, divider: true, width: '10' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Penjual', value: 'salesInitial', divider: true, width: '180', excelColWidth:'23', customValues: ['salesInitial', 'salesName']  },
