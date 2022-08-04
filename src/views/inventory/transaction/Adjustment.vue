@@ -498,7 +498,6 @@
                         :allow-negative="true"
                         :decimal-length="0"
                         :rules="rules.cannot0"
-                        :min="1"
                         class="text-body-2 text-right mt-0"
                         dense
                       ></v-currency-field>
@@ -507,7 +506,6 @@
                       <v-currency-field
                         v-model="item.qtyOpname"
                         :decimal-length="0"
-                        :min="0"
                         class="text-body-2 text-right mt-0"
                         dense
                         @change="qtyOpnameChange(item, true)"
