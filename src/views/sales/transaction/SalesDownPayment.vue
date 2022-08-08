@@ -1194,11 +1194,9 @@ export default {
           ])
         }
       })
-      console.log(resp.data.tableData)
       if (resp.data.tableData.length > 0) {
         result = resp.data.tableData.reduce((acc, obj) => { return acc + obj.taxAmount }, 0)
       }
-      console.log(result)
       return result
     }
   }
