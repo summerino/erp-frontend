@@ -349,7 +349,7 @@
                     </v-row>
                     
                     <v-row no-gutters v-if="!isReturn">
-                      <v-col cols="6">
+                      <v-col>
                         <v-checkbox
                           v-model="data.noTax"
                           :readonly="hasRelatedTrans || isReturn"
@@ -358,7 +358,7 @@
                           @change="noTaxChange"
                         ></v-checkbox>
                       </v-col>
-                      <v-col cols="6">
+                      <!-- <v-col cols="6">
                         <v-checkbox
                           v-model="data.includeTax"
                           :disabled="data.noTax"
@@ -367,7 +367,7 @@
                           class="shrink ml-1"
                           @change="calcTax"
                         ></v-checkbox>
-                      </v-col>
+                      </v-col> -->
                     </v-row>
                   </v-card-text>
                 </v-card>
@@ -517,8 +517,9 @@
                                     <v-col cols="12" md="6">
                                         <v-currency-field
                                         v-model="data.amount"
-                                        label="Nilai"
+                                        label="Nilai Setoran"
                                         class="text-right mt-0"
+                                        @change="calcTax"
                                         ></v-currency-field>
                                     </v-col>
                                     <v-col cols="12" md="6" class="pl-md-1">
@@ -546,7 +547,7 @@
                                     <v-col cols="12" md="6">
                                         <v-currency-field
                                         v-model="data.dpp"
-                                        label="Total Sebelum Pajak"
+                                        label="Nilai Uang Muka"
                                         class="text-right mt-0"
                                         readonly
                                         ></v-currency-field>
@@ -554,7 +555,7 @@
                                     <v-col cols="12" md="6" class="pl-md-1">
                                         <v-currency-field
                                         v-model="data.taxAmount"
-                                        label="Total Pajak"
+                                        label="Nilai Pajak"
                                         class="text-right mt-0"
                                         readonly
                                         ></v-currency-field>
@@ -721,7 +722,8 @@ export default {
     transactionType: '',
     allowInsertCashBank: false,
     listTaxId: [],
-    highestRate: 0
+    highestRate: 0,
+    soUsedTaxAmount: 0
   }),
 
   created: function () {
@@ -800,7 +802,7 @@ export default {
         used: 0,
         outstanding: 0,
         dpp: 0,
-        includeTax: false,
+        includeTax: true,
         noTax: false,
         taxId: 0,
         taxAmount: 0,
@@ -1060,7 +1062,7 @@ export default {
         this.getList(!closeDialog)
       }
     },
-    bindSOData(item) {
+    async bindSOData(item) {
       if (item) {
         this.data.transCode = item.code
         this.data.custCode = item.custCode
@@ -1099,7 +1101,13 @@ export default {
                 this.highestRate = Math.max(response.data.tableData.map(x => x.rate), 0)
               })
           })
-  
+
+        const soTax = await this.getSOUsedTaxAmount(item.code)
+        if (soTax) {
+          this.soUsedTaxAmount = soTax
+          this.calcTax()
+        }
+
         if (!item.called) {
           // Get customer details
           this.bindCustData(this.data)
@@ -1135,21 +1143,26 @@ export default {
         this.data.total = this.data.tempDpp
       } else {
         this.data.taxAmount = this.data.tempTaxAmount
+        this.data.includeTax = true
       }
       this.calcTax()
     },
     calcTax() {
-      if ((!this.data.includeTax || this.data.includeTax) && this.data.noTax) {
-        this.data.dpp = this.data.tempTotal
-        this.data.total = this.data.dpp
-      } else if (this.data.includeTax) {
-        this.data.taxAmount = (this.data.tempTotal) - ((this.data.tempTotal) / (1 + (this.highestRate / 100)))
-        this.data.dpp = this.data.tempTotal - this.data.taxAmount
-        this.data.total = this.data.dpp + this.data.taxAmount
-      } else {
-        this.data.taxAmount = (this.data.tempTotal) * (this.highestRate / 100)
-        this.data.dpp = this.data.tempTotal
-        this.data.total = this.data.dpp + this.data.taxAmount
+      if (!this.isReturn) {
+        if ((!this.data.includeTax || this.data.includeTax) && this.data.noTax) {
+          this.data.dpp = this.data.amount
+          this.data.total = this.data.dpp
+        } else if (this.data.includeTax) {
+          const soTaxAmount = ((this.data.amount) - ((this.data.amount) / (1 + (this.highestRate / 100))))
+          const taxAmount = this.soUsedTaxAmount > 0 ? soTaxAmount > (this.data.tempTaxAmount - this.soUsedTaxAmount) ? (this.data.tempTaxAmount - this.soUsedTaxAmount) : soTaxAmount : soTaxAmount > this.data.tempTaxAmount ? this.data.tempTaxAmount : soTaxAmount
+          this.data.taxAmount = taxAmount
+          this.data.dpp = this.data.amount - this.data.taxAmount
+          this.data.total = this.data.dpp + this.data.taxAmount
+        } else {
+          this.data.taxAmount = (this.data.amount) * (this.highestRate / 100)
+          this.data.dpp = this.data.amount
+          this.data.total = this.data.dpp + this.data.taxAmount
+        }
       }
     },
     bindSDPData(item) {
@@ -1162,6 +1175,31 @@ export default {
       this.data.outstanding = item.remaining
 
       this.bindCustData(this.data)
+    },
+    async getSOUsedTaxAmount(code) {
+      let result = 0
+      const resp = await api.getAll(this.endpoint.sales.creditMemo, {
+        params: { 
+          filters: JSON.stringify([
+            {
+              field: 'transCode',
+              operator: 'eq',
+              keyword: code
+            },
+            {
+              field: 'mark',
+              operator: 'neq',
+              keyword: 'V'
+            }
+          ])
+        }
+      })
+      console.log(resp.data.tableData)
+      if (resp.data.tableData.length > 0) {
+        result = resp.data.tableData.reduce((acc, obj) => { return acc + obj.taxAmount }, 0)
+      }
+      console.log(result)
+      return result
     }
   }
 }
