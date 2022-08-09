@@ -612,7 +612,7 @@
     <find-so
       ref="findSO"
       :invCode="data.code"
-      caller="inv"
+      :mark-exclude="['V', 'CLS', 'CMP', 'OL']"
       @dblclick:row="bindSOData"
     ></find-so>
     <find-sdp
