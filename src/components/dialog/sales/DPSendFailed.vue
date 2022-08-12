@@ -354,13 +354,15 @@ export default {
         for (let i = 0; i < this.data.length; i++) {
           const item = {
             id: randomNumber(-1, -1000),
+            code: this.rowItem.code,
             itemId: this.data[i].itemId,
             uomId: this.data[i].uomId,
             unitId: this.data[i].unitId,
             qty: this.data[i].qty,
             warehouseCode: this.warehouseCode,
-            type: 0,
+            type: this.data[i].type,
             unitName: this.data[i].unitName,
+            detailId: this.data[i].id,
             units: this.data.filter(x => x.itemId === this.data[i].itemId).map(function (data) { return { unitId: data.unitId, unitName: data.unitName } })
           }
           this.grid.data.push(item) 
