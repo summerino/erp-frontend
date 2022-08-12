@@ -922,7 +922,7 @@ export default {
         this.$refs.form.validate()
       }, 0)
     },
-    edit(item) {
+    async edit(item) {
       if (!item) return
 
       this.dialog.add = true
@@ -964,9 +964,16 @@ export default {
               }
             })
               .then(response => {
-                this.highestRate = Math.max(response.data.tableData.map(x => x.rate), 0)
+                const rateArr = response.data.tableData.map(x => x.rate)
+                this.highestRate = Math.max(Math.max(...rateArr))
               })
           })
+
+        const soTax = await this.getSOUsedTaxAmount(item.code)
+        if (soTax) {
+          this.soUsedTaxAmount = soTax
+          this.calcTax()
+        }
       }
 
       // Calculate Outstanding
@@ -1098,7 +1105,8 @@ export default {
               }
             })
               .then(response => {
-                this.highestRate = Math.max(response.data.tableData.map(x => x.rate), 0)
+                const rateArr = response.data.tableData.map(x => x.rate)
+                this.highestRate = Math.max(Math.max(...rateArr))
               })
           })
 
