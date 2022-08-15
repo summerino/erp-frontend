@@ -400,6 +400,7 @@ export default {
         item.custName = this.selected[i].custName
         item.custAddress = this.selected[i].custAddress
         item.custArea = this.selected[i].custArea
+        item.salesName = this.selected[i].salesName
         item.volume = _sumBy(detailData, 'finalVolume')
         item.weight = _sumBy(detailData, 'finalWeight')
 
