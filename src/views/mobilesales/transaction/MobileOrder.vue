@@ -970,7 +970,7 @@ export default {
         })
 
       // Get free item details
-      api.getAll(`${this.endpoint.sales.order}/free-item`, {
+      api.getAll(`${this.endpoint.mobileSales.order}/free-item`, {
         params: { code: item.code }
       })
         .then(response => {
