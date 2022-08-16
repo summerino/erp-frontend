@@ -558,7 +558,7 @@
                           <template v-slot:[`item.amount`]="{ item }">
                             <v-currency-field
                               v-model="item.amount"
-                              :readonly="item.type === 'DEPC' || item.type === 'DEPS'"
+                              :readonly="item.type === 'DEPC' || item.type === 'DEPS'|| item.type === 'SDP' || item.type === 'RSDP'"
                               :rules="rules.above0"
                               class="text-body-2 text-right mt-0"
                               dense
