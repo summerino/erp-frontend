@@ -161,7 +161,7 @@
                 <template v-slot:[`item.transAmount`]="{ item }">
                   <v-currency-field
                     v-model="item.transAmount"
-                    :readonly="!selected.find(x => x.code === item.code) || data.type === 'DEPC' || data.type === 'DEPS'"
+                    :readonly="!selected.find(x => x.code === item.code) || data.type === 'DEPC' || data.type === 'DEPS' || data.type === 'SDP' || data.type === 'RSDP'"
                     class="text-body-2 text-right mt-0"
                     @keydown="changeAmount"
                     @keyup="changeAmount"
