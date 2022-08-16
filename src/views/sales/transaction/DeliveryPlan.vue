@@ -828,6 +828,7 @@ export default {
     warehouses: [],
     listCode: [],
     orderData: [],
+    dlvData: [],
     seenByOthers: false
   }),
 
@@ -1266,7 +1267,15 @@ export default {
         })
     },
     getDlvData() {
-      api.getAll(this.endpoint.sales.delivery)
+      api.getAll(this.endpoint.sales.delivery, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'mark',
+            operator: 'doesnotcontain',
+            keyword: ['V', 'OL']
+          }])
+        }
+      })
         .then(response => {
           this.dlvData = response.data.tableData
         })
