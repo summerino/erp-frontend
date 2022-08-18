@@ -570,7 +570,7 @@
                               class="text-body-2 mt-0"
                               dense
                               required
-                              @change="itemIdChange(item); findPromo(); calcPromo();"
+                              @change="itemIdChange(item); calcPromo();"
                             >
                             </v-autocomplete>
                           </template>
@@ -582,7 +582,7 @@
                               :readonly="dialog.add && (inActive || !auth.allowUpdate)"
                               class="text-body-2 text-right mt-0"
                               dense
-                              @change="calcItemPrice(item); calcPromo();"
+                              @change="calcItemPrice(item);"
                             ></v-currency-field>
                           </template>
                           <template v-slot:[`item.unitName`]="{ item }">
@@ -596,7 +596,7 @@
                               class="text-body-2 mt-0"
                               dense
                               required
-                              @change="unitItemChange(item); calcPromo();"
+                              @change="unitItemChange(item);"
                             ></v-autocomplete>
                           </template>
                           <template v-slot:[`item.unitPrice`]="{ item }">
@@ -979,21 +979,14 @@ export default {
 
       this.getCustomerAddressesLists(this.data.custCode)
 
-      // // Get Promo
-      // api.getAll(`${this.endpoint.sales.promo}/list`, {
-      //   params: { code: item.code }
-      // })
-      //   .then(response => {
-      //     const data = response.data.tableData
-      //     const obj = new Object()
-      //     const result = []
-      //     for (let i = 0; i < data.length; i++) {
-      //       obj['name'] = data[i]
-      //       obj['usePromo'] = true
-      //       result.push(obj)
-      //     }
-      //     this.gridPromo.data = result
-      //   })
+      // Get Promo
+      api.getAll(`${this.endpoint.mobileSales.order}/promos`, {
+        params: { code: item.code }
+      })
+        .then(response => {
+          const data = response.data.tableData
+          this.gridPromo.data = data
+        })
     },
     async save(closeDialog) {
       if (!this.dialog.add) return
@@ -1078,10 +1071,10 @@ export default {
         this.gridItem.data.splice(idx, 1)
 
         // Find Promo
-        await this.findPromo()
+        //await this.findPromo()
 
         // Calc Promo
-        await this.calcPromo()
+        //await this.calcPromo()
 
         // Calc price
         this.calcPrice()
