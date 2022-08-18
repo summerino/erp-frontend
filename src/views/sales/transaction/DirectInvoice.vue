@@ -319,7 +319,7 @@
                       >
                         <template v-slot:[`item.action`]="{ item }">
                           <v-checkbox
-                            v-model="item.usePromo"
+                            v-model="item.isActive"
                           >
                           </v-checkbox>
                         </template>
@@ -1476,16 +1476,12 @@ export default {
           })
 
         // Get Promo
-        api.getAll(`${this.endpoint.sales.promo}/list`, {
+        api.getAll(`${this.endpoint.sales.order}/promos`, {
           params: { code: resp.data.code }
         })
           .then(response => {
             const data = response.data.tableData
-            if (data.length > 0) {
-              this.gridPromo.data = data
-            } else {
-              this.findPromo(true)
-            }
+            this.gridPromo.data = data
           })
       } else {
         this.data.action = 'add'
@@ -1890,39 +1886,6 @@ export default {
 
       //find Promo
       //this.findPromo()
-    },
-    async findPromo(fromEdit = false) {
-      const gridData = this.gridItem.data
-      this.gridPromo.data = []
-      for (let k = 0; k < gridData.length; k++) {
-        for (let i = 0; i < this.promos.length; i++) {
-          let appliedHeader = false
-          const applied = this.promos[i].itemDetails.find(x => x.itemId === gridData[k].itemId || x.itemId === gridData[k].categoryId)
-          if (this.promos[i].applyTo === 1) {
-            appliedHeader = true
-          } else if (this.promos[i].applyTo === 2) {
-            const resPromo = this.promos[i].subject.find(x => x.custCode === this.data.custCode)
-            if (resPromo) {
-              appliedHeader = true
-            }
-          } else if (this.promos[i].applyTo === 3) {
-            const resPromo = this.promos[i].subject.find(x => x.custTypeId === this.data.custTypeId)
-            if (resPromo) {
-              appliedHeader = true
-            }
-          }
-          if (applied && appliedHeader) {
-            if (!this.gridPromo.data.includes(this.promos[i])) {
-              if (fromEdit) {
-                this.promos[i].usePromo = false
-              } else {
-                this.promos[i].usePromo = true
-              }
-              this.gridPromo.data.push(this.promos[i])
-            }
-          }
-        }
-      }
     },
     setDefaultWarehouse() {
       const userInfo = this.userInfo = auth.getUserInfo()
