@@ -254,7 +254,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 'alt', 'i']"
-                  :disabled="isSaveNInvoiceAble || !allowInsertPurchaseInvoice || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
+                  :disabled="isSaveNInvoiceAble || !allowInsertPurchaseInvoice || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers)) || isReturn"
                   @click="saveInv()"
                   @shortkey="saveInv()"
                 >
@@ -954,6 +954,9 @@ export default {
     },
     formatInvoiceDate() {
       return this.data.taxInvoiceDate ? format(parseISO(this.data.taxInvoiceDate), 'dd-MMM-yyyy') : ''
+    },
+    isReturn() {
+      return (this.data.srcTrans === 2)
     }
   },
 
