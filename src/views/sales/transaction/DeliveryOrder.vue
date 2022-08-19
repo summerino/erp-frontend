@@ -257,7 +257,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 'alt', 'i']"
-                  :disabled="isVoid || isSaveNInvoiceAble || !allowInsertSalesInvoice || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers)) || isOverLimit"
+                  :disabled="isVoid || isSaveNInvoiceAble || !allowInsertSalesInvoice || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers)) || isOverLimit || isReturn"
                   @click="saveInv()"
                   @shortkey="saveInv()"
                 >
@@ -949,6 +949,9 @@ export default {
     },
     isOverLimit() {
       return (this.data?.mark?.toUpperCase() === 'OL')
+    },
+    isReturn() {
+      return (this.data.srcTrans === 2)
     }
   },
 
