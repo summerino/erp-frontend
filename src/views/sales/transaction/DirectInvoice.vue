@@ -1446,7 +1446,7 @@ export default {
               const index = this.dlvDetailData.findIndex(x => x.itemId === this.gridItem.data[i].itemId && x.unitId === this.gridItem.data[i].unitId)
               if (index >= 0) {
                 this.gridItem.data[i].qty = this.dlvDetailData[index].qty
-                this.calcItemPrice(this.gridItem.data[i], true)
+                //this.calcItemPrice(this.gridItem.data[i], true)
               }
             }
           })
