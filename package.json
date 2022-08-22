@@ -1,6 +1,6 @@
 {
   "name": "sahassa-erp",
-  "version": "22.8.19",
+  "version": "22.8.22",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -35,9 +35,9 @@
     "core-js": "^3.24.1",
     "eslint": "^6.8.0",
     "eslint-plugin-vue": "^9.3.0",
-    "sass": "^1.54.4",
+    "sass": "^1.54.5",
     "sass-loader": "^10.3.1",
-    "vue-cli-plugin-vuetify": "^2.5.2",
+    "vue-cli-plugin-vuetify": "^2.5.4",
     "vuetify-loader": "^1.9.2"
   },
   "browserslist": [
