@@ -335,6 +335,7 @@
                         >
                           <template v-slot:append>
                             <v-btn
+                              :disabled="hasRelatedTrans"
                               color="primary"
                               icon
                               small
@@ -517,6 +518,7 @@
                                     <v-col cols="12" md="6">
                                         <v-currency-field
                                         v-model="data.amount"
+                                        :readonly="hasRelatedTrans || isReturn"
                                         label="Nilai Setoran"
                                         class="text-right mt-0"
                                         @change="calcTax"
