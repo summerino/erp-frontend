@@ -827,8 +827,6 @@ export default {
     vehicles: [],
     warehouses: [],
     listCode: [],
-    orderData: [],
-    dlvData: [],
     seenByOthers: false
   }),
 
@@ -839,8 +837,6 @@ export default {
     this.getEmployeeLists()
     this.getVehicleLists()
     this.getWarehouseLists()
-    this.getOrderData()
-    this.getDlvData()
     auth.getAction(this.endpoint, this.menuId.deliveryPlan)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -1113,19 +1109,6 @@ export default {
         params: { code: item.code }
       })
         .then(response => {
-          for (let i = 0; i < response.data.tableData.length; i++) {
-            const data_dlv = this.dlvData.find(x => x.code === response.data.tableData[i].transCode)
-            if (data_dlv) {
-              response.data.tableData[i].custName = data_dlv.custName
-              response.data.tableData[i].custAddress = data_dlv.custAddress
-              response.data.tableData[i].custArea = data_dlv.custArea
-
-              const data_so = this.orderData.find(x => x.code === data_dlv.transCode)
-              if (data_so) {
-                response.data.tableData[i].salesName = data_so.salesName
-              }
-            }
-          }
           this.gridItem.data = response.data.tableData
           this.calcTotal()  
         })
@@ -1259,26 +1242,6 @@ export default {
           this.data.warehouseCode = defWarehouse.code
         }
       }
-    },
-    getOrderData() {
-      api.getAll(this.endpoint.sales.order)
-        .then(response => {
-          this.orderData = response.data.tableData
-        })
-    },
-    getDlvData() {
-      api.getAll(this.endpoint.sales.delivery, {
-        params: {
-          filters: JSON.stringify([{
-            field: 'mark',
-            operator: 'doesnotcontain',
-            keyword: ['V', 'OL']
-          }])
-        }
-      })
-        .then(response => {
-          this.dlvData = response.data.tableData
-        })
     }
   }
 }
