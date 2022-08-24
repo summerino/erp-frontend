@@ -971,11 +971,11 @@ export default {
               })
           })
 
-        const soTax = await this.getSOUsedTaxAmount(item.code)
-        if (soTax) {
-          this.soUsedTaxAmount = soTax
-          this.calcTax()
-        }
+        // const soTax = await this.getSOUsedTaxAmount(item.code)
+        // if (soTax) {
+        //   this.soUsedTaxAmount = soTax
+        //   this.calcTax()
+        // }
       }
 
       // Calculate Outstanding
@@ -1111,12 +1111,13 @@ export default {
                 this.highestRate = Math.max(Math.max(...rateArr))
               })
           })
-
-        const soTax = await this.getSOUsedTaxAmount(item.code)
-        if (soTax) {
-          this.soUsedTaxAmount = soTax
-          this.calcTax()
-        }
+        
+        this.calcTax()
+        // const soTax = await this.getSOUsedTaxAmount(item.code)
+        // if (soTax) {
+        //   this.soUsedTaxAmount = soTax
+        //   this.calcTax()
+        // }
 
         if (!item.called) {
           // Get customer details
@@ -1163,8 +1164,8 @@ export default {
           this.data.dpp = this.data.amount
           this.data.total = this.data.dpp
         } else if (this.data.includeTax) {
-          const soTaxAmount = ((this.data.amount) - ((this.data.amount) / (1 + (this.highestRate / 100))))
-          const taxAmount = this.soUsedTaxAmount > 0 ? soTaxAmount > (this.data.tempTaxAmount - this.soUsedTaxAmount) ? (this.data.tempTaxAmount - this.soUsedTaxAmount) : soTaxAmount : soTaxAmount > this.data.tempTaxAmount ? this.data.tempTaxAmount : soTaxAmount
+          //const soTaxAmount = ((this.data.amount) - ((this.data.amount) / (1 + (this.highestRate / 100))))
+          const taxAmount = ((this.data.amount) - ((this.data.amount) / (1 + (this.highestRate / 100))))
           this.data.taxAmount = taxAmount
           this.data.dpp = this.data.amount - this.data.taxAmount
           this.data.total = this.data.dpp + this.data.taxAmount
@@ -1184,31 +1185,55 @@ export default {
       this.data.amount = item.remaining
       this.data.outstanding = item.remaining
 
-      this.bindCustData(this.data)
-    },
-    async getSOUsedTaxAmount(code) {
-      let result = 0
-      const resp = await api.getAll(this.endpoint.sales.creditMemo, {
-        params: { 
-          filters: JSON.stringify([
-            {
-              field: 'transCode',
-              operator: 'eq',
-              keyword: code
-            },
-            {
-              field: 'mark',
-              operator: 'neq',
-              keyword: 'V'
-            }
-          ])
-        }
+      api.getAll(`${this.endpoint.sales.order}/item`, {
+        params: { code: item.transCode }
       })
-      if (resp.data.tableData.length > 0) {
-        result = resp.data.tableData.reduce((acc, obj) => { return acc + obj.taxAmount }, 0)
-      }
-      return result
+        .then(response => {
+          this.listTaxId = response.data.tableData.map(x => x.taxId)
+          // Get Highest Tax Rates
+          api.getAll(this.endpoint.general.tax, {
+            params: { 
+              filters: JSON.stringify([
+                {
+                  field: 'id',
+                  operator: 'contains',
+                  keyword: this.listTaxId
+                }
+              ])
+            }
+          })
+            .then(response => {
+              const rateArr = response.data.tableData.map(x => x.rate)
+              this.highestRate = Math.max(Math.max(...rateArr))
+            })
+        })
+      
+      this.calcTax()
+      this.bindCustData(this.data)
     }
+    // async getSOUsedTaxAmount(code) {
+    //   let result = 0
+    //   const resp = await api.getAll(this.endpoint.sales.creditMemo, {
+    //     params: { 
+    //       filters: JSON.stringify([
+    //         {
+    //           field: 'transCode',
+    //           operator: 'eq',
+    //           keyword: code
+    //         },
+    //         {
+    //           field: 'mark',
+    //           operator: 'neq',
+    //           keyword: 'V'
+    //         }
+    //       ])
+    //     }
+    //   })
+    //   if (resp.data.tableData.length > 0) {
+    //     result = resp.data.tableData.reduce((acc, obj) => { return acc + obj.taxAmount }, 0)
+    //   }
+    //   return result
+    // }
   }
 }
 </script>
