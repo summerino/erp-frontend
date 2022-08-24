@@ -197,7 +197,7 @@ export default {
         }, {
           field: 'mark',
           operator: 'eq',
-          keyword: 'PP'
+          keyword: 'A'
         }, {
           field: 'srcTrans',
           operator: 'eq',
