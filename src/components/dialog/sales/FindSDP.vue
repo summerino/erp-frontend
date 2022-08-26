@@ -99,8 +99,14 @@
             <template v-slot:[`item.custName`]="{ item }">
               {{ item.custCode }}- {{ item.custName }}
             </template>
-            <template v-slot:[`item.total`]="{ item }">
-              {{ item.total | formatCurrency }}
+            <template v-slot:[`item.amount`]="{ item }">
+              {{ item.amount | formatCurrency }}
+            </template>
+            <template v-slot:[`item.used`]="{ item }">
+              {{ item.used | formatCurrency }}
+            </template>
+            <template v-slot:[`item.remaining`]="{ item }">
+              {{ item.remaining | formatCurrency }}
             </template>
           </v-data-table>
         </v-card>

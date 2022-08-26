@@ -642,7 +642,7 @@
                     <v-tab key="memo">Nota</v-tab>
                     <v-tab key="related-trans">Transaksi Terkait</v-tab>
                     <v-tab v-if="arRecogTime === 'SI'" key="tax">Faktur Pajak</v-tab>
-                    <v-tab v-if="allowSalesDownPayment" key="sales-down-payment">Uang Muka Setelah Nota</v-tab>
+                    <v-tab v-if="allowSalesDownPayment" key="sales-down-payment">Uang Muka Penjualan</v-tab>
 
                     <v-tab-item
                       key="detail-trans"
