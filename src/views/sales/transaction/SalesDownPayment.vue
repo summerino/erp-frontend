@@ -519,9 +519,10 @@
                                         <v-currency-field
                                         v-model="data.amount"
                                         :readonly="hasRelatedTrans || isReturn"
+                                        :rules="above0"
                                         label="Nilai Setoran"
                                         class="text-right mt-0"
-                                        @change="calcTax"
+                                        @change="amountChange(); calcTax();"
                                         ></v-currency-field>
                                     </v-col>
                                     <v-col cols="12" md="6" class="pl-md-1">
@@ -725,7 +726,8 @@ export default {
     allowInsertCashBank: false,
     listTaxId: [],
     highestRate: 0,
-    soUsedTaxAmount: 0
+    soUsedTaxAmount: 0,
+    soUsedAmount: 0
   }),
 
   created: function () {
@@ -813,6 +815,10 @@ export default {
       this.gridRelated.data = []
       this.tab.cust = 0
       this.tab.related = 0
+      this.listTaxId = []
+      this.highestRate = 0
+      this.soUsedTaxAmount = 0
+      this.soUsedAmount = 0
 
       // Reset form validation
       if (resetValidation) {
@@ -953,6 +959,7 @@ export default {
         })
           .then(response => {
             this.listTaxId = response.data.tableData.map(x => x.taxId)
+            this.data.tempTotal = response.data.tableData.reduce((x, y) => x + y.total, 0)
             // Get Highest Tax Rates
             api.getAll(this.endpoint.general.tax, {
               params: { 
@@ -971,11 +978,10 @@ export default {
               })
           })
 
-        // const soTax = await this.getSOUsedTaxAmount(item.code)
-        // if (soTax) {
-        //   this.soUsedTaxAmount = soTax
-        //   this.calcTax()
-        // }
+        const soUsedAmount = await this.getSOUsedAmount(item.transCode, item.code)
+        if (soUsedAmount > 0) {
+          this.soUsedAmount = soUsedAmount
+        }
       } else {
         const url = this.endpoint.sales.creditMemo
         const params = {
@@ -1063,6 +1069,10 @@ export default {
       this.exportExcel.export()
     },
     amountChange() {
+      if (this.data.amount > this.data.tempTotal - this.soUsedAmount) {
+        this.data.amount = this.data.tempTotal - this.soUsedAmount
+      }
+      
       this.data.outstanding = this.data.amount - this.data.used
     },
     close() {
@@ -1131,42 +1141,38 @@ export default {
         this.data.includeTax = item.includeTax
 
         // Get Tax From Order Detail
-        api.getAll(`${this.endpoint.sales.order}/item`, {
+        const soDetail = await api.getAll(`${this.endpoint.sales.order}/item`, {
           params: { code: item.code }
         })
-          .then(response => {
-            this.listTaxId = response.data.tableData.map(x => x.taxId)
-            // Get Highest Tax Rates
-            api.getAll(this.endpoint.general.tax, {
-              params: { 
-                filters: JSON.stringify([
-                  {
-                    field: 'id',
-                    operator: 'contains',
-                    keyword: this.listTaxId
-                  }
-                ])
+        this.listTaxId = soDetail.data.tableData.map(x => x.taxId)
+
+        // Get Highest Tax Rates
+        const taxData = await api.getAll(this.endpoint.general.tax, {
+          params: { 
+            filters: JSON.stringify([
+              {
+                field: 'id',
+                operator: 'contains',
+                keyword: this.listTaxId
               }
-            })
-              .then(response => {
-                const rateArr = response.data.tableData.map(x => x.rate)
-                this.highestRate = Math.max(Math.max(...rateArr))
-              })
-          })
+            ])
+          }
+        })
+        const rateArr = taxData.data.tableData.map(x => x.rate)
+        this.highestRate = Math.max(Math.max(...rateArr))
         
+        const soUsedAmount = await this.getSOUsedAmount(item.code)
+        if (soUsedAmount > 0) {
+          this.soUsedAmount = soUsedAmount
+          this.data.amount = this.data.tempTotal - this.soUsedAmount
+        }
+        this.amountChange()
         this.calcTax()
-        // const soTax = await this.getSOUsedTaxAmount(item.code)
-        // if (soTax) {
-        //   this.soUsedTaxAmount = soTax
-        //   this.calcTax()
-        // }
 
         if (!item.called) {
           // Get customer details
           this.bindCustData(this.data)
         }
-
-        this.amountChange()
       } else {
         this.data.custCode = null
         this.data.custName = null
@@ -1258,6 +1264,39 @@ export default {
       
       this.calcTax()
       this.bindCustData(this.data)
+    },
+    async getSOUsedAmount(soCode, sdpCode = null) {
+      let result = 0
+
+      const filters = [{
+        field: 'transCode',
+        operator: 'eq',
+        keyword: soCode
+      },
+      {
+        field: 'mark',
+        operator: 'neq',
+        keyword: 'V'
+      }
+      ]
+
+      if (sdpCode) {
+        filters.push({
+          field: 'code',
+          operator: 'neq',
+          keyword: sdpCode
+        })
+      }
+      
+      const resp = await api.getAll(this.endpoint.sales.creditMemo, {
+        params: { 
+          filters: JSON.stringify(filters)
+        }
+      })
+      if (resp.data.tableData.length > 0) {
+        result = resp.data.tableData.reduce((acc, obj) => { return acc + obj.amount }, 0)
+      }
+      return result
     }
     // async getSOUsedTaxAmount(code) {
     //   let result = 0
