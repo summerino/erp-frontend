@@ -545,7 +545,7 @@
                                     </v-col>
                                 </v-row>
 
-                                <v-row no-gutters v-if="!isReturn">
+                                <v-row no-gutters>
                                     <v-col cols="12" md="6">
                                         <v-currency-field
                                         v-model="data.dpp"
@@ -976,6 +976,48 @@ export default {
         //   this.soUsedTaxAmount = soTax
         //   this.calcTax()
         // }
+      } else {
+        const url = this.endpoint.sales.creditMemo
+        const params = {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: this.data.transCode
+          }, {
+            field: 'srcTrans',
+            operator: 'eq',
+            keyword: 3
+          }])
+        }
+
+        const result = await api.getAll(url, {
+          params: params
+        })
+
+        api.getAll(`${this.endpoint.sales.order}/item`, {
+          params: { code: result.data.tableData[0].transCode }
+        })
+          .then(response => {
+            this.listTaxId = response.data.tableData.map(x => x.taxId)
+            // Get Highest Tax Rates
+            api.getAll(this.endpoint.general.tax, {
+              params: { 
+                filters: JSON.stringify([
+                  {
+                    field: 'id',
+                    operator: 'contains',
+                    keyword: this.listTaxId
+                  }
+                ])
+              }
+            })
+              .then(response => {
+                const rateArr = response.data.tableData.map(x => x.rate)
+                this.highestRate = Math.max(Math.max(...rateArr))
+              })
+          })
+
+        this.calcTax()
       }
 
       // Calculate Outstanding
@@ -1184,6 +1226,12 @@ export default {
 
       this.data.amount = item.remaining
       this.data.outstanding = item.remaining
+      this.data.taxAmount = item.taxAmount
+      this.data.tempTaxAmount = item.taxAmount
+      this.data.dpp = item.remaining
+      this.data.tempDpp = item.remaining
+      this.data.noTax = (item.taxAmount === 0)
+      this.data.includeTax = item.includeTax
 
       api.getAll(`${this.endpoint.sales.order}/item`, {
         params: { code: item.transCode }
