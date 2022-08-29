@@ -1736,8 +1736,8 @@ export default {
           },
           {
             field: 'mark',
-            operator: 'eq',
-            keyword: 'PP'
+            operator: 'contains',
+            keyword: ['PU', 'CMP']
           }])
         }
       })
