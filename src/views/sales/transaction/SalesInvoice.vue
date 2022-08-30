@@ -640,9 +640,9 @@
                   <v-tabs v-model="tab.det">
                     <v-tab key="detail-trans">Detail</v-tab>
                     <v-tab key="memo">Nota</v-tab>
+                    <v-tab v-if="allowSalesDownPayment" key="sales-down-payment">Uang Muka Penjualan</v-tab>
                     <v-tab key="related-trans">Transaksi Terkait</v-tab>
                     <v-tab v-if="arRecogTime === 'SI'" key="tax">Faktur Pajak</v-tab>
-                    <v-tab v-if="allowSalesDownPayment" key="sales-down-payment">Uang Muka Penjualan</v-tab>
 
                     <v-tab-item
                       key="detail-trans"
@@ -819,6 +819,52 @@
                       </v-data-table>
                     </v-tab-item>
                     <v-tab-item
+                      key="sales-down-payment"
+                      transition="false"
+                    >
+                      <v-data-table
+                        :headers="gridSalesDownPayment.columns"
+                        :items="gridSalesDownPayment.data"
+                        :items-per-page="-1"
+                        height="300"
+                        class="elevation-1"
+                        dense
+                        disable-sort
+                        fixed-header
+                        hide-default-footer
+                      >
+                        <template v-slot:[`item.action`]="{ item }">
+                          <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                              <v-btn
+                                v-bind="attrs"
+                                v-on="on"
+                                color="red"
+                                icon
+                                small
+                                @click="removeMemo(item)"
+                              >
+                                <v-icon small>mdi-close-thick</v-icon>
+                              </v-btn>
+                            </template>
+                            <span class="text-caption">Hapus</span>
+                          </v-tooltip>
+                        </template>
+                        <template v-slot:[`item.date`]="{ item }">
+                          {{ item.date | formatDate('dd-MMM-yyyy') }}
+                        </template>
+                        <template v-slot:[`item.creditMemoAmount`]="{ item }">
+                          {{ item.creditMemoAmount | formatCurrency }}
+                        </template>
+                        <template v-slot:[`item.creditMemoTaxAmount`]="{ item }">
+                          {{ item.creditMemoTaxAmount | formatCurrency }}
+                        </template>
+                        <template v-slot:[`item.creditMemoTotal`]="{ item }">
+                          {{ item.creditMemoTotal | formatCurrency }}
+                        </template>
+                      </v-data-table>
+                    </v-tab-item>
+                    <v-tab-item
                       key="related-trans"
                       transition="false"
                     >
@@ -890,49 +936,6 @@
                           </v-row>
                         </v-card-text>
                       </v-card>
-                    </v-tab-item>
-                    <v-tab-item
-                      key="sales-down-payment"
-                      transition="false"
-                    >
-                      <v-data-table
-                        :headers="gridSalesDownPayment.columns"
-                        :items="gridSalesDownPayment.data"
-                        :items-per-page="-1"
-                        height="300"
-                        class="elevation-1"
-                        dense
-                        disable-sort
-                        fixed-header
-                        hide-default-footer
-                      >
-                        <template v-slot:[`item.action`]="{ item }">
-                          <v-tooltip bottom>
-                            <template v-slot:activator="{ on, attrs }">
-                              <v-btn
-                                v-bind="attrs"
-                                v-on="on"
-                                color="red"
-                                icon
-                                small
-                                @click="removeMemo(item)"
-                              >
-                                <v-icon small>mdi-close-thick</v-icon>
-                              </v-btn>
-                            </template>
-                            <span class="text-caption">Hapus</span>
-                          </v-tooltip>
-                        </template>
-                        <template v-slot:[`item.date`]="{ item }">
-                          {{ item.date | formatDate('dd-MMM-yyyy') }}
-                        </template>
-                        <template v-slot:[`item.creditMemoAmount`]="{ item }">
-                          {{ item.creditMemoAmount | formatCurrency }}
-                        </template>
-                        <template v-slot:[`item.creditMemoTaxAmount`]="{ item }">
-                          {{ item.creditMemoTaxAmount | formatCurrency }}
-                        </template>
-                      </v-data-table>
                     </v-tab-item>
                   </v-tabs>
                 </v-card>
@@ -1137,8 +1140,9 @@ export default {
       columns: [
         { text: 'Kode', value: 'creditMemoCode', divider: true },
         { text: 'Tanggal', value: 'date', divider: true },
-        { text: 'Nilai', value: 'creditMemoAmount', align: 'right', divider: true },
-        { text: 'Pajak', value: 'creditMemoTaxAmount', align: 'right', divider: true }
+        { text: 'Nilai Uang Muka', value: 'creditMemoAmount', align: 'right', divider: true },
+        { text: 'Pajak', value: 'creditMemoTaxAmount', align: 'right', divider: true },
+        { text: 'Total', value: 'creditMemoTotal', align: 'right' }
       ],
       data: []
     },
@@ -1582,6 +1586,9 @@ export default {
 
         // Calc price
         this.calcPrice()
+
+        // get SDP
+        this.getSalesDownPayment()
       }
     },
     async removeMemo(item) {
@@ -1737,20 +1744,41 @@ export default {
           {
             field: 'mark',
             operator: 'contains',
-            keyword: ['PU', 'CMP']
+            keyword: ['A', 'PU']
           }])
         }
       })
         .then(response => {
           const data = []
+          let totalAmount = _sumBy(this.gridDet.data, 'total')
+          let totalDpp = _sumBy(this.gridDet.data, 'dpp')
+          let totalTaxAmount = _sumBy(this.gridDet.data, 'taxAmount') - _sumBy(this.gridDet.data, 'exemptTaxAmount')
           for (let i = 0; i < response.data.tableData.length; i++) {
-            data.push({
-              creditMemoCode: response.data.tableData[i].code,
-              date: response.data.tableData[i].date,
-              creditMemoAmount: response.data.tableData[i].amount,
-              creditMemoTaxAmount: response.data.tableData[i].taxAmount,
-              src: 'DP'
-            })
+            if (response.data.tableData[i].total <= totalAmount && totalAmount > 0) {
+              data.push({
+                creditMemoCode: response.data.tableData[i].code,
+                date: response.data.tableData[i].date,
+                creditMemoAmount: response.data.tableData[i].remaining - response.data.tableData[i].taxAmount,
+                creditMemoTaxAmount: response.data.tableData[i].taxAmount,
+                creditMemoTotal: response.data.tableData[i].remaining,
+                src: 'DP'
+              })
+              totalAmount -= response.data.tableData[i].amount
+              totalDpp -= (response.data.tableData[i].amount - response.data.tableData[i].taxAmount)
+              totalTaxAmount -= response.data.tableData[i].taxAmount
+            } else if (totalAmount > 0) {
+              data.push({
+                creditMemoCode: response.data.tableData[i].code,
+                date: response.data.tableData[i].date,
+                creditMemoAmount: totalDpp,
+                creditMemoTaxAmount: totalTaxAmount,
+                creditMemoTotal: totalAmount,
+                src: 'DP'
+              })
+              totalAmount -= totalAmount
+              totalDpp -= totalDpp
+              totalTaxAmount -= totalTaxAmount
+            }
           }
           this.gridSalesDownPayment.data = data
         })
