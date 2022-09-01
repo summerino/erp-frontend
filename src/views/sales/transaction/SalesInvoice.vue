@@ -160,7 +160,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="item.mark.toUpperCase() !== 'A' || !auth.allowVoid"
+                :disabled="!auth.allowVoid"
                 color="red"
                 icon
                 small
