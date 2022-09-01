@@ -1154,7 +1154,8 @@ export default {
     data: {},
     seenByOthers: false,
     arRecogTime: null,
-    salesDownPaymentAction: []
+    salesDownPaymentAction: [],
+    highestRate: 0
   }),
 
   created: function () {
@@ -1256,6 +1257,7 @@ export default {
       this.gridMemo.data = []
       this.tab.cust = 0
       this.tab.det = 0
+      this.highestRate = 0
       // this.tab.foot = 0
 
       // Reset form validation
@@ -1636,6 +1638,9 @@ export default {
 
         // Calc price
         this.calcPrice()
+
+        // get SDP
+        this.getSalesDownPayment()
       }
     },
     calcPrice() {
@@ -1647,13 +1652,31 @@ export default {
     showFindDODialog(item) {
       this.$refs.findDO.open(item)
     },
-    bindSOData(item) {
+    async bindSOData(item) {
       if (item) {
         this.data.soCode = item.code
         this.data.custCode = item.custCode
         this.data.custName = item.custName
         this.data.currCode = item.currCode
         this.data.total = 0
+
+        const soData = await api.getAll(`${this.endpoint.sales.order}/item`, {
+          params: { code: item.code }
+        })
+
+        const taxData = await api.getAll(this.endpoint.general.tax, {
+          params: { 
+            filters: JSON.stringify([
+              {
+                field: 'id',
+                operator: 'contains',
+                keyword: soData.data.tableData.map(x => x.taxId)
+              }
+            ])
+          }
+        })
+        const rateArr = taxData.data.tableData.map(x => x.rate)
+        this.highestRate = Math.max(Math.max(...rateArr))
 
         if (!item.called) {
           // Get customer details
@@ -1755,11 +1778,12 @@ export default {
           let totalTaxAmount = _sumBy(this.gridDet.data, 'taxAmount') - _sumBy(this.gridDet.data, 'exemptTaxAmount')
           for (let i = 0; i < response.data.tableData.length; i++) {
             if (response.data.tableData[i].total <= totalAmount && totalAmount > 0) {
+              const taxAmount = ((response.data.tableData[i].remaining) - ((response.data.tableData[i].remaining) / (1 + (this.highestRate / 100))))
               data.push({
                 creditMemoCode: response.data.tableData[i].code,
                 date: response.data.tableData[i].date,
-                creditMemoAmount: response.data.tableData[i].remaining - response.data.tableData[i].taxAmount,
-                creditMemoTaxAmount: response.data.tableData[i].taxAmount,
+                creditMemoAmount: response.data.tableData[i].remaining - taxAmount,
+                creditMemoTaxAmount: taxAmount,
                 creditMemoTotal: response.data.tableData[i].remaining,
                 src: 'DP'
               })
