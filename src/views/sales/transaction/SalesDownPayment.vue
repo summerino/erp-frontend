@@ -983,6 +983,11 @@ export default {
           this.soUsedAmount = soUsedAmount
         }
       } else {
+        this.data.dpp = this.data.total - this.data.taxAmount
+        this.data.tempDpp = this.data.dpp
+        this.data.tempTotal = this.data.total
+        this.data.tempTaxAmount = this.data.taxAmount
+
         const url = this.endpoint.sales.creditMemo
         const params = {
           filters: JSON.stringify([{
@@ -1022,8 +1027,6 @@ export default {
                 this.highestRate = Math.max(Math.max(...rateArr))
               })
           })
-
-        this.calcTax()
       }
 
       // Calculate Outstanding
@@ -1207,24 +1210,22 @@ export default {
       this.calcTax()
     },
     calcTax() {
-      if (!this.isReturn) {
-        if ((!this.data.includeTax || this.data.includeTax) && this.data.noTax) {
-          this.data.dpp = this.data.amount
-          this.data.total = this.data.dpp
-        } else if (this.data.includeTax) {
-          //const soTaxAmount = ((this.data.amount) - ((this.data.amount) / (1 + (this.highestRate / 100))))
-          const taxAmount = ((this.data.amount) - ((this.data.amount) / (1 + (this.highestRate / 100))))
-          this.data.taxAmount = taxAmount
-          this.data.dpp = this.data.amount - this.data.taxAmount
-          this.data.total = this.data.dpp + this.data.taxAmount
-        } else {
-          this.data.taxAmount = (this.data.amount) * (this.highestRate / 100)
-          this.data.dpp = this.data.amount
-          this.data.total = this.data.dpp + this.data.taxAmount
-        }
+      if ((!this.data.includeTax || this.data.includeTax) && this.data.noTax) {
+        this.data.dpp = this.data.amount
+        this.data.total = this.data.dpp
+      } else if (this.data.includeTax) {
+        //const soTaxAmount = ((this.data.amount) - ((this.data.amount) / (1 + (this.highestRate / 100))))
+        const taxAmount = ((this.data.amount) - ((this.data.amount) / (1 + (this.highestRate / 100))))
+        this.data.taxAmount = taxAmount
+        this.data.dpp = this.data.amount - this.data.taxAmount
+        this.data.total = this.data.dpp + this.data.taxAmount
+      } else {
+        this.data.taxAmount = (this.data.amount) * (this.highestRate / 100)
+        this.data.dpp = this.data.amount
+        this.data.total = this.data.dpp + this.data.taxAmount
       }
     },
-    bindSDPData(item) {
+    async bindSDPData(item) {
       this.data.transCode = item.code
       this.data.custCode = item.custCode
       this.data.custName = item.custName
@@ -1239,28 +1240,26 @@ export default {
       this.data.noTax = (item.taxAmount === 0)
       this.data.includeTax = item.includeTax
 
-      api.getAll(`${this.endpoint.sales.order}/item`, {
+      // Get Tax From Order Detail
+      const soDetail = await api.getAll(`${this.endpoint.sales.order}/item`, {
         params: { code: item.transCode }
       })
-        .then(response => {
-          this.listTaxId = response.data.tableData.map(x => x.taxId)
-          // Get Highest Tax Rates
-          api.getAll(this.endpoint.general.tax, {
-            params: { 
-              filters: JSON.stringify([
-                {
-                  field: 'id',
-                  operator: 'contains',
-                  keyword: this.listTaxId
-                }
-              ])
+      this.listTaxId = soDetail.data.tableData.map(x => x.taxId)
+
+      // Get Highest Tax Rates
+      const taxData = await api.getAll(this.endpoint.general.tax, {
+        params: { 
+          filters: JSON.stringify([
+            {
+              field: 'id',
+              operator: 'contains',
+              keyword: this.listTaxId
             }
-          })
-            .then(response => {
-              const rateArr = response.data.tableData.map(x => x.rate)
-              this.highestRate = Math.max(Math.max(...rateArr))
-            })
-        })
+          ])
+        }
+      })
+      const rateArr = taxData.data.tableData.map(x => x.rate)
+      this.highestRate = Math.max(Math.max(...rateArr))
       
       this.calcTax()
       this.bindCustData(this.data)

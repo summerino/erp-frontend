@@ -202,8 +202,8 @@ export default {
           keyword: this.data.value
         }, {
           field: 'mark',
-          operator: 'eq',
-          keyword: 'A'
+          operator: 'contains',
+          keyword: ['A', 'PU']
         }, {
           field: 'srcTrans',
           operator: 'eq',
