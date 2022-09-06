@@ -206,7 +206,7 @@
                 <v-autocomplete
                   v-model="data.customer"
                   :items="customers"
-                  :item-text="item => `${item.initial} - ${item.firstName}`"
+                  :item-text="item => `${item.initial} - ${item.name}`"
                   label="Pelanggan"
                   item-value="code"
                   class="mt-0"
@@ -428,6 +428,7 @@ export default {
         params: {
           type: this.data.type,
           date: this.data.date,
+          srcTrans: this.data.srcTrans,
           custCode: this.data.customer,
           status: this.data.status,
           sorts: JSON.stringify(sorts)
