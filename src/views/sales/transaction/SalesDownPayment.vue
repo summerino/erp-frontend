@@ -522,7 +522,7 @@
                                         :rules="above0"
                                         label="Nilai Setoran"
                                         class="text-right mt-0"
-                                        @change="amountChange(); calcTax();"
+                                        @change="amountChange(true); calcTax();"
                                         ></v-currency-field>
                                     </v-col>
                                     <v-col cols="12" md="6" class="pl-md-1">
@@ -810,7 +810,10 @@ export default {
         noTax: false,
         taxId: 0,
         taxAmount: 0,
-        total: 0
+        total: 0,
+        tempTotal: 0,
+        tempTaxAmount: 0,
+        tempDpp: 0
       }
       this.gridRelated.data = []
       this.tab.cust = 0
@@ -1071,8 +1074,8 @@ export default {
     async exportExcel() {
       this.exportExcel.export()
     },
-    amountChange() {
-      if (this.data.amount > this.data.tempTotal - this.soUsedAmount) {
+    amountChange(isEdit = false) {
+      if (isEdit && this.data.amount > this.data.tempTotal - this.soUsedAmount) {
         this.data.amount = this.data.tempTotal - this.soUsedAmount
       }
       
@@ -1141,7 +1144,7 @@ export default {
         this.data.dpp = item.dpp
         this.data.tempDpp = item.dpp
         this.data.noTax = (item.taxAmount === 0)
-        this.data.includeTax = item.includeTax
+        this.data.includeTax = true
 
         // Get Tax From Order Detail
         const soDetail = await api.getAll(`${this.endpoint.sales.order}/item`, {
