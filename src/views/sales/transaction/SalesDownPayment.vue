@@ -519,7 +519,7 @@
                                         <v-currency-field
                                         v-model="data.amount"
                                         :readonly="hasRelatedTrans || isReturn"
-                                        :rules="above0"
+                                        :min="1"
                                         label="Nilai Setoran"
                                         class="text-right mt-0"
                                         @change="amountChange(true); calcTax();"
@@ -965,7 +965,7 @@ export default {
           .then(response => {
             this.listTaxId = response.data.tableData.map(x => x.taxId)
             this.data.tempTotal = response.data.tableData.reduce((x, y) => x + y.total, 0)
-            this.soTaxAmount = response.data.tableData.reduce((acc, obj) => { return acc + ((obj.taxAmount - obj.exemptTaxAmount) * obj.qty) }, 0)
+            this.soTaxAmount = response.data.tableData.reduce((acc, obj) => acc + ((obj.taxAmount - obj.exemptTaxAmount) * obj.qty), 0)
             // Get Highest Tax Rates
             api.getAll(this.endpoint.general.tax, {
               params: { 
@@ -1146,6 +1146,8 @@ export default {
         this.data.noTax = (item.taxAmount === 0)
         this.data.includeTax = true
 
+        this.soTaxAmount = item.taxAmount - item.exemptTaxAmount
+
         // Get Tax From Order Detail
         const soDetail = await api.getAll(`${this.endpoint.sales.order}/item`, {
           params: { code: item.code }
@@ -1215,8 +1217,8 @@ export default {
       } else if (this.data.includeTax) {
         //const soTaxAmount = ((this.data.amount) - ((this.data.amount) / (1 + (this.highestRate / 100))))
         const taxAmount = ((this.data.amount) - ((this.data.amount) / (1 + (this.highestRate / 100))))
-        this.data.taxAmount = (taxAmount - this.soUsedTaxAmount) > this.soTaxAmount ? this.soTaxAmount - (taxAmount - this.soUsedTaxAmount) : (taxAmount - this.soUsedTaxAmount)
-        this.data.dpp = this.data.amount - this.data.taxAmount
+        this.data.taxAmount = taxAmount > this.soTaxAmount - this.soUsedTaxAmount ? this.soTaxAmount - this.soUsedTaxAmount : taxAmount
+        this.data.dpp = this.data.amount - taxAmount
         this.data.total = this.data.dpp + this.data.taxAmount
       } else {
         this.data.taxAmount = (this.data.amount) * (this.highestRate / 100)
