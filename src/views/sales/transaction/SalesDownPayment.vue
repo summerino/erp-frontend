@@ -1218,7 +1218,7 @@ export default {
         //const soTaxAmount = ((this.data.amount) - ((this.data.amount) / (1 + (this.highestRate / 100))))
         const taxAmount = ((this.data.amount) - ((this.data.amount) / (1 + (this.highestRate / 100))))
         this.data.taxAmount = taxAmount > this.soTaxAmount - this.soUsedTaxAmount ? this.soTaxAmount - this.soUsedTaxAmount : taxAmount
-        this.data.dpp = this.data.amount - taxAmount
+        this.data.dpp = this.data.amount - this.data.taxAmount
         this.data.total = this.data.dpp + this.data.taxAmount
       } else {
         this.data.taxAmount = (this.data.amount) * (this.highestRate / 100)
