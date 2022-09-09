@@ -1155,7 +1155,8 @@ export default {
     seenByOthers: false,
     arRecogTime: null,
     salesDownPaymentAction: [],
-    highestRate: 0
+    highestRate: 0,
+    siSDPData: []
   }),
 
   created: function () {
@@ -1258,6 +1259,7 @@ export default {
       this.tab.cust = 0
       this.tab.det = 0
       this.highestRate = 0
+      this.siSDPData = []
       // this.tab.foot = 0
 
       // Reset form validation
@@ -1589,6 +1591,8 @@ export default {
         // Calc price
         this.calcPrice()
 
+        await this.getSalesInvoiceSDP()
+
         // get SDP
         this.getSalesDownPayment()
       }
@@ -1621,7 +1625,7 @@ export default {
           this.bindSOData(response.data.tableData[0] ?? null)
         })
     },
-    doCodeChange(item) {
+    async doCodeChange(item) {
       const data_d = this.dlvOrders.find(r => r.code.toUpperCase() === item.doCode.toUpperCase())
       if (data_d) {
         item.shipmentFee = data_d.shipmentFee
@@ -1638,6 +1642,8 @@ export default {
 
         // Calc price
         this.calcPrice()
+
+        await this.getSalesInvoiceSDP()
 
         // get SDP
         this.getSalesDownPayment()
@@ -1687,6 +1693,7 @@ export default {
         }
 
         if (this.allowSalesDownPayment) {
+          await this.getSalesInvoiceSDP()
           this.getSalesDownPayment()
         }
       } else {
@@ -1777,13 +1784,17 @@ export default {
           let totalDpp = _sumBy(this.gridDet.data, 'dpp')
           let totalTaxAmount = _sumBy(this.gridDet.data, 'taxAmount') - _sumBy(this.gridDet.data, 'exemptTaxAmount')
           for (let i = 0; i < response.data.tableData.length; i++) {
+            const usedTaxAmount = this.siSDPData.filter(x => x.creditMemoCode === response.data.tableData[i].code).reduce((x, y) => x + y.creditMemoTaxAmount, 0)
+            const remainingTax = response.data.tableData[i].taxAmount - usedTaxAmount
             if (response.data.tableData[i].total <= totalAmount && totalAmount > 0) {
               const taxAmount = ((response.data.tableData[i].remaining) - ((response.data.tableData[i].remaining) / (1 + (this.highestRate / 100))))
+              const sdpTaxAmount = response.data.tableData[i].taxAmount
+              const finalTaxAmount = taxAmount + remainingTax > sdpTaxAmount ? remainingTax : taxAmount
               data.push({
                 creditMemoCode: response.data.tableData[i].code,
                 date: response.data.tableData[i].date,
-                creditMemoAmount: response.data.tableData[i].remaining - taxAmount,
-                creditMemoTaxAmount: taxAmount,
+                creditMemoAmount: response.data.tableData[i].remaining - finalTaxAmount,
+                creditMemoTaxAmount: finalTaxAmount,
                 creditMemoTotal: response.data.tableData[i].remaining,
                 src: 'DP'
               })
@@ -1806,6 +1817,13 @@ export default {
           }
           this.gridSalesDownPayment.data = data
         })
+    },
+    async getSalesInvoiceSDP() {
+      const result = await api.getAll(`${this.endpoint.sales.invoice}/si-sdp`, {
+        params: { soCode: this.data.soCode, siCode: this.data.code }
+      })
+
+      this.siSDPData = result.data.tableData
     }
   }
 }
