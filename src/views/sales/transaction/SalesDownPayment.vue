@@ -957,6 +957,7 @@ export default {
         this.data.tempDpp = this.data.dpp
         //this.data.tempTotal = this.data.total
         this.data.tempTaxAmount = this.data.taxAmount
+        this.data.noTax = (this.data.taxAmount === 0)
 
         // Get Tax From Order Detail
         api.getAll(`${this.endpoint.sales.order}/item`, {
