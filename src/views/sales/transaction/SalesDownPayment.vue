@@ -522,7 +522,7 @@
                                         :min="1"
                                         label="Nilai Setoran"
                                         class="text-right mt-0"
-                                        @change="amountChange(true); calcTax();"
+                                        @change="amountChange(); calcTax();"
                                         ></v-currency-field>
                                     </v-col>
                                     <v-col cols="12" md="6" class="pl-md-1">
@@ -955,7 +955,7 @@ export default {
       if (!this.isReturn) {
         this.data.dpp = this.data.total - this.data.taxAmount
         this.data.tempDpp = this.data.dpp
-        this.data.tempTotal = this.data.total
+        //this.data.tempTotal = this.data.total
         this.data.tempTaxAmount = this.data.taxAmount
 
         // Get Tax From Order Detail
@@ -1074,8 +1074,8 @@ export default {
     async exportExcel() {
       this.exportExcel.export()
     },
-    amountChange(isEdit = false) {
-      if (isEdit && this.data.amount > this.data.tempTotal - this.soUsedAmount) {
+    amountChange() {
+      if (this.data.amount > this.data.tempTotal - this.soUsedAmount) {
         this.data.amount = this.data.tempTotal - this.soUsedAmount
       }
       
