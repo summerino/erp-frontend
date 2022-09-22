@@ -1092,7 +1092,7 @@ export default {
         different *=  data.conversion
       }
       if (direction === 'up') {
-        item.qtyOnHand = Number((item.qtyOnHand / different).toFixed(6))
+        item.qtyOnHand = item.qtyOnHand / different
       } else {
         item.qtyOnHand = item.qtyOnHand * different
       }
