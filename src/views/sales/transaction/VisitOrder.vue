@@ -1246,7 +1246,9 @@ export default {
           dataSchedule = response.data.tableData
 
           if (dataSchedule) {
-            arrId.push(dataSchedule[0].salesmanScheduleId)
+            for (let i = 0; i < dataSchedule.length; i++) {
+              arrId.push(dataSchedule[i].salesmanScheduleId)
+            }
           }
 
           api.getAll(`${this.endpoint.general.employee}/salesman-schedule-customer`, {
