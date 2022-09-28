@@ -409,7 +409,20 @@
                             class="mt-0"
                             readonly
                             required
-                          ></v-text-field>
+                          >
+                            <template v-slot:append-outer>
+                              <v-btn
+                                :disabled="hasRelatedTrans"
+                                color="primary"
+                                icon
+                                @click="showFindCustDialog"
+                              >
+                                <v-icon>
+                                  mdi-account-search
+                                </v-icon>
+                              </v-btn>
+                            </template>
+                          </v-text-field>
                         </v-col>
                       </v-row>
 
@@ -938,6 +951,10 @@
       ref="findItem"
       @dblclick:row="bindItemData"
     ></find-item>
+    <find-customer
+      ref="findCust"
+      @dblclick:row="bindCustData"
+    ></find-customer>
   </div>
 </template>
 
@@ -956,6 +973,7 @@ import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 import ReportViewer from '@/components/dialog/ReportViewer'
 import FindItem from '@/components/dialog/inventory/FindItem'
+import FindCustomer from '@/components/dialog/general/FindCustomer'
 
 export default {
   components: {
@@ -963,6 +981,7 @@ export default {
     ExportExcel,
     Confirm,
     ReportViewer,
+    FindCustomer,
     FindItem
   },
 
@@ -1847,6 +1866,9 @@ export default {
       this.data.difference = this.data.totalIn - this.data.totalOut
       this.data.total = this.data.totalIn
     },
+    showFindCustDialog() {
+      this.$refs.findCust.open()
+    },
     showFindItemDialog(item) {
       this.$refs.findItem.open(item)
     },
@@ -1860,6 +1882,7 @@ export default {
         this.data.custAddr = customer.address1
         this.data.custPhone = customer.phone
         this.data.custFax = customer.fax
+        this.getCustomerAddressesLists(customer)
       }
     },
     async exportExcel() {
@@ -1876,6 +1899,26 @@ export default {
           this.data.warehouseCode = defWarehouse.code
         }
       }
+    },
+    bindCustData(item) {
+      this.data.custCode = item.code
+      this.data.custName = item.name
+      this.data.custAddr = item.address1
+      this.data.custPhone = item.phone
+      this.data.custFax = item.fax
+      this.getCustomerAddressesLists(item)
+    },
+    getCustomerAddressesLists(item) {
+      api.getAll(`${this.endpoint.general.customer.customer}/addresses`, {
+        params: { code: item.code }
+      })
+        .then(response => {
+          this.customerAddresses = response.data.tableData
+          const data_c = this.customerAddresses.find(x => x.isDefault === true)
+          if (data_c) {
+            this.data.billingAddressId = data_c.id
+          }
+        })
     }
   }
 }
