@@ -42,6 +42,22 @@
                 <v-btn
                   v-bind="attrs"
                   v-on="on"
+                  v-shortkey="['ctrl', 'alt', 'd']"
+                  :disabled="isVoid || (data.action === 'edit' && !auth.allowPrint) || data.action === 'add'"
+                  dark
+                  text
+                  @click="print('do', data)"
+                  @shortkey="print('do', data)"
+                >Cetak Surat Jalan</v-btn>
+              </template>
+              <span class="text-caption">(Ctrl + Alt + D)</span>
+            </v-tooltip>
+            <v-divider vertical></v-divider>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  v-bind="attrs"
+                  v-on="on"
                   v-shortkey="['ctrl', 'alt', 'r']"
                   :disabled="isVoid || (data.action === 'edit' && !auth.allowPrint) || data.action === 'add'"
                   dark
@@ -1522,6 +1538,8 @@ export default {
         this.$refs.reportViewer.open('sales-invoice', item.code)
       } else if (caller === 'receipt') {
         this.$refs.reportViewer.open('invoice-receipt', item.code)
+      } else if (caller === 'do') {
+        this.$refs.reportViewer.open('delivery-order', item.code)
       }
     },
     async save(closeDialog) {
