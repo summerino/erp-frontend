@@ -122,7 +122,11 @@
             </template>
             <span class="text-caption">Void</span>
           </v-tooltip>
-          <v-tooltip bottom>
+          <v-menu
+            bottom
+            eager
+            open-on-hover
+          >
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 v-bind="attrs"
@@ -131,13 +135,37 @@
                 color="teal darken-2"
                 icon
                 small
-                @click="print(item)"
               >
                 <v-icon small>mdi-printer</v-icon>
               </v-btn>
             </template>
-            <span class="text-caption">Cetak Daftar Pelanggan</span>
-          </v-tooltip>
+            <v-list
+              class="cursor-pointer"
+              color="teal darken-2"
+              dark
+            >
+              <v-list-item
+                dense
+                @click="print('cust', item)"
+              >
+                <v-list-item-title>
+                  <span class="text-caption">
+                    Cetak Daftar Pelanggan
+                  </span>
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item
+                dense
+                @click="print('inv', item)"
+              >
+                <v-list-item-title>
+                  <span class="text-caption">
+                    Cetak Daftar Faktur
+                  </span>
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </template>
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
@@ -1136,8 +1164,12 @@ export default {
           })
       }
     },
-    print(item) {
-      this.$refs.reportViewer.open('visit-order-customer', item.code)
+    print(caller, item) {
+      if (caller === 'cust') {
+        this.$refs.reportViewer.open('visit-order-customer', item.code)
+      } else if (caller === 'inv') {
+        this.$refs.reportViewer.open('visit-order-invoice', item.code)
+      }
     },
     async save(closeDialog) {
       if (!this.$refs.form.validate()) {
