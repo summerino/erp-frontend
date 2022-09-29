@@ -429,6 +429,18 @@
                             readonly
                             required
                           >
+                            <template v-slot:append-outer>
+                              <v-btn
+                                :disabled="hasRelatedTrans"
+                                color="primary"
+                                icon
+                                @click="showFindSupDialog"
+                              >
+                                <v-icon>
+                                  mdi-account-search
+                                </v-icon>
+                              </v-btn>
+                            </template>
                           </v-text-field>
                         </v-col>
                       </v-row>
@@ -657,6 +669,10 @@
       :grid-detail="gridDetail.data"
       :ei-code="data.code"
     ></ei-find>
+    <find-supplier
+      ref="findSup"
+      @dblclick:row="bindSupData"
+    ></find-supplier>
   </div>
 </template>
 
@@ -673,6 +689,7 @@ import ExportExcel from '@/components/common/ExportExcel.vue'
 import Confirm from '@/components/dialog/Confirm'
 import ReportViewer from '@/components/dialog/ReportViewer'
 import EiFind from '@/components/dialog/EIFind'
+import FindSupplier from '@/components/dialog/general/FindSupplier'
 
 export default {
   components:{
@@ -680,6 +697,7 @@ export default {
     ExportExcel,
     Confirm,
     ReportViewer,
+    FindSupplier,
     EiFind
   },
   data: () => ({
@@ -1052,6 +1070,16 @@ export default {
         }
         this.getList(!closeDialog)
       }
+    },
+    showFindSupDialog() {
+      this.$refs.findSup.open()
+    },
+    bindSupData(item) {
+      this.data.supCode = item.code
+      this.data.supName = item.name
+      this.data.supAddr = item.address1
+      this.data.supPhone = item.phone
+      this.data.supFax = item.fax
     }
   }
 }
