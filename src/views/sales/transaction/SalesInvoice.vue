@@ -204,6 +204,17 @@
                 </v-list-item-title>
               </v-list-item>
               <v-list-item
+                v-if="item.fromDirectInvoice"
+                dense
+                @click="print('do', item)"
+              >
+                <v-list-item-title>
+                  <span class="text-caption">
+                    Cetak Surat Jalan
+                  </span>
+                </v-list-item-title>
+              </v-list-item>
+              <v-list-item
                 dense
                 @click="print('receipt', item)"
               >
@@ -1511,6 +1522,8 @@ export default {
         this.$refs.reportViewer.open('sales-invoice', item.code)
       } else if (caller === 'receipt') {
         this.$refs.reportViewer.open('invoice-receipt', item.code)
+      } else if (caller === 'do') {
+        this.$refs.reportViewer.open('delivery-order', item.code)
       }
     },
     async save(closeDialog) {
