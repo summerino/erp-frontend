@@ -1828,10 +1828,12 @@ export default {
             `Penggunaan Kredit Pelanggan ${ data.custCode } - ${ data.custName } Melebihi Batas`,
             'Data Surat Jalan tidak akan terbentuk. Apakah anda yakin ingin melanjutkan?')
         ) {
+          data.listPromo = this.gridPromo.data
           data.itemDetails = this.gridItem.data
           this.$refs.soSd.open(data)
         }
       } else {
+        data.listPromo = this.gridPromo.data
         data.itemDetails = this.gridItem.data
         this.$refs.soSd.open(data)
       }
@@ -1854,10 +1856,12 @@ export default {
             `Penggunaan Kredit Pelanggan ${ data.custCode } - ${ data.custName } Melebihi Batas`,
             'Data Surat Jalan & Faktur tidak akan terbentuk. Apakah anda yakin ingin melanjutkan?')
         ) {
+          data.listPromo = this.gridPromo.data
           data.itemDetails = this.gridItem.data
           this.$refs.soSi.open(data, true)
         }
       } else {
+        data.listPromo = this.gridPromo.data
         data.itemDetails = this.gridItem.data
         this.$refs.soSi.open(data, true)
       }
