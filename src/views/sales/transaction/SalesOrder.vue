@@ -1828,11 +1828,21 @@ export default {
             `Penggunaan Kredit Pelanggan ${ data.custCode } - ${ data.custName } Melebihi Batas`,
             'Data Surat Jalan tidak akan terbentuk. Apakah anda yakin ingin melanjutkan?')
         ) {
+          for (let i = 0; i < this.gridItem.data.length; i++) {
+            const bonusData = this.gridBonus.data.filter(x => x.orderDetailId === this.gridItem.data[i].id)
+            this.gridItem.data[i].freeItemDetails = bonusData
+            this.gridItem.data[i].discountItemDetails = this.gridItem.data[i].discPromo
+          }
           data.listPromo = this.gridPromo.data
           data.itemDetails = this.gridItem.data
           this.$refs.soSd.open(data)
         }
       } else {
+        for (let i = 0; i < this.gridItem.data.length; i++) {
+          const bonusData = this.gridBonus.data.filter(x => x.orderDetailId === this.gridItem.data[i].id)
+          this.gridItem.data[i].freeItemDetails = bonusData
+          this.gridItem.data[i].discountItemDetails = this.gridItem.data[i].discPromo
+        }
         data.listPromo = this.gridPromo.data
         data.itemDetails = this.gridItem.data
         this.$refs.soSd.open(data)
@@ -1856,11 +1866,21 @@ export default {
             `Penggunaan Kredit Pelanggan ${ data.custCode } - ${ data.custName } Melebihi Batas`,
             'Data Surat Jalan & Faktur tidak akan terbentuk. Apakah anda yakin ingin melanjutkan?')
         ) {
+          for (let i = 0; i < this.gridItem.data.length; i++) {
+            const bonusData = this.gridBonus.data.filter(x => x.orderDetailId === this.gridItem.data[i].id)
+            this.gridItem.data[i].freeItemDetails = bonusData
+            this.gridItem.data[i].discountItemDetails = this.gridItem.data[i].discPromo
+          }
           data.listPromo = this.gridPromo.data
           data.itemDetails = this.gridItem.data
           this.$refs.soSi.open(data, true)
         }
       } else {
+        for (let i = 0; i < this.gridItem.data.length; i++) {
+          const bonusData = this.gridBonus.data.filter(x => x.orderDetailId === this.gridItem.data[i].id)
+          this.gridItem.data[i].freeItemDetails = bonusData
+          this.gridItem.data[i].discountItemDetails = this.gridItem.data[i].discPromo
+        }
         data.listPromo = this.gridPromo.data
         data.itemDetails = this.gridItem.data
         this.$refs.soSi.open(data, true)
