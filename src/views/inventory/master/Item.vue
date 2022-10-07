@@ -1266,7 +1266,7 @@ export default {
       item.qtyOnTransit /= conversionValue
     },
     calcQtyAvailable(qtySystem, qtyOrder) {
-      return (qtySystem - qtyOrder < 0) ? 0 : qtySystem - qtyOrder
+      return qtySystem - qtyOrder
     },
     async exportExcel() {
       this.exportExcel.export()
