@@ -1498,7 +1498,6 @@ export default {
 
       data.currCode = 'IDR'
       let result = { success: false, message: '' }
-      console.log(data)
       if (data.action === 'add') {
         const resp = await api.create(this.endpoint.purchase.return, data)
         result = resp.data
@@ -1795,7 +1794,6 @@ export default {
           item.exemptTaxAmountTemp = item.exemptTaxAmount
           item.nettPrice = item.unitPrice
           item.dpp = item.unitPrice - item.taxAmount
-          console.log(item)
         } else {
           item.taxAmount = item.unitPrice * (tax.rate / 100)
           item.exemptTaxAmount = item.unitPrice * (tax.exemptRate / 100)
