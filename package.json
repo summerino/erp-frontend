@@ -1,6 +1,6 @@
 {
   "name": "sahassa-erp",
-  "version": "22.10.10",
+  "version": "22.10.13",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -17,7 +17,7 @@
     "file-saver": "^2.0.5",
     "lodash": "^4.17.21",
     "v-currency-field": "^3.1.1",
-    "vue": "^2.7.10",
+    "vue": "^2.7.12",
     "vue-head": "^2.2.0",
     "vue-i18n": "^8.27.2",
     "vue-router": "^3.6.5",

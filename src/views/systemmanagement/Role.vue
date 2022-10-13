@@ -381,7 +381,7 @@
 <script>
 import { mapState } from 'vuex'
 import { format, parseISO }  from 'date-fns'
-import { sortBy as _sortBy } from 'lodash'
+import { uniq as _uniq, sortBy as _sortBy } from 'lodash'
 import { randomNumber } from '@/helpers/math-helpers'
 
 import api from '@/services/axios.service'
@@ -647,6 +647,7 @@ export default {
     },
     createRoleMenuSave() {
       // Inserting parent
+      this.selectionParent = _uniq(this.selectionParent)
       if (this.selectionParent.length) {
         for (let j = 0; j < this.selectionParent.length; j++) {
           this.addSelection(this.selectionParent[j])
@@ -654,6 +655,7 @@ export default {
       }
 
       // Inserting child
+      this.selectionForView = _uniq(this.selectionForView)
       for (let i = 0; i < this.selectionForView.length; i++) {
         this.addSelection(this.selectionForView[i])
       }

@@ -1021,7 +1021,7 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '150' },
+        { value: 'action', sortable: false, divider: true, width: '120' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'18' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Tipe', value: 'typeName', divider: true, width: '160', excelColWidth:'19' },
@@ -1178,10 +1178,12 @@ export default {
         includeTax: this.defTaxInc,
         taxAmount: 0,
         exemptTaxAmount: 0,
+        taxInvoiceDate: null,
+        taxInvoiceNo: null,
         totalIn: 0,
         totalOut: 0,
         total: 0,
-        difference: null
+        difference: 0
       }
       this.gridItem.data = []
       this.gridRelated.data = []
@@ -1496,6 +1498,7 @@ export default {
 
       data.currCode = 'IDR'
       let result = { success: false, message: '' }
+      console.log(data)
       if (data.action === 'add') {
         const resp = await api.create(this.endpoint.purchase.return, data)
         result = resp.data
@@ -1540,13 +1543,19 @@ export default {
           unitName: null,
           unitPrice: 0,
           taxAmount: 0,
+          taxAmountTemp: 0,
           exemptTaxAmount: 0,
+          exemptTaxAmountTemp: 0,
           nettPrice: 0,
           total: 0,
           dpp: 0,
           totTax: 0,
+          totExemptTax: 0,
           totExemptTaxAmount: 0,
           totDPP: 0,
+          totalIn: 0,
+          totalOut: 0,
+          difference: 0,
           state: 'A'
         }
         this.gridItem.data.push(item)
@@ -1780,15 +1789,16 @@ export default {
           item.nettPrice = item.unitPrice
           item.dpp = item.unitPrice
         } else if (this.data.includeTax) {
-          item.taxAmount = (item.unitPrice) - ((item.unitPrice) / (1 + (tax.rate / 100)))
-          item.exemptTaxAmount = (item.unitPrice - item.disc) - ((item.unitPrice - item.disc) / (1 + (tax.exemptRate / 100)))
+          item.taxAmount = item.unitPrice - (item.unitPrice / (1 + (tax.rate / 100)))
+          item.exemptTaxAmount = item.unitPrice - (item.unitPrice / (1 + (tax.exemptRate / 100)))
           item.taxAmountTemp = item.taxAmount
           item.exemptTaxAmountTemp = item.exemptTaxAmount
           item.nettPrice = item.unitPrice
           item.dpp = item.unitPrice - item.taxAmount
+          console.log(item)
         } else {
-          item.taxAmount = (item.unitPrice) * (tax.rate / 100)
-          item.exemptTaxAmount = (item.unitPrice - item.disc) * (tax.exemptRate / 100)
+          item.taxAmount = item.unitPrice * (tax.rate / 100)
+          item.exemptTaxAmount = item.unitPrice * (tax.exemptRate / 100)
           item.taxAmountTemp = item.taxAmount
           item.exemptTaxAmountTemp = item.exemptTaxAmount
           item.nettPrice = item.unitPrice + item.taxAmount

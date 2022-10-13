@@ -1028,7 +1028,7 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '150' },
+        { value: 'action', sortable: false, divider: true, width: '120' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Tipe', value: 'typeName', divider: true, width: '160', excelColWidth:'19' },
@@ -1196,9 +1196,7 @@ export default {
       this.gridItem.data = []
       this.gridRelated.data = []
       this.tab.cust = 0
-      this.tab.location = 0
-      this.tab.notes = 0
-      this.tab.user = 0
+      this.tab.item = 0
 
       // Reset form validation
       if (resetValidation) {
@@ -1703,7 +1701,6 @@ export default {
       this.calcTax()
     },
     itemIdChange(item) {
-      
       const data_i = this.items.find(i => i.id === item.itemId)
       if (data_i) {
         item.itemName = data_i.name
@@ -1779,21 +1776,6 @@ export default {
       }
     },
     calcItemTax(item) {
-      // const tax = this.taxes.find(t => t.id === item.taxId)
-      // if (tax) {
-      //   if (this.data.includeTax) {
-      //     item.taxAmount = (item.unitPrice) - ((item.unitPrice) / (1 + (tax.rate / 100)))
-      //     item.taxAmountTemp = item.taxAmount
-      //     item.nettPrice = item.unitPrice 
-      //     item.dpp = item.unitPrice - item.taxAmount
-      //   } else {
-      //     item.taxAmount = (item.unitPrice) * (tax.rate / 100)
-      //     item.taxAmountTemp = item.taxAmount
-      //     item.nettPrice = item.unitPrice + item.taxAmount
-      //     item.dpp = item.unitPrice 
-      //   }
-      // }
-
       const tax = this.taxes.find(t => t.id === item.taxId)
       if (tax) {
         if ((!this.data.includeTax || this.data.includeTax) && this.data.noTax) {
@@ -1802,15 +1784,15 @@ export default {
           item.nettPrice = item.unitPrice
           item.dpp = item.unitPrice
         } else if (this.data.includeTax) {
-          item.taxAmount = (item.unitPrice) - ((item.unitPrice) / (1 + (tax.rate / 100)))
-          item.exemptTaxAmount = (item.unitPrice) - ((item.unitPrice) / (1 + (tax.exemptRate / 100)))
+          item.taxAmount = item.unitPrice - (item.unitPrice / (1 + (tax.rate / 100)))
+          item.exemptTaxAmount = item.unitPrice - (item.unitPrice / (1 + (tax.exemptRate / 100)))
           item.taxAmountTemp = item.taxAmount
           item.exemptTaxAmountTemp = item.exemptTaxAmount
           item.nettPrice = item.unitPrice
           item.dpp = item.unitPrice - item.taxAmount + item.exemptTaxAmount
         } else {
-          item.taxAmount = (item.unitPrice) * (tax.rate / 100)
-          item.exemptTaxAmount = (item.unitPrice) * (tax.exemptRate / 100)
+          item.taxAmount = item.unitPrice * (tax.rate / 100)
+          item.exemptTaxAmount = item.unitPrice * (tax.exemptRate / 100)
           item.taxAmountTemp = item.taxAmount
           item.exemptTaxAmountTemp = item.exemptTaxAmount
           item.nettPrice = item.unitPrice + item.taxAmount - item.exemptTaxAmount
