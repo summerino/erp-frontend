@@ -22,7 +22,8 @@ export default {
     master: 'master',
     approval: 'approval',
     activeTransaction: 'active-transaction',
-    customDynamicReport: 'custom-dynamic-report'
+    customDynamicReport: 'custom-dynamic-report',
+    localReport: 'local-report'
   },
 
   inventory: {

@@ -45,6 +45,22 @@
                 :gridDefOpts="gridDefOpts"
                 title="Daftar Surat Jalan"
               ></export-excel>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    :disabled="!auth.allowPrint"
+                    color="teal darken-2"
+                    icon
+                    small
+                    @click="print(null)"
+                  >
+                    <v-icon small>mdi-printer</v-icon>
+                  </v-btn>
+                </template>
+                <span class="text-caption">Cetak Data Yang Dipilih</span>
+              </v-tooltip>
             </v-row>
           </v-col>
           <v-col cols="12" md="4" class="text-right">
@@ -76,6 +92,7 @@
         <advanced-search @search="search"></advanced-search>
       </v-card-text>
       <v-data-table
+        v-model="selected"
         :headers="grid.columns"
         :footer-props="{ itemsPerPageOptions: gridDefOpts.pageSizes }"
         :height="gridDefOpts.height"
@@ -85,9 +102,18 @@
         :server-items-length="grid.total"
         :sort-by="grid.options.sortBy"
         :sort-desc="grid.options.sortDesc"
+        item-key="code"
         class="elevation-1"
         fixed-header
+        show-select
       >
+        <template v-slot:[`item.data-table-select`]="{ item, isSelected, select }">
+          <v-simple-checkbox
+            :disabled="item.mark.toUpperCase() === 'V' || !auth.allowPrint"
+            :value="isSelected"
+            @input="select($event)"
+          ></v-simple-checkbox>
+        </template>
         <template v-slot:[`item.action`]="{ item }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -757,6 +783,7 @@
 <script>
 import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
+import { saveAs } from 'file-saver'
 import { sumBy as _sumBy } from 'lodash'
 
 import { randomNumber } from '@/helpers/math-helpers'
@@ -856,6 +883,7 @@ export default {
     },
     valid: false,
     dataStartDate: null,
+    selected: [],
     drivers: [],
     employees: [],
     warehouses: [],
@@ -1032,6 +1060,7 @@ export default {
         }
       })
         .then(response => {
+          this.selected = []
           this.grid.data = response.data.tableData
           this.grid.total = response.data.rowCount
           if (bindToForm) {
@@ -1231,8 +1260,18 @@ export default {
           })
       }
     },
-    print(item) {
-      this.$refs.reportViewer.open('delivery-order', item.code)
+    async print(item) {
+      if (item) {
+        this.$refs.reportViewer.open('delivery-order', item.code)
+      } else if (this.selected) {
+        const resp = await api.create(this.endpoint.general.localReport, {
+          reportName: 'delivery-order-multi',
+          codes: this.selected.map(x => x.code)
+        }, {
+          responseType: 'blob'
+        })
+        saveAs(resp.data, 'delivery-order-multi.pdf')
+      }
     },
     async save(closeDialog) {
       if (!this.dialog.add) return
@@ -1258,7 +1297,6 @@ export default {
             return
           }
         }
-        
       }
 
       const data = this.data

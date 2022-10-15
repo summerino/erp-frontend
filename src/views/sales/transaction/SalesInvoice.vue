@@ -45,6 +45,50 @@
                 :gridDefOpts="gridDefOpts"
                 title="Daftar Faktur Penjualan"
               ></export-excel>
+              <v-menu
+                bottom
+                eager
+                open-on-hover
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    :disabled="!auth.allowPrint"
+                    color="teal darken-2"
+                    icon
+                    small
+                  >
+                    <v-icon small>mdi-printer-settings</v-icon>
+                  </v-btn>
+                </template>
+                <v-list
+                  class="cursor-pointer"
+                  color="teal darken-2"
+                  dark
+                >
+                  <v-list-item
+                    dense
+                    @click="print('inv', null)"
+                  >
+                    <v-list-item-title>
+                      <span class="text-caption">
+                        Cetak Faktur Penjualan (Pilih Data)
+                      </span>
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item
+                    dense
+                    @click="print('do', null)"
+                  >
+                    <v-list-item-title>
+                      <span class="text-caption">
+                        Cetak Surat Jalan (Pilih Data)
+                      </span>
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
             </v-row>
           </v-col>
           <v-col cols="12" md="4" class="text-right">
@@ -127,6 +171,7 @@
         <advanced-search @search="search"></advanced-search>
       </v-card-text>
       <v-data-table
+        v-model="selected"
         :headers="grid.columns"
         :footer-props="{ itemsPerPageOptions: gridDefOpts.pageSizes }"
         :height="gridDefOpts.height"
@@ -136,9 +181,18 @@
         :server-items-length="grid.total"
         :sort-by="grid.options.sortBy"
         :sort-desc="grid.options.sortDesc"
+        item-key="code"
         class="elevation-1"
         fixed-header
+        show-select
       >
+        <template v-slot:[`item.data-table-select`]="{ item, isSelected, select }">
+          <v-simple-checkbox
+            :disabled="item.mark.toUpperCase() === 'V' || !auth.allowPrint"
+            :value="isSelected"
+            @input="select($event)"
+          ></v-simple-checkbox>
+        </template>
         <template v-slot:[`item.action`]="{ item }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -1023,6 +1077,7 @@
 <script>
 import { mapState } from 'vuex'
 import { format, parseISO, addDays } from 'date-fns'
+import { saveAs } from 'file-saver'
 import { sumBy as _sumBy } from 'lodash'
 
 import { randomNumber } from '@/helpers/math-helpers'
@@ -1159,6 +1214,7 @@ export default {
     },
     valid: false,
     dataStartDate: null,
+    selected: [],
     employees: [],
     dlvOrders: [],
     paymentTerms: [],
@@ -1310,6 +1366,7 @@ export default {
         }
       })
         .then(response => {
+          this.selected = []
           this.grid.data = response.data.tableData
           this.grid.total = response.data.rowCount
           if (bindToForm) {
@@ -1517,13 +1574,40 @@ export default {
           })
       }
     },
-    print(caller, item) {
-      if (caller === 'inv') {
-        this.$refs.reportViewer.open('sales-invoice', item.code)
-      } else if (caller === 'receipt') {
-        this.$refs.reportViewer.open('invoice-receipt', item.code)
-      } else if (caller === 'do') {
-        this.$refs.reportViewer.open('delivery-order', item.code)
+    async print(caller, item) {
+      if (item) {
+        if (caller === 'inv') {
+          this.$refs.reportViewer.open('sales-invoice', item.code)
+        } else if (caller === 'receipt') {
+          this.$refs.reportViewer.open('invoice-receipt', item.code)
+        } else if (caller === 'do') {
+          this.$refs.reportViewer.open('delivery-order', item.code)
+        }
+      } else if (this.selected) {
+        if (caller === 'inv') {
+          const resp = await api.create(this.endpoint.general.localReport, {
+            reportName: 'sales-invoice-multi',
+            codes: this.selected.map(x => x.code)
+          }, {
+            responseType: 'blob'
+          })
+          saveAs(resp.data, 'sales-invoice-multi.pdf')
+        } else if (caller === 'do') {
+          const doData = await api.getAll(`${this.endpoint.sales.invoice}/delivery-order`, {
+            params: {
+              codes: JSON.stringify(this.selected.map(x => x.code))
+            }
+          })
+
+          const resp = await api.create(this.endpoint.general.localReport, {
+            reportName: 'delivery-order-multi',
+            codes: doData.data.tableData.map(x => x.doCode)
+          }, {
+            responseType: 'blob'
+          })
+          
+          saveAs(resp.data, 'delivery-order-multi.pdf')
+        }
       }
     },
     async save(closeDialog) {
