@@ -133,6 +133,9 @@
         <template v-slot:[`item.total`]="{ item }">
           {{ item.total | formatCurrency }}
         </template>
+        <template v-slot:[`item.salesName`]="{ item }">
+          {{ item.salesInitial }} - {{ item.salesName }}
+        </template>
         <template v-slot:[`item.custName`]="{ item }">
           {{ item.custCode }} - {{ item.custName }}
         </template>
@@ -780,11 +783,11 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
+        { value: 'action', sortable: false, divider: true, width: '50' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
-        { text: 'Penjual', value: 'salesInitial', divider: true, width: '180', excelColWidth:'23' },
-        { text: 'Pelanggan', value: 'custName', divider: true, width: '220', excelColWidth:'35', customValues: ['custCode', 'custName'] },
+        { text: 'Penjual', value: 'salesName', divider: true, width: '220', excelColWidth:'40', customValues: ['salesInitial', 'salesName'] },
+        { text: 'Pelanggan', value: 'custName', divider: true, width: '220', excelColWidth:'40', customValues: ['custCode', 'custName'] },
         { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
         { text: 'Status', value: 'mark', width: '50' }
       ],

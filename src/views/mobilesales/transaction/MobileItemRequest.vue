@@ -130,6 +130,9 @@
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
+        <template v-slot:[`item.salesmanInitial`]="{ item }">
+          {{ item.salesmanInitial }} - {{ item.salesmanName }}
+        </template>
         <template v-slot:[`item.mark`]="{ item }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -615,10 +618,10 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
+        { value: 'action', sortable: false, divider: true, width: '50' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
-        { text: 'Penjual', value: 'salesmanInitial', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Penjual', value: 'salesmanInitial', divider: true, width: '350', excelColWidth:'40', customValues: ['salesmanInitial', 'salesmanName'] },
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],

@@ -576,10 +576,10 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
+        { value: 'action', sortable: false, divider: true, width: '50' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
-        { text: 'Penjual', value: 'salesmanInitial', divider: true, width: '150', excelColWidth:'18', customValues: ['salesmanInitial', 'salesmanName'] },
+        { text: 'Penjual', value: 'salesmanInitial', divider: true, width: '220', excelColWidth:'40', customValues: ['salesmanInitial', 'salesmanName'] },
         { text: 'Nilai Total', value: 'total', divider: true, align:'right', width: '100', excelColWidth:'15', isCurrency: true },
         { text: 'Status', value: 'mark', width: '50' }
       ],

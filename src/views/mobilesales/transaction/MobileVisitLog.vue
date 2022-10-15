@@ -133,6 +133,9 @@
         <template v-slot:[`item.total`]="{ item }">
           {{ item.total | formatCurrency }}
         </template>
+        <template v-slot:[`item.salesmanInitial`]="{ item }">
+          {{ item.salesmanInitial }} - {{ item.salesmanName }}
+        </template>
         <template v-slot:[`item.customerName`]="{ item }">
           {{ item.custCode }} - {{ item.customerName }}
         </template>
@@ -594,16 +597,16 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '90' },
-        { text: 'Kode', value: 'code', divider: true, width: '140', excelColWidth:'20' },
-        { text: 'Kode Perintah Kunjungan', value: 'visitOrderCode', divider: true, width: '140', excelColWidth:'20' },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'15', isDateTime: true },
-        { text: 'Penjual', value: 'salesmanInitial', divider: true, width: '120', excelColWidth:'18' },
-        { text: 'Pelanggan', value: 'customerName', divider: true, width: '120', excelColWidth:'18' },
-        { text: 'Koordinat', value: 'lat', divider: true, width: '100', excelColWidth:'18' },
-        { text: 'Radius', value: 'radius', divider: true, width: '100', excelColWidth:'18' },
+        { value: 'action', sortable: false, divider: true, width: '50' },
+        { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
+        { text: 'Kd. Perintah Kunjungan', value: 'visitOrderCode', divider: true, width: '160', excelColWidth:'20' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+        { text: 'Penjual', value: 'salesmanInitial', divider: true, width: '220', excelColWidth:'40', customValues: ['salesmanInitial', 'salesmanName'] },
+        { text: 'Pelanggan', value: 'customerName', divider: true, width: '220', excelColWidth:'40', customValues: ['customerCode', 'customerName'] },
+        { text: 'Koordinat', value: 'lat', divider: true, width: '160', excelColWidth:'18' },
+        { text: 'Radius', value: 'radius', divider: true, width: '140', excelColWidth:'18' },
         { text: 'Gambar', value: 'image', divider: true, width: '100', excelColWidth:'18' },
-        { text: 'Nilai Total', value: 'total', divider: true, align:'right', width: '100', excelColWidth:'15', isCurrency: true },
+        { text: 'Nilai Total', value: 'total', divider: true, align:'right', width: '120', excelColWidth:'15', isCurrency: true },
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
