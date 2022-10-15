@@ -1264,7 +1264,7 @@ export default {
       if (item) {
         this.$refs.reportViewer.open('delivery-order', item.code)
       } else if (this.selected) {
-        const resp = await api.create(this.endpoint.general.localReport, {
+        const resp = await api.create(this.endpoint.localReport, {
           reportName: 'delivery-order-multi',
           codes: this.selected.map(x => x.code)
         }, {

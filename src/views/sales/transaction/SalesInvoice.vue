@@ -1585,7 +1585,7 @@ export default {
         }
       } else if (this.selected) {
         if (caller === 'inv') {
-          const resp = await api.create(this.endpoint.general.localReport, {
+          const resp = await api.create(this.endpoint.localReport, {
             reportName: 'sales-invoice-multi',
             codes: this.selected.map(x => x.code)
           }, {
@@ -1599,7 +1599,7 @@ export default {
             }
           })
 
-          const resp = await api.create(this.endpoint.general.localReport, {
+          const resp = await api.create(this.endpoint.localReport, {
             reportName: 'delivery-order-multi',
             codes: doData.data.tableData.map(x => x.doCode)
           }, {

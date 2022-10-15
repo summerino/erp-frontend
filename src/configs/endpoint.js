@@ -1,5 +1,6 @@
 export default {
   master: 'master',
+  localReport: 'local-report',
   
   general: {
     customer: {
@@ -22,8 +23,7 @@ export default {
     master: 'master',
     approval: 'approval',
     activeTransaction: 'active-transaction',
-    customDynamicReport: 'custom-dynamic-report',
-    localReport: 'local-report'
+    customDynamicReport: 'custom-dynamic-report'
   },
 
   inventory: {
