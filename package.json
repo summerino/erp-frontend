@@ -11,7 +11,7 @@
   "dependencies": {
     "@boldreports/javascript-reporting-controls": "^4.2.55",
     "animate.css": "^4.1.1",
-    "axios": "^1.1.2",
+    "axios": "^1.1.3",
     "date-fns": "^2.29.3",
     "exceljs": "^4.3.0",
     "file-saver": "^2.0.5",
