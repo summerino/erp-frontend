@@ -822,7 +822,7 @@ export default {
     grid: {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '120' },
-        { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
+        { text: 'Kode', value: 'code', divider: true, width: '165', excelColWidth:'19' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
         { text: 'Kode Trans.', value: 'transCode', divider: true, width: '160', excelColWidth:'19' },
