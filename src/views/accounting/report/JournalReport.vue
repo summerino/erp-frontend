@@ -393,7 +393,14 @@ export default {
       this.exportExcel.export()
     },
     getCOAList() {
-      api.getAll(`${this.endpoint.accounting.coa}/lists`)
+      api.getAll(`${this.endpoint.accounting.coa}/lists`, {
+        params: {
+          sorts: JSON.stringify([{
+            field: 'code',
+            direction: 'asc'
+          }])
+        }
+      })
         .then(response => {
           this.coas = response.data.tableData
         })
