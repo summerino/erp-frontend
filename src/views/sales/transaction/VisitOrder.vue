@@ -1003,8 +1003,8 @@ export default {
     theme() {
       return this.$vuetify.theme.isDark ? 'dark' : 'light'
     },
-    isActive() {
-      return (this.data?.IsActive?.IsActive === true)
+    isVoid() {
+      return (this.data?.mark?.toUpperCase() === 'V')
     },
     formatVisitDate() {
       return this.data.date ? format(parseISO(this.data.date), 'dd-MMM-yyyy') : ''
