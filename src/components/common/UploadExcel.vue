@@ -124,7 +124,7 @@ export default {
       this.$emit('uploadCmp')
     },
     async extractData() {
-      const result = await templateExcelService.extractData(this.uploadedFile, true)
+      const result = await templateExcelService.extractData(this.uploadedFile)
       return result
     }
   }  

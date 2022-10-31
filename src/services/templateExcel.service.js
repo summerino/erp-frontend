@@ -104,7 +104,7 @@ class TemplateExcelService {
     saveAs(new Blob([buf]), `${title}.xlsx`)
   }
 
-  async extractData(file, isStock = false) {
+  async extractData(file) {
     const workbook = new Excel.Workbook()
     const values = []
     const result = []
@@ -124,20 +124,14 @@ class TemplateExcelService {
     const header = values.shift()
 
     for (let i = 0; i < values.length; i++) {
-      if (i < 3) {
-        values[i].pop()
-        if (isStock) {
-          values[i].pop()
-        }
-      }
       const obj = new Object()
-      for (let j = 0; j < values[i].length; j++) {
+      for (let j = 0; j < header.length; j++) {
         obj[header[j].toLowerCase().replace(/[ ,.]/g, '')] = values[i][j]
       }
       obj['mark'] = false
       result.push(obj)
     }
-    
+  
     return result
   }
 }
