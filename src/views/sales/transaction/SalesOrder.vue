@@ -1314,10 +1314,8 @@ export default {
     isSaveNInvoiceAble() {
       if (this.data.action === 'add') {
         return false
-      } if (this.data.mark === 'CMP' || this.data.mark === 'A') {
-        if (this.data.action === 'edit') {
-          return false
-        }
+      } if (this.data.mark === 'A' && this.data.action === 'edit') {
+        return false
       }
       return true
     },
