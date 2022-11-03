@@ -432,7 +432,6 @@
               <v-col cols="12" md="6" class="pl-md-3">
                 <v-currency-field
                   v-model="data.paidAmount"
-                  :decimal-length="0"
                   class="mt-0"
                   label="Nilai Sudah Dibayar"
                   readonly
@@ -444,7 +443,6 @@
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-currency-field
                   v-model="data.leftoverAmount"
-                  :decimal-length="0"
                   class="mt-0"
                   label="Nilai Sisa"
                   readonly
