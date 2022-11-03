@@ -424,7 +424,6 @@
               <v-col cols="12" md="6" class="pr-md-3">
                 <v-currency-field
                   v-model="data.amount"
-                  :decimal-length="0"
                   class="mt-0"
                   label="Nilai"
                   @change="nilaiChange()"
