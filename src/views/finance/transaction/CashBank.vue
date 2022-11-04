@@ -682,6 +682,8 @@ export default {
     }, {
       text: 'Nama Akun', value: 'coaName', dataType: 'text'
     }, {
+      text: 'Catatan', value: 'notes', dataType: 'text'
+    }, {
       text: 'Status', value: 'mark', dataType: 'text'
     }],
     dialog: {
@@ -704,6 +706,7 @@ export default {
         { text: 'Nilai', value: 'amount', divider: true, align:'right', width: '100', excelColWidth:'15', isCurrency: true },
         { text: 'Tipe', value: 'typeName', divider: true, width: '90', excelColWidth:'17' },
         { text: 'Akun', value: 'coaCode', divider: true, width: '130', excelColWidth:'40', customValues: ['coaCode', 'coaName'] },
+        { text: 'Catatan', value: 'notes', divider: true, width: '150', excelColWidth:'30' },
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
