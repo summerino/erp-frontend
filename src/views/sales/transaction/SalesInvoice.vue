@@ -214,7 +214,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="!auth.allowVoid"
+                :disabled="item.mark.toUpperCase() === 'V' || !auth.allowVoid"
                 color="red"
                 icon
                 small

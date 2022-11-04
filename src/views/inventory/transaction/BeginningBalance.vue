@@ -706,8 +706,8 @@ export default {
         { value: 'action', sortable: false, divider: true, width: '90' },
         { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'18' },
         { text: 'Tanggal', value: 'date', divider: true, width: '150', excelColWidth:'18', isDateTime: true },
-        { text: 'Gudang', value: 'warehouseInitial', divider: true, width: '150', excelColWidth:'18' },
-        { text: 'Catatan', value: 'notes', width: '200', excelColWidth:'25' }
+        { text: 'Gudang', value: 'warehouseInitial', divider: true, width: '200', excelColWidth:'30' },
+        { text: 'Catatan', value: 'notes', width: '350', excelColWidth:'40' }
       ],
       template: [
         { text: 'Inisial Barang', value: 'inisialbarang', divider: true, width: '150', excelColWidth:'15' },
