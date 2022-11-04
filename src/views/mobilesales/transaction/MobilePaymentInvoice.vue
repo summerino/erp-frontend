@@ -60,8 +60,8 @@
                   dark
                   small
                   tile
-                  @click="approve"
-                  @shortkey="approve"
+                  @click="approveNotes"
+                  @shortkey="approveNotes"
                 >
                   Setujui
                 </v-btn>
@@ -169,7 +169,7 @@
       hide-overlay
       persistent
       scrollable
-      @keydown.esc="close"
+      @keydown.esc="close('add')"
     >
       <v-card :style="{ background: $vuetify.theme.themes[theme].surface }">
         <v-toolbar
@@ -467,6 +467,62 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <v-dialog
+    v-model="dialog.notes"
+    width="600"  
+    persistent
+    @keydown.esc="close('notes')"
+  >
+    <v-card>
+      <v-toolbar
+        color="indigo darken-1"
+        max-height="64"
+        dark
+      >
+        <v-toolbar-title>Catatan</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn
+          class="ma-2"
+          icon
+          @click="approve"
+        >
+          Simpan
+        </v-btn>
+        <v-divider vertical></v-divider>
+        <v-btn
+          icon
+          @click="close('notes')"
+        >
+          <v-icon>mdi-window-close</v-icon>
+        </v-btn>
+      </v-toolbar>
+
+      <v-card-text class="px-2 pt-1">
+          <v-card>
+            <v-card-text>
+              <v-form
+                ref="form"
+                v-model="valid"
+              >
+                <v-row dense>
+                  <v-col cols="12">
+                    <v-textarea
+                      v-model="notes"
+                      :rules="rules.max256chars"
+                      label="Catatan"
+                      counter="256"
+                      class="mt-0"
+                      rows="6"
+                    ></v-textarea>
+                  </v-col>
+                </v-row>
+              </v-form>
+            </v-card-text>
+          </v-card>
+      </v-card-text>
+    </v-card>
+  </v-dialog>
   </div>
 </template>
 
@@ -494,7 +550,8 @@ export default {
       { text: 'Status', value: 'mark', dataType: 'text' }
     ],
     dialog: {
-      add: false
+      add: false,
+      notes: false
     },
     tab: {
       user: null
@@ -524,7 +581,8 @@ export default {
     customers: [],
     employees: [],
     selected: [],
-    data: {}
+    data: {},
+    notes: ''
   }),
 
   created: function () {
@@ -587,6 +645,7 @@ export default {
       this.data = {}
       this.tab.user = 0
       this.selected = []
+      this.notes = ''
     },
     advancedSearch() {
       this.grid.search = null
@@ -627,8 +686,12 @@ export default {
           }
         })
     },
-    close() {
-      this.dialog.add = false
+    close(value) {
+      if (value === 'add') {
+        this.dialog.add = false
+      } else {
+        this.dialog.notes = false
+      }
       this.reset()
     },
     edit(item) {
@@ -673,9 +736,15 @@ export default {
     async exportExcel() {
       this.exportExcel.export()
     },
+    approveNotes() {
+      this.dialog.notes = true
+    },
     async approve() {
       let result = { success: false, message: '' }
-      const resp = await api.updatemaster(`${this.endpoint.mobileSales.paymentInvoice}/approve`, this.selected)
+      const resp = await api.updatemaster(`${this.endpoint.mobileSales.paymentInvoice}/approve`, {
+        data: this.selected,
+        notes: this.notes
+      })
       result = resp.data
       if (result.success) {
         this.$store.dispatch('app/showSuccess', result.message)
