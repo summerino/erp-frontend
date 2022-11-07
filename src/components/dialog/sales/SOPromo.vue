@@ -182,7 +182,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { randomNumber } from '@/helpers/math-helpers'
+import { dateToTick } from '@/helpers/date-helpers'
 import api from '@/services/axios.service'
 
 export default {
@@ -270,7 +270,7 @@ export default {
     addItem() {
       if (this.grid.data.length === 0 || (this.grid.data.slice(-1)[0]?.name ?? null)) {
         const item = {
-          id: randomNumber(-1, -1000),
+          id: -dateToTick(),
           name: null,
           promoMethod: 1,
           value: null,

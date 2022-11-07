@@ -549,8 +549,8 @@
 <script>
 import { mapState } from 'vuex'
 import { format, parseISO }  from 'date-fns'
-import { randomNumber } from '@/helpers/math-helpers'
 
+import { dateToTick } from '@/helpers/date-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
 
@@ -851,7 +851,7 @@ export default {
 
       if (data) {
         for (let i = 0; i < data.length; i++) {
-          const keyId = randomNumber(-1, -1000)
+          const keyId = -dateToTick()
           const newItem = {
             id: keyId,
             salesmanId: data[i].salesmanId,
@@ -871,7 +871,7 @@ export default {
             const lstCustomer = data[i].customerList
             for (let j = 0; j < lstCustomer.length; j++) {
               const newCustomer = {
-                id: randomNumber(-1, -1000),
+                id: -dateToTick(),
                 salesmanScheduleId: keyId,
                 custCode: lstCustomer[j].code
               }
@@ -884,7 +884,7 @@ export default {
     addItem(newItem) {
       const item = {
         ...newItem,
-        salesmanScheduleId: randomNumber(-1, -1000),
+        salesmanScheduleId: -dateToTick(),
         id: this.data.id,
         areaName1: this.getAreaName(newItem.areaId1 === null ? 0 : newItem.areaId1),
         areaName2: this.getAreaName(newItem.areaId2 === null ? 0 : newItem.areaId2),

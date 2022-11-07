@@ -1080,7 +1080,7 @@ import { format, parseISO, addDays } from 'date-fns'
 import { saveAs } from 'file-saver'
 import { sumBy as _sumBy } from 'lodash'
 
-import { randomNumber } from '@/helpers/math-helpers'
+import { dateToTick } from '@/helpers/date-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
 import activeTrans from '@/services/activeTransaction.service'
@@ -1438,7 +1438,7 @@ export default {
           if (bindToGridDet) {
             this.gridDet.data = response.data.tableData
             for (let i = 0; i < this.gridDet.data.length; i++) {
-              this.gridDet.data[i].id = randomNumber(-1, -1000)
+              this.gridDet.data[i].id = -dateToTick()
               this.gridDet.data[i].doCode = this.gridDet.data[i].code
               this.gridDet.data[i].code = this.data.code
               this.gridDet.data[i].state = 'A'
@@ -1649,7 +1649,7 @@ export default {
 
       if (this.gridDet.data.length === 0 || (this.gridDet.data.slice(-1)[0].doCode ?? null)) {
         const item = {
-          id: randomNumber(-1, -1000),
+          id: -dateToTick(),
           code: this.data.code,
           doCode: null,
           shipmentFee: 0,

@@ -334,7 +334,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { randomNumber } from '@/helpers/math-helpers'
+import { dateToTick } from '@/helpers/date-helpers'
 import api from '@/services/axios.service'
 
 export default {
@@ -460,7 +460,7 @@ export default {
       if (this.data.promoType !== 4) {
         if (this.grid.data.length === 0) {
           const item = {
-            id: randomNumber(-1, -1000),
+            id: -dateToTick(),
             fromQty: 1,
             value: null,
             toQty: Number.MAX_SAFE_INTEGER
@@ -468,7 +468,7 @@ export default {
           this.grid.data.push(item)
         } else if (this.grid.data[this.grid.data.length - 1].toQty !== Number.MAX_SAFE_INTEGER) {
           const item = {
-            id: randomNumber(-1, -1000),
+            id: -dateToTick(),
             fromQty: this.grid.data[this.grid.data.length - 1].toQty + 1,
             value: null,
             toQty: Number.MAX_SAFE_INTEGER
@@ -478,7 +478,7 @@ export default {
       } else if (this.data.promoType === 4) {
         if (this.gridPayment.data.length === 0 || (this.gridPayment.data.slice(-1)[0]?.paymentTermId ?? null)) {
           const item = {
-            id: randomNumber(-1, -1000),
+            id: -dateToTick(),
             paymentTermId: null,
             value: null
           }

@@ -506,8 +506,8 @@
 <script>
 import { mapState } from 'vuex'
 import { format, parseISO }  from 'date-fns'
-import { randomNumber } from '@/helpers/math-helpers'
 
+import { dateToTick } from '@/helpers/date-helpers'
 import api from '@/services/axios.service'
 
 import Confirm from '@/components/dialog/Confirm'
@@ -932,7 +932,7 @@ export default {
     newMappingVisitPlanDetail(item) {
       if (item.length) {
         for (let i = 0; i < item.length; i++) {
-          const newId = randomNumber(-1, -1000)
+          const newId = -dateToTick()
           const newItem = {
             id: newId,
             code: this.data.code,
@@ -944,7 +944,7 @@ export default {
           if (customerFilter.length) {
             for (let j = 0; j < customerFilter.length; j++) {
               const newCustomer = {
-                id: randomNumber(-1, -1000),
+                id: -dateToTick(),
                 visitPlanDetailId: newId,
                 custCode: customerFilter[j].code
               }

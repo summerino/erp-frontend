@@ -182,7 +182,7 @@ import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
 import { sumBy as _sumBy } from 'lodash'
 
-import { randomNumber } from '@/helpers/math-helpers'
+import { dateToTick } from '@/helpers/date-helpers'
 import api from '@/services/axios.service'
 
 export default {
@@ -264,7 +264,7 @@ export default {
       this.resetGeneralTransaction()
     },
     resetGeneralTransaction() {
-      this.data.id = randomNumber(-1, -1000)
+      this.data.id = -dateToTick()
       this.data.amount = 0
       this.data.total = 0
     },
@@ -355,7 +355,7 @@ export default {
         this.grid.data[i].transAmount = 0
       }
       for (let i = 0; i < this.selected.length; i++) {
-        this.selected[i].id = randomNumber(-1, -1000)
+        this.selected[i].id = -dateToTick()
         if (temp > 0) {
           if (temp > this.selected[i].remaining) {
             this.selected[i].transAmount = this.selected[i].remaining

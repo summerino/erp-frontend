@@ -767,7 +767,7 @@ import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
 import { sumBy as _sumBy } from 'lodash'
 
-import { randomNumber } from '@/helpers/math-helpers'
+import { dateToTick } from '@/helpers/date-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
 import activeTrans from '@/services/activeTransaction.service'
@@ -1288,7 +1288,7 @@ export default {
 
       if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemId ?? null)) {
         const item = {
-          id: randomNumber(-1, -1000),
+          id: -dateToTick(),
           code: this.data.code,
           itemId: null,
           itemName: null,
@@ -1526,7 +1526,7 @@ export default {
               this.gridItem.data = [...response.data.tableData]
               for (let i = 0; i < this.gridItem.data.length; i++) {
                 this.gridItem.data[i].transDetailId = this.gridItem.data[i].id
-                this.gridItem.data[i].id = randomNumber(-1, -1000)
+                this.gridItem.data[i].id = -dateToTick()
                 this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
                 this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyRcv
                 this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
@@ -1548,7 +1548,7 @@ export default {
               this.gridItem.data = [...response.data.tableData]
               for (let i = 0; i < this.gridItem.data.length; i++) {
                 this.gridItem.data[i].transDetailId = this.gridItem.data[i].id
-                this.gridItem.data[i].id = randomNumber(-1, -1000)
+                this.gridItem.data[i].id = -dateToTick()
                 this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
                 this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyRcv
                 this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty

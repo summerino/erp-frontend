@@ -393,7 +393,7 @@
 import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
 
-import { randomNumber } from '@/helpers/math-helpers'
+import { dateToTick } from '@/helpers/date-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
 
@@ -623,7 +623,7 @@ export default {
     },
     initiateFirstItem() {
       const item = {
-        id: randomNumber(-1, -1000),
+        id: -dateToTick(),
         unitToConvert: this.data.baseUnit,
         unitToConvertLabel: '= 1',
         unitEquivalent: this.data.baseUnit,
@@ -640,7 +640,7 @@ export default {
     addNewItem() {
       const lastMeasurement = this.gridItem.data[this.gridItem.data.length - 1].unitEquivalent
       const item = {
-        id: randomNumber(-1, -1000),
+        id: -dateToTick(),
         unitToConvert: lastMeasurement,
         unitToConvertLabel: '= 1',
         unitEquivalent: null,

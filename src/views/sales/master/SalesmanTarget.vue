@@ -588,7 +588,7 @@
 import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
 
-import { randomNumber } from '@/helpers/math-helpers'
+import { dateToTick } from '@/helpers/date-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
 
@@ -905,7 +905,7 @@ export default {
     addDetail() {
       if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemGroupId ?? null)) {
         const item = {
-          id: randomNumber(-1, -1000),
+          id: -dateToTick(),
           itemGroupId: null,
           itemSubGroupId: null,
           subGroup: null,
@@ -933,7 +933,7 @@ export default {
     addSubject() {
       if (this.gridSubject.data.length === 0 || (this.gridSubject.data.slice(-1)[0]?.salesmanId ?? null)) {
         const item = {
-          id: randomNumber(-1, -1000),
+          id: -dateToTick(),
           salesmanId: null
         }
         this.gridSubject.data.push(item)

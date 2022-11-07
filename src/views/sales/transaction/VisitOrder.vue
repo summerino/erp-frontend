@@ -812,8 +812,8 @@
 <script>
 import { mapState } from 'vuex'
 import { format, parseISO }  from 'date-fns'
-import { randomNumber } from '@/helpers/math-helpers'
 
+import { dateToTick } from '@/helpers/date-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
 import activeTrans from '@/services/activeTransaction.service'
@@ -1296,7 +1296,7 @@ export default {
                   this.getCustomerAddressByCode(customerList[i].code)
                     .then(result => { 
                       const item = {
-                        id: randomNumber(-1, -1000),
+                        id: -dateToTick(),
                         custCode: customerList[i].code,
                         replacingForSalesmanId: null,
                         visited: false,
@@ -1319,7 +1319,7 @@ export default {
     addItem() {
       if (this.gridCustomer.data.length === 0 || (this.gridCustomer.data.slice(-1)[0]?.custCode ?? null)) {
         const item = {
-          id: randomNumber(-1, -1000),
+          id: -dateToTick(),
           custCode: null,
           replacingForSalesmanId: null,
           visited: false,
@@ -1361,7 +1361,7 @@ export default {
     addItemInvoice() {
       if (this.gridInvoice.data.length === 0 || (this.gridInvoice.data.slice(-1)[0]?.invCode ?? null)) {
         const item = {
-          id: randomNumber(-1, -1000),
+          id: -dateToTick(),
           invCode: null,
           failCollect: false,
           notesFailCollect: null,
@@ -1559,7 +1559,7 @@ export default {
           for (let i = 0; i < data.length; i++) {
             if (this.gridInvoice.data.length === 0 || (this.gridInvoice.data.slice(-1)[0]?.invCode ?? null)) {
               const item = {
-                id: randomNumber(-1, -1000),
+                id: -dateToTick(),
                 invCode: null,
                 failCollect: false,
                 notesFailCollect: null,

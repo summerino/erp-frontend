@@ -929,7 +929,7 @@
 <script>
 import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
-import { sumBy as _sumBy } from 'lodash'
+import { map as _map, sumBy as _sumBy } from 'lodash'
 
 import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
@@ -1535,7 +1535,7 @@ export default {
     addItem() {
       if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemId ?? null)) {
         const item = {
-          id: randomNumber(-1, -1000),
+          id: randomNumber(-1, -1000, _map(this.gridItem.data, 'id')),
           code: this.data.code,
           itemId: null,
           itemName: null,

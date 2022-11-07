@@ -116,6 +116,7 @@
 <script>
 import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
+import { map as _map } from 'lodash'
 import { randomNumber } from '@/helpers/math-helpers'
 
 import api from '@/services/axios.service'
@@ -220,7 +221,7 @@ export default {
     save() {
       for (let i = 0; i < this.selected.length; i++) {
         const item = {
-          id: randomNumber(-1, -1000),
+          id: randomNumber(-1, -1000, _map(this.gridDetail, 'id')),
           code: this.eiCode,
           transCode: null,
           date: null,

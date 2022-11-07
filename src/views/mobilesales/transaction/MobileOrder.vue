@@ -749,7 +749,7 @@ import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
 import { sumBy as _sumBy, cloneDeep as _cloneDeep } from 'lodash'
 
-import { randomNumber } from '@/helpers/math-helpers'
+import { dateToTick } from '@/helpers/date-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
 
@@ -1030,7 +1030,7 @@ export default {
     addItem() {
       if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0].itemId ?? null)) {
         const item = {
-          id: randomNumber(-1, -1000),
+          id: -dateToTick(),
           code: this.data.code,
           itemId: null,
           itemCode: null,
@@ -1437,7 +1437,7 @@ export default {
                   if (dataPromo[i].itemDetails[j].isPercentage) {
                     totalDisc += gridData[k].unitPrice * (dataPromo[i].itemDetails[j].valuePercentage / 100)
                     discPromo.push({
-                      id: randomNumber(-1, -1000),
+                      id: -dateToTick(),
                       promoDetailId: dataPromo[i].itemDetails[j].id,
                       promoCode: dataPromo[i].code,
                       name: dataPromo[i].name, 
@@ -1452,7 +1452,7 @@ export default {
                   } else {
                     totalDisc += dataPromo[i].itemDetails[j].valueAmount
                     discPromo.push({
-                      id: randomNumber(-1, -1000),
+                      id: -dateToTick(),
                       promoDetailId: dataPromo[i].itemDetails[j].id,
                       promoCode: dataPromo[i].code,
                       name: dataPromo[i].name, 
@@ -1476,7 +1476,7 @@ export default {
                         if (itemUnit.seq >= promoUnit.seq) {
                           totalDisc += gridData[k].unitPrice * (tierData.value / 100)
                           discPromo.push({
-                            id: randomNumber(-1, -1000),
+                            id: -dateToTick(),
                             promoDetailId: dataPromo[i].itemDetails[j].id,
                             promoCode: dataPromo[i].code,
                             name: dataPromo[i].name, 
@@ -1492,7 +1492,7 @@ export default {
                       } else if (gridData[k].unitId === tierData.saleUnit) {
                         totalDisc += gridData[k].unitPrice * (tierData.value / 100)
                         discPromo.push({
-                          id: randomNumber(-1, -1000),
+                          id: -dateToTick(),
                           promoDetailId: dataPromo[i].itemDetails[j].id,
                           promoCode: dataPromo[i].code,
                           name: dataPromo[i].name, 
@@ -1511,7 +1511,7 @@ export default {
                       if (itemUnit.seq >= promoUnit.seq) {
                         totalDisc += tierData.value
                         discPromo.push({
-                          id: randomNumber(-1, -1000),
+                          id: -dateToTick(),
                           promoDetailId: dataPromo[i].itemDetails[j].id,
                           promoCode: dataPromo[i].code,
                           name: dataPromo[i].name, 
@@ -1527,7 +1527,7 @@ export default {
                     } else if (gridData[k].unitId === tierData.saleUnit) {
                       totalDisc += tierData.value
                       discPromo.push({
-                        id: randomNumber(-1, -1000),
+                        id: -dateToTick(),
                         promoDetailId: dataPromo[i].itemDetails[j].id,
                         promoCode: dataPromo[i].code,
                         name: dataPromo[i].name, 
@@ -1556,7 +1556,7 @@ export default {
                         freeItem.unitName = freeItem.units.find(x => x.id === parseInt(tierData.unitFreeGood)).unitEquivalent
                         const multipleValue = Math.floor(gridData[k].qty / tierData.fromQty)
                         const item = {
-                          id: randomNumber(-1, -1000),
+                          id: -dateToTick(),
                           initial: freeItem.initial,
                           name: freeItem.name,
                           orderDetailId: gridData[k].id,
@@ -1581,7 +1581,7 @@ export default {
                       this.unitItemChange(freeItem)
                       freeItem.unitName = freeItem.units.find(x => x.id === parseInt(tierData.unitFreeGood)).unitEquivalent
                       const item = {
-                        id: randomNumber(-1, -1000),
+                        id: -dateToTick(),
                         initial: freeItem.initial,
                         name: freeItem.name,
                         orderDetailId: gridData[k].id,
@@ -1605,7 +1605,7 @@ export default {
                     if (tierData.isPercentage) {
                       totalDisc += gridData[k].unitPrice * (tierData.value / 100)
                       discPromo.push({
-                        id: randomNumber(-1, -1000),
+                        id: -dateToTick(),
                         promoDetailId: dataPromo[i].itemDetails[j].id,
                         promoCode: dataPromo[i].code,
                         name: dataPromo[i].name, 
@@ -1620,7 +1620,7 @@ export default {
                     } else {
                       totalDisc += tierData.value
                       discPromo.push({
-                        id: randomNumber(-1, -1000),
+                        id: -dateToTick(),
                         promoDetailId: dataPromo[i].itemDetails[j].id,
                         promoCode: dataPromo[i].code, 
                         name: dataPromo[i].name, 
@@ -1644,7 +1644,7 @@ export default {
                   if (dataPromo[i].itemDetails[j].isPercentage) {
                     totalDisc += gridData[k].unitPrice * (dataPromo[i].itemDetails[j].valuePercentage / 100)
                     discPromo.push({
-                      id: randomNumber(-1, -1000),
+                      id: -dateToTick(),
                       promoDetailId: dataPromo[i].itemDetails[j].id,
                       promoCode: dataPromo[i].code,
                       name: dataPromo[i].name, 
@@ -1659,7 +1659,7 @@ export default {
                   } else {
                     totalDisc += dataPromo[i].itemDetails[j].valueAmount
                     discPromo.push({
-                      id: randomNumber(-1, -1000),
+                      id: -dateToTick(),
                       promoDetailId: dataPromo[i].itemDetails[j].id,
                       promoCode: dataPromo[i].code, 
                       name: dataPromo[i].name, 
@@ -1679,7 +1679,7 @@ export default {
                     if (dataPromo[i].itemDetails[j].isPercentage) {
                       totalDisc += gridData[k].unitPrice * (tierData.value / 100)
                       discPromo.push({
-                        id: randomNumber(-1, -1000),
+                        id: -dateToTick(),
                         promoDetailId: dataPromo[i].itemDetails[j].id,
                         promoCode: dataPromo[i].code, 
                         name: dataPromo[i].name, 
@@ -1694,7 +1694,7 @@ export default {
                     } else {
                       totalDisc += tierData.value
                       discPromo.push({
-                        id: randomNumber(-1, -1000),
+                        id: -dateToTick(),
                         promoDetailId: dataPromo[i].itemDetails[j].id,
                         promoCode: dataPromo[i].code,
                         name: dataPromo[i].name, 
@@ -1723,7 +1723,7 @@ export default {
                         freeItem.unitName = freeItem.units.find(x => x.id === parseInt(tierData.unitFreeGood)).unitEquivalent
                         const multipleValue = Math.floor(gridData[k].qty / tierData.fromQty)
                         const item = {
-                          id: randomNumber(-1, -1000),
+                          id: -dateToTick(),
                           initial: freeItem.initial,
                           name: freeItem.name,
                           orderDetailId: gridData[k].id,
@@ -1748,7 +1748,7 @@ export default {
                       this.unitItemChange(freeItem)
                       freeItem.unitName = freeItem.units.find(x => x.id === parseInt(tierData.unitFreeGood)).unitEquivalent
                       const item = {
-                        id: randomNumber(-1, -1000),
+                        id: -dateToTick(),
                         initial: freeItem.initial,
                         name: freeItem.name,
                         orderDetailId: gridData[k].id,
@@ -1772,7 +1772,7 @@ export default {
                     if (tierData.isPercentage) {
                       totalDisc += gridData[k].unitPrice * (tierData.value / 100)
                       discPromo.push({
-                        id: randomNumber(-1, -1000),
+                        id: -dateToTick(),
                         promoDetailId: dataPromo[i].itemDetails[j].id,
                         promoCode: dataPromo[i].code,
                         name: dataPromo[i].name, 
@@ -1787,7 +1787,7 @@ export default {
                     } else {
                       totalDisc += tierData.value
                       discPromo.push({
-                        id: randomNumber(-1, -1000),
+                        id: -dateToTick(),
                         promoDetailId: dataPromo[i].itemDetails[j].id,
                         promoCode: dataPromo[i].code, 
                         name: dataPromo[i].name, 

@@ -528,7 +528,7 @@ import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
 import { sumBy as _sumBy } from 'lodash'
 
-import { randomNumber } from '@/helpers/math-helpers'
+import { dateToTick } from '@/helpers/date-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
 import activeTrans from '@/services/activeTransaction.service'
@@ -786,7 +786,7 @@ export default {
     addDetail() {
       if (this.gridDetail.data.length === 0 || (this.gridDetail.data.slice(-1)[0]?.coaCode ?? null)) {
         const item = {
-          id: randomNumber(-1, -1000),
+          id: -dateToTick(),
           code: this.data.code,
           coaCode: null,
           debitValue: 0,

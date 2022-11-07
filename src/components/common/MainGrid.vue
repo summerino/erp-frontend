@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import CopyLabel from '@/components/common/CopyLabel'
+import CopyLabel from '@/components/common/CopyLabel.vue'
 import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
 

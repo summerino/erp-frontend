@@ -144,9 +144,9 @@
 <script>
 import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
-import { randomNumber } from '@/helpers/math-helpers'
 import { sumBy as _sumBy } from 'lodash'
 
+import { dateToTick } from '@/helpers/date-helpers'
 import api from '@/services/axios.service'
 
 export default {
@@ -297,7 +297,7 @@ export default {
     save() {
       for (let i = 0; i < this.selected.length; i++) {
         const item = {
-          id: randomNumber(-1, -1000),
+          id: -dateToTick(),
           code: this.dpCode,
           transCode: null,
           volume: 0,

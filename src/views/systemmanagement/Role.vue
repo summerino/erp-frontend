@@ -382,8 +382,8 @@
 import { mapState } from 'vuex'
 import { format, parseISO }  from 'date-fns'
 import { uniq as _uniq, sortBy as _sortBy } from 'lodash'
-import { randomNumber } from '@/helpers/math-helpers'
 
+import { dateToTick } from '@/helpers/date-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
 
@@ -662,7 +662,7 @@ export default {
     },
     addSelection(id) {
       const item = {
-        id: randomNumber(-1, -1000),
+        id: -dateToTick(),
         menuId: id,
         isActive: true,
         updatedDate: format(new Date(), 'yyyy-MM-dd HH:mm:ss')
@@ -751,7 +751,7 @@ export default {
     },
     addSelectionAction(itemId, itemAction) {
       const item = {
-        id: randomNumber(-1, -1000),
+        id: -dateToTick(),
         menuId: itemId,
         actionId: itemAction,
         updatedDate: format(new Date(), 'yyyy-MM-dd HH:mm:ss')

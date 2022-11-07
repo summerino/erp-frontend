@@ -660,7 +660,7 @@
 import { mapState } from 'vuex'
 import { add, format, parseISO }  from 'date-fns'
 
-import { randomNumber } from '@/helpers/math-helpers'
+import { dateToTick } from '@/helpers/date-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
 
@@ -936,7 +936,7 @@ export default {
       }
       if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0]?.itemId ?? null)) {
         const item = {
-          id: randomNumber(-1, -1000),
+          id: -dateToTick(),
           itemId: null,
           name: null,
           qty: 1,

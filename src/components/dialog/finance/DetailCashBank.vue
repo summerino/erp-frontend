@@ -247,7 +247,7 @@ import { mapState } from 'vuex'
 import { format, parseISO } from 'date-fns'
 import { sumBy as _sumBy } from 'lodash'
 
-import { randomNumber } from '@/helpers/math-helpers'
+import { dateToTick } from '@/helpers/date-helpers'
 import api from '@/services/axios.service'
 
 export default {
@@ -362,7 +362,7 @@ export default {
       this.getTypeCoaCode()
     },
     resetGeneralTransaction() {
-      this.data.id = randomNumber(-1, -1000)
+      this.data.id = -dateToTick()
       this.data.notes = ''
       this.data.amount = 0
       this.data.total = 0
@@ -547,7 +547,7 @@ export default {
         }
 
         const model = {
-          id: randomNumber(-1, -1000),
+          id: -dateToTick(),
           transAmount: this.data.amount,
           notes: this.data.notes,
           type: this.data.type,
@@ -572,7 +572,7 @@ export default {
 
           this.selected[i].coaCode = this.typeCoaCode
           this.selected[i].coaName = this.typeCoaName
-          this.selected[i].id = randomNumber(-1, -1000)
+          this.selected[i].id = -dateToTick()
           this.selected[i].notes = this.selected[i][field]
           this.selected[i].type = this.data.type
           this.selected[i].typeAmount = this.getTypeAmount()

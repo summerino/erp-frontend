@@ -392,8 +392,9 @@
 <script>
 import { mapState } from 'vuex'
 import { format, parseISO }  from 'date-fns'
-import { randomNumber } from '@/helpers/math-helpers'
+import { map as _map } from 'lodash'
 
+import { randomNumber } from '@/helpers/math-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
 
@@ -622,7 +623,7 @@ export default {
     addItem() {
       if (this.gridItem.data.length < 5) {
         const item = {
-          id: randomNumber(-1, -1000),
+          id: randomNumber(-1, -1000, _map(this.gridItem.data, 'id')),
           name: null,
           value: null,
           state: 'A'

@@ -572,7 +572,7 @@
 import { mapState } from 'vuex'
 import { format, parseISO }  from 'date-fns'
 
-import { randomNumber } from '@/helpers/math-helpers'
+import { dateToTick } from '@/helpers/date-helpers'
 import api from '@/services/axios.service'
 import auth from '@/services/authorization.service'
 import activeTrans from '@/services/activeTransaction.service'
@@ -876,7 +876,7 @@ export default {
         let item = {}
         if (this.data.type === 2) {
           item = {
-            id: randomNumber(-1, -1000),
+            id: -dateToTick(),
             itemId: null,
             name: null,
             unitName: null,
@@ -892,7 +892,7 @@ export default {
           }
         } else {
           item = {
-            id: randomNumber(-1, -1000),
+            id: -dateToTick(),
             itemId: null,
             name: null,
             units: [],

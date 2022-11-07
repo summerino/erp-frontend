@@ -178,7 +178,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { randomNumber } from '@/helpers/math-helpers'
+import { dateToTick } from '@/helpers/date-helpers'
 
 import api from '@/services/axios.service'
 
@@ -248,7 +248,7 @@ export default {
           this.data = response.data.tableData
           for (let i = 0; i < this.data.length; i++) {
             const item = {
-              id: randomNumber(-1, -1000),
+              id: -dateToTick(),
               code: this.rowItem.code,
               itemId: this.data[i].itemId,
               uomId: this.data[i].uomId,
@@ -282,7 +282,7 @@ export default {
           if (this.dataFreeItem.length > 0) {
             for (let i = 0; i < this.dataFreeItem.length; i++) {
               const item = {
-                id: randomNumber(-1, -1000),
+                id: -dateToTick(),
                 code: this.rowItem.code,
                 itemId: this.dataFreeItem[i].itemId,
                 uomId: this.dataFreeItem[i].uomId,
@@ -331,7 +331,7 @@ export default {
     addItem() {
       if (this.grid.data.length === 0 || (this.grid.data.slice(-1)[0]?.itemId ?? null)) {
         const item = {
-          id: randomNumber(-1, -1000),
+          id: -dateToTick(),
           code: this.rowItem.code,
           itemId: null,
           uomId: null,
@@ -353,7 +353,7 @@ export default {
       if (this.checkAll) {
         for (let i = 0; i < this.data.length; i++) {
           const item = {
-            id: randomNumber(-1, -1000),
+            id: -dateToTick(),
             code: this.rowItem.code,
             itemId: this.data[i].itemId,
             uomId: this.data[i].uomId,
