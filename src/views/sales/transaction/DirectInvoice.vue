@@ -1554,6 +1554,11 @@ export default {
         return
       }
 
+      if (this.checkCoaCodePromo(this.gridItem.data)) {
+        this.$store.dispatch('app/showInfo', 'Tidak bisa melakukan simpan karena terdapat promo detail dengan kode akun kosong.')
+        return
+      }
+
       const data = this.data
       const respValidation = await api.updatemaster(`${this.endpoint.sales.order}/check-over-limit`, data)
       if (respValidation.data.success) {
@@ -2003,6 +2008,15 @@ export default {
           }
         }
       }
+    },
+    checkCoaCodePromo(item) {
+      let result = false
+
+      for (let i = 0; i < item.length; i++) {
+        result = item[i].discPromo.every(x => x.coaCode === null || x.coaCode === undefined || x.coaCode === '')
+      }      
+
+      return result
     }
   }
 }
