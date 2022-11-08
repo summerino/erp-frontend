@@ -1239,11 +1239,10 @@ export default {
         })
     },
     onChangeType() {
-      if (this.isTypeIn) {
-        this.data.warehouseCodeFrom = null
-        this.data.warehouseCodeTo = null
-        this.gridDet.data = []
-      }
+      this.data.warehouseCodeFrom = null
+      this.data.warehouseCodeTo = null
+      this.data.originTransferCode = null
+      this.gridDet.data = []
     },
     getUnitItemLists(item) {
       api.getAll(`${this.endpoint.inventory.uom}/item`, {
