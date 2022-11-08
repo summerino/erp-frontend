@@ -509,9 +509,8 @@
                   <v-col cols="12">
                     <v-textarea
                       v-model="notes"
-                      :rules="rules.max256chars"
                       label="Catatan"
-                      counter="256"
+                      counter="230"
                       class="mt-0"
                       rows="6"
                     ></v-textarea>
@@ -750,6 +749,7 @@ export default {
         this.$store.dispatch('app/showSuccess', result.message)
         this.reset()
         this.getList()
+        this.dialog.notes = false
       }
     },
     async reject() {
