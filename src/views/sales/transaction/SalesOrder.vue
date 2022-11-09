@@ -1927,7 +1927,6 @@ export default {
           state: 'A',
           discPromo: []
         }
-        console.log(item)
         this.gridItem.data.push(item)
 
         setTimeout(() => {
