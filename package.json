@@ -3,10 +3,10 @@
   "version": "22.11.9",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "dev": "npm run serve"
+    "serve": "SET NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service serve",
+    "build": "SET NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build",
+    "lint": "SET NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service lint",
+    "dev": "SET NODE_OPTIONS=--openssl-legacy-provider && npm run serve"
   },
   "dependencies": {
     "@boldreports/javascript-reporting-controls": "^4.2.58",
