@@ -1552,7 +1552,7 @@ export default {
       if (this.isMemoDuplicate()) {
         this.$store.dispatch('app/showInfo', 'Tidak bisa melakukan simpan karena terdapat kredit memo dengan kode yang sama.')
         return
-      }
+      }      
 
       if (this.checkCoaCodePromo(this.gridItem.data)) {
         this.$store.dispatch('app/showInfo', 'Tidak bisa melakukan simpan karena terdapat promo detail dengan kode akun kosong.')
@@ -2011,9 +2011,11 @@ export default {
     },
     checkCoaCodePromo(item) {
       let result = false
+      const unusedPromo = this.gridPromo.data.filter(x => !x.isActive).map(x => x.promoCode)
 
       for (let i = 0; i < item.length; i++) {
-        result = item[i].discPromo.every(x => x.coaCode === null || x.coaCode === undefined || x.coaCode === '')
+        item[i].discPromo = item[i].discPromo.filter(x => !unusedPromo.includes(x.promoCode))
+        result = item[i].discPromo.some(x => x.coaCode === null || x.coaCode === '')
       }      
 
       return result
