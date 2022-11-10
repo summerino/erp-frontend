@@ -137,6 +137,9 @@
             <span class="text-caption">Cetak</span>
           </v-tooltip>
         </template>
+        <template v-slot:[`item.originTransferCode`]="{ item }">
+          {{ item.originTransferCode || '-' }}
+        </template>
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
@@ -742,6 +745,8 @@ export default {
         value: 'DT'
       }]
     }, {
+      text: 'Kd. Transf. Keluar', value: 'originTransferCode', dataType: 'text'
+    }, {
       text: 'Gudang Asal', value: 'warehouseInitialFrom', dataType: 'text'
     }, {
       text: 'Gudang Tujuan', value: 'warehouseInitialTo', dataType: 'text'
@@ -764,6 +769,7 @@ export default {
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Tipe', value: 'typeInitial', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Kd. Transf. Keluar', value: 'originTransferCode', divider: true, width: '180', excelColWidth:'20' },
         { text: 'Gudang Asal', value: 'warehouseInitialFrom', divider: true, width: '180', excelColWidth:'20' },
         { text: 'Gudang Tujuan', value: 'warehouseInitialTo', divider: true, width: '180', excelColWidth:'20' },
         { text: 'Status', value: 'mark', width: '50' }
