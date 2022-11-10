@@ -17,6 +17,7 @@ steps:
 
 - script: |
     npm install
+    export NODE_OPTIONS=--openssl-legacy-provider
     npm run build -- --mode staging
   displayName: 'npm install and build'
 
