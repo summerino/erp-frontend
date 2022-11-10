@@ -146,6 +146,9 @@
         <template v-slot:[`item.coaCode`]="{ item }">
           {{ item.coaCode }} - {{ item.coaName }}
         </template>
+        <template v-slot:[`item.createdDate`]="{ item }">
+          {{ item.createdDate | formatDate('dd-MMM-yyyy') }}
+        </template>
         <template v-slot:[`item.mark`]="{ item }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -684,6 +687,8 @@ export default {
     }, {
       text: 'Catatan', value: 'notes', dataType: 'text'
     }, {
+      text: 'Dibuat Oleh', value: 'createdInitial', dataType: 'text'
+    }, {
       text: 'Status', value: 'mark', dataType: 'text'
     }],
     dialog: {
@@ -699,7 +704,7 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '85' },
+        { value: 'action', sortable: false, divider: true, width: '110' },
         { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'18' },
         // { text: 'Kode Voucher', value: 'vouCode', divider: true, width: '160', excelColWidth:'18' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'15', isDateTime: true },
@@ -707,6 +712,8 @@ export default {
         { text: 'Tipe', value: 'typeName', divider: true, width: '90', excelColWidth:'17' },
         { text: 'Akun', value: 'coaCode', divider: true, width: '130', excelColWidth:'40', customValues: ['coaCode', 'coaName'] },
         { text: 'Catatan', value: 'notes', divider: true, width: '150', excelColWidth:'30' },
+        { text: 'Dibuat Oleh', value: 'createdInitial', divider: true, width: '100', excelColWidth:'18' },
+        { text: 'Tanggal Dibuat', value: 'createdDate', align: 'right', divider: true, width: '100', excelColWidth:'15', isDateTime: true },
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
