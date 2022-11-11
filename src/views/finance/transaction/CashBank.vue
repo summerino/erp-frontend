@@ -147,7 +147,7 @@
           {{ item.coaCode }} - {{ item.coaName }}
         </template>
         <template v-slot:[`item.createdDate`]="{ item }">
-          {{ item.createdDate | formatDate('dd-MMM-yyyy') }}
+          {{ item.createdDate | formatDate('dd-MMM-yyyy HH:mm:ss') }}
         </template>
         <template v-slot:[`item.mark`]="{ item }">
           <v-tooltip bottom>
@@ -687,9 +687,9 @@ export default {
     }, {
       text: 'Catatan', value: 'notes', dataType: 'text'
     }, {
-      text: 'Dibuat Oleh', value: 'createdInitial', dataType: 'text'
-    }, {
       text: 'Status', value: 'mark', dataType: 'text'
+    }, {
+      text: 'Dibuat Oleh', value: 'createdInitial', dataType: 'text'
     }],
     dialog: {
       add: false
@@ -704,17 +704,17 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '110' },
-        { text: 'Kode', value: 'code', divider: true, width: '100', excelColWidth:'18' },
+        { value: 'action', sortable: false, divider: true, width: '120' },
+        { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'18' },
         // { text: 'Kode Voucher', value: 'vouCode', divider: true, width: '160', excelColWidth:'18' },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '100', excelColWidth:'15', isDateTime: true },
-        { text: 'Nilai', value: 'amount', divider: true, align:'right', width: '100', excelColWidth:'15', isCurrency: true },
-        { text: 'Tipe', value: 'typeName', divider: true, width: '90', excelColWidth:'17' },
-        { text: 'Akun', value: 'coaCode', divider: true, width: '130', excelColWidth:'40', customValues: ['coaCode', 'coaName'] },
-        { text: 'Catatan', value: 'notes', divider: true, width: '150', excelColWidth:'30' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+        { text: 'Nilai', value: 'amount', divider: true, align:'right', width: '120', excelColWidth:'15', isCurrency: true },
+        { text: 'Tipe', value: 'typeName', divider: true, width: '150', excelColWidth:'17' },
+        { text: 'Akun', value: 'coaCode', divider: true, width: '200', excelColWidth:'40', customValues: ['coaCode', 'coaName'] },
+        { text: 'Catatan', value: 'notes', divider: true, width: '250', excelColWidth:'40' },
+        { text: 'Status', value: 'mark', divider: true, width: '50' },
         { text: 'Dibuat Oleh', value: 'createdInitial', divider: true, width: '100', excelColWidth:'18' },
-        { text: 'Tanggal Dibuat', value: 'createdDate', align: 'right', divider: true, width: '100', excelColWidth:'15', isDateTime: true },
-        { text: 'Status', value: 'mark', width: '50' }
+        { text: 'Tanggal Dibuat', value: 'createdDate', align: 'right', width: '160', excelColWidth:'23', isFullDateTime: true }
       ],
       data: [],
       options: {
