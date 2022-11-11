@@ -17,6 +17,10 @@ module.exports = {
 
   // https://cli.vuejs.org/config/#configurewebpack
   configureWebpack: {
+    output: {
+      chunkFilename: 'js/[name].[contenthash].js',
+      filename: 'js/[name].[contenthash].js'
+    },
     optimization: {
       splitChunks: {
         chunks: 'all',
