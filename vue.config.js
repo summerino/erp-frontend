@@ -19,7 +19,7 @@ module.exports = {
   configureWebpack: {
     output: {
       chunkFilename: 'js/[name].[contenthash].js',
-      filename: 'js/[name].[contenthash].js'
+      filename: process.env.NODE_ENV === 'development' ? 'js/[name].[hash].js' : 'js/[name].[contenthash].js'
     },
     optimization: {
       splitChunks: {

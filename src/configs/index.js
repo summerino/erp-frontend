@@ -12,7 +12,7 @@ export default {
   // product display information
   product: {
     name: 'Sahassa ERP',
-    version: '22.11.11'
+    version: '22.11.14'
   },
 
   // google maps
