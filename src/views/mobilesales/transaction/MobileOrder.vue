@@ -1845,7 +1845,7 @@ export default {
       this.data = mainData    
     },
     showPromoDialog(item) {
-      this.$refs.soPr.open(item, this.accounts)
+      this.$refs.soPr.open(item, this.accounts, true)
     },
     closePopup() {
       this.reset()
