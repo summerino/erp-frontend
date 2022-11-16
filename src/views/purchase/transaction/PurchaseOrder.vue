@@ -967,6 +967,8 @@ export default {
     }, {
       text: 'Pemasok', value: 'supName', dataType: 'text'
     }, {
+      text: 'Catatan', value: 'notes', dataType: 'text'
+    }, {
       text: 'Status', value: 'mark', dataType: 'text'
     }],
     dialog: {
@@ -988,6 +990,7 @@ export default {
         { text: 'Diminta Oleh', value: 'requestInitial', divider: true, width: '200', excelColWidth:'23' },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
         { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
+        { text: 'Catatan', value: 'notes', divider: true, width: '200' },
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
