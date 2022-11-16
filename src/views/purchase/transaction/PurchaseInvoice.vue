@@ -1127,7 +1127,7 @@ export default {
       }
       api.getAll(this.endpoint.purchase.invoice, {
         params: {
-          search: this.grid.search,
+          search: this.dialog.add ? null : this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
           take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
           sorts: JSON.stringify(sorts),
@@ -1144,7 +1144,7 @@ export default {
             } else {
               api.getAll(this.endpoint.purchase.invoice, {
                 params: {
-                  search: this.grid.search,
+                  search: this.dialog.add ? null : this.grid.search,
                   skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
                   take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
                   sorts: JSON.stringify(sorts),
