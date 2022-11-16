@@ -53,7 +53,7 @@
                 </v-app-bar>
 
                 <v-data-table
-                  :headers="grid.columns"
+                  :headers="!fromMobile ? grid.columns : grid.columnsMobile"
                   :items="grid.data"
                   :items-per-page="-1"
                   height="300"
@@ -199,6 +199,13 @@ export default {
           { text: 'Harga Bersih', value: 'nettPrice', align: 'right', divider: true, width: '100' },
           { text: 'Akun', value: 'coaCode', divider: true, width: '100' }
         ],
+        columnsMobile: [
+          { value: 'action', sortable: false, divider: true, width: '30' },
+          { text: 'Nama Diskon', value: 'name', divider: true, width: '100' },
+          { text: 'Tipe', value: 'promoMethod', divider: true, width: '100' },
+          { text: 'Nilai', value: 'value', align: 'right', divider: true, width: '100' },
+          { text: 'Harga Bersih', value: 'nettPrice', align: 'right', width: '100' }
+        ],
         data: [],
         height: 100
       },
@@ -206,7 +213,8 @@ export default {
       promoMethod: [{ id: 1, name: 'Persen' }, { id: 2, name: 'Nominal' }],
       accounts: [],
       sysCoa: null,
-      valid: false
+      valid: false,
+      fromMobile: false
     }
   },
 
@@ -221,11 +229,13 @@ export default {
     reset() {
       this.grid.data = []
       this.data = []
+      this.fromMobile = false
     },
-    open(item, accounts) {
+    open(item, accounts, fromMobile = false) {
       this.reset()
       this.getSysCOA()
       this.dialog = true
+      this.fromMobile = fromMobile
       this.accounts = accounts
       if (item.discPromo) {
         for (let i = 0; i < item.discPromo.length; i++) {
