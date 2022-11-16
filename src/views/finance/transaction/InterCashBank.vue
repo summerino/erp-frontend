@@ -675,11 +675,11 @@ export default {
     },
     grid: {
       columns: [
-        { value: 'action', sortable: false, divider: true, width: '135' },
-        { text: 'Kode', value: 'code', divider: true, width: '130', excelColWidth:'18' },
-        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '110', excelColWidth:'15', isDateTime: true },
-        { text: 'Akun Asal', value: 'coaCode', divider: true, width: '180', excelColWidth:'40', customValues: ['coaCode', 'coaNameFrom'] },
-        { text: 'Akun Tujuan', value: 'coaCodeTo', divider: true, width: '180', excelColWidth:'40', customValues: ['coaCodeTo', 'coaNameTo'] },
+        { value: 'action', sortable: false, divider: true, width: '145' },
+        { text: 'Kode', value: 'code', divider: true, width: '150', excelColWidth:'18' },
+        { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+        { text: 'Akun Asal', value: 'coaCode', divider: true, width: '200', excelColWidth:'40', customValues: ['coaCode', 'coaNameFrom'] },
+        { text: 'Akun Tujuan', value: 'coaCodeTo', divider: true, width: '200', excelColWidth:'40', customValues: ['coaCodeTo', 'coaNameTo'] },
         { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
         { text: 'Status', value: 'mark', align: 'center', width: '50' }
       ],

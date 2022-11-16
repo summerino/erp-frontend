@@ -990,7 +990,7 @@ export default {
         { text: 'Diminta Oleh', value: 'requestInitial', divider: true, width: '200', excelColWidth:'23' },
         { text: 'Pemasok', value: 'supName', divider: true, width: '200', excelColWidth:'23' },
         { text: 'Total', value: 'total', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
-        { text: 'Catatan', value: 'notes', divider: true, width: '200' },
+        { text: 'Catatan', value: 'notes', divider: true, width: '250', excelColWidth:'60' },
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
