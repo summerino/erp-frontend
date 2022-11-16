@@ -808,7 +808,7 @@ export default {
       
       api.getAll(this.endpoint.general.customer.customer, {
         params: {
-          search: this.grid.search,
+          search: !this.main ? null : this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
           take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
           sorts: JSON.stringify(sorts)
