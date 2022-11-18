@@ -162,6 +162,9 @@
         <template v-slot:[`item.total`]="{ item }">
           {{ item.total | formatCurrency }}
         </template>
+        <template v-slot:[`item.salesInitial`]="{ item }">
+          {{ `${item.salesInitial} - ${item.salesName}` }}
+        </template>
         <template v-slot:[`item.mark`]="{ item }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -1009,7 +1012,9 @@ export default {
     }, {
       text: 'Gudang', value: 'warehouseCode', dataType: 'text'
     }, {
-      text: 'Dijual Oleh', value: 'salesInitial', dataType: 'text'
+      text: 'Inisial Penjual', value: 'salesInitial', dataType: 'text'
+    }, {
+      text: 'Nama Penjual', value: 'salesName', dataType: 'text'
     }, {
       text: 'Status', value: 'mark', dataType: 'text'
     }],
@@ -1034,7 +1039,7 @@ export default {
         { text: 'Tipe', value: 'typeName', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Pelanggan', value: 'custName', divider: true, width: '220', excelColWidth:'35', customValues: ['custCode', 'custName'] },
         { text: 'Gudang', value: 'warehouseCode', divider: true, width: '100', excelColWidth:'13' },
-        { text: 'Dijual Oleh', value: 'salesInitial', divider: true, width: '180', excelColWidth:'23' },
+        { text: 'Penjual', value: 'salesInitial', divider: true, width: '180', excelColWidth:'23' },
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
