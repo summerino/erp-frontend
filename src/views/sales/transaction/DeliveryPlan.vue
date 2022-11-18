@@ -168,6 +168,9 @@
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
+        <template v-slot:[`item.driverInitial`]="{ item }">
+          {{ `${item.driverInitial} - ${item.driverName}` }}
+        </template>
         <template v-slot:[`item.total`]="{ item }">
           {{ item.total | formatCurrency }}
         </template>
@@ -812,7 +815,8 @@ export default {
     filterfields: [
       { text: 'Kode', value: 'code', dataType: 'text' },
       { text: 'No. Kendaraan', value: 'vehicleNo', dataType: 'text' },
-      { text: 'Supir', value: 'driverInitial', dataType: 'text' },
+      { text: 'Initial Supir', value: 'driverInitial', dataType: 'text' },
+      { text: 'Nama Supir', value: 'driverName', dataType: 'text' },
       { text: 'Gudang', value: 'warehouseInitial', dataType: 'text' }, 
       { text: 'Tanggal', value: 'date', dataType: 'datetime' },
       { text: 'Status', value: 'mark', dataType: 'text' }     
