@@ -135,7 +135,8 @@ export default {
   data: () => ({
     filterFields: [{ text: 'Kode', value: 'code', dataType: 'text' },
       { text: 'Tanggal', value: 'date', dataType: 'datetime' },
-      { text: 'Penjual', value: 'salesInitial', dataType: 'text' },
+      { text: 'Inisial Penjual', value: 'salesInitial', dataType: 'text' },
+      { text: 'Nama Penjual', value: 'salesName', dataType: 'text' },
       { text: 'Kd. Pelanggan', value: 'custCode', dataType: 'text' },
       { text: 'Nama Pelanggan', value: 'custName', dataType: 'text' },
       { text: 'Sumber Transaksi', value: 'sourceTrans', dataType: 'text' }],
