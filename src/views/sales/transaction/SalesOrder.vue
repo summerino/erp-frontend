@@ -156,6 +156,9 @@
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
+        <template v-slot:[`item.salesInitial`]="{ item }">
+          {{ `${item.salesInitial} - ${item.salesName}` }}
+        </template>
         <template v-slot:[`item.custName`]="{ item }">
           {{ item.custCode }} - {{ item.custName }}
         </template>
@@ -1131,7 +1134,8 @@ export default {
     filterfields: [
       { text: 'Kode', value: 'code', dataType: 'text' },
       { text: 'Tanggal', value: 'date', dataType: 'datetime' },
-      { text: 'Penjual', value: 'salesInitial', dataType: 'text' },
+      { text: 'Inisial Penjual', value: 'salesInitial', dataType: 'text' },
+      { text: 'Nama Penjual', value: 'salesName', dataType: 'text' },
       { text: 'Kd. Pelanggan', value: 'custCode', dataType: 'text' },
       { text: 'Nama Pelanggan', value: 'custName', dataType: 'text' },
       { text: 'Status', value: 'mark', dataType: 'text' }
