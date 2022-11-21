@@ -233,7 +233,20 @@
               </v-col>
             </v-row>
             <v-row no-gutters>
-              <v-col cols="12" md="4">
+              <v-col cols="12" md="3">
+                <v-autocomplete
+                  v-model="data.sales"
+                  :items="employees"
+                  :item-text="item => `${item.initial} - ${item.firstName}`"
+                  label="Penjual"
+                  item-value="id"
+                  class="mt-0"
+                  dense
+                  clearable
+                  @change="clearTable()"
+                ></v-autocomplete>
+              </v-col>
+              <v-col cols="12" md="3" class="pl-1">
                 <v-autocomplete
                   v-model="data.status"
                   :items="statuses"
@@ -246,7 +259,7 @@
                   @change="clearTable()"
                 ></v-autocomplete>
               </v-col>
-              <v-col cols="12" md="4" class="pl-1">
+              <v-col cols="12" md="3" class="pl-1">
                 <v-autocomplete
                   v-model="data.itemId"
                   :items="items"
@@ -259,7 +272,7 @@
                   @change="clearTable()"
                 ></v-autocomplete>
               </v-col>
-              <v-col cols="12" md="4" class="pl-1">
+              <v-col cols="12" md="3" class="pl-1">
                 <v-autocomplete
                   v-model="data.categoryId"
                   :items="itemCategories"
@@ -430,6 +443,8 @@ export default {
       { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
       { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
       { text: 'Tipe', value: 'typeName', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Ins. Penjual', value: 'salesInitial', divider: true, width: '100', excelColWidth:'18' },
+      { text: 'Nm. Penjual', value: 'salesName', divider: true, width: '300', excelColWidth:'40' },
       { text: 'Kd. Pelanggan', value: 'custCode', divider: true, width: '100', excelColWidth:'18' },
       { text: 'Nm. Pelanggan', value: 'custName', divider: true, width: '300', excelColWidth:'40' },
       { text: 'Sub Total', value: 'subTotal', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
@@ -456,6 +471,8 @@ export default {
       { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
       { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
       { text: 'Tipe', value: 'typeName', divider: true, width: '160', excelColWidth:'20' },
+      { text: 'Ins. Penjual', value: 'salesInitial', divider: true, width: '100', excelColWidth:'18' },
+      { text: 'Nm. Penjual', value: 'salesName', divider: true, width: '300', excelColWidth:'40' },
       { text: 'Kd. Pelanggan', value: 'custCode', divider: true, width: '100', excelColWidth:'18' },
       { text: 'Nm. Pelanggan', value: 'custName', divider: true, width: '300', excelColWidth:'40' },
       { text: 'Ins. Barang', value: 'itemInitial', divider: true, width: '120', excelColWidth:'12' },
@@ -517,6 +534,7 @@ export default {
     this.getCustomerLists()
     this.getItemLists()
     this.getItemCategoryLists()
+    this.getSalesmanLists()
     auth.getAction(this.endpoint, this.menuId.salesReturnReport)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -565,6 +583,7 @@ export default {
         type: 1,
         startDate: format(new Date(), 'yyyy-MM-dd'),
         endDate: format(new Date(), 'yyyy-MM-dd'),
+        sales: null,
         customer: null,
         status: 'A',
         itemId: null,
@@ -590,6 +609,7 @@ export default {
           type: this.data.type,
           startDate: this.data.startDate,
           endDate: this.data.endDate,
+          salesId: this.data.sales,
           custCode: this.data.customer,
           status: this.data.status,
           itemId: this.data.itemId,
@@ -801,6 +821,24 @@ export default {
       api.getAll(`${this.endpoint.inventory.item.category}/lists`, {})
         .then(response => {
           this.itemCategories = response.data.tableData
+        })
+    },
+    getSalesmanLists() {
+      api.getAll(`${this.endpoint.general.employee}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'type',
+            operator: 'eq',
+            keyword: 1
+          }]),
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.employees = response.data.tableData
         })
     }
   }
