@@ -166,6 +166,9 @@
         <template v-slot:[`item.date`]="{ item }">
           {{ item.date | formatDate('dd-MMM-yyyy') }}
         </template>
+        <template v-slot:[`item.salesInitial`]="{ item }">
+          {{ `${item.salesInitial} - ${item.salesName}` }}
+        </template>
         <template v-slot:[`item.custName`]="{ item }">
           {{ item.custCode }} - {{ item.custName }}
         </template>
@@ -814,6 +817,8 @@ export default {
     filterfields: [
       { text: 'Kode', value: 'code', dataType: 'text' },
       { text: 'Tanggal', value: 'date', dataType: 'datetime' },
+      { text: 'Inisial Penjual', value: 'salesInitial', dataType: 'text' },
+      { text: 'Nama Penjual', value: 'salesName', dataType: 'text' },
       { text: 'Kd. Pelanggan', value: 'custCode', dataType: 'text' },
       { text: 'Nama Pelanggan', value: 'custName', dataType: 'text' },
       { text: 'Kode Trans.', value: 'transCode', dataType: 'text' },
@@ -835,6 +840,7 @@ export default {
         { value: 'action', sortable: false, divider: true, width: '120' },
         { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'19' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+        { text: 'Penjual', value: 'salesInitial', divider: true, width: '180', excelColWidth:'23' },
         { text: 'Pelanggan', value: 'custName', divider: true, width: '220', excelColWidth:'35', customValues: ['custCode', 'custName'] },
         { text: 'Kode Trans.', value: 'transCode', width: '160', excelColWidth:'19' },
         { text: 'Dikirim Oleh', value: 'shippedInitial', divider: true, width: '180', excelColWidth:'22' },
