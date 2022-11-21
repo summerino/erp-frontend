@@ -760,6 +760,12 @@
                                   </template>     
                                   <template v-slot:[`item.total`]="{ item }">
                                     {{ item.total | formatCurrency }}
+                                  </template>
+                                  <template v-slot:[`item.paidAmount`]="{ item }">
+                                    {{ item.paidAmount | formatCurrency }}
+                                  </template>
+                                  <template v-slot:[`item.remaining`]="{ item }">
+                                    {{ item.remaining | formatCurrency }}
                                   </template>   
                                   <template v-slot:[`item.notesFailCollect`]="{ item }">
                                     <v-text-field
@@ -902,7 +908,9 @@ export default {
         { text: 'Nama Pelanggan', value: 'customerName', divider: true, width: '150' },
         { text: 'Tanggal Transaksi', value: 'transactionDate', align: 'right', divider: true, width: '110' },
         { text: 'Tanggal Jatuh Tempo', value: 'invoiceDueDate', align: 'right', divider: true, width: '110' },
-        { text: 'Nilai', value: 'total', align: 'right', divider: true, width: '150' },
+        { text: 'Total', value: 'total', align: 'right', divider: true, width: '150' },
+        { text: 'Nilai Sudah Dibayar', value: 'paidAmount', align: 'right', divider: true, width: '150' },
+        { text: 'Sisa', value: 'remaining', align: 'right', divider: true, width: '150' },
         { text: 'Alasan Gagal Tagih', value: 'notesFailCollect', divider: true, width: '150' }
       ],
       data: [],
