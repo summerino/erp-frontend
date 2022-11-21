@@ -509,7 +509,8 @@ export default {
       ],
       operator: [{ text: 'Sama dgn.', value: 'eq'}],
       searches: []
-    }  
+    },
+    employees: []  
   }),
 
   created: function () {

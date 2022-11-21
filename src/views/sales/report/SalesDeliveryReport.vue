@@ -233,7 +233,7 @@
               </v-col>
             </v-row>
             <v-row no-gutters>
-              <v-col cols="12" md="3">
+              <v-col cols="12" md="4">
                 <v-autocomplete
                   v-model="data.customer"
                   :items="customers"
@@ -246,7 +246,20 @@
                   @change="clearTable()"
                 ></v-autocomplete>
               </v-col>
-              <v-col cols="12" md="3" class="pl-1">
+              <v-col cols="12" md="4" class="pl-1">
+                <v-autocomplete
+                  v-model="data.sales"
+                  :items="employees"
+                  :item-text="item => `${item.initial} - ${item.firstName}`"
+                  label="Penjual"
+                  item-value="id"
+                  class="mt-0"
+                  dense
+                  clearable
+                  @change="clearTable()"
+                ></v-autocomplete>
+              </v-col>
+              <v-col cols="12" md="4" class="pl-1">
                 <v-autocomplete
                   v-model="data.status"
                   :items="statuses"
@@ -259,7 +272,9 @@
                   @change="clearTable()"
                 ></v-autocomplete>
               </v-col>
-              <v-col cols="12" md="3" class="pl-1">
+            </v-row>
+            <v-row no-gutters>
+              <v-col cols="12" md="6">
                 <v-autocomplete
                   v-model="data.itemId"
                   :items="items"
@@ -272,7 +287,7 @@
                   @change="clearTable()"
                 ></v-autocomplete>
               </v-col>
-              <v-col cols="12" md="3" class="pl-1">
+              <v-col cols="12" md="6" class="pl-1">
                 <v-autocomplete
                   v-model="data.categoryId"
                   :items="itemCategories"
@@ -471,6 +486,8 @@ export default {
       { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
       { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
       { text: 'Kd. Trans.', value: 'transCode', divider: true, width: '120', excelColWidth:'12' },
+      { text: 'Ins. Penjual', value: 'salesInitial', divider: true, width: '100', excelColWidth:'18' },
+      { text: 'Nm. Penjual', value: 'salesName', divider: true, width: '300', excelColWidth:'40' },
       { text: 'Kd. Pelanggan', value: 'custCode', divider: true, width: '100', excelColWidth:'18' },
       { text: 'Nm. Pelanggan', value: 'custName', divider: true, width: '300', excelColWidth:'40' },
       { text: 'Gudang', value: 'warehouseName', divider: true, width: '120', excelColWidth:'12' },
@@ -523,6 +540,8 @@ export default {
       { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
       { text: 'Kode', value: 'code', divider: true, width: '160', excelColWidth:'20' },
       { text: 'Kd. Trans.', value: 'transCode', divider: true, width: '120', excelColWidth:'12' },
+      { text: 'Ins. Penjual', value: 'salesInitial', divider: true, width: '100', excelColWidth:'18' },
+      { text: 'Nm. Penjual', value: 'salesName', divider: true, width: '300', excelColWidth:'40' },
       { text: 'Kd. Pelanggan', value: 'custCode', divider: true, width: '100', excelColWidth:'18' },
       { text: 'Nm. Pelanggan', value: 'custName', divider: true, width: '300', excelColWidth:'40' },
       { text: 'Ins. Barang', value: 'itemInitial', divider: true, width: '120', excelColWidth:'12' },
@@ -555,6 +574,8 @@ export default {
       { text: 'Kd. Trans.', value: 'transCode', divider: true, width: '120', excelColWidth:'12' },
       { text: 'No. Fkt. Pajak', value: 'taxInvoiceNo', divider: true, width: '160', excelColWidth:'20' },
       { text: 'Tgl. Fkt. Pajak', value: 'taxInvoiceDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
+      { text: 'Ins. Penjual', value: 'salesInitial', divider: true, width: '100', excelColWidth:'18' },
+      { text: 'Nm. Penjual', value: 'salesName', divider: true, width: '300', excelColWidth:'40' },
       { text: 'Kd. Pelanggan', value: 'custCode', divider: true, width: '100', excelColWidth:'18' },
       { text: 'Nm. Pelanggan', value: 'custName', divider: true, width: '300', excelColWidth:'40' },
       { text: 'Ins. Barang', value: 'itemInitial', divider: true, width: '120', excelColWidth:'12' },
@@ -619,7 +640,8 @@ export default {
       operator: [{ text: 'Sama dgn.', value: 'eq'}],
       searches: []
     },
-    arRecogTime: null  
+    arRecogTime: null,
+    employees: []  
   }),
 
   created: function () {
@@ -628,6 +650,7 @@ export default {
     this.getItemLists()
     this.getItemCategoryLists()
     this.getSysARRecog()
+    this.getSalesmanLists()
     auth.getAction(this.endpoint, this.menuId.salesDeliveryReport)
       .then((response) => {
         this.$store.commit('api/setAuth', response.data)
@@ -676,6 +699,7 @@ export default {
         type: 1,
         startDate: format(new Date(), 'yyyy-MM-dd'),
         endDate: format(new Date(), 'yyyy-MM-dd'),
+        sales: null,
         customer: null,
         status: 'A',
         itemId: null,
@@ -702,6 +726,7 @@ export default {
           type: this.data.type,
           startDate: this.data.startDate,
           endDate: this.data.endDate,
+          salesId : this.data.sales,
           custCode: this.data.customer,
           status: this.data.status,
           itemId: this.data.itemId,
@@ -939,6 +964,24 @@ export default {
       })
         .then(response => {
           this.arRecogTime = response.data.tableData[0].value
+        })
+    },
+    getSalesmanLists() {
+      api.getAll(`${this.endpoint.general.employee}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'type',
+            operator: 'contains',
+            keyword: [1, 2]
+          }]),
+          sorts: JSON.stringify([{
+            field: 'initial',
+            direction: 'asc'
+          }])
+        }
+      })
+        .then(response => {
+          this.employees = response.data.tableData
         })
     }
   }
