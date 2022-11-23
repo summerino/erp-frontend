@@ -1112,6 +1112,10 @@ export default {
           state: 'A'
         }
         this.gridDet.data.push(item)
+
+        setTimeout(() => {
+          this.$refs.itemId.focus()
+        }, 0)
       }
     },
     async removeItem(item) {
