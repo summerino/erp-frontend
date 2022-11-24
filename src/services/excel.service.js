@@ -151,16 +151,18 @@ class ExcelService {
           const index = j + (i * maxLength)
           let criteria = ''
           let operator = ''
-          const keyword = filter.searches[index].keyword
-          const searchCriteria = filter.fields.find(x => x.value === filter.searches[index].field)
-          if (searchCriteria) {
-            criteria = searchCriteria.text
+          if (filter.searches[index]) {
+            const keyword = filter.searches[index].keyword
+            const searchCriteria = filter.fields.find(x => x.value === filter.searches[index].field)
+            if (searchCriteria) {
+              criteria = searchCriteria.text
+            }
+            const searchOp = filter.operator.find(x => x.value === filter.searches[index].operator)
+            if (searchOp) {
+              operator = searchOp.text
+            }
+            rowText += `; ${criteria} ${operator} ${keyword}`
           }
-          const searchOp = filter.operator.find(x => x.value === filter.searches[index].operator)
-          if (searchOp) {
-            operator = searchOp.text
-          }
-          rowText += `; ${criteria} ${operator} ${keyword}`
         }
         if (rowText.length > 0) {
           rowText = rowText.substring(2)
