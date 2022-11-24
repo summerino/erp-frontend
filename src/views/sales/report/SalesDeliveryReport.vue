@@ -632,6 +632,7 @@ export default {
         {text: 'Tanggal Mulai', value: 'startDate'},
         {text: 'Tanggal Akhir', value: 'endDate'},
         {text: 'Pelanggan', value: 'customer'},
+        {text: 'Penjual', value: 'sales'},
         {text: 'Status', value: 'status'},
         {text: 'Barang', value: 'item'},
         {text: 'Kategori Barang', value: 'category'},
@@ -895,7 +896,7 @@ export default {
           operator: 'eq'
         }
         searchCategory.field = 'category'
-        searchCategory.keyword = item.name
+        searchCategory.keyword = category.name
         this.exportFilter.searches.push(searchCategory)
       }
 
@@ -909,6 +910,18 @@ export default {
         searchSrc.field = 'srcTrans'
         searchSrc.keyword = src.name
         this.exportFilter.searches.push(searchSrc)
+      }
+
+      const sls = this.employees.find(x => x.id === this.data.sales)
+      if (sls) {
+        const searchSls = {
+          field: '',
+          keyword: '',
+          operator: 'eq'
+        }
+        searchSls.field = 'sales'
+        searchSls.keyword = sls.firstName
+        this.exportFilter.searches.push(searchSls)
       }
     },
     clearTable() {
