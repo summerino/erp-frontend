@@ -116,7 +116,7 @@
                           :filters="exportFilter"
                           :grid="grid"
                           :gridDefOpts="gridDefOpts"
-                          :title="`Daftar Laporan Mutasi Barang - Detail Berdasarkan ${this.data.filterName}`"
+                          :title="`Daftar Laporan Mutasi Barang - Detail Berdasarkan ${this.data.filterName} - ${this.data.initial} - ${this.data.name}`"
                         ></export-excel>
                       </v-list-item-title>
                     </v-list-item>

@@ -881,7 +881,7 @@ export default {
           operator: 'eq'
         }
         searchCategory.field = 'category'
-        searchCategory.keyword = item.name
+        searchCategory.keyword = category.name
         this.exportFilter.searches.push(searchCategory)
       }
     },
