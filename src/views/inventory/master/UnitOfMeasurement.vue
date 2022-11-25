@@ -702,7 +702,7 @@ export default {
     resetItems() {
       this.gridItem.data = []      
       this.initiateFirstItem()
-      this.addNewItem()
+      //this.addNewItem()
     },
     validateLastRecord() {
       let result = true
