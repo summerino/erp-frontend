@@ -754,7 +754,7 @@ export default {
       this.exportFilter.searches = []
       const searchType = {
         field: 'type',
-        keyword: '',
+        keyword: `Berdasarkan ${this.data.filterName}`,
         operator: 'eq'
       }
       const searchStartDate = {
@@ -773,8 +773,6 @@ export default {
         operator: 'eq'
       }
 
-      const report = this.types.find(x => x.id === this.data.type)
-      searchType.keyword = report.name
       this.exportFilter.searches.push(searchType)
 
       searchStartDate.keyword = this.data.startDate ? format(parseISO(this.data.startDate), 'dd-MMM-yyyy') : ''
