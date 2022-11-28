@@ -116,7 +116,7 @@
                           :filters="exportFilter"
                           :grid="grid"
                           :gridDefOpts="gridDefOpts"
-                          :title="`Daftar Laporan Mutasi Barang - Detail Berdasarkan ${this.data.filterName} - ${this.data.initial} - ${this.data.name}`"
+                          :title="`Daftar Laporan Mutasi Barang - Detail Berdasarkan ${this.data.filterName}`"
                         ></export-excel>
                       </v-list-item-title>
                     </v-list-item>
@@ -174,7 +174,7 @@
                   item-value="id"
                   class="mt-0"
                   dense
-                  @change="clearTable()"
+                  @change="clearTable(); setOriginalType();"
                 >
                 </v-autocomplete>
               </v-col>
@@ -583,7 +583,8 @@ export default {
       ],
       operator: [{ text: 'Sama dgn.', value: 'eq'}],
       searches: []
-    }  
+    },
+    originalType: null  
   }),
 
   created: function () {
@@ -643,6 +644,7 @@ export default {
         typeUnit: 2,
         isSM: false
       }
+      this.originalType = 1
       this.filter = true
     },
     getList() {
@@ -754,7 +756,7 @@ export default {
       this.exportFilter.searches = []
       const searchType = {
         field: 'type',
-        keyword: `Berdasarkan ${this.data.filterName}`,
+        keyword: '',
         operator: 'eq'
       }
       const searchStartDate = {
@@ -773,6 +775,8 @@ export default {
         operator: 'eq'
       }
 
+      const report = this.types.find(x => x.id === this.originalType)
+      searchType.keyword = report.name
       this.exportFilter.searches.push(searchType)
 
       searchStartDate.keyword = this.data.startDate ? format(parseISO(this.data.startDate), 'dd-MMM-yyyy') : ''
@@ -816,6 +820,9 @@ export default {
         this.itemColumn = this.itemColumn.filter(x => !removed.includes(x.value))
         this.smColumn = this.smColumn.filter(x => !removed.includes(x.value))
       }
+    },
+    setOriginalType() {
+      this.originalType = this.data.type
     }
   }
 }
