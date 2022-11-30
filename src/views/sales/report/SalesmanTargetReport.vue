@@ -485,7 +485,8 @@ export default {
         {text: 'Tanggal Akhir', value: 'endDate'},
         {text: 'Penjual', value: 'sales'},
         {text: 'Grup Barang', value: 'group'},
-        {text: 'Sub Grup Barang', value: 'subGroup'}
+        {text: 'Sub Grup Barang', value: 'subGroup'},
+        {text: 'Nilai Sub Grup Barang', value: 'groupSubGroup'}
       ],
       operator: [{ text: 'Sama dgn.', value: 'eq'}],
       searches: []
@@ -712,6 +713,18 @@ export default {
         searchSubGrp.field = 'subGroup'
         searchSubGrp.keyword = subGrp.name
         this.exportFilter.searches.push(searchSubGrp)
+      }
+
+      const grpSubGrp = this.itemGroupSubGroup.find(x => x.name === this.data.groupSubGroup)
+      if (grpSubGrp) {
+        const searchGrpSubGrp = {
+          field: '',
+          keyword: '',
+          operator: 'eq'
+        }
+        searchGrpSubGrp.field = 'groupSubGroup'
+        searchGrpSubGrp.keyword = grpSubGrp.name
+        this.exportFilter.searches.push(searchGrpSubGrp)
       }
 
       const sls = this.salesmans.find(x => x.id === this.data.salesId)
