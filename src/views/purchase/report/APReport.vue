@@ -156,7 +156,7 @@
                   item-value="id"
                   class="mt-0"
                   dense
-                  @change="clearTable()"
+                  @change="clearTable(); setOriginalType();"
                 >
                 </v-autocomplete>
                 <v-autocomplete v-else
@@ -167,7 +167,7 @@
                   item-value="id"
                   class="mt-0"
                   dense
-                  @change="clearTable()"
+                  @change="clearTable(); setOriginalType();"
                 >
                 </v-autocomplete>
               </v-col>
@@ -329,7 +329,8 @@ export default {
       ],
       operator: [{ text: 'Sama dgn.', value: 'eq'}],
       searches: []
-    }  
+    },
+    originalType: null  
   }),
 
   created: function () {
@@ -382,6 +383,7 @@ export default {
         date: format(new Date(), 'yyyy-MM-dd'),
         supplier: null
       }
+      this.originalType = 1
       this.filter = true
     },
     getList() {
@@ -466,7 +468,7 @@ export default {
         operator: 'eq'
       }
 
-      const report = this.apRecogTime === 'PI' ? this.typesInv.find(x => x.id === this.data.type) : this.typesRcv.find(x => x.id === this.data.type)
+      const report = this.apRecogTime === 'PI' ? this.typesInv.find(x => x.id === this.originalType) : this.typesRcv.find(x => x.id === this.originalType)
       searchType.keyword = report.name
       this.exportFilter.searches.push(searchType)
 
@@ -499,6 +501,9 @@ export default {
         .then(response => {
           this.apRecogTime = response.data.tableData[0].value
         })
+    },
+    setOriginalType() {
+      this.originalType = this.data.type
     }
   }
 }
