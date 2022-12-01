@@ -428,7 +428,7 @@ export default {
         this.exportFilter.searches.push(searchCust)
       }
 
-      const sls = this.sales.find(x => x.id === this.data.sales)
+      const sls = this.employees.find(x => x.id === this.data.sales)
       if (sls) {
         const searchSales = {
           field: '',
@@ -436,7 +436,7 @@ export default {
           operator: 'eq'
         }
         searchSales.field = 'sales'
-        searchSales.keyword = cust.firstName
+        searchSales.keyword = sls.firstName
         this.exportFilter.searches.push(searchSales)
       }
     },
