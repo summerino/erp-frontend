@@ -156,7 +156,7 @@
                   item-value="id"
                   class="mt-0"
                   dense
-                  @change="clearTable()"
+                  @change="clearTable(); setOriginalType();"
                 >
                 </v-autocomplete>
               </v-col>
@@ -357,7 +357,8 @@ export default {
       ],
       operator: [{ text: 'Sama dgn.', value: 'eq'}],
       searches: []
-    }  
+    },
+    originalType: null  
   }),
 
   created: function () {
@@ -411,6 +412,7 @@ export default {
         customer: null,
         status: 'A'
       }
+      this.originalType = 1
       this.filter = true
     },
     getList() {
@@ -508,7 +510,7 @@ export default {
         operator: 'eq'
       }
 
-      const report = this.types.find(x => x.id === this.data.type)
+      const report = this.types.find(x => x.id === this.originalType)
       searchType.keyword = report.name
       this.exportFilter.searches.push(searchType)
 
@@ -527,7 +529,7 @@ export default {
           operator: 'eq'
         }
         searchCust.field = 'customer'
-        searchCust.keyword = cust.firstName
+        searchCust.keyword = cust.name
         this.exportFilter.searches.push(searchCust)
       }
 
@@ -546,6 +548,9 @@ export default {
     clearTable() {
       this.grid.data = []
       this.grid.columns = []
+    },
+    setOriginalType() {
+      this.originalType = this.data.type
     }
   }
 }
