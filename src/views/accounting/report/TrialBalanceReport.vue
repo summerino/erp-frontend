@@ -119,7 +119,7 @@
                           :filters="exportFilter"
                           :grid="grid"
                           :gridDefOpts="gridDefOpts"
-                          :title=" mainDet === 1 ? 'Daftar Laporan Buku Besar - Neraca Percobaan' : 'Daftar Laporan Jurnal Detail - Buku Besar - Neraca Percobaan'"
+                          :title=" mainDet === 1 ? `Daftar Laporan Buku Besar - Neraca Percobaan - Akun Detail - ${ this.data.coaCode } - ${ this.data.coaName }` : `Daftar Laporan Jurnal Detail - Buku Besar - Neraca Percobaan - Akun Detail - ${ this.data.coaCode } - ${ this.data.coaName } - Jurnal Detail - ${ this.data.vouFrom }`"
                         ></export-excel>
                       </v-list-item-title>
                     </v-list-item>

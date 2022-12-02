@@ -116,7 +116,7 @@
                           :filters="exportFilter"
                           :grid="grid"
                           :gridDefOpts="gridDefOpts"
-                          title="Daftar Laporan Uang Muka Penjualan - Detail Berdasarkan Pelanggan"
+                          :title="`Daftar Laporan Uang Muka Penjualan - Detail Berdasarkan Pelanggan  - ${ this.data.cusInitial } - ${ this.data.cusName } (${ this.data.cusCode })`"
                         ></export-excel>
                       </v-list-item-title>
                     </v-list-item>
