@@ -397,7 +397,7 @@ export default {
       searchEndDate.keyword = this.data.endDate ? format(parseISO(this.data.endDate), 'dd-MMM-yyyy') : ''
       this.exportFilter.searches.push(searchEndDate)
 
-      const cust = this.customers.find(x => x.code === this.data.customer)
+      const cust = this.customers.find(x => x.code === this.data.custCode)
       if (cust) {
         const searchCust = {
           field: '',
@@ -405,7 +405,7 @@ export default {
           operator: 'eq'
         }
         searchCust.field = 'customer'
-        searchCust.keyword = cust.firstName
+        searchCust.keyword = cust.name
         this.exportFilter.searches.push(searchCust)
       }
 

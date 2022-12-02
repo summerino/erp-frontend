@@ -296,7 +296,8 @@ export default {
         {text: 'Tanggal Akhir', value: 'dateTo'},
         {text: 'Kode Jurnal', value: 'vouFrom'},
         {text: 'Detail', value: 'rptDet'},
-        {text: 'Akun', value: ' coa'}
+        {text: 'Akun', value: ' coa'},
+        {text: 'Urutkan', value: 'sort'}
       ],
       operator: [{ text: 'Sama dgn.', value: 'eq'}],
       searches: []
@@ -408,6 +409,18 @@ export default {
     appendFilter() {
       this.exportFilter.searches = []
 
+      const type = this.types.find(x => x.id === this.data.rptBy)
+      if (type) {
+        const searchType = {
+          field: '',
+          keyword: '',
+          operator: 'eq'
+        }
+        searchType.field = 'rptBy'
+        searchType.keyword = type.name
+        this.exportFilter.searches.push(searchType)
+      }
+
       if (this.data.rptBy === 'DT') {
         if (this.data.dateFrom) {
           this.exportFilter.searches.push({
@@ -454,6 +467,18 @@ export default {
         searchCoa.field = 'coa'
         searchCoa.keyword = coa.name
         this.exportFilter.searches.push(searchCoa)
+      }
+
+      const sortType = this.sortTypes.find(x => x.id === this.data.sort)
+      if (sortType) {
+        const searchSortType = {
+          field: '',
+          keyword: '',
+          operator: 'eq'
+        }
+        searchSortType.field = 'sort'
+        searchSortType.keyword = sortType.name
+        this.exportFilter.searches.push(searchSortType)
       }
     },
     clearTable() {

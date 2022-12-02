@@ -517,7 +517,7 @@ export default {
         this.exportFilter.searches.push(searchType)
       }
 
-      const salesMan = this.salesmanGroupRef.find(x => x.id === this.data.employeeType)
+      const salesMan = this.salesmanGroupRef.find(x => x.id === this.data.salesGroupId)
       searchSalesGroup.keyword = salesMan?.name
       if (searchSalesGroup.keyword) {
         this.exportFilter.searches.push(searchSalesGroup)

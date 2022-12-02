@@ -328,7 +328,7 @@ export default {
     appendFilter() {
       this.exportFilter.searches = []
       const searchCoa = {
-        field: 'coaCode',
+        field: 'coa',
         keyword: '',
         operator: 'eq'
       }
