@@ -85,7 +85,7 @@ export default {
     araReport: 'ar-aging-report',
     arcReport: 'ar-card-report',
     cmReport: 'credit-memo-report',
-    dpReport: 'sales-down-payment-report',
+    dpReport: 'delivery-plan-report',
     dlvPlanReport: 'delivery-plan-report',
     roReport: 'release-overlimit-report',
     sdpReport: 'sales-down-payment-report'
