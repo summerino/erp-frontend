@@ -433,7 +433,7 @@ export default {
           }
           this.grid.columns = this.ledgerColumn
           this.grid.data = response.data
-          this.appendGLFilter()
+          //this.appendGLFilter()
         })
     },
     getDetail() {
@@ -455,7 +455,7 @@ export default {
           }
           this.grid.columns = this.detailColumn
           this.grid.data = response.data
-          this.appendDetailFilter()
+          //this.appendDetailFilter()
         })
     },
     showfilter() {
