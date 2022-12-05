@@ -500,6 +500,7 @@ export default {
       this.data.dateFrom = format(new Date(), 'yyyy-MM-dd')
       this.data.dateTo = format(new Date(), 'yyyy-MM-dd')
       this.data.vouFrom = null
+      this.data.rptDet = 'C'
       this.clearTable()
     }
   }
