@@ -86,7 +86,7 @@
             </v-row>
             <v-row v-else no-gutters>
               <v-col cols="12" md="8">
-                Laporan Rencana Pengiriman Detail - {{ this.data.detailName}}
+                Laporan Rencana Pengiriman - Detail {{ this.data.typeName }} - {{ this.data.detailName}}
               </v-col>
               <v-col cols="12" md="4" class="text-right">
                 <v-menu
@@ -116,7 +116,7 @@
                           :filters="exportFilter"
                           :grid="grid"
                           :gridDefOpts="gridDefOpts"
-                          :title="`Daftar Laporan Rencana Pengiriman Detail - ${ this.data.detailName }`"
+                          :title="`Daftar Laporan Rencana Pengiriman - Detail ${ this.data.typeName } - ${ this.data.detailName }`"
                         ></export-excel>
                       </v-list-item-title>
                     </v-list-item>
@@ -553,7 +553,7 @@ export default {
         })
     },
     dblclickRow(event, { item }) {
-      if (this.main && this.data.type < 5) {
+      if (this.main && this.data.type < 4) {
         this.data.oldType = this.data.type
         this.data.oldStartDate = this.data.startDate
         this.data.oldEndDate = this.data.endDate
