@@ -489,7 +489,7 @@ export default {
         .then(response => {
           this.grid.columns = this.detailColumn
           this.grid.data = response.data
-          this.appendDetailFilter()
+          //this.appendDetailFilter()
         })
     },
     getLedger() {
@@ -511,7 +511,7 @@ export default {
           }
           this.grid.columns = this.ledgerColumn
           this.grid.data = response.data
-          this.appendGLFilter()
+          //this.appendGLFilter()
         })
     },
     getJournal() {
@@ -533,7 +533,7 @@ export default {
           }
           this.grid.columns = this.journalColumn
           this.grid.data = response.data
-          this.appendJournalFilter()
+          //this.appendJournalFilter()
         })
     },
     showfilter() {

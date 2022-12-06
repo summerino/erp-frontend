@@ -86,7 +86,7 @@
             </v-row>
             <v-row v-else no-gutters>
               <v-col cols="12" md="10">
-                Buku Besar - Detail - {{ this.data.vouFrom }}
+                Laporan Buku Besar - Detail - {{ this.data.vouFrom }}
               </v-col>
               <v-col cols="12" md="2" class="text-right">
                 <v-menu
@@ -116,7 +116,7 @@
                           :filters="exportFilter"
                           :grid="grid"
                           :gridDefOpts="gridDefOpts"
-                          title="Daftar Laporan Jurnal Detail Buku Besar"
+                          :title="`Daftar Laporan Buku Besar - Detail - ${ this.data.vouFrom }`"
                         ></export-excel>
                       </v-list-item-title>
                     </v-list-item>
@@ -472,7 +472,7 @@ export default {
           }
           this.grid.columns = this.detailColumn
           this.grid.data = response.data
-          this.appendDetailFilter()
+          //this.appendDetailFilter()
         })
     },
     showfilter() {
@@ -521,7 +521,7 @@ export default {
           operator: 'eq'
         }
         searchCoa.field = 'acc'
-        searchCoa.keyword = coa.name
+        searchCoa.keyword = `${coa.code} - ${coa.name}`
         this.exportFilter.searches.push(searchCoa)
       }
 
@@ -533,7 +533,7 @@ export default {
           operator: 'eq'
         }
         searchCoa2.field = 'acc2'
-        searchCoa2.keyword = coa2.name
+        searchCoa2.keyword = `${coa2.code} - ${coa2.name}`
         this.exportFilter.searches.push(searchCoa2)
       }
 
