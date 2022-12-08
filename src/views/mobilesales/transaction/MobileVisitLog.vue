@@ -586,6 +586,10 @@ export default {
     filterfields: [
       { text: 'Kode', value: 'code', dataType: 'text' },
       { text: 'Kode Perintah Kunjungan', value: 'visitOrderCode', dataType: 'text' },
+      { text: 'Ins. Penjual', value: 'salesmanInitial', dataType: 'text' },
+      { text: 'Nm. Penjual', value: 'salesmanName', dataType: 'text' },
+      { text: 'Kd. Pelanggan', value: 'customerInitial', dataType: 'text' },
+      { text: 'Nm. Pelanggan', value: 'customerName', dataType: 'text' },
       { text: 'Tanggal', value: 'date', dataType: 'datetime' },
       { text: 'Status', value: 'mark', dataType: 'text' }
     ],
