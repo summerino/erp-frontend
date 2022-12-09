@@ -606,6 +606,8 @@ export default {
   data: () => ({
     filterfields: [
       { text: 'Kode', value: 'code', dataType: 'text' },
+      { text: 'Ins. Penjual', value: 'salesmanInitial', dataType: 'text' },
+      { text: 'Nm. Penjual', value: 'salesmanName', dataType: 'text' },
       { text: 'Tanggal', value: 'date', dataType: 'datetime' },
       { text: 'Status', value: 'mark', dataType: 'text' }
     ],
