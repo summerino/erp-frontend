@@ -295,6 +295,7 @@
                           v-model="data.srcTrans"
                           :items="sources"
                           :rules="rules.required"
+                          :readonly="isInvoiced"
                           label="Sumber Transaksi"
                           item-text="name"
                           item-value="id"
@@ -957,6 +958,9 @@ export default {
     },
     isReturn() {
       return (this.data.srcTrans === 2)
+    },
+    isInvoiced() {
+      return (this.data.mark === 'INV')
     }
   },
 
