@@ -727,10 +727,10 @@ export default {
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Tgl. Jatuh Tempo', value: 'dueDate', align: 'right', divider: true, width: '120', excelColWidth:'15', isDateTime: true },
         { text: 'Pemasok', value: 'supInitial', divider: true, width: '200', excelColWidth:'35' },
-        { text: 'Catatan', value: 'notes', divider: true, width: '300', excelColWidth:'40' },        
         { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
         { text: 'Nilai Sudah Dibayar', value: 'paidAmount', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
         { text: 'Sisa', value: 'remaining', align: 'right', divider: true, width: '120', excelColWidth:'15', isCurrency: true },
+        { text: 'Catatan', value: 'notes', divider: true, width: '300', excelColWidth:'40' },        
         { text: 'Status', value: 'mark', width: '50' }
       ],
       data: [],
