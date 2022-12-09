@@ -290,7 +290,9 @@ export default {
       { text: 'Nm. Pemasok', value: 'supName', divider: true, width: '300', excelColWidth:'40' },
       { text: 'Nilai Transaksi', value: 'totalAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
       { text: 'Nilai Bayar', value: 'paidAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
-      { text: 'Sisa', value: 'remainderAmount', align: 'right', width: '100', excelColWidth:'20', isCurrency: true }
+      { text: 'Sisa', value: 'remainderAmount', align: 'right', divider: true, width: '100', excelColWidth:'20', isCurrency: true },
+      { text: 'Catatan', value: 'notes', width: '200', excelColWidth:'30' }
+
     ],
     types: [{ id: 1, name: 'Berdasarkan Faktur' }, { id: 2, name: 'Berdasarkan Pemasok' }],
     suppliers: [],
