@@ -1,6 +1,6 @@
 {
   "name": "sahassa-erp",
-  "version": "22.12.9",
+  "version": "22.12.13",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
