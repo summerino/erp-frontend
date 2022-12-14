@@ -1,6 +1,6 @@
 {
   "name": "sahassa-erp",
-  "version": "22.12.13",
+  "version": "22.12.14",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -24,7 +24,7 @@
     "vue-shortkey": "^3.1.7",
     "vue-spinner": "^1.0.4",
     "vue2-google-maps": "^0.10.7",
-    "vuetify": "^2.6.12",
+    "vuetify": "^2.6.13",
     "vuex": "^3.6.2"
   },
   "devDependencies": {
