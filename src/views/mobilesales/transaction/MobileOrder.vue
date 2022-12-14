@@ -298,7 +298,6 @@
                   <v-tabs v-model="tab.cust">
                     <v-tab key="cust">Pelanggan</v-tab>
                     <v-tab key="payment">Pembayaran</v-tab>
-                    <v-tab key="user">Pengguna</v-tab>
                   </v-tabs>
 
                   <v-tabs-items v-model="tab.cust" class="pa-2">
@@ -399,89 +398,6 @@
                           readonly
                           >
                           </v-autocomplete>
-                        </v-col>
-                      </v-row>
-                    </v-tab-item>
-
-                    <v-tab-item
-                      key="user"
-                      transition="false"
-                      eager
-                    >
-
-                      <v-row no-gutters>
-                        <v-col cols="6">
-                          <v-text-field
-                            v-model="data.createdInitial"
-                            label="Dibuat Oleh"
-                            class="mt-0"
-                            readonly
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="6" class="pl-1">
-                          <v-text-field
-                            v-model="data.createdDate"
-                            label="Tanggal Dibuat"
-                            class="mt-0"
-                            readonly
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-
-                      <v-row no-gutters>
-                        <v-col cols="6">
-                          <v-text-field
-                            v-model="data.updatedInitial"
-                            label="Diperbarui Oleh"
-                            class="mt-0"
-                            readonly
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="6" class="pl-1">
-                          <v-text-field
-                            v-model="data.updatedDate"
-                            label="Tanggal Diperbarui"
-                            class="mt-0"
-                            readonly
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-
-                      <v-row no-gutters>
-                        <v-col cols="6">
-                          <v-text-field
-                            v-model="data.approvedInitial"
-                            label="Disetujui Oleh"
-                            class="mt-0"
-                            readonly
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="6" class="pl-1">
-                          <v-text-field
-                            v-model="data.approvedDate"
-                            label="Tanggal Disetujui"
-                            class="mt-0"
-                            readonly
-                          ></v-text-field>
-                        </v-col>
-                      </v-row>
-
-                      <v-row no-gutters>
-                        <v-col cols="6">
-                          <v-text-field
-                            v-model="data.rejectedInitial"
-                            label="Ditolak Oleh"
-                            class="mt-0"
-                            readonly
-                          ></v-text-field>
-                        </v-col>
-                        <v-col cols="6" class="pl-1">
-                          <v-text-field
-                            v-model="data.rejectedDate"
-                            label="Tanggal Ditolak"
-                            class="mt-0"
-                            readonly
-                          ></v-text-field>
                         </v-col>
                       </v-row>
                     </v-tab-item>
