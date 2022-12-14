@@ -672,7 +672,117 @@
             </v-row>
 
             <v-row dense>
-              <v-col cols="12">
+              <v-col cols="12" md="5">
+                <v-card>
+                  <v-tabs v-model="tab.foot">
+                    <v-tab key="detail">Detail</v-tab>
+                    <v-tab key="user">Pengguna</v-tab>
+                  </v-tabs>
+
+                  <v-tabs-items v-model="tab.foot" class="pa-2">
+                    <v-tab-item
+                      key="detail"
+                      transition="false"
+                    >
+                      <v-row no-gutters>
+                        <v-col cols="12">
+                          <v-currency-field
+                            v-model="data.dpp"
+                            label="Total Sebelum Pajak"
+                            class="text-right mt-0"
+                            readonly
+                          ></v-currency-field>
+                        </v-col>
+                      </v-row>
+                      
+                      <v-row no-gutters>
+                        <v-col cols="4">
+                          <v-currency-field
+                            v-model="data.finalDiscPercent"
+                            :allow-negative="false"
+                            label="Persen Diskon"
+                            suffix="%"
+                            class="text-right mt-0"
+                            readonly
+                          ></v-currency-field>
+                        </v-col>
+                        <v-col cols="8" class="pl-1">
+                          <v-currency-field
+                            v-model="data.finalDisc"
+                            :allow-negative="false"
+                            label="Diskon Final"
+                            class="text-right mt-0"
+                            readonly
+                          ></v-currency-field>
+                        </v-col>
+                      </v-row>
+                    </v-tab-item>
+
+                    <v-tab-item
+                      key="user"
+                      transition="false"
+                    >
+                      <v-row no-gutters>
+                        <v-col cols="6">
+                          <v-text-field
+                            v-model="data.createdInitial"
+                            label="Dibuat Oleh"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="6" class="pl-md-1">
+                          <v-text-field
+                            v-model="data.createdDate"
+                            label="Tanggal Dibuat"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                      
+                      <v-row no-gutters>
+                        <v-col cols="6">
+                          <v-text-field
+                            v-model="data.updatedInitial"
+                            label="Diperbarui Oleh"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="6" class="pl-md-1">
+                          <v-text-field
+                            v-model="data.updatedDate"
+                            label="Tanggal Diperbarui"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+
+                      <v-row no-gutters>
+                        <v-col cols="6">
+                          <v-text-field
+                            v-model="data.approvedInitial"
+                            label="Disetujui Oleh"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                        <v-col cols="6" class="pl-md-1">
+                          <v-text-field
+                            v-model="data.approvedDate"
+                            label="Tanggal Disetujui"
+                            class="mt-0"
+                            readonly
+                          ></v-text-field>
+                        </v-col>
+                      </v-row>
+                    </v-tab-item>
+                  </v-tabs-items>
+                </v-card>
+              </v-col>
+              <v-col cols="12" md="7">
                 <v-card>
                   <v-card-text>
                     <v-row no-gutters>
@@ -682,28 +792,6 @@
                         class="text-right mt-0"
                         readonly
                       ></v-currency-field>
-                    </v-row>
-
-                    <v-row no-gutters>
-                      <v-col cols="4">
-                        <v-currency-field
-                          v-model="data.finalDiscPercent"
-                          :allow-negative="false"
-                          label="Persen Diskon"
-                          suffix="%"
-                          class="text-right mt-0"
-                          readonly
-                        ></v-currency-field>
-                      </v-col>
-                      <v-col cols="8" class="pl-1">
-                        <v-currency-field
-                          v-model="data.finalDisc"
-                          :allow-negative="false"
-                          label="Diskon Final"
-                          class="text-right mt-0"
-                          readonly
-                        ></v-currency-field>
-                      </v-col>
                     </v-row>
 
                     <v-row no-gutters>
@@ -718,8 +806,9 @@
 
                     <v-row no-gutters>
                       <v-currency-field
-                        v-model="data.total"
-                        label="Total Keseluruhan"
+                        v-model="data.exemptTaxAmount"
+                        :allow-negative="false"
+                        label="Jumlah Pajak Yang Dibebaskan"
                         class="text-right mt-0"
                         readonly
                       ></v-currency-field>
@@ -783,7 +872,8 @@ export default {
     },
     tab: {
       cust: null,
-      det: null
+      det: null,
+      foot: null
     },
     grid: {
       columns: [
@@ -908,6 +998,7 @@ export default {
       this.gridItem.data = []
       this.tab.cust = 0
       this.tab.det = 0
+      this.tab.foot = 0
       this.selected = []
     },
     advancedSearch() {
