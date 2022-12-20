@@ -937,7 +937,7 @@ export default {
           'Hapus?',
           'Apakah anda yakin ingin menghapus data ini?')
       ) {
-        const idx = this.gridItem.data.findIndex(i => i.id === item.id)
+        const idx = this.gridItem.data.findIndex(i => i.salesmanScheduleId === item.salesmanScheduleId)
         if (idx !== -1) {
           this.gridItem.data.splice(idx, 1)
         }
