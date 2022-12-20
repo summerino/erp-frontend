@@ -567,6 +567,22 @@ export default {
         this.data.recurrence = 1
       }
 
+      if (this.data.areaId1) {
+        this.fillAreaRef(2, action === 'edit')
+      }
+
+      if (this.data.areaId2) {
+        this.fillAreaRef(3, action === 'edit')
+      }
+
+      if (this.data.areaId3) {
+        this.fillAreaRef(4, action === 'edit')
+      }
+
+      if (this.data.areaId4) {
+        this.fillAreaRef(5, action === 'edit')
+      }
+
       setTimeout(() => {
         this.$refs.area1.focus()
       }, 0)
@@ -642,7 +658,7 @@ export default {
           this.area1Ref = response.data.tableData
         })
     },
-    fillAreaRef(deep) {
+    fillAreaRef(deep, isEdit = false) {
       let parentId = 0
       if (deep === 2) {
         // Clear area 2-5 & customer list if area 1 changed
@@ -650,11 +666,13 @@ export default {
         this.area3Ref = []
         this.area4Ref = []
         this.area5Ref = []
-        this.data.areaId2 = null
-        this.data.areaId3 = null
-        this.data.areaId4 = null
-        this.data.areaId5 = null
-        this.gridCustomer.data = []
+        if (!isEdit) {
+          this.data.areaId2 = null
+          this.data.areaId3 = null
+          this.data.areaId4 = null
+          this.data.areaId5 = null
+          this.gridCustomer.data = []
+        }
         parentId = this.data.areaId1
       } else if (deep === 3) {
         parentId = this.data.areaId2
