@@ -108,7 +108,7 @@
                       :decimal-length="2"
                       :min="0"
                       :readonly="item.fromPromo"
-                      :rules="[rules.required[0],rules.cannot0[0]]"
+                      :rules="[rules.required[0], item.fromPromo === false ? rules.cannot0[0] : '']"
                       class="text-body-2 text-right mt-0"
                       dense
                       required
