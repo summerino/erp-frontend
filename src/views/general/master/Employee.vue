@@ -851,7 +851,7 @@ export default {
 
       if (data) {
         for (let i = 0; i < data.length; i++) {
-          const keyId = -dateToTick()
+          const keyId = 0 - [i + 1]
           const newItem = {
             id: keyId,
             salesmanId: data[i].salesmanId,
@@ -871,7 +871,7 @@ export default {
             const lstCustomer = data[i].customerList
             for (let j = 0; j < lstCustomer.length; j++) {
               const newCustomer = {
-                id: -dateToTick(),
+                id: 0 - [j + 1],
                 salesmanScheduleId: keyId,
                 custCode: lstCustomer[j].code
               }
