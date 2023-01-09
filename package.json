@@ -1,6 +1,6 @@
 {
   "name": "sahassa-erp",
-  "version": "23.1.4",
+  "version": "23.1.9",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -9,7 +9,7 @@
     "dev": "set NODE_OPTIONS=--openssl-legacy-provider && npm run serve"
   },
   "dependencies": {
-    "@boldreports/javascript-reporting-controls": "^4.2.65",
+    "@boldreports/javascript-reporting-controls": "^4.2.66",
     "animate.css": "^4.1.1",
     "axios": "^1.2.2",
     "date-fns": "^2.29.3",
