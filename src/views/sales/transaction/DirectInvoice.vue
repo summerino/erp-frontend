@@ -1667,6 +1667,8 @@ export default {
           dpp: 0,
           totTax: 0,
           totExemptTax: 0,
+          totUnitPrice: 0,
+          totDisc: 0,
           totDPP: 0,
           notes: null,
           state: 'A',
@@ -1765,6 +1767,8 @@ export default {
         item.dpp = data_i.sellPrice
         item.totTax = 0
         item.totExemptTax = 0
+        item.totUnitPrice = 0
+        item.totDisc = 0
         item.totDPP = data_i.sellPrice
         item.notes = null
         item.coaInventory = data_i.coaInventory
@@ -1850,11 +1854,7 @@ export default {
     },
     discPercentBlur() {
       if (this.data.oldFinalDiscPercent > 0 || this.data.finalDiscPercent > 0) {
-        if (this.data.includeTax) {
-          this.data.finalDisc = (this.data.action === 'edit' ? (this.data.subTotal + _sumBy(this.gridItem.data, 'totFDH')) : this.data.subTotal) * (this.data.finalDiscPercent / 100)
-        } else {
-          this.data.finalDisc = (this.data.action === 'edit' ? (this.data.dpp + _sumBy(this.gridItem.data, 'totFDH')) : this.data.dpp) * (this.data.finalDiscPercent / 100)
-        }
+        this.data.finalDisc = (_sumBy(this.gridItem.data, 'totUnitPrice') - _sumBy(this.gridItem.data, 'totDisc')) * (this.data.finalDiscPercent / 100)
         this.calcGrandTotal()
       }
     },
