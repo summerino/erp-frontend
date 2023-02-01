@@ -587,6 +587,7 @@ export default {
       this.data.salesId = this.data.oldSalesId
       this.data.groupId = this.data.oldGroupId
       this.data.subGroupId = this.data.oldSubGroupId
+      this.data.groupSubGroup = this.data.oldGroupSubGroup
       this.filter = true
       this.main = true
       this.getList()
@@ -658,6 +659,7 @@ export default {
         this.data.oldSalesId = this.data.salesId
         this.data.oldGroupId = this.data.groupId
         this.data.oldSubGroupId = this.data.subGroupId
+        this.data.oldGroupSubGroup = this.data.groupSubGroup
         this.data.salesId = item.salesId
         this.data.groupId = item.itemGroupId
         this.data.subGroupId = item.itemSubGroupId
