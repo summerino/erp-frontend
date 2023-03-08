@@ -13,7 +13,7 @@
               label="Cari..."
               class="font-weight-regular mt-0 pt-0"
               single-line
-              @keyup.enter="getList"
+              @keyup.enter="getList()"
             ></v-text-field>
           </v-col>
           <v-spacer></v-spacer>
@@ -324,17 +324,15 @@ export default {
       
       api.getAll(this.endpoint.sales.salesman, {
         params: {
-          search: this.dialog.add ? null : this.grid.search,
+          search: !this.main ? null : this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
           take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
           sorts: JSON.stringify(sorts),
-          filters: JSON.stringify([
-            {
-              field: 'isActive',
-              operator: 'eq',
-              keyword: 'true'
-            }
-          ])
+          filters: JSON.stringify([{
+            field: 'isActive',
+            operator: 'eq',
+            keyword: 'true'
+          }])
         }
       })
         .then(response => {
