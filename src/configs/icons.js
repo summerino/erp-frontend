@@ -1,6 +1,6 @@
 export default [
   // Community Material Design Icons | http://materialdesignicons.com/
-  'https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css',
+  'https://cdn.jsdelivr.net/npm/@mdi/font@7.x/css/materialdesignicons.min.css',
 
   // Google Material Icons | https://github.com/google/material-design-icons
   'https://fonts.googleapis.com/css?family=Material+Icons',
@@ -9,5 +9,5 @@ export default [
   'https://use.fontawesome.com/releases/v5.1.0/css/all.css',
 
   // Boxicons | https://boxicons.com
-  'https://unpkg.com/boxicons@2.0.5/css/boxicons.min.css'
+  'https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css'
 ]
