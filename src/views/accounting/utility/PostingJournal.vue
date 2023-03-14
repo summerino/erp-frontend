@@ -76,10 +76,11 @@
             <v-row dense v-if="ongoingPost">
               <v-col cols="12">
                 <v-progress-linear
-                  v-model="this.postingState.percent"
+                  :value="this.postingState.percent"
                   color="red lighten-2"
                   height="20"
                   stream
+                  readonly
                 >
                 </v-progress-linear>
               </v-col>
@@ -133,7 +134,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { format, parseISO, getMonth }  from 'date-fns'
+import { add, format, parseISO, getMonth, getYear }  from 'date-fns'
 
 import auth from '@/services/authorization.service'
 import axios from '@/axiosnoload'
@@ -157,12 +158,14 @@ export default {
     postingState: {
       status: null
     },
+    dataStartDate: null,
     disableControl: true,
     countInterval: null
   }),
 
   created: function () {
     this.reset()
+    this.getSystemParameter()
     this.countInterval = setInterval(() => {
       this.getPostingState()
       this.getHistoryPost()
@@ -219,6 +222,18 @@ export default {
         date: format(new Date(), 'yyyy-MM-dd')
       }
     },
+    async getSystemParameter() {
+      const resp = await axios.get(`${this.endpoint.systemManagement.parameter}/lists`, {
+        params: {
+          filters: JSON.stringify([{
+            field: 'code',
+            operator: 'eq',
+            keyword: 'DATA_START_DATE'
+          }])
+        }
+      })
+      this.dataStartDate = format(add(parseISO(resp.data.tableData[0].value), { days: -1 }), 'yyyy-MM-dd')
+    },
     async save() {
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Tolong cek kembali bagian formulir yang wajib diisi atau yang terdapat kesalahan.')
@@ -244,7 +259,15 @@ export default {
           if (response.data.status === 'ONGOING') {
             this.disableControl = true
             this.data.date = response.data.processDate
-            response.data.percent = getMonth(parseISO(response.data.processDate)) === 11 ? (response.data.step / 21) * 100 : (response.data.step / 19) * 100
+            let totalStep = 18
+            const processDateMonth = getMonth(parseISO(response.data.processDate))
+            if (processDateMonth === getMonth(parseISO(this.dataStartDate)) && getYear(parseISO(response.data.processDate)) === getYear(parseISO(this.dataStartDate))) {
+              totalStep += 5
+            }
+            if (processDateMonth === 12) {
+              totalStep += 1
+            }
+            response.data.percent = (response.data.step / totalStep) * 100
           } else if (response.data.status === 'FAILED' && this.postingState.status !== 'FAILED') {
             this.disableControl = false
             this.$store.dispatch('app/showError', `Posting journal periode ${format(parseISO(response.data.processDate), 'MMM-yyyy')} gagal.<br/>${response.data.notes}`)
