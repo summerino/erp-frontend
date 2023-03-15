@@ -116,7 +116,7 @@
                           :filters="exportFilter"
                           :grid="grid"
                           :gridDefOpts="gridDefOpts"
-                          :title="`Daftar Laporan Mutasi Barang - Detail Berdasarkan ${this.data.filterName} - ${this.data.initial} - ${this.data.name}`"
+                          :title="removeSpecialCharacter(`Daftar Laporan Mutasi Barang - Detail Berdasarkan ${this.data.filterName} - ${this.data.initial} - ${this.data.name}`)"
                         ></export-excel>
                       </v-list-item-title>
                     </v-list-item>
@@ -134,7 +134,7 @@
                           :gridDefOpts="gridDefOpts"
                           :shortcut="['ctrl', 'alt', 's']"
                           :shortcutCaption="'(Ctrl + Alt + S)'"
-                          :title="`Stock Opname - Detail Berdasarkan ${this.data.filterName} - ${this.data.name} (${this.data.initial}) `"
+                          :title="removeSpecialCharacter(`Stock Opname - Detail Berdasarkan ${this.data.filterName} - ${this.data.name} (${this.data.initial}) `)"
                         ></export-excel>
                       </v-list-item-title>
                     </v-list-item>
@@ -823,6 +823,9 @@ export default {
     },
     setOriginalType() {
       this.originalType = this.data.type
+    },
+    removeSpecialCharacter(value) {
+      return value.replace(/[*?:\\/[\]]/g, ' ')
     }
   }
 }
