@@ -234,7 +234,7 @@ class ExcelService {
 
     // Apply column width
     for (let i = 0; i < grid.columns.length; i++) {
-      const t = columns[0].value === 'no' ? 1 : 0
+      const t = columnOnly.length > grid.columns.length ? 1 : 0
       const colWidth = grid.columns[i].excelColWidth
       if (colWidth) {
         worksheet.columns[i + t].width = colWidth

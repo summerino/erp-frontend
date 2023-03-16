@@ -724,6 +724,7 @@
       :list-code="listCode"
       :grid-item="gridItem.data"
       :dp-code="data.code"
+      @closeFind="calcTotal"
     ></dp-find>
     <dp-send-failed
       ref="dpSendFailed"

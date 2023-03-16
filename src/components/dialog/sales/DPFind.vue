@@ -294,7 +294,7 @@ export default {
       this.menu = false
       this.$refs.search.focus()
     },
-    save() {
+    async save() {
       for (let i = 0; i < this.selected.length; i++) {
         const item = {
           id: -dateToTick(),
@@ -313,70 +313,58 @@ export default {
         let detailData = []
         let invDetail = []
         if (srcTrans === 2) {
-          api.getAll(`${this.endpoint.sales.delivery}/item`, {
+          const result = await api.getAll(`${this.endpoint.sales.delivery}/item`, {
             params: { code: this.selected[i].code }
           })
-            .then(response => {
-              detailData = response.data.tableData
-              for (let i = 0; i < detailData.length; i++) {
-                detailData[i].volume = detailData[i].length * detailData[i].width * detailData[i].height
-                detailData[i].finalVolume = detailData[i].dimensionMeasurement === 'cm' ? (detailData[i].volume * detailData[i].qty) / 100 : detailData[i].dimensionMeasurement === 'mm' ? (detailData[i].volume * detailData[i].qty) / 1000 : (detailData[i].volume * detailData[i].qty)
-                detailData[i].finalWeight = detailData[i].weightMeasurement === 'gr' ? (detailData[i].weight * detailData[i].qty) / 1000 : (detailData[i].weight * detailData[i].qty)
-              }
-            })
+          detailData = result.data.tableData
+          for (let i = 0; i < detailData.length; i++) {
+            detailData[i].volume = detailData[i].length * detailData[i].width * detailData[i].height
+            detailData[i].finalVolume = detailData[i].dimensionMeasurement === 'cm' ? (detailData[i].volume * detailData[i].qty) / 100 : detailData[i].dimensionMeasurement === 'mm' ? (detailData[i].volume * detailData[i].qty) / 1000 : (detailData[i].volume * detailData[i].qty)
+            detailData[i].finalWeight = detailData[i].weightMeasurement === 'gr' ? (detailData[i].weight * detailData[i].qty) / 1000 : (detailData[i].weight * detailData[i].qty)
+          }
         } else if (srcTrans === 1) { 
-          api.getAll(`${this.endpoint.sales.invoice}/detail`, {
+          const result = await api.getAll(`${this.endpoint.sales.invoice}/detail`, {
             params: { code: this.selected[i].code }
           })
-            .then(response => {
-              invDetail = response.data.tableData
-              for (let i = 0; i < invDetail.length; i++) {
-                api.getAll(`${this.endpoint.sales.delivery}/item`, {
-                  params: { code: invDetail[i].doCode }
-                })
-                  .then(response => {
-                    for (let j = 0; j < response.data.tableData.length; j++) {
-                      response.data.tableData[j].volume = response.data.tableData[j].length * response.data.tableData[j].width * response.data.tableData[j].height
-                      response.data.tableData[j].finalVolume = response.data.tableData[j].dimensionMeasurement === 'cm' ? (response.data.tableData[j].volume * response.data.tableData[j].qty) / 100 : response.data.tableData[j].dimensionMeasurement === 'mm' ? (response.data.tableData[j].volume * response.data.tableData[j].qty) / 1000 : (response.data.tableData[j].volume * response.data.tableData[j].qty)
-                      response.data.tableData[j].finalWeight = response.data.tableData[j].weightMeasurement === 'gr' ? (response.data.tableData[j].weight * response.data.tableData[j].qty) / 1000 : (response.data.tableData[j].weight * response.data.tableData[j].qty)
-                      detailData.push(response.data.tableData[j])
-                    }
-                  })
-              }
+          invDetail = result.data.tableData
+          for (let i = 0; i < invDetail.length; i++) {
+            const resulDlv = api.getAll(`${this.endpoint.sales.delivery}/item`, {
+              params: { code: invDetail[i].doCode }
             })
+            for (let j = 0; j < resulDlv.data.tableData.length; j++) {
+              resulDlv.data.tableData[j].volume = resulDlv.data.tableData[j].length * resulDlv.data.tableData[j].width * resulDlv.data.tableData[j].height
+              resulDlv.data.tableData[j].finalVolume = resulDlv.data.tableData[j].dimensionMeasurement === 'cm' ? (resulDlv.data.tableData[j].volume * resulDlv.data.tableData[j].qty) / 100 : resulDlv.data.tableData[j].dimensionMeasurement === 'mm' ? (resulDlv.data.tableData[j].volume * resulDlv.data.tableData[j].qty) / 1000 : (resulDlv.data.tableData[j].volume * resulDlv.data.tableData[j].qty)
+              resulDlv.data.tableData[j].finalWeight = resulDlv.data.tableData[j].weightMeasurement === 'gr' ? (resulDlv.data.tableData[j].weight * resulDlv.data.tableData[j].qty) / 1000 : (resulDlv.data.tableData[j].weight * resulDlv.data.tableData[j].qty)
+              detailData.push(resulDlv.data.tableData[j])
+            }
+          }
         } else if (srcTrans === 3) {
           if (item.type === 'Surat Jalan') {
-            api.getAll(`${this.endpoint.sales.delivery}/item`, {
+            const result = await api.getAll(`${this.endpoint.sales.delivery}/item`, {
               params: { code: this.selected[i].code }
             })
-              .then(response => {
-                detailData = response.data.tableData
-                for (let i = 0; i < detailData.length; i++) {
-                  detailData[i].volume = detailData[i].length * detailData[i].width * detailData[i].height
-                  detailData[i].finalVolume = detailData[i].dimensionMeasurement === 'cm' ? (detailData[i].volume * detailData[i].qty) / 100 : detailData[i].dimensionMeasurement === 'mm' ? (detailData[i].volume * detailData[i].qty) / 1000 : (detailData[i].volume * detailData[i].qty)
-                  detailData[i].finalWeight = detailData[i].weightMeasurement === 'gr' ? (detailData[i].weight * detailData[i].qty) / 1000 : (detailData[i].weight * detailData[i].qty)
-                }
-              })
+            detailData = result.data.tableData
+            for (let i = 0; i < detailData.length; i++) {
+              detailData[i].volume = detailData[i].length * detailData[i].width * detailData[i].height
+              detailData[i].finalVolume = detailData[i].dimensionMeasurement === 'cm' ? (detailData[i].volume * detailData[i].qty) / 100 : detailData[i].dimensionMeasurement === 'mm' ? (detailData[i].volume * detailData[i].qty) / 1000 : (detailData[i].volume * detailData[i].qty)
+              detailData[i].finalWeight = detailData[i].weightMeasurement === 'gr' ? (detailData[i].weight * detailData[i].qty) / 1000 : (detailData[i].weight * detailData[i].qty)
+            }
           } else {
-            api.getAll(`${this.endpoint.sales.invoice}/detail`, {
+            const result = await api.getAll(`${this.endpoint.sales.invoice}/detail`, {
               params: { code: this.selected[i].code }
             })
-              .then(response => {
-                invDetail = response.data.tableData
-                for (let i = 0; i < invDetail.length; i++) {
-                  api.getAll(`${this.endpoint.sales.delivery}/item`, {
-                    params: { code: invDetail[i].doCode }
-                  })
-                    .then(response => {
-                      for (let j = 0; j < response.data.tableData.length; j++) {
-                        response.data.tableData[j].volume = response.data.tableData[j].length * response.data.tableData[j].width * response.data.tableData[j].height
-                        response.data.tableData[j].finalVolume = response.data.tableData[j].dimensionMeasurement === 'cm' ? (response.data.tableData[j].volume * response.data.tableData[j].qty) / 100 : response.data.tableData[j].dimensionMeasurement === 'mm' ? (response.data.tableData[j].volume * response.data.tableData[j].qty) / 1000 : (response.data.tableData[j].volume * response.data.tableData[j].qty)
-                        response.data.tableData[j].finalWeight = response.data.tableData[j].weightMeasurement === 'gr' ? (response.data.tableData[j].weight * response.data.tableData[j].qty) / 1000 : (response.data.tableData[j].weight * response.data.tableData[j].qty)
-                        detailData.push(response.data.tableData[j])
-                      }
-                    })
-                }
+            invDetail = result.data.tableData
+            for (let i = 0; i < invDetail.length; i++) {
+              const resulDlv = await api.getAll(`${this.endpoint.sales.delivery}/item`, {
+                params: { code: invDetail[i].doCode }
               })
+              for (let j = 0; j < resulDlv.data.tableData.length; j++) {
+                resulDlv.data.tableData[j].volume = resulDlv.data.tableData[j].length * resulDlv.data.tableData[j].width * resulDlv.data.tableData[j].height
+                resulDlv.data.tableData[j].finalVolume = resulDlv.data.tableData[j].dimensionMeasurement === 'cm' ? (resulDlv.data.tableData[j].volume * resulDlv.data.tableData[j].qty) / 100 : resulDlv.data.tableData[j].dimensionMeasurement === 'mm' ? (resulDlv.data.tableData[j].volume * resulDlv.data.tableData[j].qty) / 1000 : (resulDlv.data.tableData[j].volume * resulDlv.data.tableData[j].qty)
+                resulDlv.data.tableData[j].finalWeight = resulDlv.data.tableData[j].weightMeasurement === 'gr' ? (resulDlv.data.tableData[j].weight * resulDlv.data.tableData[j].qty) / 1000 : (resulDlv.data.tableData[j].weight * resulDlv.data.tableData[j].qty)
+                detailData.push(resulDlv.data.tableData[j])
+              }
+            }
           }
         }
 
@@ -408,6 +396,7 @@ export default {
         this.listCode.push(item.transCode)
       }
       this.dialog = false
+      this.$emit('closeFind')
     },
     clickRow(event, { item }) {
       const srcTrans = this.srcTrans
