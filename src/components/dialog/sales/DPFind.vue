@@ -328,7 +328,7 @@ export default {
           })
           invDetail = result.data.tableData
           for (let i = 0; i < invDetail.length; i++) {
-            const resulDlv = api.getAll(`${this.endpoint.sales.delivery}/item`, {
+            const resulDlv = await api.getAll(`${this.endpoint.sales.delivery}/item`, {
               params: { code: invDetail[i].doCode }
             })
             for (let j = 0; j < resulDlv.data.tableData.length; j++) {
