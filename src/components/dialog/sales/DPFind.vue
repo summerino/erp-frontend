@@ -339,7 +339,7 @@ export default {
             }
           }
         } else if (srcTrans === 3) {
-          if (item.type === 'Surat Jalan') {
+          if (this.selected[i].type === 'Surat Jalan') {
             const result = await api.getAll(`${this.endpoint.sales.delivery}/item`, {
               params: { code: this.selected[i].code }
             })
