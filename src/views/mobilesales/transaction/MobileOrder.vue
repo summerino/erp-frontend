@@ -489,7 +489,7 @@
                               class="text-body-2 mt-0"
                               dense
                               required
-                              @change="itemIdChange(item); calcPromo();"
+                              @change="itemIdChange(item);"
                             >
                             </v-autocomplete>
                           </template>
@@ -928,7 +928,7 @@ export default {
       this.grid.search = vm.search
       this.getList(vm.bindToForm, vm.filters)
     },
-    getList(bindToForm = false, filters = []) {
+    async getList(bindToForm = false, filters = []) {
       const sorts = []
 
       for (let i = 0; i < this.grid.options.sortBy.length; i++) {
@@ -938,7 +938,7 @@ export default {
         })
       }
 
-      api.getAll(this.endpoint.mobileSales.order, {
+      const respGetAll = await api.getAll(this.endpoint.mobileSales.order, {
         params: {
           search: this.dialog.add ? null : this.grid.search,
           skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
@@ -947,14 +947,32 @@ export default {
           filters: JSON.stringify(filters)
         }
       })
-        .then(response => {
-          this.grid.data = response.data.tableData
-          this.grid.total = response.data.rowCount
-          if (bindToForm) {
-            const item = this.grid.data.find(h => h.code === this.data.code)
-            this.edit(item)
-          }
-        })
+
+      this.grid.data = respGetAll.data.tableData
+      this.grid.total = respGetAll.data.rowCount
+
+      if (bindToForm) {
+        const item = this.grid.data.find(h => h.code === this.data.code)
+        if (item) {
+          this.edit(item)
+        } else {
+          const respGetOne = await api.getAll(this.endpoint.mobileSales.order, {
+            params: {
+              search: this.dialog.add ? null : this.grid.search,
+              skip: ((this.grid.options.page - 1) * this.grid.options.itemsPerPage) || 0,
+              take: this.grid.options.itemsPerPage || this.gridDefOpts.pageSize,
+              sorts: JSON.stringify(sorts),
+              filters: JSON.stringify([{
+                field: 'code',
+                operator: 'eq',
+                keyword: this.data.code
+              }])
+            }
+          })
+
+          this.edit(respGetOne.data.tableData[0])
+        }
+      }
     },
     close() {
       this.dialog.add = false
@@ -994,15 +1012,16 @@ export default {
       this.getCustomerAddressesLists(this.data.custCode)
 
       // Get Promo
-      api.getAll(`${this.endpoint.mobileSales.order}/promos`, {
-        params: { code: item.code }
-      })
-        .then(response => {
-          const data = response.data.tableData
-          this.gridPromo.data = data
-        })
+      // api.getAll(`${this.endpoint.mobileSales.order}/promos`, {
+      //   params: { code: item.code }
+      // })
+      //   .then(response => {
+      //     const data = response.data.tableData
+      //     this.gridPromo.data = data
+      //   })
     },
     async save(closeDialog) {
+      await document.activeElement.blur()
       if (!this.dialog.add) return
       if (!this.$refs.form.validate()) {
         this.$store.dispatch('app/showInfo', 'Mohon periksa kembali inputan yang wajib diisi atau yang terdapat kesalahan.')
