@@ -233,7 +233,6 @@ export default {
       this.dialog = true
       this.gridData = gridData
       this.reset()
-      this.getOrderData()
       setTimeout(() => {
         this.$refs.search.focus()
       }, 100)
@@ -372,17 +371,6 @@ export default {
         if (data_i) {
           item.doCode = data_i.doCode
         }
-        if (this.selected[i].type === 'Penjualan Langsung') {
-          const data_o = this.orderData.find(x => x.code === this.selected[i].code)
-          if (data_o) {
-            item.salesName = data_o.salesName
-          }
-        } else {
-          const data_o = this.orderData.find(x => x.code === (srcTrans === 3 ? this.selected[i].soCode : this.selected[i].transCode))
-          if (data_o) {
-            item.salesName = data_o.salesName
-          }
-        }
         item.srcTrans = srcTrans
         item.transCode = this.selected[i].code
         item.custName = this.selected[i].custName
@@ -452,14 +440,7 @@ export default {
             })
         }
       }
-    },
-    getOrderData() {
-      api.getAll(this.endpoint.sales.order)
-        .then(response => {
-          this.orderData = response.data.tableData
-        })
     }
-    
   }
 }
 </script>
