@@ -279,7 +279,7 @@
                <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 'alt', 'r']"
-                  :disabled="isSaveNDeliveryAble || !allowInsertSalesDelivery || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers)) "
+                  :disabled="hasRelatedTrans || !allowInsertSalesDelivery || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers)) "
                   @click="saveDlv()"
                   @shortkey="saveDlv()"
                 >
@@ -301,7 +301,7 @@
               <v-list class="cursor-pointer">
                 <v-list-item
                   v-shortkey="['ctrl', 'alt', 'i']"
-                  :disabled="isSaveNInvoiceAble || !allowInsertSalesInvoice || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
+                  :disabled="hasRelatedTrans || !allowInsertSalesInvoice || (data.action === 'edit' && (!auth.allowUpdate || seenByOthers))"
                   @click="saveInv()"
                   @shortkey="saveInv()"
                 >
@@ -1307,22 +1307,22 @@ export default {
     isVoid() {
       return (this.data?.mark?.toUpperCase() === 'V')
     },
-    isSaveNDeliveryAble() {
-      if (this.data.action === 'add') {
-        return false
-      } if (this.data.mark === 'A' && this.data.action === 'edit') {
-        return false
-      }
-      return true
-    },
-    isSaveNInvoiceAble() {
-      if (this.data.action === 'add') {
-        return false
-      } if (this.data.mark === 'A' && this.data.action === 'edit') {
-        return false
-      }
-      return true
-    },
+    // isSaveNDeliveryAble() {
+    //   if (this.data.action === 'add') {
+    //     return false
+    //   } if (this.data.mark === 'A' && this.data.action === 'edit') {
+    //     return false
+    //   }
+    //   return true
+    // },
+    // isSaveNInvoiceAble() {
+    //   if (this.data.action === 'add') {
+    //     return false
+    //   } if (this.data.mark === 'A' && this.data.action === 'edit') {
+    //     return false
+    //   }
+    //   return true
+    // },
     isOverLimit() {
       return (this.data?.mark?.toUpperCase() === 'OL')
     }
