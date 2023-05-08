@@ -1991,6 +1991,7 @@ export default {
     itemIdChange(item) {
       const data_i = this.items.find(i => i.id === item.itemId)
       if (data_i) {
+        item.id = -dateToTick()
         item.itemId = data_i.id
         item.itemName = data_i.name
         item.categoryId = data_i.categoryId
