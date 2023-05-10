@@ -1121,7 +1121,7 @@ export default {
       this.data.sourceTransaction = 'Jadwal Kunjungan'  
 
       await this.getCustomer()
-      await this.getInvoice()
+      // await this.getInvoice()
 
       setTimeout(() => {
         // Validate form first
@@ -1146,7 +1146,7 @@ export default {
       }
 
       await this.getCustomer()
-      await this.getInvoice()
+      // await this.getInvoice()
 
       this.loadEmployee()
       this.loadCustomer()
@@ -1389,23 +1389,23 @@ export default {
         this.$store.dispatch('app/showInfo', 'Data Invoice sudah tersedia, hanya data pertama yang akan disimpan.')
       }
 
-      const data_i = this.itemInvoice.find(i => i.code === item.invCode)
-      if (data_i) {
-        item.invCode = data_i.code
-        item.failCollect = data_i.failCollect
-        item.notesFailCollect = data_i.notesFailCollect
-        item.customerName = data_i.custName
-        item.transactionDate = data_i.date
-        item.invoiceDueDate = data_i.dueDate
-        item.salesName = data_i.salesName
-        item.total = data_i.total
-        if (item.state !== 'A') {
-          item.state = 'M'
-        }
-      }
+      // const data_i = this.itemInvoice.find(i => i.code === item.invCode)
+      // if (data_i) {
+      //   item.invCode = data_i.code
+      //   item.failCollect = data_i.failCollect
+      //   item.notesFailCollect = data_i.notesFailCollect
+      //   item.customerName = data_i.custName
+      //   item.transactionDate = data_i.date
+      //   item.invoiceDueDate = data_i.dueDate
+      //   item.salesName = data_i.salesName
+      //   item.total = data_i.total
+      //   if (item.state !== 'A') {
+      //     item.state = 'M'
+      //   }
+      // }
     },
-    getCustomer() {
-      return api.getAll(`${this.endpoint.general.customer.customer}/lists`, {
+    async getCustomer() {
+      const result = await api.getAll(`${this.endpoint.general.customer.customer}/lists`, {
         params: { 
           filters: JSON.stringify([{
             field: 'isactive',
@@ -1418,12 +1418,11 @@ export default {
           }])
         }
       })
-        .then(response => {
-          this.items = response.data.tableData
-        })
+
+      this.items = result.data.tableData
     },
-    getInvoice() {
-      return api.getAll(this.endpoint.sales.invoice, {
+    async getInvoice() {
+      const result = await api.getAll(this.endpoint.sales.invoice, {
         params: { 
           filters: JSON.stringify([{
             field: 'mark',
@@ -1436,9 +1435,8 @@ export default {
           }])
         }
       })
-        .then(response => {
-          this.itemInvoice = response.data.tableData
-        })
+
+      this.itemInvoice = result.data.tableData
     },
     loadEmployee() {
       api.getAll(this.endpoint.general.employee, {
@@ -1548,8 +1546,8 @@ export default {
         this.listInvCode.push(this.gridInvoice.data[i].invCode)
       }
     },
-    addAllInvoice() {
-      api.getAll(this.endpoint.sales.invoice, {
+    async addAllInvoice() {
+      const result = await api.getAll(this.endpoint.sales.invoice, {
         params: { 
           filters: JSON.stringify([{
             field: 'mark',
@@ -1562,29 +1560,38 @@ export default {
           }])
         }
       })
-        .then(response => {
-          const data = response.data.tableData.filter(x => this.listCustCode.includes(x.custCode) && !this.listInvCode.includes(x.code))
-          for (let i = 0; i < data.length; i++) {
-            if (this.gridInvoice.data.length === 0 || (this.gridInvoice.data.slice(-1)[0]?.invCode ?? null)) {
-              const item = {
-                id: -dateToTick(),
-                invCode: null,
-                failCollect: false,
-                notesFailCollect: null,
-                customerName: null,
-                transactionDate: null,
-                invoiceDueDate: null,
-                salesName: null,
-                total: 0,
-                state: 'A'
-              }
-              item.invCode = data[i].code
-              item.customerName = data[i].custName
-              this.invCodeChange(item)
-              this.gridInvoice.data.push(item)
-            }
+
+      const data = result.data.tableData.filter(x => this.listCustCode.includes(x.custCode) && !this.listInvCode.includes(x.code))
+      for (let i = 0; i < data.length; i++) {
+        if (this.gridInvoice.data.length === 0 || (this.gridInvoice.data.slice(-1)[0]?.invCode ?? null)) {
+          const item = {
+            id: -dateToTick(),
+            invCode: null,
+            failCollect: false,
+            notesFailCollect: null,
+            customerName: null,
+            transactionDate: null,
+            invoiceDueDate: null,
+            salesName: null,
+            total: 0,
+            state: 'A'
           }
-        })
+          item.invCode = data[i].code
+          item.customerName = data[i].custName
+          item.failCollect = data[i].failCollect
+          item.notesFailCollect = data[i].notesFailCollect
+          item.customerName = data[i].custName
+          item.transactionDate = data[i].date
+          item.invoiceDueDate = data[i].dueDate
+          item.salesName = data[i].salesName
+          item.total = data[i].total
+          if (item.state !== 'A') {
+            item.state = 'M'
+          }
+          this.invCodeChange(item)
+          this.gridInvoice.data.push(item)
+        }
+      }
     }
   }
 }
