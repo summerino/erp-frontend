@@ -2039,6 +2039,10 @@ export default {
 
         // Calc unit item lists
         this.calcItemPrice(item)
+
+        setTimeout(() => {
+          this.$refs.itemId.focus()
+        }, 0)
       }
     },
     unitItemChange(item) {
