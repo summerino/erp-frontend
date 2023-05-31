@@ -1620,6 +1620,16 @@ export default {
         return
       }
       
+      if (this.isMemoDuplicate()) {
+        this.$store.dispatch('app/showInfo', 'Tidak bisa melakukan simpan karena terdapat nota kredit dengan kode yang sama.')
+        return
+      }
+      
+      if (this.isMemoDateGreaterThanInv()) {
+        this.$store.dispatch('app/showInfo', 'Tidak bisa melakukan simpan karena terdapat nota kredit dengan tanggal yang lebih besar dari faktur.')
+        return
+      }
+
       const data = this.data
       data.details = this.gridDet.data
       data.memos = this.gridMemo.data
@@ -1841,6 +1851,11 @@ export default {
         return valueArr.indexOf(item) !== idx 
       })
       return isDuplicate
+    },
+    isMemoDateGreaterThanInv() {
+      const valueArr = this.gridMemo.data.map(function (item) { return item.date })
+      const isInvalid = valueArr.some((x) => x > this.data.date)
+      return isInvalid
     },
     getSysARRecog() {
       const codes = ['AR_RECOG_TIME']

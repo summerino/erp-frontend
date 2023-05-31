@@ -1315,7 +1315,12 @@ export default {
       }
       
       if (this.isMemoDuplicate()) {
-        this.$store.dispatch('app/showInfo', 'Tidak bisa melakukan simpan karena terdapat debit memo dengan kode yang sama.')
+        this.$store.dispatch('app/showInfo', 'Tidak bisa melakukan simpan karena terdapat nota debit dengan kode yang sama.')
+        return
+      }
+
+      if (this.isMemoDateGreaterThanInv()) {
+        this.$store.dispatch('app/showInfo', 'Tidak bisa melakukan simpan karena terdapat nota debit dengan tanggal yang lebih besar dari faktur.')
         return
       }
       
@@ -1504,6 +1509,11 @@ export default {
         return valueArr.indexOf(item) !== idx 
       })
       return isDuplicate
+    },
+    isMemoDateGreaterThanInv() {
+      const valueArr = this.gridMemo.data.map(function (item) { return item.date })
+      const isInvalid = valueArr.some((x) => x > this.data.date)
+      return isInvalid
     },
     getSysAPRecog() {
       const codes = ['AP_RECOG_TIME']
