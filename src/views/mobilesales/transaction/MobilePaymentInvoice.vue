@@ -177,7 +177,7 @@
           max-height="64"
           dark
         >
-          <v-btn icon dark @click="close">
+          <v-btn icon dark @click="close('add')">
             <v-icon>mdi-close</v-icon>
           </v-btn>
           <v-toolbar-title>Pembayaran</v-toolbar-title>
