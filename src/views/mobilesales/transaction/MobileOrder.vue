@@ -298,6 +298,7 @@
                   <v-tabs v-model="tab.cust">
                     <v-tab key="cust">Pelanggan</v-tab>
                     <v-tab key="payment">Pembayaran</v-tab>
+                    <v-tab key="others">Lainnya</v-tab>
                   </v-tabs>
 
                   <v-tabs-items v-model="tab.cust" class="pa-2">
@@ -398,6 +399,24 @@
                           readonly
                           >
                           </v-autocomplete>
+                        </v-col>
+                      </v-row>
+                    </v-tab-item>
+
+                    <v-tab-item
+                      key="others"
+                      transition="false"
+                      eager
+                    >
+                      <v-row no-gutters>
+                        <v-col cols="12">
+                          <v-checkbox
+                            v-model="data.includeTax"
+                            label="Termasuk Pajak"
+                            class="shrink mt-0"
+                            @change="calcTax"
+                            readonly
+                          ></v-checkbox>
                         </v-col>
                       </v-row>
                     </v-tab-item>
