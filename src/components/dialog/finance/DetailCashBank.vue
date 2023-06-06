@@ -295,15 +295,16 @@ export default {
       customerFilters: [
         {
           text: 'Kode Customer',
-          value: 'custCode' 
-        },
-        {
+          value: 'custCode'
+        }, {
           text: 'Nama Customer',
-          value: 'custName' 
-        },
-        {
+          value: 'custName'
+        }, {
+          text: 'Alamat Customer',
+          value: 'custAddress'
+        }, {
           text: 'Kode Transaksi',
-          value: 'code' 
+          value: 'code'
         }
       ],      
       transType: [
@@ -479,7 +480,8 @@ export default {
           { text: 'Nilai Sudah Diterima', value: 'paidAmount', align: 'right', divider: true, width: '120' },
           { text: 'Sisa', value: 'remaining', divider: true, align: 'right', width: '120' },
           { text: 'Saat Ini Diterima', value: 'transAmount', align: 'right', divider: true, width: '150' },
-          { text: 'Catatan', value: 'notes', divider: true, width: '150' }        
+          { text: 'Catatan', value: 'notes', divider: true, width: '150' },
+          { text: 'Alamat', value: 'custAddress', divider: true, width: '200' }
         ]
         this.filters = this.customerFilters
         this.data.by = 'custName'
