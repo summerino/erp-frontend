@@ -170,6 +170,14 @@ export default {
             field: 'isActive',
             operator: 'eq',
             keyword: true
+          }, {
+            field: 'typeid',
+            operator: 'eq',
+            keyword: 1
+          }]),
+          sorts: JSON.stringify([{
+            field: 'code',
+            direction: 'asc'
           }])
         }
       })
