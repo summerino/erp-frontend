@@ -1167,8 +1167,8 @@ export default {
       ],
       data: [],
       options: {
-        sortBy: ['code'],
-        sortDesc: [true]
+        sortBy: ['date', 'code'],
+        sortDesc: [true, true]
       },
       total: 0,
       search: null
