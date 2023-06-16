@@ -106,6 +106,7 @@
         class="elevation-1"
         fixed-header
         show-select
+        @toggle-select-all="selectAllToggle"
       >
         <template v-slot:[`item.data-table-select`]="{ item, isSelected, select }">
           <v-simple-checkbox
@@ -1343,6 +1344,12 @@ export default {
         return
       }
       const data = this.data
+      for (let i = 0; i < this.gridItem.data.length; i++) {
+        const listFreeItem = data.action === 'add' ? this.gridBonus.data.filter(x => x.orderDetailId === this.gridItem.data[i].soDetailId) : this.gridBonus.data.filter(x => x.dlvOrderDetailId === this.gridItem.data[i].id)
+        if (listFreeItem) {
+          this.gridItem.data[i].freeItemDetails = listFreeItem
+        }
+      }
       data.itemDetails = this.gridItem.data
       this.$refs.soSi.open(data, false)
     },
@@ -1641,6 +1648,19 @@ export default {
         .then(response => {
           this.arRecogTime = response.data.tableData[0].value
         })
+    },
+    selectAllToggle(props) {
+      if (this.selected.length !== this.grid.data.length  - this.grid.data.filter(x => x.mark.toUpperCase() === 'V').length) {
+        this.selected = []
+        const self = this
+        props.items.forEach(item => {
+          if (item.mark.toUpperCase() !== 'V') {
+            self.selected.push(item)
+          } 
+        })
+      } else {
+        this.selected = []
+      }
     }
   }
 }
