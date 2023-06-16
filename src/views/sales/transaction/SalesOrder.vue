@@ -45,6 +45,74 @@
                 :gridDefOpts="gridDefOpts"
                 title="Daftar Order Penjualan"
               ></export-excel>
+              <v-menu
+                bottom
+                eager
+                open-on-hover
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    v-bind="attrs"
+                    v-on="on"
+                    :disabled="!auth.allowUpdate || !allowInsertSalesDelivery || !allowInsertSalesInvoice || selected.length === 0"
+                    color="teal darken-2"
+                    icon
+                    small
+                  >
+                    <v-icon small>mdi-content-save-all</v-icon>
+                  </v-btn>
+                </template>
+                <v-list
+                  class="cursor-pointer"
+                  color="green darken-1"
+                  dark
+                >
+                  <v-list-item
+                    v-shortkey="['ctrl', 'alt', 'd']"
+                    dense
+                    @click="multiSaveDlv()"
+                    @shortkey="multiSaveDlv()"
+                    :disabled="!auth.allowUpdate || !allowInsertSalesDelivery"
+                  >
+                    <v-list-item-title>
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                          <span
+                            v-bind="attrs"
+                            v-on="on"
+                            class="text-subtitle-2"
+                          >
+                            Simpan & Kirim
+                          </span>
+                        </template>
+                        <span class="text-caption">(Ctrl + Alt + D)</span>
+                      </v-tooltip>
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item
+                    v-shortkey="['ctrl', 'alt', 'f']"
+                    dense
+                    @click="multiSaveInv()"
+                    @shortkey="multiSaveInv()"
+                    :disabled="!auth.allowUpdate || !allowInsertSalesInvoice"
+                  >
+                    <v-list-item-title>
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ on, attrs }">
+                          <span
+                            v-bind="attrs"
+                            v-on="on"
+                            class="text-subtitle-2"
+                          >
+                            Simpan & Faktur
+                          </span>
+                        </template>
+                        <span class="text-caption">(Ctrl + Alt + F)</span>
+                      </v-tooltip>
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </v-menu>
             </v-row>
           </v-col>
           <v-col cols="12" md="4" class="text-right">
@@ -76,6 +144,7 @@
         <advanced-search @search="search"></advanced-search>
       </v-card-text>
       <v-data-table
+        v-model="selected"
         :headers="grid.columns"
         :footer-props="{ itemsPerPageOptions: gridDefOpts.pageSizes }"
         :height="gridDefOpts.height"
@@ -85,9 +154,19 @@
         :server-items-length="grid.total"
         :sort-by="grid.options.sortBy"
         :sort-desc="grid.options.sortDesc"
+        item-key="code"
         class="elevation-1"
         fixed-header
+        show-select
+        @toggle-select-all="selectAllToggle"
       >
+        <template v-slot:[`item.data-table-select`]="{ item, isSelected, select }">
+          <v-simple-checkbox
+            :disabled="item.mark.toUpperCase() !== 'A' || !allowInsertSalesDelivery || !allowInsertSalesInvoice"
+            :value="isSelected"
+            @input="select($event)"
+          ></v-simple-checkbox>
+        </template>
         <template v-slot:[`item.action`]="{ item }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
@@ -1226,6 +1305,7 @@ export default {
     paymentTerms: [],
     accounts: [],
     customerAddresses: [],
+    selected: [],
     data: {},
     allowInsertSalesInvoice: false,
     allowInsertSalesDelivery: false,
@@ -1363,7 +1443,8 @@ export default {
       this.tab.cust = 0
       this.tab.item = 0
       this.tab.foot = 0
-      
+      this.selected = []
+
       // Reset form validation
       if (resetValidation) {
         setTimeout(() => {
@@ -1853,6 +1934,7 @@ export default {
     closeDlv() {
       this.dialog.add = false
       this.getList()
+      this.reset()
     },
     async saveInv() {
       await document.activeElement.blur()
@@ -1891,6 +1973,7 @@ export default {
     closeInv() {
       this.dialog.add = false
       this.getList()
+      this.reset()
     },
     addItem() {
       if (this.gridItem.data.length === 0 || (this.gridItem.data.slice(-1)[0].itemId ?? null)) {
@@ -2225,6 +2308,38 @@ export default {
             item.discPromo[i].fromPromo = false
           }
         }
+      }
+    },
+    multiSaveDlv() {
+      const data = {
+        SOCodes: this.selected.map(x => x.code),
+        dlvDate: format(new Date(), 'yyyy-MM-dd'),
+        isSoDlv: false
+      }
+      this.$refs.soSd.open(data, true)
+    },
+    multiSaveInv() {
+      const data = {
+        SOCodes: this.selected.map(x => x.code),
+        dlvDate: format(new Date(), 'yyyy-MM-dd'),
+        isSoDlv: false,
+        invDate : format(new Date(), 'yyyy-MM-dd'),
+        invDueDate : format(new Date(), 'yyyy-MM-dd'),
+        isSoInv : false
+      }
+      this.$refs.soSi.open(data, true, true)
+    },
+    selectAllToggle(props) {
+      if (this.selected.length !== this.grid.data.length  - this.grid.data.filter(x => x.mark.toUpperCase() !== 'A').length) {
+        this.selected = []
+        const self = this
+        props.items.forEach(item => {
+          if (item.mark.toUpperCase() === 'A') {
+            self.selected.push(item)
+          } 
+        })
+      } else {
+        this.selected = []
       }
     }
   }

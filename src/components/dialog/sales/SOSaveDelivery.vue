@@ -84,6 +84,7 @@ export default {
       width: 800
     },
     data: {},
+    isMultiple: false,
     menu: {
       dlvDate: false
     }
@@ -98,33 +99,42 @@ export default {
     }
   },
   methods: {
-    reset() {
-      this.data = {
-        action: '',
-        code: null,
-        date: format(new Date(), 'yyyy-MM-dd'),
-        salesBy: null,
-        currCode: 'IDR',
-        rate: 1,
-        custCode: null,
-        custName: null,
-        custAddr: null,
-        custPhone: null,
-        custFax: null,
-        notes: null,
-        dpp: 0,
-        subTotal: 0,
-        finalDiscPercent: 0,
-        finalDisc: 0,
-        includeTax: this.defTaxInc,
-        taxAmount: 0,
-        total: 0,
-        dlvDate : format(new Date(), 'yyyy-MM-dd'),
-        isSoDlv : false
+    reset(isMulti) {
+      if (isMulti) {
+        this.data = {
+          SOCodes: null,
+          dlvDate : format(new Date(), 'yyyy-MM-dd'),
+          isSoDlv : false
+        }
+      } else {
+        this.data = {
+          action: '',
+          code: null,
+          date: format(new Date(), 'yyyy-MM-dd'),
+          salesBy: null,
+          currCode: 'IDR',
+          rate: 1,
+          custCode: null,
+          custName: null,
+          custAddr: null,
+          custPhone: null,
+          custFax: null,
+          notes: null,
+          dpp: 0,
+          subTotal: 0,
+          finalDiscPercent: 0,
+          finalDisc: 0,
+          includeTax: this.defTaxInc,
+          taxAmount: 0,
+          total: 0,
+          dlvDate : format(new Date(), 'yyyy-MM-dd'),
+          isSoDlv : false
+        }
       }
     },
-    open(SOdata) {
-      this.reset()
+    open(SOdata, isMulti = false) {
+      this.reset(isMulti)
+      this.isMultiple = isMulti
       this.dialog = true
       this.data = SOdata
       this.data.isSoDlv = true
@@ -137,19 +147,30 @@ export default {
       this.data.isSoDlv = false
     },
     async save() {
-      let result = { success: false, message: '' }
-      if (this.data.action === 'add') {
-        const resp = await api.create(this.endpoint.sales.order, this.data)
+      if (this.isMultiple) {
+        let result = { success: false, message: ''}
+        const resp = await api.create(`${this.endpoint.sales.order}/multi-save`, this.data)
         result = resp.data
-      } else if (this.data.action === 'edit') {
-        const resp = await api.update(this.endpoint.sales.order, this.data.code, this.data)
-        result = resp.data
-      }
+        if (result.success) {
+          this.$store.dispatch('app/showSuccess', result.message)
+          this.close()
+          this.$emit('closeParent')
+        }
+      } else {
+        let result = { success: false, message: '' }
+        if (this.data.action === 'add') {
+          const resp = await api.create(this.endpoint.sales.order, this.data)
+          result = resp.data
+        } else if (this.data.action === 'edit') {
+          const resp = await api.update(this.endpoint.sales.order, this.data.code, this.data)
+          result = resp.data
+        }
 
-      if (result.success) {
-        this.$store.dispatch('app/showSuccess', result.message)
-        this.close()
-        this.$emit('closeParent')
+        if (result.success) {
+          this.$store.dispatch('app/showSuccess', result.message)
+          this.close()
+          this.$emit('closeParent')
+        }
       }
     }
   }

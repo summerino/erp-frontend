@@ -485,6 +485,16 @@
                               dense
                             ></v-currency-field>
                           </template>
+                          <template v-slot:[`item.notes`]="{ item }">
+                            <v-text-field
+                              v-model="item.notes"
+                              :readonly="dialog.add && (inActive || !auth.allowUpdate)"
+                              :rules="rules.max256chars"
+                              counter="256" 
+                              class="text-body-2 mt-0"
+                              dense
+                            ></v-text-field>
+                          </template>
                         </v-data-table>
                       </v-card>
                     </v-tab-item>
@@ -597,7 +607,8 @@ export default {
       columns: [
         { value: 'action', sortable: false, divider: true, width: '1%' },
         { text: 'Akun', value: 'coaCode', divider: true, width: '150' },
-        { text: 'Nilai', value: 'amount', align: 'right', width: '70' }
+        { text: 'Nilai', value: 'amount', align: 'right', divider: true, width: '70' },
+        { text: 'Catatan', value: 'notes',  width: '120' }
       ],
       data: []
     },
