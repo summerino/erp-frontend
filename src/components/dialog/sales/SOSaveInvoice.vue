@@ -238,7 +238,7 @@ export default {
         const resp = await api.create(`${this.endpoint.sales.order}/multi-save`, this.data)
         result = resp.data
         if (result.success) {
-          this.$store.dispatch('app/showSuccess', result.message)
+          this.$store.dispatch('app/showInfo', result.message)
           this.close()
           this.$emit('closeParent')
         }
