@@ -106,7 +106,6 @@
         class="elevation-1"
         fixed-header
         show-select
-        @toggle-select-all="selectAllToggle"
       >
         <template v-slot:[`item.data-table-select`]="{ item, isSelected, select }">
           <v-simple-checkbox
@@ -1648,19 +1647,6 @@ export default {
         .then(response => {
           this.arRecogTime = response.data.tableData[0].value
         })
-    },
-    selectAllToggle(props) {
-      if (this.selected.length !== this.grid.data.length  - this.grid.data.filter(x => x.mark.toUpperCase() === 'V').length) {
-        this.selected = []
-        const self = this
-        props.items.forEach(item => {
-          if (item.mark.toUpperCase() !== 'V') {
-            self.selected.push(item)
-          } 
-        })
-      } else {
-        this.selected = []
-      }
     }
   }
 }
