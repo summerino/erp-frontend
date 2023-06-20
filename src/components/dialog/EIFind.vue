@@ -163,6 +163,7 @@ export default {
       rcvColumn : [
         { text: 'Kode Transaksi', value: 'code', divider: true, width: '160' },
         { text: 'Tanggal', value: 'date', align: 'right', divider: true, width: '120' },
+        { text: 'Nomor Ref.', value: 'refNo', divider: true, width: '160'},
         { text: 'Nama Pemasok', value: 'supName', divider: true, width: '160' },
         { text: 'Status', value: 'mark', align: 'right', width: '120' }
       ],
@@ -225,11 +226,13 @@ export default {
           code: this.eiCode,
           transCode: null,
           date: null,
+          refNo: null,
           mark: null
         }
         
         item.transCode = this.selected[i].code
         item.date = this.selected[i].date
+        item.refNo = this.selected[i].refNo
         item.mark = this.selected[i].mark
 
         this.gridDetail.push(item)
