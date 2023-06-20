@@ -742,12 +742,7 @@ export default {
       search: null
     },
     gridDetail: {
-      columns: [
-        { value: 'action', sortable: false, divider: true, width: '90'},
-        { text: 'Kode Transaksi', value: 'transCode', divider: true, width: '160'},
-        { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120'},
-        { text: 'Status', value: 'mark', width: '50'}
-      ],
+      columns: [],
       data: []
     },
     gridRelated: {
@@ -762,6 +757,19 @@ export default {
     valid: false,
     dataStartDate: null,
     sources: [{ id: 1, name: 'Penerimaan Pembelian' }, { id: 2, name: 'Surat Jalan' }],
+    gridDlv: [
+      { value: 'action', sortable: false, divider: true, width: '90'},
+      { text: 'Kode Transaksi', value: 'transCode', divider: true, width: '160'},
+      { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120'},
+      { text: 'Status', value: 'mark', width: '50'}
+    ],
+    gridRcv: [
+      { value: 'action', sortable: false, divider: true, width: '90'},
+      { text: 'Kode Transaksi', value: 'transCode', divider: true, width: '160'},
+      { text: 'Tanggal Transaksi', value: 'date', align: 'right', divider: true, width: '120'},
+      { text: 'Nomor Ref.', value: 'refNo', divider: true, width: '160'},
+      { text: 'Status', value: 'mark', width: '50'}
+    ],
     listCode: [],
     suppliers: [],
     data: {},
@@ -942,6 +950,12 @@ export default {
         approvedDate: (item.approvedDate === null) ? null : format(parseISO(item.approvedDate), 'dd-MMM-yyyy HH:mm:ss')
       }
 
+      if (item.srcTrans === 1) {
+        this.gridDetail.columns = this.gridRcv
+      } else {
+        this.gridDetail.columns = this.gridDlv
+      }
+
       // Get supplier details
       this.supCodeChange()
 
@@ -1039,6 +1053,11 @@ export default {
     },
     srcTransChange() {
       this.gridDetail.data = []
+      if (this.data.srcTrans === 1) {
+        this.gridDetail.columns = this.gridRcv
+      } else {
+        this.gridDetail.columns = this.gridDlv
+      }
     },
     print(item) {
       this.$refs.reportViewer.open('expedition-invoice', item.code)
