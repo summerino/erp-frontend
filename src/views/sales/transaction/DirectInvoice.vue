@@ -1517,7 +1517,10 @@ export default {
       if (this.$route.params.action.toLowerCase() === 'edit') {
         activeTrans.released('DI', this.data.code)
       }
-      this.$router.push({ name: 'sales-invoice' })
+      this.$router.push({
+        name: 'sales-invoice',
+        query: { s: this.$router.currentRoute.query.s }
+      })
     },
     async remove(item) {
       if (
@@ -1598,7 +1601,8 @@ export default {
               this.data.code = result.data
               this.$router.push({
                 name: 'direct-invoice',
-                params: { action: 'edit', code: result.data }
+                params: { action: 'edit', code: result.data },
+                query: { s: this.$router.currentRoute.query.s }
               })
               this.defineAction()
             }
@@ -1631,7 +1635,8 @@ export default {
             this.data.code = result.data
             this.$router.push({
               name: 'direct-invoice',
-              params: { action: 'edit', code: result.data }
+              params: { action: 'edit', code: result.data },
+              query: { s: this.$router.currentRoute.query.s }
             })
             this.defineAction()
           }
