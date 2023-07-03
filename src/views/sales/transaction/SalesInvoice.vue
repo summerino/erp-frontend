@@ -1734,7 +1734,7 @@ export default {
           }, {
             field: 'mark',
             operator: 'doesnotcontain',
-            keyword: ['A', 'V', 'CLS']
+            keyword: ['A', 'V']
           }])
         }
       })
