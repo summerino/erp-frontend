@@ -1007,6 +1007,7 @@ export default {
       this.dialog.add = true
       this.reset(false)
       this.data.action = 'add'
+      this.gridDetail.columns = this.gridRcv
 
       setTimeout(() => {
         // Set focus to order code field
