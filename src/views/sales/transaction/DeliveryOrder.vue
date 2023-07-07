@@ -1551,7 +1551,7 @@ export default {
                 this.gridItem.data = [...response.data.tableData]
                 for (let i = 0; i < this.gridItem.data.length; i++) {
                   this.gridItem.data[i].soDetailId = this.gridItem.data[i].id
-                  this.gridItem.data[i].id = -dateToTick()
+                  this.gridItem.data[i].id = -(i + 1)
                   this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
                   this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyDlv
                   this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
@@ -1581,7 +1581,7 @@ export default {
                 this.gridItem.data = [...response.data.tableData]
                 for (let i = 0; i < this.gridItem.data.length; i++) {
                   this.gridItem.data[i].soDetailId = this.gridItem.data[i].id
-                  this.gridItem.data[i].id = -dateToTick()
+                  this.gridItem.data[i].id = -(i + 1)
                   this.gridItem.data[i].orderQty = this.gridItem.data[i].qty
                   this.gridItem.data[i].outstandingQty = this.gridItem.data[i].qty - this.gridItem.data[i].qtyDlv
                   this.gridItem.data[i].qty = this.gridItem.data[i].outstandingQty
