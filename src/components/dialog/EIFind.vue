@@ -139,6 +139,7 @@ export default {
         item1: [
           { text: 'Kode', value: 'code' },
           { text: 'Tanggal', value: 'date' },
+          { text: 'No. Ref.', value: 'refNo' },
           { text: 'Nama Pemasok', value: 'supName' }
         ],
         item2: [
