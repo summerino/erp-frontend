@@ -1231,6 +1231,9 @@ export default {
   }),
 
   created: function () {
+    if (this.$router.currentRoute.query.s) {
+      this.grid.search = this.$router.currentRoute.query.s
+    }
     this.getList()
     this.getSystemParameter()
     this.getEmployeeLists()
@@ -1360,6 +1363,7 @@ export default {
           direction: this.grid.options.sortDesc[i] ? 'desc' : 'asc'
         })
       }
+
       api.getAll(this.endpoint.sales.invoice, {
         params: {
           search: this.dialog.add ? null : this.grid.search,
@@ -1467,7 +1471,8 @@ export default {
       if (fromDI) {
         this.$router.push({
           name: 'direct-invoice',
-          params: { action: 'add' }
+          params: { action: 'add' },
+          query: { s: this.grid.search }
         })
         return
       }
@@ -1487,14 +1492,15 @@ export default {
     },
     async edit(item) {
       if (!item) return
-            
+
       const resp = await activeTrans.locked('SI', item.code)
       this.seenByOthers = (resp?.data?.message === 'used')
 
       if (item.fromDirectInvoice) {
         this.$router.push({
           name: 'direct-invoice',
-          params: { action: 'edit', code: item.code }
+          params: { action: 'edit', code: item.code },
+          query: { s: this.grid.search }
         })
         return
       }
@@ -1728,7 +1734,7 @@ export default {
           }, {
             field: 'mark',
             operator: 'doesnotcontain',
-            keyword: ['A', 'V', 'CLS']
+            keyword: ['A', 'V']
           }])
         }
       })
