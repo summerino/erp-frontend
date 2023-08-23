@@ -488,13 +488,15 @@ export default {
       } else if (this.data.type === 'AP' || this.data.type === 'EPAP') {
         this.grid.columns = [
           { text: 'Kode', value: 'code', divider: true, width: '170' },
+          { text: 'No. Ref.', value: 'refNo', divider: true, width: '170' },
           { text: 'Pemasok', value: 'supName', divider: true, width: '200' },
           { text: 'Tanggal', value: 'date', divider: true, width: '120' },
           { text: 'Nilai', value: 'amount', divider: true, align: 'right', width: '120' },
           { text: 'Nilai Sudah Dibayar', value: 'paidAmount', divider: true, width: '120' },
           { text: 'Sisa', value: 'remaining', divider: true, align: 'right', width: '120' },
           { text: 'Saat Ini Dibayar', value: 'transAmount', align: 'right', divider: true, width: '150' },
-          { text: 'Catatan', value: 'notes', divider: true, width: '150' }        
+          { text: 'Catatan', value: 'notes', divider: true, width: '150' },
+          { text: 'Kd. Order', value: 'orderCode', divider: true, width: '170' }
         ]
         this.filters = this.supplierFilters
         this.data.by = 'supName'
