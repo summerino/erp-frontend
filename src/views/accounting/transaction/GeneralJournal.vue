@@ -493,7 +493,7 @@
                       <v-col cols="12" md="6">   
                         <v-currency-field
                           v-model="data.totalDebit"
-                          :decimal-length="0"
+                          :decimal-length="2"
                           :min="0"
                           :readonly="true"
                           class="text-right"
@@ -503,7 +503,7 @@
                       <v-col cols="12" md="6">
                         <v-currency-field
                           v-model="data.totalCredit"
-                          :decimal-length="0"
+                          :decimal-length="2"
                           :min="0"
                           :readonly="true"
                           class="text-right"
