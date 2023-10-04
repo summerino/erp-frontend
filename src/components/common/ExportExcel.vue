@@ -52,7 +52,6 @@ export default {
   methods: {
     async exportExcel() {
       if (this.useBackend) {
-        console.log(this.useBackend)
         try {
           const response = await api.getAll(`${this.endpoint.accounting.generalLedgerReport}/excel`, {
             headers:
@@ -76,7 +75,7 @@ export default {
           document.body.appendChild(link)
           link.click()
         } catch (error) {
-          console.log(error)
+          return error
         }
       } else {
         excelService.export(this.company, this.title, this.grid, this.gridDefOpts, this.filters)
