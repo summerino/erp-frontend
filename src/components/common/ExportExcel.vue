@@ -20,12 +20,17 @@
 
 
 <script>
+import { mapState } from 'vuex'
 import excelService from '@/services/excel.service.js'
+import api from '@/services/axios.service'
 
 export default {
-  props: ['company', 'title', 'grid', 'gridDefOpts', 'filters', 'color', 'caption', 'shortcut', 'shortcutCaption'],
+  props: ['company', 'title', 'grid', 'gridDefOpts', 'filters', 'color', 'caption', 'shortcut', 'shortcutCaption', 'data', 'menuId', 'isMain', 'useBackend'],
 
   computed: {
+    ...mapState({
+      endpoint: state => state.api.endpoint
+    }),
     defaultColor() {
       if (this.color === undefined) return 'green'
       return this.color
@@ -46,7 +51,36 @@ export default {
   
   methods: {
     async exportExcel() {
-      excelService.export(this.company, this.title, this.grid, this.gridDefOpts, this.filters)
+      if (this.useBackend) {
+        console.log(this.useBackend)
+        try {
+          const response = await api.getAll(`${this.endpoint.accounting.generalLedgerReport}/excel`, {
+            headers:
+            {
+              'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            },
+            responseType: 'blob',
+            params: {
+              data: JSON.stringify(this.data),
+              title: this.title,
+              caller: this.menuId,
+              filters: JSON.stringify(this.filters),
+              isMain: this.isMain
+            }
+          })
+          
+          const url = window.URL.createObjectURL(response.data)
+          const link = document.createElement('a')
+          link.href = url
+          link.setAttribute('download', `${this.title}.xlsx`)
+          document.body.appendChild(link)
+          link.click()
+        } catch (error) {
+          console.log(error)
+        }
+      } else {
+        excelService.export(this.company, this.title, this.grid, this.gridDefOpts, this.filters)
+      }
     }
   }  
 }
