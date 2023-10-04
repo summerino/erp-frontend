@@ -53,10 +53,14 @@
                         <export-excel
                           ref="exportExcel"
                           :company="companyName"
-                          :filters="exportFilter"
+                          :filters="exportFilter.searches"
                           :grid="grid"
                           :gridDefOpts="gridDefOpts"
                           title="Daftar Laporan Buku Besar"
+                          :useBackend="true"
+                          :data="data"
+                          :menuId="menuId.glReport"
+                          :isMain="main"
                         ></export-excel>
                       </v-list-item-title>
                     </v-list-item>
@@ -113,10 +117,14 @@
                         <export-excel
                           ref="exportExcel"
                           :company="companyName"
-                          :filters="exportFilter"
+                          :filters="exportFilter.searches"
                           :grid="grid"
                           :gridDefOpts="gridDefOpts"
                           :title="`Daftar Laporan Buku Besar - Detail - ${ this.data.vouFrom }`"
+                          :useBackend="true"
+                          :data="data"
+                          :menuId="menuId.glReport"
+                          :isMain="!main"
                         ></export-excel>
                       </v-list-item-title>
                     </v-list-item>
@@ -499,7 +507,7 @@ export default {
 
       if (this.data.dateFrom) {
         this.exportFilter.searches.push({
-          field: 'dateFrom',
+          field: 'Tanggal Mulai',
           keyword: format(parseISO(this.data.dateFrom), 'dd-MMM-yyyy'),
           operator: 'eq'
         })
@@ -507,7 +515,7 @@ export default {
 
       if (this.data.dateTo) {
         this.exportFilter.searches.push({
-          field: 'dateTo',
+          field: 'Tanggal Akhir',
           keyword: format(parseISO(this.data.dateTo), 'dd-MMM-yyyy'),
           operator: 'eq'
         })
@@ -520,7 +528,7 @@ export default {
           keyword: '',
           operator: 'eq'
         }
-        searchCoa.field = 'acc'
+        searchCoa.field = 'Akun Mulai'
         searchCoa.keyword = `${coa.code} - ${coa.name}`
         this.exportFilter.searches.push(searchCoa)
       }
@@ -532,7 +540,7 @@ export default {
           keyword: '',
           operator: 'eq'
         }
-        searchCoa2.field = 'acc2'
+        searchCoa2.field = 'Akun Akhir'
         searchCoa2.keyword = `${coa2.code} - ${coa2.name}`
         this.exportFilter.searches.push(searchCoa2)
       }
@@ -544,7 +552,7 @@ export default {
           keyword: '',
           operator: 'eq'
         }
-        searchSortType.field = 'sort'
+        searchSortType.field = 'Urutkan'
         searchSortType.keyword = sortType.name
         this.exportFilter.searches.push(searchSortType)
       }
@@ -554,7 +562,7 @@ export default {
 
       if (this.data.dateFrom) {
         this.exportFilter.searches.push({
-          field: 'dateFrom',
+          field: 'Tanggal Mulai',
           keyword: format(parseISO(this.data.dateFrom), 'dd-MMM-yyyy'),
           operator: 'eq'
         })
@@ -562,18 +570,18 @@ export default {
 
       if (this.data.dateTo) {
         this.exportFilter.searches.push({
-          field: 'dateTo',
+          field: 'Tanggal Akhir',
           keyword: format(parseISO(this.data.dateTo), 'dd-MMM-yyyy'),
           operator: 'eq'
         })
       }
       const searchJournalCode = {
-        field: 'vouFrom',
+        field: 'Kode Jurnal',
         keyword: '',
         operator: 'eq'
       }
       const searchDetail = {
-        field: 'rptDet',
+        field: 'Detail',
         keyword: '',
         operator: 'eq'
       }
@@ -592,7 +600,7 @@ export default {
           keyword: '',
           operator: 'eq'
         }
-        searchCoa.field = 'coa'
+        searchCoa.field = 'Akun'
         searchCoa.keyword = coa.name
         this.exportFilter.searches.push(searchCoa)
       }
@@ -604,7 +612,7 @@ export default {
           keyword: '',
           operator: 'eq'
         }
-        searchSortType.field = 'sort'
+        searchSortType.field = 'Urutkan'
         searchSortType.keyword = sortType.name
         this.exportFilter.searches.push(searchSortType)
       }
