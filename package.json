@@ -1,6 +1,6 @@
 {
   "name": "sahassa-erp",
-  "version": "23.9.25",
+  "version": "23.10.5",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -9,9 +9,9 @@
     "dev": "set NODE_OPTIONS=--openssl-legacy-provider && npm run serve"
   },
   "dependencies": {
-    "@boldreports/javascript-reporting-controls": "^5.2.35",
+    "@boldreports/javascript-reporting-controls": "^5.2.37",
     "animate.css": "^4.1.1",
-    "axios": "^1.5.0",
+    "axios": "^1.5.1",
     "date-fns": "^2.30.0",
     "exceljs": "^4.3.0",
     "file-saver": "^2.0.5",
@@ -32,7 +32,7 @@
     "@vue/cli-plugin-eslint": "^4.5.19",
     "@vue/cli-service": "^4.5.19",
     "babel-eslint": "^10.1.0",
-    "core-js": "^3.32.2",
+    "core-js": "^3.33.0",
     "eslint": "^6.8.0",
     "eslint-plugin-vue": "^9.17.0",
     "sass": "^1.68.0",
