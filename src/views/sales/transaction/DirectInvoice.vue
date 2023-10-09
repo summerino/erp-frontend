@@ -1975,7 +1975,7 @@ export default {
       return isDuplicate
     },
     isMemoDateGreaterThanInv() {
-      const valueArr = this.gridMemo.data.map(function (item) { return item.date })
+      const valueArr = this.gridMemo.data.map(function (item) { return format(parseISO(item.date), 'yyyy-MM-dd') })
       const isInvalid = valueArr.some((x) => x > this.data.date)
       return isInvalid
     },
