@@ -201,7 +201,7 @@
                         <v-currency-field
                           v-model="item.fromQty"
                           :decimal-length="2"
-                          :min="0"
+                          :min="1"
                           class="text-body-2 text-right mt-0"
                           dense
                           :readonly="!data.isMultiple"
@@ -239,6 +239,8 @@
                           class="text-body-2 text-right mt-0"
                           dense
                           @click="resetToQty(item)"
+                          @change="resetToQty(item)"
+                          @focus="resetToQty(item)"
                         ></v-text-field>
                         <v-currency-field v-else
                           v-model="item.toQty"
