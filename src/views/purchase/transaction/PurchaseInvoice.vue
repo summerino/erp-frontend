@@ -1459,13 +1459,11 @@ export default {
         this.data.currCode = item.currCode
         this.data.total = 0
 
-        if (!item.called) {
-          // Get supplier details
-          this.bindSupData(this.data)
+        // Get supplier details
+        this.bindSupData(this.data)
 
-          // Get purchase receive details
-          this.getReceiveLists(true)
-        }
+        // Get purchase receive details
+        this.getReceiveLists(true)
       } else {
         this.data.supCode = null
         this.data.supName = null
