@@ -1799,14 +1799,11 @@ export default {
         })
         const rateArr = taxData.data.tableData.map(x => x.rate)
         this.highestRate = Math.max(Math.max(...rateArr))
+        // Get customer details
+        this.bindCustData(this.data)
 
-        if (!item.called) {
-          // Get customer details
-          this.bindCustData(this.data)
-
-          // Get sales delivery details
-          this.getDOLists(true)
-        }
+        // Get sales delivery details
+        this.getDOLists(true)
 
         if (this.allowSalesDownPayment) {
           await this.getSalesInvoiceSDP()
