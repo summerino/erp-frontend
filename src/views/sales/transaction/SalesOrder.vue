@@ -1003,6 +1003,7 @@
                         <v-col cols="12">
                           <v-currency-field
                             v-model="data.dpp"
+                            :allow-negative="true"
                             label="Total Sebelum Pajak"
                             class="text-right mt-0"
                             readonly
