@@ -958,6 +958,7 @@
                     <v-row no-gutters>
                       <v-currency-field
                         v-model="data.subTotal"
+                        :allow-negative="true"
                         label="Harga Total"
                         class="text-right mt-0"
                         readonly
@@ -967,7 +968,7 @@
                     <v-row no-gutters>
                       <v-currency-field
                         v-model="data.taxAmount"
-                        :allow-negative="false"
+                        :allow-negative="true"
                         label="Jumlah Pajak"
                         class="text-right mt-0"
                         readonly
@@ -977,7 +978,7 @@
                     <v-row no-gutters>
                       <v-currency-field
                         v-model="data.exemptTaxAmount"
-                        :allow-negative="false"
+                        :allow-negative="true"
                         label="Jumlah Pajak Yang Dibebaskan"
                         class="text-right mt-0"
                         readonly
