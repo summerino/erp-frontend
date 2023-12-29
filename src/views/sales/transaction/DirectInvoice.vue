@@ -27,7 +27,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'alt', 'i']"
-                  :disabled="isVoid || (data.action === 'edit' && !auth.allowPrint) || data.action === 'add'"
+                  :disabled="isOverLimit || isVoid || (data.action === 'edit' && !auth.allowPrint) || data.action === 'add'"
                   dark
                   text
                   @click="print('inv', data)"
@@ -43,7 +43,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'alt', 'd']"
-                  :disabled="isVoid || (data.action === 'edit' && !auth.allowPrint) || data.action === 'add'"
+                  :disabled="isOverLimit || isVoid || (data.action === 'edit' && !auth.allowPrint) || data.action === 'add'"
                   dark
                   text
                   @click="print('do', data)"
@@ -59,7 +59,7 @@
                   v-bind="attrs"
                   v-on="on"
                   v-shortkey="['ctrl', 'alt', 'r']"
-                  :disabled="isVoid || (data.action === 'edit' && !auth.allowPrint) || data.action === 'add'"
+                  :disabled="isOverLimit || isVoid || (data.action === 'edit' && !auth.allowPrint) || data.action === 'add'"
                   dark
                   text
                   @click="print('receipt', data)"
