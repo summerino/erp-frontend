@@ -188,7 +188,7 @@
       >
         <template v-slot:[`item.data-table-select`]="{ item, isSelected, select }">
           <v-simple-checkbox
-            :disabled="item.mark.toUpperCase() === 'V' || !auth.allowPrint"
+            :disabled="item.mark.toUpperCase() === 'V'|| item.mark.toUpperCase() === 'OL' || !auth.allowPrint"
             :value="isSelected"
             @input="select($event)"
           ></v-simple-checkbox>
@@ -234,7 +234,7 @@
               <v-btn
                 v-bind="attrs"
                 v-on="on"
-                :disabled="item.mark.toUpperCase() === 'V' || !auth.allowPrint"
+                :disabled="item.mark.toUpperCase() === 'V' || item.mark.toUpperCase() === 'OL' || !auth.allowPrint"
                 color="teal darken-2"
                 icon
                 small
@@ -1596,7 +1596,7 @@ export default {
         if (caller === 'inv') {
           const resp = await api.create(this.endpoint.localReport, {
             reportName: 'sales-invoice-multi',
-            codes: this.selected.map(x => x.code)
+            codes: this.selected.filter(x => x.mark !== 'OL').map(x => x.code)
           }, {
             responseType: 'blob'
           })
@@ -1604,7 +1604,7 @@ export default {
         } else if (caller === 'do') {
           const doData = await api.getAll(`${this.endpoint.sales.invoice}/delivery-order`, {
             params: {
-              codes: JSON.stringify(this.selected.map(x => x.code))
+              codes: JSON.stringify(this.selected.filter(x => x.mark !== 'OL').map(x => x.code))
             }
           })
 
