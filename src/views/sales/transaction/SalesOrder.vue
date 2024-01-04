@@ -1776,6 +1776,7 @@ export default {
       })
         .then(response => {
           this.gridItem.data = response.data.tableData
+          this.calcPrice()
         })
       
       // Get item details
