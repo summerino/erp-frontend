@@ -1373,11 +1373,12 @@ export default {
     calcPrice() {
       this.data.subTotal = _sumBy(this.gridItem.data, 'total')
       this.data.taxAmount = _sumBy(this.gridItem.data, 'totTax')
+      this.data.exemptTaxAmount = _sumBy(this.gridItem.data, 'totExemptTax')
       this.data.dpp = _sumBy(this.gridItem.data, 'totDPP') - this.data.finalDisc
       this.calcGrandTotal()
     },
     calcGrandTotal() {
-      this.data.total = this.data.subTotal - this.data.finalDisc
+      this.data.total = this.data.subTotal
       // if (this.data.includeTax) {
       //   this.data.total = this.data.subTotal - this.data.finalDisc
       // } else {
