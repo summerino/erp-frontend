@@ -12,7 +12,7 @@
     "@boldreports/javascript-reporting-controls": "^5.4.21",
     "animate.css": "^4.1.1",
     "axios": "^1.6.4",
-    "date-fns": "^3.0.6",
+    "date-fns": "^2.30.0",
     "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
     "lodash": "^4.17.21",
