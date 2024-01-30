@@ -1,7 +1,6 @@
 #  Template NodeJS build
 
-#  This template allows you to validate your NodeJS code.
-#  The workflow allows running tests and code linting on the default branch.
+#  The workflow allows bulding on the development branch.
 
 image: node:17
 
@@ -32,12 +31,12 @@ pipelines:
             # deploy frontend object
             - $site_path=(Get-IISSite "$Env:SITE_NAME").Applications.VirtualDirectories.PhysicalPath
             - C:\Windows\System32\inetsrv\appcmd.exe stop sites "$Env:SITE_NAME"
-            - Get-ChildItem -Path "$site_path" | Remove-Item -Recurse -Force
-            - Copy-Item -Path "dist\*" -Destination "$site_path" -Recurse -Force
+            - Get-ChildItem -Path "$site_path" | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+            - Copy-Item -Path "dist\*" -Destination "$site_path" -Recurse -Force -ErrorAction SilentlyContinue
             - C:\Windows\System32\inetsrv\appcmd.exe start sites "$Env:SITE_NAME"
             # deploy frontend sms object
             - $site_path=(Get-IISSite "$Env:SMS_SITE_NAME").Applications.VirtualDirectories.PhysicalPath
             - C:\Windows\System32\inetsrv\appcmd.exe stop sites "$Env:SMS_SITE_NAME"
-            - Get-ChildItem -Path "$site_path" | Remove-Item -Recurse -Force
-            - Copy-Item -Path "dist\*" -Destination "$site_path" -Recurse -Force
+            - Get-ChildItem -Path "$site_path" | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+            - Copy-Item -Path "dist\*" -Destination "$site_path" -Recurse -Force -ErrorAction SilentlyContinue
             - C:\Windows\System32\inetsrv\appcmd.exe start sites "$Env:SMS_SITE_NAME"
