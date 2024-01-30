@@ -1,0 +1,34 @@
+#  Template NodeJS build
+
+#  This template allows you to validate your NodeJS code.
+#  The workflow allows running tests and code linting on the default branch.
+
+image: node:17
+
+pipelines:
+  branches:
+    development:
+      - step:
+          name: Build
+          caches:
+            - node
+          script:
+            - npm install
+            - export NODE_OPTIONS=--openssl-legacy-provider
+            - npm run build
+          artifacts:
+            - dist/**
+      - step:
+          name: Deploy to Tested
+          deployment: Test
+          runs-on:
+            - self.hosted
+            - windows
+            - shsdev.rw
+          script:
+            # deploy frontend object
+            - $site_path=(Get-IISSite "$Env:SITE_NAME").Applications.VirtualDirectories.PhysicalPath
+            - C:\Windows\System32\inetsrv\appcmd.exe stop sites "$Env:SITE_NAME"
+            - Get-ChildItem -Path "$site_path" | Remove-Item -Recurse -Force
+            - Copy-Item -Path "dist\*" -Destination "$site_path" -Recurse -Force
+            - C:\Windows\System32\inetsrv\appcmd.exe start sites "$Env:SITE_NAME"
