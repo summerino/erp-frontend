@@ -14,8 +14,12 @@ pipelines:
             - node
           script:
             - npm install
+            # build frontend object
             - export NODE_OPTIONS=--openssl-legacy-provider
             - npm run build
+            # build frontend sms object
+            - export VUE_APP_API_BASE_URL=$SMS_API_BASE_URL
+            - npm run build -- --dest .dist_sms/
           artifacts:
             - dist/**
       - step:
