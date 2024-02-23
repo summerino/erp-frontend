@@ -1,6 +1,6 @@
 {
   "name": "sahassa-erp",
-  "version": "24.1.5",
+  "version": "24.2.23",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -9,9 +9,9 @@
     "dev": "set NODE_OPTIONS=--openssl-legacy-provider && npm run serve"
   },
   "dependencies": {
-    "@boldreports/javascript-reporting-controls": "^5.4.21",
+    "@boldreports/javascript-reporting-controls": "^5.4.26",
     "animate.css": "^4.1.1",
-    "axios": "^1.6.4",
+    "axios": "^1.6.7",
     "date-fns": "^2.30.0",
     "exceljs": "^4.4.0",
     "file-saver": "^2.0.5",
@@ -24,7 +24,7 @@
     "vue-shortkey": "^3.1.7",
     "vue-spinner": "^1.0.4",
     "vue2-google-maps": "^0.10.7",
-    "vuetify": "^2.7.1",
+    "vuetify": "^2.7.2",
     "vuex": "^3.6.2"
   },
   "devDependencies": {
@@ -32,10 +32,10 @@
     "@vue/cli-plugin-eslint": "^4.5.19",
     "@vue/cli-service": "^4.5.19",
     "babel-eslint": "^10.1.0",
-    "core-js": "^3.35.0",
+    "core-js": "^3.36.0",
     "eslint": "^6.8.0",
-    "eslint-plugin-vue": "^9.19.2",
-    "sass": "^1.69.7",
+    "eslint-plugin-vue": "^9.22.0",
+    "sass": "^1.71.1",
     "sass-loader": "^10.5.2",
     "vue-cli-plugin-vuetify": "^2.5.8",
     "vuetify-loader": "^1.9.2"
