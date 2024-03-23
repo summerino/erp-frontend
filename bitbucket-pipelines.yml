@@ -2,7 +2,7 @@
 
 #  The workflow allows bulding on the development branch.
 
-image: node:17
+image: node:18
 
 pipelines:
   branches:
