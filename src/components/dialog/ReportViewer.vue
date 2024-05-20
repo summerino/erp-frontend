@@ -66,10 +66,10 @@ export default {
           },
           toolbarSettings: {
             // eslint-disable-next-line no-undef
-            items: ~ej.ReportViewer.ToolbarItems.Stop & ~ej.ReportViewer.ToolbarItems.ExportSetup & ~ej.ReportViewer.ToolbarItems.Find & ~ej.ReportViewer.ToolbarItems.Analytics
+            items: ~ej.ReportViewer.ToolbarItems.Stop & ~ej.ReportViewer.ToolbarItems.Parameters & ~ej.ReportViewer.ToolbarItems.ExportSetup & ~ej.ReportViewer.ToolbarItems.Find & ~ej.ReportViewer.ToolbarItems.Analytics
           },
           parameterSettings: {
-            hideParameterBlock: false
+            hideParameterBlock: true
           },
           printMode: true,
           ajaxBeforeLoad: this.onAjaxRequest

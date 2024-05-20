@@ -9,7 +9,7 @@
     "dev": "set NODE_OPTIONS=--openssl-legacy-provider && npm run serve"
   },
   "dependencies": {
-    "@boldreports/javascript-reporting-controls": "^5.4.38",
+    "@boldreports/javascript-reporting-controls": "^6.1.36",
     "animate.css": "^4.1.1",
     "axios": "^1.7.0",
     "date-fns": "^2.30.0",
